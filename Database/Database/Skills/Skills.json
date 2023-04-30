@@ -1,0 +1,508 @@
+{
+  "All": {
+    "Path": "Database\\Skills\\",
+    "Base": [
+      {
+        "id": "na28",
+        "name": "??"
+      },
+      {
+        "id": "ba1",
+        "name": "Basic Attack"
+      }
+    ]
+  },
+  "Primalist": {
+    "Path": "Database\\Skills\\Primalist\\",
+    "Base": [
+      {
+        "id": "fl13",
+        "name": "Fury Leap"
+      },
+      {
+        "id": "eb5656",
+        "name": "Eterra's Blessing"
+      },
+      {
+        "id": "wo42",
+        "name": "Summon Wolf"
+      },
+      {
+        "id": "mas54",
+        "name": "Maelstrom"
+      },
+      {
+        "id": "sw43",
+        "name": "Swipe"
+      },
+      {
+        "id": "tb47",
+        "name": "Ice Thorns"
+      },
+      {
+        "id": "sa36oh",
+        "name": "Summon Sabertooth"
+      },
+      {
+        "id": "ssc50",
+        "name": "Summon Storm Crows"
+      },
+      {
+        "id": "st31et",
+        "name": "Serpent Strike"
+      },
+      {
+        "id": "th39",
+        "name": "Summon Thorn Totem"
+      },
+      {
+        "id": "ts85i",
+        "name": "Tempest Strike"
+      }
+    ],
+    "Druid": [
+      {
+        "id": "wb8fo",
+        "name": "Werebear Form"
+      },
+      {
+        "id": "sf5rd",
+        "name": "Spriggan Form"
+      },
+      {
+        "id": "er6no",
+        "name": "Entangling Roots"
+      },
+      {
+        "id": "sp38",
+        "name": "Summon Spriggan"
+      }
+    ],
+    "Shaman": [
+      {
+        "id": "to50",
+        "name": "Tornado"
+      },
+      {
+        "id": "st38ml",
+        "name": "Summon Storm Totem"
+      },
+      {
+        "id": "av75ch",
+        "name": "Avalanche"
+      },
+      {
+        "id": "eq5s",
+        "name": "Earthquake"
+      }
+    ],
+    "BeastMaster": [
+      {
+        "id": "sc36pi",
+        "name": "Summon Scorpion"
+      },
+      {
+        "id": "wc57",
+        "name": "Warcry"
+      },
+      {
+        "id": "srtor",
+        "name": "Summon Raptor"
+      },
+      {
+        "id": "sf37",
+        "name": "Summon Frenzy Totem"
+      },
+      {
+        "id": "be36ar",
+        "name": "Summon Bear"
+      }
+    ]
+  },
+  "Mage": {
+    "Path": "Database\\Skills\\Mage\\",
+    "Base": [
+      {
+        "id": "fi9",
+        "name": "Fireball"
+      },
+      {
+        "id": "fw3d",
+        "name": "Flame Ward"
+      },
+      {
+        "id": "gl14",
+        "name": "Glacier"
+      },
+      {
+        "id": "vo54",
+        "name": "Volcanic Orb"
+      },
+      {
+        "id": "sw31a",
+        "name": "Snap Freeze"
+      },
+      {
+        "id": "te44",
+        "name": "Teleport"
+      },
+      {
+        "id": "en6",
+        "name": "Elemental Nova"
+      },
+      {
+        "id": "vm53dx",
+        "name": "Focus"
+      },
+      {
+        "id": "dig5",
+        "name": "Disintegrate"
+      },
+      {
+        "id": "st47ic",
+        "name": "Static"
+      },
+      {
+        "id": "lb23il",
+        "name": "Lightning Blast"
+      },
+      {
+        "id": "ms26",
+        "name": "Mana Strike"
+      }
+    ],
+    "Sorcerer": [
+      {
+        "id": "so35a",
+        "name": "Static Orb"
+      },
+      {
+        "id": "bh2",
+        "name": "Black Hole"
+      },
+      {
+        "id": "ib5g3",
+        "name": "Ice Barrage"
+      },
+      {
+        "id": "arcas",
+        "name": "Arcane Ascendance"
+      },
+      {
+        "id": "me27",
+        "name": "Meteor"
+      }
+    ],
+    "SpellBlade": [
+      {
+        "id": "fr11mv",
+        "name": "Flame Reave"
+      },
+      {
+        "id": "f1b4d",
+        "name": "Firebrand"
+      },
+      {
+        "id": "ss3tre",
+        "name": "Shatter Strike"
+      },
+      {
+        "id": "sb44eq",
+        "name": "Enchant Weapon"
+      },
+      {
+        "id": "su5g3",
+        "name": "Surge"
+      }
+    ]
+  },
+  "Sentinel": {
+    "Path": "Database\\Skills\\Sentinel\\",
+    "Base": [
+      {
+        "id": "sm87r4",
+        "name": "Smite"
+      },
+      {
+        "id": "va53st",
+        "name": "Warpath"
+      },
+      {
+        "id": "js21gc",
+        "name": "Juggernaut Stance"
+      },
+      {
+        "id": "ht16aw",
+        "name": "Hammer Throw"
+      },
+      {
+        "id": "sb4h",
+        "name": "Shield Bash"
+      },
+      {
+        "id": "st31io",
+        "name": "Shield Throw"
+      },
+      {
+        "id": "lu25ng",
+        "name": "Lunge"
+      },
+      {
+        "id": "sndr1",
+        "name": "Rive"
+      },
+      {
+        "id": "of28ur",
+        "name": "Ephemeral Stance"
+      },
+      {
+        "id": "re82ke",
+        "name": "Rebuke"
+      },
+      {
+        "id": "sr31hu",
+        "name": "Shield Rush"
+      },
+      {
+        "id": "gs15de",
+        "name": "Vengeance"
+      }
+    ],
+    "ForgeGuard": [
+      {
+        "id": "fs3e3",
+        "name": "Forge Strike"
+      },
+      {
+        "id": "st4th",
+        "name": "Smelter's Wrath"
+      },
+      {
+        "id": "rs31hi",
+        "name": "Ring Of Shields"
+      },
+      {
+        "id": "ma6hdr",
+        "name": "Manifest Armor"
+      }
+    ],
+    "VoidKnight": [
+      {
+        "id": "ra31gn",
+        "name": "Ravaging Stance"
+      },
+      {
+        "id": "vr53sl",
+        "name": "Volatile Reversal"
+      },
+      {
+        "id": "ab0lh",
+        "name": "Abyssal Echoes"
+      },
+      {
+        "id": "do5vr",
+        "name": "Devouring Orb"
+      },
+      {
+        "id": "es6ai",
+        "name": "Erasing Strike"
+      },
+      {
+        "id": "an0my",
+        "name": "Anomaly"
+      }
+    ],
+    "Paladin": [
+      {
+        "id": "ah443",
+        "name": "Holy Aura"
+      },
+      {
+        "id": "si4lgl",
+        "name": "Sigils Of Hope"
+      },
+      {
+        "id": "pa67ju",
+        "name": "Judgement"
+      },
+      {
+        "id": "hh7pa3",
+        "name": "Healing Hand"
+      }
+    ]
+  },
+  "Acolyte": {
+    "Path": "Database\\Skills\\Acolyte\\",
+    "Base": [
+      {
+        "id": "hs18gu",
+        "name": "Hungering Souls"
+      },
+      {
+        "id": "bg36nl",
+        "name": "Summon Bone Golem"
+      },
+      {
+        "id": "sp5g2",
+        "name": "Spirit Plague"
+      },
+      {
+        "id": "bc53",
+        "name": "Bone Curse"
+      },
+      {
+        "id": "rb31pl",
+        "name": "Rip Blood"
+      },
+      {
+        "id": "ss37kl",
+        "name": "Summon Skeleton"
+      },
+      {
+        "id": "is40",
+        "name": "Infernal Shade"
+      },
+      {
+        "id": "ha84",
+        "name": "Harvest"
+      },
+      {
+        "id": "ts50pl",
+        "name": "Transplant"
+      },
+      {
+        "id": "bp2nk",
+        "name": "Marrow Shards"
+      },
+      {
+        "id": "svz81",
+        "name": "Summon Volatile Zombie"
+      },
+      {
+        "id": "ws54hm",
+        "name": "Wandering Spirits"
+      }
+    ],
+    "Necromancer": [
+      {
+        "id": "ds4d3",
+        "name": "Dread Shade"
+      },
+      {
+        "id": "sw42ih",
+        "name": "Summon Wraith"
+      },
+      {
+        "id": "sf31rc",
+        "name": "Sacrifice"
+      },
+      {
+        "id": "sm4g",
+        "name": "Summon Skeleton Mage"
+      },
+      {
+        "id": "aa710",
+        "name": "Assemble Abomination"
+      }
+    ],
+    "Lich": [
+      {
+        "id": "ad0ry",
+        "name": "Aura Of Decay"
+      },
+      {
+        "id": "Dl73",
+        "name": "Drain Life"
+      },
+      {
+        "id": "rf1azz",
+        "name": "Reaper Form"
+      },
+      {
+        "id": "fe8at",
+        "name": "Soul Feast"
+      },
+      {
+        "id": "ds34l",
+        "name": "Death Seal"
+      }
+    ]
+  },
+  "Rogue": {
+    "Path": "Database\\Skills\\Rogue\\",
+    "Base": [
+      {
+        "id": "ba1574",
+        "name": "Ballista"
+      },
+      {
+        "id": "flur3",
+        "name": "Flurry"
+      },
+      {
+        "id": "cstri",
+        "name": "Cinder Strike"
+      },
+      {
+        "id": "shiif",
+        "name": "Shift"
+      },
+      {
+        "id": "deeco",
+        "name": "Decoy"
+      },
+      {
+        "id": "srk21",
+        "name": "Shurikens"
+      },
+      {
+        "id": "aacfl",
+        "name": "Acid Flask"
+      },
+      {
+        "id": "pun22",
+        "name": "Puncture"
+      },
+      {
+        "id": "smbmb",
+        "name": "Smoke Bomb"
+      }
+    ],
+    "Marksman": [
+      {
+        "id": "mush9",
+        "name": "Multishot"
+      },
+      {
+        "id": "exvol8",
+        "name": "Hail Of Arrows"
+      },
+      {
+        "id": "dqv5",
+        "name": "Dark Quiver"
+      },
+      {
+        "id": "detar",
+        "name": "Detonating Arrow"
+      }
+    ],
+    "BladeDancer": [
+      {
+        "id": "dacn33",
+        "name": "Dancing Strikes"
+      },
+      {
+        "id": "dagg3",
+        "name": "Shadow Cascade"
+      },
+      {
+        "id": "sync5",
+        "name": "Synchronized Strike"
+      },
+      {
+        "id": "mira59",
+        "name": "Lethal Mirage"
+      }
+    ]
+  }
+}

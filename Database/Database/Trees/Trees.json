@@ -1,0 +1,177 @@
+{
+  "Primalist": {
+    "Path": "Database\\Trees\\Primalist\\",
+    "Base": [
+      {
+        "id": "fl13",
+        "name": "Fury Leap"
+      },
+      {
+        "id": "eb5656",
+        "name": "Eterra's Blessing"
+      }
+    ],
+    "Druid": [
+      {
+        "id": "wb8fo",
+        "name": "Werebear Form"
+      },
+      {
+        "id": "sf5rd",
+        "name": "Spriggan Form"
+      }
+    ],
+    "Shaman": [
+      {
+        "id": "to50",
+        "name": "Tornado"
+      },
+      {
+        "id": "st38ml",
+        "name": "Summon Storm Totem"
+      }
+    ],
+    "BeastMaster": [
+      {
+        "id": "sc36pi",
+        "name": "Summon Scorpion"
+      },
+      {
+        "id": "wc57",
+        "name": "Warcry"
+      }
+    ]
+  },
+  "Mage": {
+    "Path": "Database\\Trees\\Mage\\",
+    "Base": [
+      {
+        "id": "fi9",
+        "name": "Fireball"
+      },
+      {
+        "id": "fw3d",
+        "name": "Flame Ward"
+      }
+    ],
+    "SpellBlade": [
+      {
+        "id": "fr11mv",
+        "name": "Flame Reave"
+      },
+      {
+        "id": "f1b4d",
+        "name": "Firebrand"
+      }
+    ]
+  },
+  "Sentinel": {
+    "Path": "Database\\Trees\\Sentinel\\",
+    "Base": [
+      {
+        "id": "sm87r4",
+        "name": "Smite"
+      },
+      {
+        "id": "va53st",
+        "name": "Warpath"
+      }
+    ],
+    "ForgeGuard": [
+      {
+        "id": "fs3e3",
+        "name": "Forge Strike"
+      },
+      {
+        "id": "st4th",
+        "name": "Smelter's Wrath"
+      }
+    ],
+    "VoidKnight": [
+      {
+        "id": "ra31gn",
+        "name": "Ravaging Stance"
+      },
+      {
+        "id": "vr53sl",
+        "name": "Volatile Reversal"
+      }
+    ],
+    "Paladin": [
+      {
+        "id": "ah443",
+        "name": "Holy Aura"
+      },
+      {
+        "id": "si4lgl",
+        "name": "Sigils Of Hope"
+      }
+    ]
+  },
+  "Acolyte": {
+    "Path": "Database\\Trees\\Acolyte\\",
+    "Base": [
+      {
+        "id": "hs18gu",
+        "name": "Hungering Souls"
+      },
+      {
+        "id": "bg36nl",
+        "name": "Summon Bone Golem"
+      }
+    ],
+    "Necromancer": [
+      {
+        "id": "ds4d3",
+        "name": "Dread Shade"
+      },
+      {
+        "id": "sw42ih",
+        "name": "Summon Wraith"
+      }
+    ],
+    "Lich": [
+      {
+        "id": "ad0ry",
+        "name": "Aura Of Decay"
+      },
+      {
+        "id": "Dl73",
+        "name": "Drain Life"
+      }
+    ]
+  },
+  "Rogue": {
+    "Path": "Database\\Trees\\Rogue\\",
+    "Base": [
+      {
+        "id": "ba1574",
+        "name": "Ballista"
+      },
+      {
+        "id": "flur3",
+        "name": "Flurry"
+      }
+    ],
+    "Marksman": [
+      {
+        "id": "mush9",
+        "name": "Multishot"
+      },
+      {
+        "id": "exvol8",
+        "name": "Hail Of Arrows"
+      }
+    ],
+    "BladeDancer": [
+      {
+        "id": "dacn33",
+        "name": "Dancing Strikes"
+      },
+      {
+        "id": "dagg3",
+        "name": "Shadow Cascade"
+      }
+    ]
+  }
+}
