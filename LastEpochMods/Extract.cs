@@ -49,18 +49,28 @@ namespace LastEpochMods
                             Db.Json.Items new_list_item = new Db.Json.Items();
                             string base_type = type_struct.Name;
                             LoggerInstance.Msg("");
-                            LoggerInstance.Msg("Get All Basic " + type_struct.Name);
+                            LoggerInstance.Msg("Get All " + type_struct.Name);
                             new_list_item.Basic = new System.Collections.Generic.List<Db.Json.Basic>();
                             List<ItemList.EquipmentItem> items = item_list.GetEquipmentSubItems(type_struct.Id);
-                            //ItemList.BaseEquipmentItem BaseEquipmentItem = item_list.GetEquipmentBaseItem(type_struct.Id);
-                            
                             foreach (var item in items)
                             {
-                                LoggerInstance.Msg("Name : " + item.name + ", Id : " + item.subTypeID);
+                                LoggerInstance.Msg("Basic : Name : " + item.name + ", Id : " + item.subTypeID);
                                 System.Collections.Generic.List<string> list_implicits = new System.Collections.Generic.List<string>();
-                                list_implicits.Add(item_list.GetItemImplicit(type_struct.Id, item.subTypeID, 0).property.ToString());
-                                list_implicits.Add(item_list.GetItemImplicit(type_struct.Id, item.subTypeID, 1).property.ToString());
-                                list_implicits.Add(item_list.GetItemImplicit(type_struct.Id, item.subTypeID, 2).property.ToString());
+                                try
+                                {
+                                    list_implicits.Add(item_list.GetItemImplicit(type_struct.Id, item.subTypeID, 0).property.ToString());
+                                }
+                                catch { }
+                                try
+                                {
+                                    list_implicits.Add(item_list.GetItemImplicit(type_struct.Id, item.subTypeID, 1).property.ToString());
+                                }
+                                catch { }
+                                try
+                                {
+                                    list_implicits.Add(item_list.GetItemImplicit(type_struct.Id, item.subTypeID, 2).property.ToString());
+                                }
+                                catch { }
                                 new_list_item.Basic.Add(new Db.Json.Basic
                                 {
                                     BaseName = item.name,
@@ -69,9 +79,6 @@ namespace LastEpochMods
                                     Implicit = list_implicits
                                 });
                             }
-
-                            LoggerInstance.Msg("");
-                            LoggerInstance.Msg("Get All Unique " + type_struct.Name);
                             new_list_item.Unique = new System.Collections.Generic.List<Db.Json.Unique>();
                             UnityEngine.Object obj2 = GetObject("UniqueList");
                             System.Type type2 = obj2.GetActualType();
@@ -106,9 +113,6 @@ namespace LastEpochMods
                                     }
                                 }
                             }
-
-                            LoggerInstance.Msg("");
-                            LoggerInstance.Msg("Get All Set " + type_struct.Name);
                             new_list_item.Set = new System.Collections.Generic.List<Db.Json.Set>();
                             UnityEngine.Object obj3 = GetObject("UniqueList");
                             System.Type type3 = obj3.GetActualType();
