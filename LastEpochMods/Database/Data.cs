@@ -4,18 +4,20 @@ namespace LastEpochMods.Db
 {
     public class Data
     {
-        public static Db.Json.Affixs.Shards DB_Single_Affixs = new Db.Json.Affixs.Shards();
-        public static Db.Json.Affixs.Shards DB_Multi_Affixs = new Db.Json.Affixs.Shards();
-
-        public static bool Affixs_init = false;
-        public static void InitAffixs()
+        public static bool Data_init = false;
+        public static void InitData()
         {
             Data.DB_Single_Affixs = new Db.Json.Affixs.Shards();
             Data.DB_Single_Affixs.List = new List<Db.Json.Affixs.Affix>();
             Data.DB_Multi_Affixs = new Db.Json.Affixs.Shards();
             Data.DB_Multi_Affixs.List = new List<Db.Json.Affixs.Affix>();
-            Affixs_init = true;
+            Data_init = true;
         }
+
+        public static Db.Json.Affixs.Shards DB_Single_Affixs = new Db.Json.Affixs.Shards();
+        public static Db.Json.Affixs.Shards DB_Multi_Affixs = new Db.Json.Affixs.Shards();
+
+        
         public static Db.Json.Affixs.Affix SingleAffixToShard(AffixList.SingleAffix affix)
         {
             int x = affix.affixId / 256;

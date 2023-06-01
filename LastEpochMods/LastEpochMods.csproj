@@ -93,6 +93,7 @@
     <Compile Include="Database\Save.cs" />
     <Compile Include="Extract.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Src\Json\Items.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Src\Icons\Json\Shards.json">
@@ -100,7 +101,6 @@
     </Content>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="Src\Icons\Items\itemdb-i0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
