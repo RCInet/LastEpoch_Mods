@@ -1,6 +1,5 @@
 # LastEpoch Extractor
-+ F10 : Get and Generate Affixs.json
-+ F11 : Get all uniques
++ F11 : Get and Generate all Items Json
 
 ## Requirements :
 + [Melon Loader 5.7](https://github.com/LavaGang/MelonLoader)
