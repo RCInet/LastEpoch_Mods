@@ -26,6 +26,9 @@ namespace LastEpochMods.Db.Json
         [JsonProperty("base_name")]
         public string BaseName { get; set; }
 
+        [JsonProperty("display_name")]
+        public string DisplayName { get; set; }
+
         [JsonProperty("implicit")]
         public List<string> Implicit { get; set; }
 

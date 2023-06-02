@@ -1,6 +1,7 @@
 ﻿using Il2CppSystem;
 using Il2CppSystem.Collections.Generic;
 using LastEpochMods.Db;
+using LastEpochMods.Db.Json;
 using MelonLoader;
 using Newtonsoft.Json;
 using System.Linq;
@@ -13,7 +14,9 @@ namespace LastEpochMods
 {
     public class Extract : MelonMod
     {
-        //Functions        
+        private string scene_name = "";
+        private string[] menu_scene_names = { "PersistentUI", "Login", "CharacterSelectScene" };
+                       
         private UnityEngine.Object GetObject(string name)
         {
             UnityEngine.Object objet = new UnityEngine.Object();
@@ -30,7 +33,7 @@ namespace LastEpochMods
                 }
             }
             return objet;
-        }        
+        }                
         private void GetItems()
         {
             LoggerInstance.Msg("Get All Items");
@@ -55,28 +58,13 @@ namespace LastEpochMods
                             foreach (var item in items)
                             {
                                 LoggerInstance.Msg("Basic : Name : " + item.name + ", Id : " + item.subTypeID);
-                                System.Collections.Generic.List<string> list_implicits = new System.Collections.Generic.List<string>();
-                                try
-                                {
-                                    list_implicits.Add(item_list.GetItemImplicit(type_struct.Id, item.subTypeID, 0).property.ToString());
-                                }
-                                catch { }
-                                try
-                                {
-                                    list_implicits.Add(item_list.GetItemImplicit(type_struct.Id, item.subTypeID, 1).property.ToString());
-                                }
-                                catch { }
-                                try
-                                {
-                                    list_implicits.Add(item_list.GetItemImplicit(type_struct.Id, item.subTypeID, 2).property.ToString());
-                                }
-                                catch { }
                                 new_list_item.Basic.Add(new Db.Json.Basic
                                 {
                                     BaseName = item.name,
+                                    DisplayName = item.displayName,
                                     BaseId = item.subTypeID,
                                     Level = item.levelRequirement,
-                                    Implicit = list_implicits
+                                    Implicit = GetItemImplicits(item.implicits)
                                 });
                             }
                             new_list_item.Unique = new System.Collections.Generic.List<Db.Json.Unique>();
@@ -198,9 +186,42 @@ namespace LastEpochMods
                 }
             }
         }
-        //Events
-        private string scene_name = "";
-        private string[] menu_scene_names = { "PersistentUI", "Login", "CharacterSelectScene" };
+        private System.Collections.Generic.List<string> GetItemImplicits(List<ItemList.EquipmentImplicit> item_implicits)
+        {
+            System.Collections.Generic.List<string> list_implicits = new System.Collections.Generic.List<string>();
+            foreach (ItemList.EquipmentImplicit item_implicit in item_implicits)
+            {
+                string min_value = Convert.ToString(item_implicit.implicitValue);
+                string max_value = Convert.ToString(item_implicit.implicitMaxValue);
+                if ((item_implicit.implicitValue >= 0) && (item_implicit.implicitValue <= 1) &&
+                    (item_implicit.implicitMaxValue >= 0) && (item_implicit.implicitMaxValue <= 1))
+                {
+                    min_value = Convert.ToString(item_implicit.implicitValue * 100) + " %";
+                    max_value = Convert.ToString(item_implicit.implicitMaxValue * 100) + " %";
+                }
+                string value = min_value;
+                if (item_implicit.implicitValue != item_implicit.implicitMaxValue)
+                {
+                    value = "(" + min_value + " to " + max_value + ")";
+                }
+                string implicit_type = item_implicit.type.ToString().ToLower();
+                string implicit_tags = "";
+                if (item_implicit.tags.ToString() != "None") { implicit_tags = " " + item_implicit.tags.ToString(); }
+                string implicit_string = implicit_type + " " + value + implicit_tags + " " + item_implicit.property.ToString().ToLower();
+                if (implicit_type == "added")
+                {
+                    implicit_string = "+" + value + implicit_tags + " " + item_implicit.property.ToString();
+                }
+                else if (implicit_type == "increased")
+                {
+                    implicit_string = value + " " + implicit_type + implicit_tags + " " + item_implicit.property.ToString();
+                }
+                list_implicits.Add(implicit_string);
+            }
+
+            return list_implicits;
+        }
+        //Events        
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
             scene_name = sceneName;
@@ -209,9 +230,7 @@ namespace LastEpochMods
         {
             if (scene_name != "")
             {
-                if ((!menu_scene_names.Contains(scene_name)) && (Input.GetKeyDown(KeyCode.F11)))
-                //if ((scene_name != "PersistentUI") && (scene_name != "Login") &&
-                //    (scene_name != "CharacterSelectScene") && (Input.GetKeyDown(KeyCode.F11)))
+                if ((!menu_scene_names.Contains(scene_name)) && (Input.GetKeyDown(KeyCode.F11)))                
                 {
                     GetItems();
                 }
