@@ -55,6 +55,9 @@ namespace LastEpochMods.Db.Json
         [JsonProperty("unique_affix")]
         public List<string> Unique_Affixs { get; set; }
 
+        [JsonProperty("lore_text")]
+        public string LoreText { get; set; }
+
         [JsonProperty("level")]
         public int Level { get; set; }
     }
@@ -71,6 +74,9 @@ namespace LastEpochMods.Db.Json
 
         [JsonProperty("set_id")]
         public int SetId { get; set; }
+
+        [JsonProperty("lore_text")]
+        public string LoreText { get; set; }
 
         [JsonProperty("set_name")]
         public string SetName { get; set; }

@@ -4,6 +4,7 @@ using LastEpochMods.Db;
 using LastEpochMods.Db.Json;
 using MelonLoader;
 using Newtonsoft.Json;
+using System.Drawing;
 using System.Linq;
 using UnhollowerBaseLib;
 using UnityEngine;
@@ -14,9 +15,9 @@ namespace LastEpochMods
 {
     public class Extract : MelonMod
     {
+        #region UnityEngine         
         private string scene_name = "";
         private string[] menu_scene_names = { "PersistentUI", "Login", "CharacterSelectScene" };
-                       
         private UnityEngine.Object GetObject(string name)
         {
             UnityEngine.Object objet = new UnityEngine.Object();
@@ -33,8 +34,158 @@ namespace LastEpochMods
                 }
             }
             return objet;
-        }                
-        private void GetItems()
+        }
+        private UnityEngine.Texture2D GetTexture2D(string name)
+        {
+            UnityEngine.Texture2D picture = null;
+            foreach (UnityEngine.Object obj in RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.Object)))
+            {
+                if ((name != "") && (obj.name.Contains(name)))
+                {
+                    System.Type type = obj.GetActualType();
+                    if (type == typeof(UnityEngine.Texture2D))
+                    {
+                        picture = obj.TryCast<UnityEngine.Texture2D>();
+                        break;
+                    }
+                }
+            }
+
+            return picture;
+        }
+        #endregion
+        #region Mods
+        #region UniquesMods
+        private List<UniqueItemMod> CustomMods_0()
+        {
+            List<UniqueItemMod> mods = new List<UniqueItemMod>();
+            mods.Add(new UniqueItemMod
+            {
+                type = BaseStats.ModType.INCREASED,
+                value = 999,
+                maxValue = 999,
+                property = SP.AttackSpeed,
+                tags = AT.None
+            });
+            mods.Add(new UniqueItemMod
+            {
+                type = BaseStats.ModType.ADDED,
+                value = 999,
+                maxValue = 999,
+                property = SP.CriticalChance,
+                tags = AT.None
+            });
+            mods.Add(new UniqueItemMod
+            {
+                type = BaseStats.ModType.INCREASED,
+                value = 999,
+                maxValue = 999,
+                property = SP.CriticalMultiplier,
+                tags = AT.None
+            });
+            mods.Add(new UniqueItemMod
+            {
+                type = BaseStats.ModType.INCREASED,
+                value = 999,
+                maxValue = 999,
+                property = SP.Damage,
+                tags = AT.Physical
+            });
+            mods.Add(new UniqueItemMod
+            {
+                type = BaseStats.ModType.ADDED,
+                value = 999,
+                maxValue = 999,
+                property = SP.Strength,
+                tags = AT.None
+            });
+            mods.Add(new UniqueItemMod
+            {
+                type = BaseStats.ModType.ADDED,
+                value = 999,
+                maxValue = 999,
+                property = SP.Intelligence,
+                tags = AT.None
+            });
+            mods.Add(new UniqueItemMod
+            {
+                type = BaseStats.ModType.ADDED,
+                value = 999,
+                maxValue = 999,
+                property = SP.Dexterity,
+                tags = AT.None
+            });
+            mods.Add(new UniqueItemMod
+            {
+                type = BaseStats.ModType.INCREASED,
+                value = 999,
+                maxValue = 999,
+                property = SP.IncreasedDropRate,
+                tags = AT.None
+            });
+            mods.Add(new UniqueItemMod
+            {
+                type = BaseStats.ModType.INCREASED,
+                value = 999,
+                maxValue = 999,
+                property = SP.IncreasedExperience,
+                tags = AT.None
+            });
+
+            return mods;
+        }
+        private void EditUniqueMods(int unique_id, List<UniqueItemMod> mods)
+        {
+            UnityEngine.Object obj = GetObject("UniqueList");
+            System.Type type = obj.GetActualType();
+            if (type == typeof(UniqueList))
+            {
+                UniqueList unique_list = obj.TryCast<UniqueList>();
+                List<UniqueList.Entry> Uniques_List_Entry = unique_list.uniques;
+                foreach (UniqueList.Entry ul_entry in Uniques_List_Entry)
+                {
+                    if (ul_entry.uniqueID == unique_id)
+                    {
+                        ul_entry.mods = mods;
+                        LoggerInstance.Msg(ul_entry.name + ": Unique Mods Edited");
+                        break;
+                    }
+                }
+            }
+        }
+        private void AddUniqueModToAnother(int item_id, int item2_id)
+        {
+            UnityEngine.Object obj = GetObject("UniqueList");
+            System.Type type = obj.GetActualType();
+            if (type == typeof(UniqueList))
+            {
+                UniqueList unique_list = obj.TryCast<UniqueList>();
+                List<UniqueItemMod> mods = new List<UniqueItemMod>();
+                //Copy
+                int index = -1;
+                int i = 0;
+                foreach (UniqueList.Entry ul_entry in unique_list.uniques)
+                {
+                    if ((ul_entry.baseType == item_id) | (ul_entry.baseType == item2_id))
+                    {
+                        if (ul_entry.baseType == item2_id) { index = i; }
+                        foreach (UniqueItemMod m in ul_entry.mods) { mods.Add(m); }
+                    }
+                    i++;
+                }
+                //Paste
+                if (index > -1) { unique_list.uniques[index].mods = mods; }
+
+                foreach (UniqueList.Entry ul_entry in unique_list.uniques)
+                {
+                    if (ul_entry.baseType == item2_id) { ul_entry.mods = mods; }
+                }
+            }
+        }
+        #endregion
+        #endregion
+        #region Database
+        private void GenerateDatabase()
         {
             LoggerInstance.Msg("Get All Items");
             UnityEngine.Object obj = GetObject("MasterItemsList");
@@ -43,6 +194,7 @@ namespace LastEpochMods
             {
                 ItemList item_list = obj.TryCast<ItemList>();
                 int index = 0;
+                
                 foreach (Db.Get.Type.Type_Structure type_struct in Db.Get.Type.TypesArray)
                 {
                     if (type_struct.Id < 34)
@@ -56,8 +208,8 @@ namespace LastEpochMods
                             new_list_item.Basic = new System.Collections.Generic.List<Db.Json.Basic>();
                             List<ItemList.EquipmentItem> items = item_list.GetEquipmentSubItems(type_struct.Id);
                             foreach (var item in items)
-                            {
-                                LoggerInstance.Msg("Basic : Name : " + item.name + ", Id : " + item.subTypeID);
+                            {                                
+                                LoggerInstance.Msg(base_type + " : Basic : " + item.name + ", Id : " + item.subTypeID);
                                 new_list_item.Basic.Add(new Db.Json.Basic
                                 {
                                     BaseName = item.name,
@@ -66,8 +218,11 @@ namespace LastEpochMods
                                     Level = item.levelRequirement,
                                     Implicit = GetItemImplicits(item.implicits)
                                 });
+                                //UnityEngine.Texture2D icon = GetTexture2D(item.name);
+                                //Save Icon
                             }
                             new_list_item.Unique = new System.Collections.Generic.List<Db.Json.Unique>();
+                            new_list_item.Set = new System.Collections.Generic.List<Db.Json.Set>();
                             UnityEngine.Object obj2 = GetObject("UniqueList");
                             System.Type type2 = obj2.GetActualType();
                             if (type2 == typeof(UniqueList))
@@ -75,64 +230,54 @@ namespace LastEpochMods
                                 UniqueList unique_list = obj2.TryCast<UniqueList>();
                                 List<UniqueList.Entry> Uniques_List_Entry = unique_list.uniques;
                                 foreach (UniqueList.Entry ul_entry in Uniques_List_Entry)
-                                {
+                                {                                    
                                     if (ul_entry.baseType == type_struct.Id)
                                     {
+                                        string base_name = "";
+                                        System.Collections.Generic.List<string> prefixs = new System.Collections.Generic.List<string>();
+                                        foreach (Db.Json.Basic basic in new_list_item.Basic)
+                                        {
+                                            if (basic.BaseId == ul_entry.baseType)
+                                            {
+                                                base_name = basic.BaseName;
+                                                prefixs = basic.Implicit;
+                                                break;
+                                            }
+                                        }
+                                        System.Collections.Generic.List<string> unique_mod_list = GetUniqueMods(ul_entry.mods);
                                         if (!ul_entry.isSetItem)
                                         {
-                                            List<UniqueItemMod> mods = ul_entry.mods;
-                                            System.Collections.Generic.List<string> unique_mod_list = new System.Collections.Generic.List<string>();
-                                            foreach (UniqueItemMod mod in mods)
-                                            {
-                                                unique_mod_list.Add(mod.property.ToString());
-                                            }
-                                            LoggerInstance.Msg("Unique : Name = " + ul_entry.name + ", Id = " + ul_entry.uniqueID);
+                                            LoggerInstance.Msg(base_type + " : Unique : " + ul_entry.name + ", Id = " + ul_entry.uniqueID);
                                             new_list_item.Unique.Add(new Db.Json.Unique
                                             {
                                                 BaseId = ul_entry.baseType,
-                                                BaseName = "",
-                                                Implicit = new System.Collections.Generic.List<string>(),
+                                                BaseName = base_name,
+                                                Implicit = prefixs,
                                                 UniqueId = ul_entry.uniqueID,
                                                 UniqueName = ul_entry.name,
                                                 Unique_Affixs = unique_mod_list,
+                                                LoreText = ul_entry.loreText,
                                                 Level = ul_entry.levelRequirement
                                             });
                                         }
-                                    }
-                                }
-                            }
-                            new_list_item.Set = new System.Collections.Generic.List<Db.Json.Set>();
-                            UnityEngine.Object obj3 = GetObject("UniqueList");
-                            System.Type type3 = obj3.GetActualType();
-                            if (type3 == typeof(UniqueList))
-                            {
-                                UniqueList unique_list = obj3.TryCast<UniqueList>();
-                                List<UniqueList.Entry> Uniques_List_Entry = unique_list.uniques;
-                                foreach (UniqueList.Entry ul_entry in Uniques_List_Entry)
-                                {
-                                    if (ul_entry.baseType == type_struct.Id)
-                                    {
-                                        if (ul_entry.isSetItem)
+                                        else
                                         {
-                                            LoggerInstance.Msg("Set : Name = " + ul_entry.name + ", Id = " + ul_entry.uniqueID);
-                                            List<UniqueItemMod> mods = ul_entry.mods;
-                                            System.Collections.Generic.List<string> unique_mod_list = new System.Collections.Generic.List<string>();
-                                            foreach (UniqueItemMod mod in mods)
-                                            {
-                                                unique_mod_list.Add(mod.property.ToString());
-                                            }
+                                            LoggerInstance.Msg(base_type + " : Set : " + ul_entry.name + ", Id = " + ul_entry.uniqueID);
                                             new_list_item.Set.Add(new Db.Json.Set
                                             {
                                                 BaseId = ul_entry.baseType,
-                                                BaseName = "",
-                                                Implicit = new System.Collections.Generic.List<string>(),
+                                                BaseName = base_name,
+                                                Implicit = prefixs,
                                                 SetId = ul_entry.uniqueID,
                                                 SetName = ul_entry.name,
                                                 Set_Refs = new System.Collections.Generic.List<Db.Json.Set_Ref>(),
                                                 Unique_Affixs = unique_mod_list,
+                                                LoreText = ul_entry.loreText,
                                                 Level = ul_entry.levelRequirement
                                             });
                                         }
+                                        //UnityEngine.Texture2D icon = GetTexture2D(ul_entry.name);
+                                        //Save Icon
                                     }
                                 }
                             }
@@ -186,6 +331,7 @@ namespace LastEpochMods
                 }
             }
         }
+        #region Items
         private System.Collections.Generic.List<string> GetItemImplicits(List<ItemList.EquipmentImplicit> item_implicits)
         {
             System.Collections.Generic.List<string> list_implicits = new System.Collections.Generic.List<string>();
@@ -221,7 +367,44 @@ namespace LastEpochMods
 
             return list_implicits;
         }
-        //Events        
+        private System.Collections.Generic.List<string> GetUniqueMods(List<UniqueItemMod> unique_mods)
+        {
+            System.Collections.Generic.List<string> list_unique_affixs = new System.Collections.Generic.List<string>();
+            foreach (UniqueItemMod mod in unique_mods)
+            {
+                string min_value = Convert.ToString(mod.value);
+                string max_value = Convert.ToString(mod.maxValue);
+                if ((mod.value >= 0) && (mod.value <= 1) &&
+                    (mod.maxValue >= 0) && (mod.maxValue <= 1))
+                {
+                    min_value = Convert.ToString(mod.value * 100) + " %";
+                    max_value = Convert.ToString(mod.maxValue * 100) + " %";
+                }
+                string value = min_value;
+                if (mod.value != mod.maxValue)
+                {
+                    value = "(" + min_value + " to " + max_value + ")";
+                }
+                string mod_type = mod.type.ToString().ToLower();
+                string mod_tag = "";
+                if (mod.tags.ToString() != "None") { mod_tag = " " + mod.tags.ToString(); }
+                string mod_string = mod_type + " " + value + mod_tag + " " + mod.property.ToString().ToLower();
+                if (mod_type == "added")
+                {
+                    mod_string = "+" + value + mod_tag + " " + mod.property.ToString();
+                }
+                else if (mod_type == "increased")
+                {
+                    mod_string = value + " " + mod_type + mod_tag + " " + mod.property.ToString();
+                }
+                list_unique_affixs.Add(mod_string);
+            }
+            
+            return list_unique_affixs;
+        }
+        #endregion
+        #endregion
+        #region Events       
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
             scene_name = sceneName;
@@ -230,15 +413,19 @@ namespace LastEpochMods
         {
             if (scene_name != "")
             {
-                if ((!menu_scene_names.Contains(scene_name)) && (Input.GetKeyDown(KeyCode.F11)))                
+                if (Input.GetKeyDown(KeyCode.F10)) //Wait UnityEngine Initialized
                 {
-                    GetItems();
+                    EditUniqueMods(111, CustomMods_0()); //Wover Flesh
+                    if (!menu_scene_names.Contains(scene_name))
+                    { LoggerInstance.Msg("Go Back to Menu for actualize items Mods"); }
                 }
                 else if (Input.GetKeyDown(KeyCode.F11))
                 {
-                    LoggerInstance.Msg("Lauch a character before doing this");
+                    if (!menu_scene_names.Contains(scene_name)) { GenerateDatabase(); }
+                    else { LoggerInstance.Msg("Lauch a character before doing this"); }
                 }
             }
         }
+        #endregion
     }
 }
