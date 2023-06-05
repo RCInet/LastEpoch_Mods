@@ -58,7 +58,7 @@ namespace LastEpochMods.Db
             new Type_Structure { Id = 102, Name = "Runes", Path = @"\Database\Materials\Runes\" },
             new Type_Structure { Id = 103, Name = "Glyphs", Path = @"\Database\Materials\Glyphs\" },
             new Type_Structure { Id = 104, Name = "Key", Path = @"\Database\Items\Keys\" }
-            };            
+            };
         }
     }
 }

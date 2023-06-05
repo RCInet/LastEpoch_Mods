@@ -9,7 +9,7 @@ namespace LastEpochMods.Db
 {
     public class Save
     {
-        public static void AffixsJson(Extract instance)
+        public static void AffixsJson(Main instance)
         {
             List<Db.Json.Affixs.Affix> affixslist = new List<Db.Json.Affixs.Affix>();
             string path = "";

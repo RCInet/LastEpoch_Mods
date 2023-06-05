@@ -5,7 +5,7 @@ using System.Runtime.InteropServices.ComTypes;
 using LastEpochMods;
 using MelonLoader;
 
-[assembly: MelonInfo(typeof(Extract), "Extractor", "4.5.1", "Ash")]
+[assembly: MelonInfo(typeof(LastEpochMods.Main), "LastEpochMods", "4.5.1", "Ash")]
 [assembly: MelonGame("Eleventh Hour Games", "Last Epoch")]
 
 // Les informations générales relatives à un assembly dépendent de
@@ -38,7 +38,7 @@ using MelonLoader;
 // Vous pouvez spécifier toutes les valeurs ou indiquer les numéros de build et de révision par défaut
 // en utilisant '*', comme indiqué ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.128")]
-[assembly: AssemblyFileVersion("1.0.0.128")]
+[assembly: AssemblyVersion("1.0.0.133")]
+[assembly: AssemblyFileVersion("1.0.0.133")]
 
-[assembly: AssemblyInformationalVersion("0.0.0.128")]
+[assembly: AssemblyInformationalVersion("0.0.0.133")]
