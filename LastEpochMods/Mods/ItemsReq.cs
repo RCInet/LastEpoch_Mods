@@ -1,12 +1,4 @@
-﻿using MelonLoader;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnhollowerBaseLib;
-using UniverseLib;
+﻿using UniverseLib;
 
 namespace LastEpochMods.Mods
 {
@@ -42,6 +34,7 @@ namespace LastEpochMods.Mods
                             }                                                      
                         }
                     }
+                    else { break; }
                 }
             }
         }

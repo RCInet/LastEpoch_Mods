@@ -90,7 +90,7 @@
     <Compile Include="Mods\ItemsReq.cs" />
     <Compile Include="Mods\LastEpochSaveEditorDatabase.cs" />
     <Compile Include="Mods\UniqueMods.cs" />
-    <Compile Include="Mods\UniquesDrop.cs" />
+    <Compile Include="Mods\ItemsDrop.cs" />
     <Compile Include="Scenes.cs" />
     <Compile Include="Src\Icons\Data.cs" />
     <Compile Include="Src\Icons\Get.cs" />

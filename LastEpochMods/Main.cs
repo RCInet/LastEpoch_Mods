@@ -15,9 +15,15 @@ namespace LastEpochMods
             if (Scenes.CurrentName != "")
             {
                 //Wait UnityEngine Initialized before
-                if (Input.GetKeyDown(KeyCode.F8)) //Unlock Drop for all Uniques
+                if (Input.GetKeyDown(KeyCode.F7)) //Unlock Drop for all Uniques
                 {
-                    Mods.UniquesDrop.UnlockForAllUniques(this);
+                    Mods.ItemsDrop.UnlockForAllUniques(this);
+                    if (!Scenes.MenuNames.Contains(Scenes.CurrentName))
+                    { LoggerInstance.Msg("Go Back to Menu for actualize items Mods"); }
+                }
+                if (Input.GetKeyDown(KeyCode.F8)) //Unlock Drop for all Basic
+                {
+                    Mods.ItemsDrop.UnlockForAllBasic(this);
                     if (!Scenes.MenuNames.Contains(Scenes.CurrentName))
                     { LoggerInstance.Msg("Go Back to Menu for actualize items Mods"); }
                 }
