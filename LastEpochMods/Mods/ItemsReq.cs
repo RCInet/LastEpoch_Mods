@@ -11,30 +11,25 @@ namespace LastEpochMods.Mods
             if (type == typeof(ItemList))
             {
                 ItemList item_list = obj.TryCast<ItemList>();
-                foreach (Db.Get.Type.Type_Structure type_struct in Db.Get.Type.TypesArray)
+                for (int i = 0; i < 34; i++)
                 {
-                    if (type_struct.Id < 34)
+                    if ((i != 11) && (i != 24))
                     {
-                        if ((type_struct.Id != 11) && (type_struct.Id != 24)) //Fist and Crosbow
+                        Il2CppSystem.Collections.Generic.List<ItemList.EquipmentItem> items = item_list.GetEquipmentSubItems(i);
+                        foreach (var item in items)
                         {
-                            string base_type = type_struct.Name;
-                            Il2CppSystem.Collections.Generic.List<ItemList.EquipmentItem> items = item_list.GetEquipmentSubItems(type_struct.Id);
-                            foreach (var item in items)
+                            if (item.classRequirement != ItemList.ClassRequirement.None)
                             {
-                                if (item.classRequirement != ItemList.ClassRequirement.None)
-                                {
-                                    main.LoggerInstance.Msg("Remove Class Req : " + item.name);
-                                    item.classRequirement = ItemList.ClassRequirement.None;
-                                }
-                                if (item.levelRequirement > 0)
-                                {
-                                    main.LoggerInstance.Msg("Remove Level Req : " + item.name);
-                                    item.levelRequirement = 0;
-                                }                               
-                            }                                                      
+                                main.LoggerInstance.Msg("Remove Class Req : " + item.name);
+                                item.classRequirement = ItemList.ClassRequirement.None;
+                            }
+                            if (item.levelRequirement > 0)
+                            {
+                                main.LoggerInstance.Msg("Remove Level Req : " + item.name);
+                                item.levelRequirement = 0;
+                            }
                         }
                     }
-                    else { break; }
                 }
             }
         }

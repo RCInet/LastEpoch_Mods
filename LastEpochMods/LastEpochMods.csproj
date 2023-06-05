@@ -84,9 +84,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Database\Data.cs" />
     <Compile Include="Functions.cs" />
-    <Compile Include="Items.cs" />
     <Compile Include="Mods\ItemsReq.cs" />
     <Compile Include="Mods\LastEpochSaveEditorDatabase.cs" />
     <Compile Include="Mods\UniqueMods.cs" />
@@ -96,8 +94,6 @@
     <Compile Include="Src\Icons\Get.cs" />
     <Compile Include="Src\Icons\Load.cs" />
     <Compile Include="Src\Json\Affixs.cs" />
-    <Compile Include="Database\Get.cs" />
-    <Compile Include="Database\Save.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Src\Json\Items.cs" />

@@ -11,24 +11,20 @@ namespace LastEpochMods.Mods
             if (type == typeof(ItemList))
             {
                 ItemList item_list = obj.TryCast<ItemList>();
-                foreach (Db.Get.Type.Type_Structure type_struct in Db.Get.Type.TypesArray)
+                for (int i = 0; i < 34; i++)
                 {
-                    if (type_struct.Id < 34)
+                    if ((i != 11) && (i != 24))
                     {
-                        if ((type_struct.Id != 11) && (type_struct.Id != 24)) //Fist and Crosbow
+                        Il2CppSystem.Collections.Generic.List<ItemList.EquipmentItem> items = item_list.GetEquipmentSubItems(i);
+                        foreach (var item in items)
                         {
-                            Il2CppSystem.Collections.Generic.List<ItemList.EquipmentItem> items = item_list.GetEquipmentSubItems(type_struct.Id);
-                            foreach (var item in items)
+                            if (item.cannotDrop)
                             {
-                                if (item.cannotDrop)
-                                {
-                                    main.LoggerInstance.Msg("Basic : " + item.name + " : Can Drop Now");
-                                    item.cannotDrop = false;
-                                }                                
+                                main.LoggerInstance.Msg("Basic : " + item.name + " : Can Drop Now");
+                                item.cannotDrop = false;
                             }
                         }
                     }
-                    else { break; }
                 }
             }
         }
