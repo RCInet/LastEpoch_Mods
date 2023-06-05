@@ -1,4 +1,4 @@
-# LastEpoch Extractor
+# LastEpoch Mods
 + F7 : Unlock Drop for all Uniques Items
 + F8 : Unlock Drop for all Basic Items
 + F9 : Remove Level and Class Req for all Items
