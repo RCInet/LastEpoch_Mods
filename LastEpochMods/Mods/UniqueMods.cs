@@ -85,8 +85,9 @@ namespace LastEpochMods.Mods
         }
         public static Il2CppSystem.Collections.Generic.List<UniqueItemMod> CustomMods_1()
         {
+            //Create new Array of UniqueItemMod
             Il2CppSystem.Collections.Generic.List<UniqueItemMod> mods = new Il2CppSystem.Collections.Generic.List<UniqueItemMod>();
-            //Add UniqueItemMod
+            //Add UniqueItemMod to Array
             mods.Add(new UniqueItemMod
             {
                 type = BaseStats.ModType.INCREASED,
@@ -101,7 +102,7 @@ namespace LastEpochMods.Mods
         }
 
         //Functions
-        public static void EditUniqueMods(int unique_id, Il2CppSystem.Collections.Generic.List<UniqueItemMod> mods, Main main)
+        public static void Edit(int unique_id, Il2CppSystem.Collections.Generic.List<UniqueItemMod> mods, Main main)
         {
             UnityEngine.Object obj = Functions.GetObject("UniqueList");
             System.Type type = obj.GetActualType();

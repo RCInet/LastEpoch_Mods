@@ -21,7 +21,7 @@ namespace LastEpochMods
                 }
             }
             return objet;
-        }
+        }        
         public static UnityEngine.Texture2D GetTexture2D(string name)
         {
             UnityEngine.Texture2D picture = null;

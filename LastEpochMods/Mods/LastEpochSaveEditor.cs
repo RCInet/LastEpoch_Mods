@@ -1,8 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using MelonLoader;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Linq;
 using UnhollowerBaseLib;
+using UnityEngine;
 using UniverseLib;
 
 namespace LastEpochMods.Mods
@@ -154,6 +157,7 @@ namespace LastEpochMods.Mods
                     index++;
                 }
             }
+            GetAllCharactersSkills(main);
         }
         //Items
         public static System.Collections.Generic.List<string> GetItemImplicits(Il2CppSystem.Collections.Generic.List<ItemList.EquipmentImplicit> item_implicits)
@@ -394,6 +398,106 @@ namespace LastEpochMods.Mods
                 if (!Directory.Exists(path)) { Directory.CreateDirectory(path); }
                 File.WriteAllText(path + filename, final_string);
             }
+        }
+        //Skills
+        public static void GetAllCharactersSkills(Main main)
+        {
+            UnityEngine.Object obj = Functions.GetObject("Character Class List");
+            System.Type type = obj.GetActualType();            
+            Il2CppSystem.Collections.Generic.List<CharacterClass> characters_class = new Il2CppSystem.Collections.Generic.List<CharacterClass>();
+            if (type == typeof(CharacterClassList))
+            {
+                CharacterClassList characters = obj.TryCast<CharacterClassList>();
+                characters_class = characters.classes;
+            }
+            main.LoggerInstance.Msg("");
+            main.LoggerInstance.Msg("Get All Skills");
+            System.Collections.Generic.List<Class_Skills_structure> Class_Skills_List = new System.Collections.Generic.List<Class_Skills_structure>();
+            foreach (CharacterClass c_class in characters_class)
+            {
+                main.LoggerInstance.Msg("");
+                main.LoggerInstance.Msg("Class = " + c_class.name);
+                main.LoggerInstance.Msg("Default Skills");
+                List<Skill_structure> Default_Skills = new List<Skill_structure>();                
+                foreach (Ability ability in c_class.knownAbilities)
+                {
+                    main.LoggerInstance.Msg("Skill : Name = " + ability.abilityName +
+                        ", Id = " + ability.playerAbilityID);
+                    Default_Skills.Add(new Skill_structure
+                    {
+                        Name = ability.abilityName,
+                        Id = ability.playerAbilityID //,
+                        //Sprite = ability.abilitySprite
+                    });
+                }
+                main.LoggerInstance.Msg("Unlockable Skills");
+                foreach (AbilityAndLevel ability_level in c_class.unlockableAbilities)
+                {
+                    Ability ability = ability_level.ability;
+                    main.LoggerInstance.Msg("Skill : Name = " + ability.abilityName +
+                        ", Id = " + ability.playerAbilityID);
+                    Default_Skills.Add(new Skill_structure
+                    {
+                        Name = ability.abilityName,
+                        Id = ability.playerAbilityID //,
+                        //Sprite = ability.abilitySprite
+                    });
+                }
+                List<Mastery_structure> Masteries_Skills = new List<Mastery_structure>();
+                foreach (Mastery masterie in c_class.masteries)
+                {
+                    main.LoggerInstance.Msg(masterie.name + " Skills");
+                    List<Skill_structure> MasterySkills = new List<Skill_structure>();
+                    foreach (AbilityAndLevel ability_level in masterie.abilities)
+                    {
+                        Ability ability = ability_level.ability;
+                        main.LoggerInstance.Msg("Skill : Name = " + ability.abilityName +
+                            ", Id = " + ability.playerAbilityID);
+                        MasterySkills.Add(new Skill_structure
+                        {
+                            Name = ability.abilityName,
+                            Id = ability.playerAbilityID //,
+                            //Sprite = ability.abilitySprite
+                        });
+                    }
+                    Masteries_Skills.Add(new Mastery_structure
+                    {
+                        MasteryName = masterie.name,
+                        MasterySkills = MasterySkills
+                    });
+                }
+                Class_Skills_List.Add(new Class_Skills_structure
+                {
+                    ClassName = c_class.name,
+                    DefaultSkills = Default_Skills,
+                    Masteries = Masteries_Skills
+                });
+
+                string jsonString = JsonConvert.SerializeObject(Class_Skills_List);
+                string path = System.IO.Directory.GetCurrentDirectory() + @"\Mods\Out_LastEpoch\Database\Skills\";
+                string filename = "Skills.json";
+                main.LoggerInstance.Msg("Save Skills : Path = " + path + ", Filename = " + filename);
+                if (System.IO.File.Exists(path + filename)) { System.IO.File.Delete(path + filename); }
+                if (!System.IO.Directory.Exists(path)) { System.IO.Directory.CreateDirectory(path); }
+                System.IO.File.WriteAllText(path + filename, jsonString);
+            }                
+        }
+        public struct Class_Skills_structure
+        {
+            public string ClassName;
+            public List<Skill_structure> DefaultSkills;
+            public List<Mastery_structure> Masteries;
+        }
+        public struct Mastery_structure
+        {
+            public string MasteryName;
+            public List<Skill_structure> MasterySkills;
+        }
+        public struct Skill_structure
+        {
+            public string Name;
+            public string Id;
+            //public Sprite Sprite;
         }
         //Types
         public class Type

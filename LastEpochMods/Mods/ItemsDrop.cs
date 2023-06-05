@@ -1,4 +1,5 @@
 ﻿using LastEpochMods.Db.Json;
+using MelonLoader;
 using UniverseLib;
 
 namespace LastEpochMods.Mods
@@ -38,11 +39,11 @@ namespace LastEpochMods.Mods
         public static bool OnlyUndropablesUnique = false;
         public static void UnlockForAllUniques(Main main)
         {
-            UnityEngine.Object obj2 = Functions.GetObject("UniqueList");
-            System.Type type2 = obj2.GetActualType();
-            if (type2 == typeof(UniqueList))
+            UnityEngine.Object obj = Functions.GetObject("UniqueList");
+            System.Type type = obj.GetActualType();
+            if (type == typeof(UniqueList))
             {
-                UniqueList unique_list = obj2.TryCast<UniqueList>();
+                UniqueList unique_list = obj.TryCast<UniqueList>();
                 Il2CppSystem.Collections.Generic.List<UniqueList.Entry> Uniques_List_Entry = unique_list.uniques;
                 foreach (UniqueList.Entry ul_entry in Uniques_List_Entry)
                 {
@@ -56,6 +57,23 @@ namespace LastEpochMods.Mods
                         main.LoggerInstance.Msg("Unique : " + ul_entry.name + " : Can't Drop");
                         ul_entry.canDropRandomly = false;
                     }
+                }
+            }
+        }
+        public static void SetLevelReqForLegendaryPotencial(int level_req)
+        {
+            UnityEngine.Object obj = Functions.GetObject("UniqueList");
+            System.Type type = obj.GetActualType();
+            if (type == typeof(UniqueList))
+            {
+                UniqueList unique_list = obj.TryCast<UniqueList>();
+                Il2CppSystem.Collections.Generic.List<UniqueList.Entry> Uniques_List_Entry = unique_list.uniques;
+                foreach (UniqueList.Entry ul_entry in Uniques_List_Entry)
+                {
+                    if (ul_entry.effectiveLevelForLegendaryPotential != (byte)level_req)
+                    {
+                        ul_entry.effectiveLevelForLegendaryPotential = (byte)level_req;
+                    }                    
                 }
             }
         }
