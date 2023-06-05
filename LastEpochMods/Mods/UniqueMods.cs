@@ -86,6 +86,7 @@ namespace LastEpochMods.Mods
         public static Il2CppSystem.Collections.Generic.List<UniqueItemMod> CustomMods_1()
         {
             Il2CppSystem.Collections.Generic.List<UniqueItemMod> mods = new Il2CppSystem.Collections.Generic.List<UniqueItemMod>();
+            //Add UniqueItemMod
             mods.Add(new UniqueItemMod
             {
                 type = BaseStats.ModType.INCREASED,
@@ -94,70 +95,7 @@ namespace LastEpochMods.Mods
                 property = SP.AttackSpeed,
                 tags = AT.None
             });
-            mods.Add(new UniqueItemMod
-            {
-                type = BaseStats.ModType.ADDED,
-                value = 999,
-                maxValue = 999,
-                property = SP.CriticalChance,
-                tags = AT.None
-            });
-            mods.Add(new UniqueItemMod
-            {
-                type = BaseStats.ModType.INCREASED,
-                value = 999,
-                maxValue = 999,
-                property = SP.CriticalMultiplier,
-                tags = AT.None
-            });
-            mods.Add(new UniqueItemMod
-            {
-                type = BaseStats.ModType.INCREASED,
-                value = 999,
-                maxValue = 999,
-                property = SP.Damage,
-                tags = AT.Physical
-            });
-            mods.Add(new UniqueItemMod
-            {
-                type = BaseStats.ModType.ADDED,
-                value = 999,
-                maxValue = 999,
-                property = SP.Strength,
-                tags = AT.None
-            });
-            mods.Add(new UniqueItemMod
-            {
-                type = BaseStats.ModType.ADDED,
-                value = 999,
-                maxValue = 999,
-                property = SP.Intelligence,
-                tags = AT.None
-            });
-            mods.Add(new UniqueItemMod
-            {
-                type = BaseStats.ModType.ADDED,
-                value = 999,
-                maxValue = 999,
-                property = SP.Dexterity,
-                tags = AT.None
-            });
-            mods.Add(new UniqueItemMod
-            {
-                type = BaseStats.ModType.INCREASED,
-                value = 999,
-                maxValue = 999,
-                property = SP.IncreasedDropRate,
-                tags = AT.None
-            });
-            mods.Add(new UniqueItemMod
-            {
-                type = BaseStats.ModType.INCREASED,
-                value = 999,
-                maxValue = 999,
-                property = SP.IncreasedExperience,
-                tags = AT.None
-            });
+            //Add More
 
             return mods;
         }

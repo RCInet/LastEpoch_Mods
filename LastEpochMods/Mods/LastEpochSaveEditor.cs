@@ -7,7 +7,7 @@ using UniverseLib;
 
 namespace LastEpochMods.Mods
 {
-    public class LastEpochSaveEditorDatabase
+    public class LastEpochSaveEditor
     {
         public static void GenerateDatabase(Main main)
         {

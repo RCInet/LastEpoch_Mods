@@ -1,9 +1,11 @@
-﻿using UniverseLib;
+﻿using LastEpochMods.Db.Json;
+using UniverseLib;
 
 namespace LastEpochMods.Mods
 {
     public class ItemsDrop
     {
+        public static bool OnlyUndropablesBasic = false;
         public static void UnlockForAllBasic(Main main)
         {
             UnityEngine.Object obj = Functions.GetObject("MasterItemsList");
@@ -23,11 +25,17 @@ namespace LastEpochMods.Mods
                                 main.LoggerInstance.Msg("Basic : " + item.name + " : Can Drop Now");
                                 item.cannotDrop = false;
                             }
+                            else if (OnlyUndropablesBasic)
+                            {
+                                main.LoggerInstance.Msg("Basic : " + item.name + " : Can't Drop");
+                                item.cannotDrop = true;
+                            }
                         }
                     }
                 }
             }
         }
+        public static bool OnlyUndropablesUnique = false;
         public static void UnlockForAllUniques(Main main)
         {
             UnityEngine.Object obj2 = Functions.GetObject("UniqueList");
@@ -42,6 +50,11 @@ namespace LastEpochMods.Mods
                     {
                         main.LoggerInstance.Msg("Unique : " + ul_entry.name + " : Can Drop Now");
                         ul_entry.canDropRandomly = true;
+                    }
+                    else if (OnlyUndropablesUnique)
+                    {
+                        main.LoggerInstance.Msg("Unique : " + ul_entry.name + " : Can't Drop");
+                        ul_entry.canDropRandomly = false;
                     }
                 }
             }
