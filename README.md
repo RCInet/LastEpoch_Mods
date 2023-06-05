@@ -1,6 +1,8 @@
 # LastEpoch Extractor
++ F8 : Unlock Drop for all Uniques
++ F9 : Remove Level and Class Req
 + F10 : Edit Unique Mods (exemple with woven flesh)
-+ F11 : Get and Generate all Items Json (except Materials and Skills)
++ F11 : Get and Generate all Items Json (except Materials and Skills) for LastEpochSaveEditor
 
 ## Requirements :
 + [Melon Loader 5.7](https://github.com/LavaGang/MelonLoader)
