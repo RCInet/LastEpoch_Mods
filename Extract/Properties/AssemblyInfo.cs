@@ -1,21 +1,15 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
-using LastEpochMods;
-using MelonLoader;
-
-[assembly: MelonInfo(typeof(LastEpochMods.Main), "LastEpochMods", "4.5.1", "Ash")]
-[assembly: MelonGame("Eleventh Hour Games", "Last Epoch")]
 
 // Les informations générales relatives à un assembly dépendent de
 // l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
 // associées à un assembly.
-[assembly: AssemblyTitle("LastEpochMods")]
+[assembly: AssemblyTitle("Extract")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("LastEpochMods")]
+[assembly: AssemblyProduct("Extract")]
 [assembly: AssemblyCopyright("Copyright ©  2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -26,7 +20,7 @@ using MelonLoader;
 [assembly: ComVisible(false)]
 
 // Le GUID suivant est pour l'ID de la typelib si ce projet est exposé à COM
-[assembly: Guid("9d71348f-7bfe-4d73-aabe-812edffb54e3")]
+[assembly: Guid("d87e54d0-29f2-4355-960b-cff3f7f8e554")]
 
 // Les informations de version pour un assembly se composent des quatre valeurs suivantes :
 //
@@ -38,7 +32,7 @@ using MelonLoader;
 // Vous pouvez spécifier toutes les valeurs ou indiquer les numéros de build et de révision par défaut
 // en utilisant '*', comme indiqué ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.178")]
-[assembly: AssemblyFileVersion("1.0.0.178")]
+[assembly: AssemblyVersion("1.0.0.1")]
+[assembly: AssemblyFileVersion("1.0.0.1")]
 
-[assembly: AssemblyInformationalVersion("0.0.0.178")]
+[assembly: AssemblyInformationalVersion("0.0.0.1")]
