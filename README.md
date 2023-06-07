@@ -1,9 +1,14 @@
 # LastEpoch Mods
++ F9 : Launch Scene Mods (when scene change)
++ Gold Multiplier
++ Item Multiplier
++ Experience Multiplier
++ Mob Spawner Density (Untested)
++ F10 : Launch Global Mods (Launch in menu)
 + Remove Level and Class Req for all Items
 + Unlock Drop for all Basic Items or Only Undropable
 + Unlock Drop for all Uniques Items or Only Undropable
 + Edit Unique Mods (exemple with woven flesh)
-+ F10 : Launch Mods
 + F11 : Get and Generate all Items Json (except Materials) for LastEpochSaveEditor
 
 ## Requirements :
