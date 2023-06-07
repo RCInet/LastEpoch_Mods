@@ -4,6 +4,27 @@ namespace LastEpochMods.Mods
 {
     public class ItemsDrop
     {
+        //DeathItemDrop
+        public static int goldMultiplier = 99;
+        public static int ItemMultiplier = 99;
+        public static int Experience = 9999;
+        public static void EditMonstersDeathDrop()
+        {
+            foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.Object)))
+            {
+                System.Type type = obj.GetActualType();
+                if (type == typeof(DeathItemDrop))
+                {
+                    DeathItemDrop drop = obj.TryCast<DeathItemDrop>();
+                    drop.overrideBaseGoldDropChance = true;
+                    drop.goldMultiplier = goldMultiplier;
+                    drop.overrideBaseItemDropChance = true;
+                    drop.itemMultiplier = ItemMultiplier;
+                    drop.itemDropChance = 1; //100%
+                    drop.experience = Experience;
+                }
+            }
+        }
         public static bool OnlyUndropablesBasic = false;
         public static void UnlockForAllBasic(Main main)
         {
