@@ -4,6 +4,13 @@ namespace LastEpochMods.Mods
 {
     public class UniqueMods
     {
+        public struct unique_mod
+        {
+            public int id;
+            public Il2CppSystem.Collections.Generic.List<UniqueItemMod> mods;
+        }
+        public static System.Collections.Generic.List<unique_mod> Uniques_Mods = new System.Collections.Generic.List<unique_mod>();
+        public static bool Enable_UniqueMods = false;
         //Exemple Custom Mods
         public static Il2CppSystem.Collections.Generic.List<UniqueItemMod> CustomMods_0()
         {
