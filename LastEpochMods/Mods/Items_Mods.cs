@@ -58,14 +58,7 @@ namespace LastEpochMods.Mods
             public static bool UniqueList_Entry_UnlockDropForAll = false;
             public static bool UniqueList_Entry_UnlockDropForUndropableOnly = false; //Lock Dropable Item
             public static bool Enable_LegendaryPotentialLevelMod = false;
-            public static int UniqueList_Entry_LegendaryPotentialLevel = 0;
-            public static bool UniqueList_Entry_Enable_UniqueMods = false;
-            public static System.Collections.Generic.List<unique_mod> Uniques_Mods = new System.Collections.Generic.List<unique_mod>();
-            public struct unique_mod
-            {
-                public int id;
-                public Il2CppSystem.Collections.Generic.List<UniqueItemMod> mods;
-            }
+            public static int UniqueList_Entry_LegendaryPotentialLevel = 0;                       
 
             public static void Launch()
             {
@@ -87,9 +80,9 @@ namespace LastEpochMods.Mods
                         {
                             item.effectiveLevelForLegendaryPotential = (byte)UniqueList_Entry_LegendaryPotentialLevel;
                         }
-                        if (UniqueList_Entry_Enable_UniqueMods)
+                        if (Mods.UniqueMods.Enable_UniqueMods)
                         {
-                            foreach (unique_mod m in Uniques_Mods)
+                            foreach (Mods.UniqueMods.unique_mod m in Mods.UniqueMods.Uniques_Mods)
                             {
                                 if (m.id == item.uniqueID) { item.mods = m.mods; break; }
                             }
