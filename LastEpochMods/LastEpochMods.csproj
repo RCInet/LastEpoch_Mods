@@ -85,12 +85,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Functions.cs" />
-    <Compile Include="Mods\Monsters.cs" />
-    <Compile Include="Mods\Spawner.cs" />
-    <Compile Include="Mods\ItemsReq.cs" />
+    <Compile Include="Mods\Items_Mods.cs" />
+    <Compile Include="Mods\Scene_Mods.cs" />
     <Compile Include="Mods\LastEpochSaveEditor.cs" />
     <Compile Include="Mods\UniqueMods.cs" />
-    <Compile Include="Mods\ItemsDrop.cs" />
     <Compile Include="Scenes.cs" />
     <Compile Include="Src\Icons\Data.cs" />
     <Compile Include="Src\Icons\Get.cs" />

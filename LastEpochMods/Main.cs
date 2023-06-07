@@ -9,7 +9,7 @@ namespace LastEpochMods
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
             Scenes.CurrentName = sceneName;
-            LoggerInstance.Msg("Scene : " + sceneName);
+            //LoggerInstance.Msg("Scene : " + sceneName);
         }
         public override void OnLateUpdate()
         {
@@ -19,37 +19,61 @@ namespace LastEpochMods
                 {
                     if (!Scenes.MenuNames.Contains(Scenes.CurrentName))
                     {
-                        Mods.Spawner.Density = 999; //Untested
-                        //Mods.Spawner.IncreaseDensity(); //Comment to Disable
-                        Mods.ItemsDrop.goldMultiplier = 9999;
-                        Mods.ItemsDrop.ItemMultiplier = 5;
-                        Mods.ItemsDrop.Experience = 99999999; //Untested //should be xp on death
-                        Mods.ItemsDrop.EditMonstersDeathDrop(); //Comment to Disable
-                        Mods.Monsters.MagicMobExpMultiplier = 99999999; //Untested
-                        Mods.Monsters.MagicMobExpMultiplierPerLevel = 999; //Untested
-                        Mods.Monsters.RareMobExpMultiplier = 99999999; //Untested
-                        Mods.Monsters.RareMobExpMultiplierPerLevel = 999; //Untested
-                        Mods.Monsters.ExperienceMultiplier(); //Comment to Disable
+                        //ItemDrop
+                        Mods.Scene_Mods.Enable_DeathItemDrop_goldMultiplier = true;
+                        Mods.Scene_Mods.DeathItemDrop_goldMultiplier = 99;
+                        Mods.Scene_Mods.Enable_DeathItemDrop_ItemMultiplier = true;
+                        Mods.Scene_Mods.DeathItemDrop_ItemMultiplier = 2;
+                        Mods.Scene_Mods.Enable_DeathItemDrop_Experience = true;
+                        Mods.Scene_Mods.DeathItemDrop_Experience = 99999;
+                        //MonsterRarityMagic
+                        Mods.Scene_Mods.Enable_MonsterRarityMagic_BaseExpMultiplier = true;
+                        Mods.Scene_Mods.MonsterRarityMagic_BaseExpMultiplier = 99999;
+                        Mods.Scene_Mods.Enable_MonsterRarityMagic_ExpMultiplierPerLevel = true;
+                        Mods.Scene_Mods.MonsterRarityMagic_ExpMultiplierPerLevel = 99999;
+                        //MonsterRarityRare
+                        Mods.Scene_Mods.Enable_MonsterRarityRare_BaseExpMultiplier = true;
+                        Mods.Scene_Mods.MonsterRarityRare_BaseExpMultiplier = 99999;
+                        Mods.Scene_Mods.Enable_MonsterRarityRare_xpMultiplierPerLevel = true;
+                        Mods.Scene_Mods.MonsterRarityRare_xpMultiplierPerLevel = 99999;
+                        //SpawnerPlacementRoom
+                        Mods.Scene_Mods.Enable_SpawnerPlacementRoom_intendedSpawnerDensity = true;
+                        Mods.Scene_Mods.SpawnerPlacementRoom_intendedSpawnerDensity = 10;
+                        //SpawnerPlacementManager
+                        Mods.Scene_Mods.Enable_SpawnerPlacementManager_defaultSpawnerDensity = false;
+                        Mods.Scene_Mods.SpawnerPlacementManager_defaultSpawnerDensity = 10;
+                        Mods.Scene_Mods.Enable_SpawnerPlacementManager_alwaysRollSpawnerDensity = false;
+                        Mods.Scene_Mods.SpawnerPlacementManager_alwaysRollSpawnerDensity = false;
+                        Mods.Scene_Mods.Launch();
+                        LoggerInstance.Msg("Scene Mods Launch");
                     }
                     else { LoggerInstance.Msg("Lauch a character before doing this"); }
                 }
-                else if (Input.GetKeyDown(KeyCode.F10)) //Items Mods (Launch at menu)
+                else if (Input.GetKeyDown(KeyCode.F10)) //Items_Mods (Launch at menu)
                 {
-                    //Level and Class Req
-                    Mods.ItemsReq.Remove(this); //Comment to Disable
-                    //Basic Drop
-                    Mods.ItemsDrop.OnlyUndropablesBasic = true; //False = unlock all / True = Only Undropable
-                    Mods.ItemsDrop.UnlockForAllBasic(this); //Comment to Disable
-                    //Unique Drop
-                    Mods.ItemsDrop.OnlyUndropablesUnique = true; //False = unlock all / True = Only Undropable
-                    Mods.ItemsDrop.UnlockForAllUniques(this); //Comment to Disable                    
-                    //Drop Level minimum for Legenday Potencial
-                    //Mods.ItemsDrop.SetLevelReqForLegendaryPotencial(0); //Untested //Comment to Disable
+                    //Basic
+                    Mods.Items_Mods.Basic.EquipmentItem_UnlockDropForAll = false;
+                    Mods.Items_Mods.Basic.EquipmentItem_UnlockDropForUndropableOnly = true; //Lock Dropable Item if UnlockDropForAll is set to false
+                    Mods.Items_Mods.Basic.EquipmentItem_RemoveClassReq = true;
+                    Mods.Items_Mods.Basic.EquipmentItem_EditLevelReq = true;
+                    Mods.Items_Mods.Basic.EquipmentItem_SetLevelReq = 0;
+                    Mods.Items_Mods.Basic.Launch();
                     //Unique Mods
-                    Mods.UniqueMods.Edit(111, Mods.UniqueMods.CustomMods_0(), this); //Wover Flesh : UniqueId = 111
-                    //Mods.UniqueMods.Edit(UniqueId, CustomMod, this);
-                    //Mods.UniqueMods.Edit(UniqueId, CustomMod, this);
-                    //Mods.UniqueMods.Edit(UniqueId, CustomMod, this);
+                    Mods.Items_Mods.Unique.Uniques_Mods = new System.Collections.Generic.List<Mods.Items_Mods.Unique.unique_mod>
+                    {
+                        new Mods.Items_Mods.Unique.unique_mod { id = 111, mods = Mods.UniqueMods.CustomMods_0() }
+                        //Add more unique here
+                        //new Mods.Items_Mods.Unique.unique_mod { id = UniqueId, mods = CustomMod }
+                    };                    
+                    Mods.Items_Mods.Unique.UniqueList_Entry_Enable_UniqueMods = true;
+                    //Unique
+                    Mods.Items_Mods.Unique.UniqueList_Entry_UnlockDropForAll = false;
+                    Mods.Items_Mods.Unique.UniqueList_Entry_UnlockDropForUndropableOnly = true; //Lock Dropable Item if UnlockDropForAll is set to false
+                    Mods.Items_Mods.Unique.Enable_LegendaryPotentialLevelMod = true;
+                    Mods.Items_Mods.Unique.UniqueList_Entry_LegendaryPotentialLevel = 0;
+                    Mods.Items_Mods.Unique.Launch();
+                    LoggerInstance.Msg("Items Mods Launch");
+
                     if (!Scenes.MenuNames.Contains(Scenes.CurrentName))
                     { LoggerInstance.Msg("Go Back to Menu for actualize items Mods"); }
                 }
