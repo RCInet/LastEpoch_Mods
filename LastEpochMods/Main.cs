@@ -42,6 +42,8 @@ namespace LastEpochMods
                 Mods.Scene_Mods.DeathItemDrop_ItemMultiplier = 2;
                 Mods.Scene_Mods.Enable_DeathItemDrop_Experience = true;
                 Mods.Scene_Mods.DeathItemDrop_Experience = 99999;
+                Mods.Scene_Mods.Enable_DeathItemDrop_AdditionalRare = true;
+                Mods.Scene_Mods.DeathItemDrop_AdditionalRare = true;
                 //MonsterRarityMagic
                 Mods.Scene_Mods.Enable_MonsterRarityMagic_BaseExpMultiplier = true;
                 Mods.Scene_Mods.MonsterRarityMagic_BaseExpMultiplier = 99999;
@@ -54,16 +56,33 @@ namespace LastEpochMods
                 Mods.Scene_Mods.MonsterRarityRare_xpMultiplierPerLevel = 99999;
                 //SpawnerPlacementRoom
                 Mods.Scene_Mods.Enable_SpawnerPlacementRoom_intendedSpawnerDensity = true;
-                Mods.Scene_Mods.SpawnerPlacementRoom_intendedSpawnerDensity = 10;
+                Mods.Scene_Mods.SpawnerPlacementRoom_intendedSpawnerDensity = 9999;
                 //SpawnerPlacementManager
-                Mods.Scene_Mods.Enable_SpawnerPlacementManager_defaultSpawnerDensity = false;
-                Mods.Scene_Mods.SpawnerPlacementManager_defaultSpawnerDensity = 10;
-                Mods.Scene_Mods.Enable_SpawnerPlacementManager_alwaysRollSpawnerDensity = false;
+                Mods.Scene_Mods.Enable_SpawnerPlacementManager_defaultSpawnerDensity = true;
+                Mods.Scene_Mods.SpawnerPlacementManager_defaultSpawnerDensity = 9999;
+                Mods.Scene_Mods.Enable_SpawnerPlacementManager_alwaysRollSpawnerDensity = true;
                 Mods.Scene_Mods.SpawnerPlacementManager_alwaysRollSpawnerDensity = false;
+                Mods.Scene_Mods.Enable_SpawnerPlacementManager_IncreaseExperience = true;
+                Mods.Scene_Mods.SpawnerPlacementManager_IncreaseExperience = 99999;
+                //SkillsTreeNode
+                //Mods.Scene_Mods.Enable_SkillTreeNode_RemoveNodeRequirements = true;
+
                 Mods.Scene_Mods.Launch();
                 LoggerInstance.Msg("Scene Mods Loaded");
             }
-        }        
+        }
+        private void LoadSkill_Mods()
+        {
+            Mods.Skills_Mods.EditNode("Smite", 9, 0, this);
+        }
+        private void LoadSkillsHelper()
+        {
+            if ((Scenes.CurrentName != "") && (!Scenes.MenuNames.Contains(Scenes.CurrentName)))
+            {
+                Mods.Skills_Mods.Helper_Skills_Nodes(this);                
+            }
+            else { LoggerInstance.Msg("Go in game for launching Skills Helper"); }
+        }
 
         private bool UnityExplorerLoaded = false;
         private bool ItemsModsLoaded = false;
@@ -87,7 +106,12 @@ namespace LastEpochMods
             else
             {
                 if (!ItemsModsLoaded) { ItemsModsLoaded = true; LoadItemsMods(); }
-                if (Input.GetKeyDown(KeyCode.F11)) { Mods.LastEpochSaveEditor.GenerateDatabase(this); }                
+                if (Input.GetKeyDown(KeyCode.F9))
+                {
+                    LoadSkill_Mods();                    
+                }
+                else if (Input.GetKeyDown(KeyCode.F10)) { LoadSkillsHelper(); }
+                else if (Input.GetKeyDown(KeyCode.F11)) { Mods.LastEpochSaveEditor.GenerateDatabase(this); }                
             }
         }
     }

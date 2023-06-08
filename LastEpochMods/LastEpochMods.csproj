@@ -91,6 +91,7 @@
     <Compile Include="Mods\Items_Mods.cs" />
     <Compile Include="Mods\Scene_Mods.cs" />
     <Compile Include="Mods\LastEpochSaveEditor.cs" />
+    <Compile Include="Mods\Skills_Mods.cs" />
     <Compile Include="Mods\UniqueMods.cs" />
     <Compile Include="Scenes.cs" />
     <Compile Include="Src\Icons\Data.cs" />

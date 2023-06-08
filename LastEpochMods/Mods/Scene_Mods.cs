@@ -17,6 +17,8 @@ namespace LastEpochMods.Mods
         public static int DeathItemDrop_ItemMultiplier = 99;
         public static bool Enable_DeathItemDrop_Experience = true;
         public static int DeathItemDrop_Experience = 9999;
+        public static bool Enable_DeathItemDrop_AdditionalRare = true;
+        public static bool DeathItemDrop_AdditionalRare = true;
         //MonsterRarityMagic
         public static bool Enable_MonsterRarityMagic_BaseExpMultiplier = true;
         public static int MonsterRarityMagic_BaseExpMultiplier = 99999;
@@ -35,6 +37,10 @@ namespace LastEpochMods.Mods
         public static int SpawnerPlacementManager_defaultSpawnerDensity = 99999;
         public static bool Enable_SpawnerPlacementManager_alwaysRollSpawnerDensity = true;
         public static bool SpawnerPlacementManager_alwaysRollSpawnerDensity = false;
+        public static bool Enable_SpawnerPlacementManager_IncreaseExperience = true;
+        public static int SpawnerPlacementManager_IncreaseExperience = 99999;
+
+        //public static bool Enable_SkillTreeNode_RemoveNodeRequirements = false;
 
         public static void Launch()
         {
@@ -44,20 +50,26 @@ namespace LastEpochMods.Mods
                 if (type == typeof(DeathItemDrop))
                 {
                     DeathItemDrop drop = new DeathItemDrop();
-                    if ((Enable_DeathItemDrop_goldMultiplier) | (Enable_DeathItemDrop_ItemMultiplier) | Enable_DeathItemDrop_Experience)
+                    if ((Enable_DeathItemDrop_goldMultiplier) | (Enable_DeathItemDrop_ItemMultiplier) |
+                        (Enable_DeathItemDrop_AdditionalRare) | (Enable_DeathItemDrop_Experience))
                     {
                         drop = obj.TryCast<DeathItemDrop>();
                     }
                     if (Enable_DeathItemDrop_goldMultiplier)
                     {
                         drop.overrideBaseGoldDropChance = true;
+                        drop.goldDropChance = 1; //100%
                         drop.goldMultiplier = DeathItemDrop_goldMultiplier;
                     }
                     if (Enable_DeathItemDrop_ItemMultiplier)
                     {
                         drop.overrideBaseItemDropChance = true;
-                        drop.itemMultiplier = DeathItemDrop_ItemMultiplier;
                         drop.itemDropChance = 1; //100%
+                        drop.itemMultiplier = DeathItemDrop_ItemMultiplier;                        
+                    }
+                    if (Enable_DeathItemDrop_AdditionalRare)
+                    {
+                        drop.guaranteedAdditionalRare = DeathItemDrop_AdditionalRare;
                     }
                     if (Enable_DeathItemDrop_Experience)
                     {
@@ -101,13 +113,13 @@ namespace LastEpochMods.Mods
                     if (Enable_SpawnerPlacementRoom_intendedSpawnerDensity)
                     {
                         SpawnerPlacementRoom room = obj.TryCast<SpawnerPlacementRoom>();
-                        room.intendedSpawnerDensity = SpawnerPlacementRoom_intendedSpawnerDensity;
+                        room.intendedSpawnerDensity = SpawnerPlacementRoom_intendedSpawnerDensity;                        
                     }                    
                 }
                 else if (type == typeof(SpawnerPlacementManager))
                 {
                     SpawnerPlacementManager spawner_manager = new SpawnerPlacementManager();
-                    if ((Enable_SpawnerPlacementManager_defaultSpawnerDensity) | (Enable_SpawnerPlacementManager_alwaysRollSpawnerDensity))
+                    if ((Enable_SpawnerPlacementManager_defaultSpawnerDensity) | (Enable_SpawnerPlacementManager_alwaysRollSpawnerDensity) | (Enable_SpawnerPlacementManager_IncreaseExperience))
                     {
                         spawner_manager = obj.TryCast<SpawnerPlacementManager>();
                     }                    
@@ -118,6 +130,10 @@ namespace LastEpochMods.Mods
                     if (Enable_SpawnerPlacementManager_alwaysRollSpawnerDensity)
                     {
                         spawner_manager.alwaysRollSpawnerDensity = SpawnerPlacementManager_alwaysRollSpawnerDensity;
+                    }
+                    if (Enable_SpawnerPlacementManager_IncreaseExperience)
+                    {
+                        spawner_manager.increasedExperience = SpawnerPlacementManager_IncreaseExperience;
                     }
                 }
             }
