@@ -29,6 +29,9 @@ namespace LastEpochMods
             Mods.Items_Mods.Unique.Enable_LegendaryPotentialLevelMod = true;
             Mods.Items_Mods.Unique.UniqueList_Entry_LegendaryPotentialLevel = 0;
             Mods.Items_Mods.Unique.Launch();
+            //Affixs
+            Mods.Affixs_Mods.MultiplyAffixsRolls(100);
+            Mods.Affixs_Mods.EditAffixRollsByTier(100, 7, 100, 999);
             LoggerInstance.Msg("Items Mods Loaded");
         }
         private void LoadSceneMods() //Scene_Mods (AutoLoad on Scene Change)

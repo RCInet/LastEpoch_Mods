@@ -88,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Functions.cs" />
+    <Compile Include="Mods\Affixs_Mods.cs" />
     <Compile Include="Mods\Items_Mods.cs" />
     <Compile Include="Mods\Scene_Mods.cs" />
     <Compile Include="Mods\LastEpochSaveEditor.cs" />
