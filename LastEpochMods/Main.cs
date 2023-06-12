@@ -170,6 +170,7 @@ namespace LastEpochMods
                         if ((obj.name == "MainPlayer(Clone)") && (obj.GetActualType() == typeof(ExperienceTracker)))
                         {
                             obj.TryCast<ExperienceTracker>().LevelUp(true);
+                            break;
                         }
                     }
                 }
