@@ -40,8 +40,6 @@ namespace LastEpochMods.Mods
         public static bool Enable_SpawnerPlacementManager_IncreaseExperience = true;
         public static int SpawnerPlacementManager_IncreaseExperience = 99999;
 
-        //public static bool Enable_SkillTreeNode_RemoveNodeRequirements = false;
-
         public static void Launch()
         {
             foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.Object)))

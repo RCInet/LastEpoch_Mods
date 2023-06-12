@@ -1,6 +1,7 @@
 ﻿using MelonLoader;
 using System.Linq;
 using UnityEngine;
+using UniverseLib;
 
 namespace LastEpochMods
 {
@@ -30,8 +31,8 @@ namespace LastEpochMods
             Mods.Items_Mods.Unique.UniqueList_Entry_LegendaryPotentialLevel = 0;
             Mods.Items_Mods.Unique.Launch();
             //Affixs
-            Mods.Affixs_Mods.MultiplyAffixsRolls(100);
-            Mods.Affixs_Mods.EditAffixRollsByTier(100, 7, 100, 999);
+            //Mods.Affixs_Mods.MultiplyAffixsRolls(100);
+            //Mods.Affixs_Mods.EditAffixRollsByTier(100, 7, 100, 999);
             LoggerInstance.Msg("Items Mods Loaded");
         }
         private void LoadSceneMods() //Scene_Mods (AutoLoad on Scene Change)
@@ -73,11 +74,63 @@ namespace LastEpochMods
                 Mods.Scene_Mods.Launch();
                 LoggerInstance.Msg("Scene Mods Loaded");
             }
-        }
-        private void LoadSkill_Mods()
+        }        
+        private void LoadCharacter_Mods() //Character_Mods (AutoLoad on Scene Change)
         {
-            Mods.Skills_Mods.EditNode("Smite", 9, 0, this);
+            //ItemDrop
+            Mods.Character_Mods.Enable_increase_equipment_droprate = true;
+            Mods.Character_Mods.increase_equipment_droprate = 1;
+            Mods.Character_Mods.Enable_increase_equipmentshards_droprate = true;
+            Mods.Character_Mods.increase_equipmentshards_droprate = 1;
+            Mods.Character_Mods.Enable_increase_uniques_droprate = true;
+            Mods.Character_Mods.increase_uniques_droprate = 1;
+            //Speed Manager
+            Mods.Character_Mods.Enable_base_movement_speed = true;
+            Mods.Character_Mods.base_movement_speed = 10; //default 4,8
+            //Ability List
+            Mods.Character_Mods.Enable_channel_cost = true;
+            Mods.Character_Mods.channel_cost = 0;
+            Mods.Character_Mods.Enable_manaCost = true;
+            Mods.Character_Mods.manaCost = 0;
+            Mods.Character_Mods.Enable_manaCostPerDistance = true;
+            Mods.Character_Mods.manaCostPerDistance = 0;
+            Mods.Character_Mods.Enable_minimumManaCost = true;
+            Mods.Character_Mods.minimumManaCost = 0;
+            Mods.Character_Mods.Enable_noManaRegenWhileChanneling = true;
+            Mods.Character_Mods.noManaRegenWhileChanneling = false;
+            Mods.Character_Mods.Enable_stopWhenOutOfMana = true;
+            Mods.Character_Mods.stopWhenOutOfMana = false;
+            //Tree Data
+            Mods.Character_Mods.Enable_character_class = true;
+            Mods.Character_Mods.character_class = CharacterClassID.Sentinel;
+            Mods.Character_Mods.Enable_character_level = true;
+            Mods.Character_Mods.character_level = 100;
+            Mods.Character_Mods.Enable_choosen_mastery = true;
+            Mods.Character_Mods.chosen_mastery = 0;
+            Mods.Character_Mods.Enable_number_of_unlocked_slots = true;
+            Mods.Character_Mods.number_of_unlocked_slots = 5;
+            Mods.Character_Mods.Enable_passiveTree_pointsEarnt = true;
+            Mods.Character_Mods.passiveTree_pointsEarnt = 65535;
+            Mods.Character_Mods.Enable_skilltree_level = true;
+            Mods.Character_Mods.skilltree_level = 255;
+            //GoldTracker
+            Mods.Character_Mods.Enable_gold_value = true;
+            Mods.Character_Mods.gold_value = 99999999;
+            //CharacterStats
+            Mods.Character_Mods.Enable_attack_rate = true;
+            Mods.Character_Mods.attack_rate = 255;
+            Mods.Character_Mods.Enable_attributes = true;
+            Mods.Character_Mods.attributes_str = 99999999;
+            Mods.Character_Mods.attributes_int = 99999999;
+            Mods.Character_Mods.attributes_vita = 99999999;
+            Mods.Character_Mods.attributes_dext = 99999999;
+            Mods.Character_Mods.attributes_atte = 99999999;
+            //ExperienceTracker
+            Mods.Character_Mods.Enable_NextLevelExperience = true;
+            Mods.Character_Mods.NextLevelExperience = 0;
+            Mods.Character_Mods.Launch();
         }
+
         private void LoadSkillsHelper()
         {
             if ((Scenes.CurrentName != "") && (!Scenes.MenuNames.Contains(Scenes.CurrentName)))
@@ -96,8 +149,9 @@ namespace LastEpochMods
             {
                 if ((Scenes.CurrentName != "") && (!Scenes.MenuNames.Contains(Scenes.CurrentName)))
                 { LoggerInstance.Msg("New Scene : " + sceneName); }
-                LoadItemsMods();
-                LoadSceneMods();                
+                if (!ItemsModsLoaded) { ItemsModsLoaded = true; LoadItemsMods(); }                
+                LoadSceneMods();
+                LoadCharacter_Mods();
             }
         }
         public override void OnLateUpdate()
@@ -108,13 +162,23 @@ namespace LastEpochMods
             }
             else
             {
-                if (!ItemsModsLoaded) { ItemsModsLoaded = true; LoadItemsMods(); }
-                if (Input.GetKeyDown(KeyCode.F9))
+                if (!ItemsModsLoaded) { ItemsModsLoaded = true; LoadItemsMods(); }                
+                if (Input.GetKeyDown(KeyCode.F10)) //Launch LevelUp
                 {
-                    LoadSkill_Mods();                    
+                    foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.Object)))
+                    {
+                        if (obj.name == "MainPlayer(Clone)")
+                        {
+                            System.Type type = obj.GetActualType();
+                            if (type == typeof(ExperienceTracker))
+                            {
+                                ExperienceTracker exp_tracker = obj.TryCast<ExperienceTracker>();
+                                exp_tracker.LevelUp(true);
+                            }
+                        }
+                    }
                 }
-                else if (Input.GetKeyDown(KeyCode.F10)) { LoadSkillsHelper(); }
-                else if (Input.GetKeyDown(KeyCode.F11)) { Mods.LastEpochSaveEditor.GenerateDatabase(this); }                
+                else if (Input.GetKeyDown(KeyCode.F11)) { LoadSkillsHelper(); }
             }
         }
     }

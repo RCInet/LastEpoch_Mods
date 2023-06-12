@@ -14,7 +14,7 @@ namespace LastEpochMods.Mods
         //Exemple Custom Mods
         public static Il2CppSystem.Collections.Generic.List<UniqueItemMod> CustomMods_0()
         {
-            Il2CppSystem.Collections.Generic.List<UniqueItemMod> mods = new Il2CppSystem.Collections.Generic.List<UniqueItemMod>();
+            Il2CppSystem.Collections.Generic.List<UniqueItemMod> mods = new Il2CppSystem.Collections.Generic.List<UniqueItemMod>();            
             mods.Add(new UniqueItemMod
             {
                 type = BaseStats.ModType.INCREASED,

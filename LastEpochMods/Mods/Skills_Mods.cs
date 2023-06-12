@@ -1,4 +1,6 @@
 ﻿using MelonLoader;
+using System.Drawing;
+using System.Linq;
 using UMA.AssetBundles;
 using UniverseLib;
 
@@ -34,7 +36,7 @@ namespace LastEpochMods.Mods
 
             return tree_data;
         }
-        private static System.Collections.Generic.List<skill_structure> GetAllSkills()
+        public static System.Collections.Generic.List<skill_structure> GetAllSkills()
         {
             System.Collections.Generic.List<skill_structure> skills = new System.Collections.Generic.List<skill_structure>();
             foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.Object)))
@@ -67,24 +69,92 @@ namespace LastEpochMods.Mods
 
             return skills;
         }
-        private static System.Collections.Generic.List<node_structure> GetAllNode(string skill_name, Main main)
+        public static System.Collections.Generic.List<node_structure> GetAllNode(string skill_name, Main main)
         {
             System.Collections.Generic.List<node_structure> nodes = new System.Collections.Generic.List<node_structure>();
-            foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.Object)))
+            if ((skill_name != "") && (skill_name != "BasicPlayerAttack"))
             {
-                if (obj.name.Contains(skill_name))
+                string skill_name_format = "";
+                string skill_name_format2 = "";
+                string skill_name_temp = string.Concat(skill_name.Select(x => System.Char.IsUpper(x) ? " " + x : x.ToString())).TrimStart(' ');                
+                int index = 0;
+                foreach (string s in skill_name_temp.Split(' '))
                 {
-                    //string name = obj.name;
+                    if ((s != " ") && (s != ""))
+                    {
+                        try { int z = System.Convert.ToInt32(s); } //Remove Numbers
+                        catch
+                        {
+                            string temp = "";
+                            if (s == "Smelters") { temp = s + "'s"; }
+                            else { temp = s; }
+
+                            if (index == 0) { skill_name_format = s; }
+                            else { skill_name_format += " " + s; }
+                            index++;
+                        }
+                    }
+                }
+                int index2 = 0;
+                foreach (string s in skill_name_temp.Split(' '))
+                {
+                    if ((s != " ") && (s != "") && (s != "Summon") && (s != "Slam") && (s != "Rogue"))
+                    {
+                        try { int z = System.Convert.ToInt32(s); } //Remove Numbers
+                        catch
+                        {
+                            if (index2 == 0) { skill_name_format2 = s; }
+                            else { skill_name_format2 += " " + s; }
+                            index2++;
+                        }                        
+                    }
+                }
+                //main.LoggerInstance.Msg("Search for Node with name : " + skill_name_format);
+                foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.Object)))
+                {
                     System.Type type = obj.GetActualType();
                     if (type == typeof(SkillTreeNode))
                     {
-                        //main.LoggerInstance.Msg("SkillTreeNode : Name = " + obj.name);
-                        SkillTreeNode tree_node = obj.TryCast<SkillTreeNode>();
-                        //main.LoggerInstance.Msg("NodeName = " + tree_node.name);
-                        //main.LoggerInstance.Msg("Id = " + tree_node.id);
-                        nodes.Add(new node_structure { name = obj.name, id = tree_node.id });
+                        bool found = false;
+                        int skill_name_count = skill_name_format.Split(' ').Count();
+                        if (obj.name.Split(' ').Count() >= skill_name_count)
+                        {
+                            string obj_name = "";
+                            for (int i = 0; i < skill_name_count; i++)
+                            {
+                                if (i == 0) { obj_name = obj.name.Split(' ')[i]; }
+                                else { obj_name += " " + obj.name.Split(' ')[i]; }
+                            }
+                            if (obj_name.ToUpper() == skill_name_format.ToUpper()) { found = true; }
+                            if (found)
+                            {
+                                SkillTreeNode tree_node = obj.TryCast<SkillTreeNode>();
+                                nodes.Add(new node_structure { name = obj.name, id = tree_node.id });
+                            }
+                        }
+                        if (!found)
+                        {
+                            int skill_name_count2 = skill_name_format2.Split(' ').Count();
+                            if (obj.name.Split(' ').Count() >= skill_name_count2)
+                            {
+                                string obj_name = "";
+                                for (int i = 0; i < skill_name_count2; i++)
+                                {
+                                    if (i == 0) { obj_name = obj.name.Split(' ')[i]; }
+                                    else { obj_name += " " + obj.name.Split(' ')[i]; }
+                                }
+                                if (obj_name.ToUpper() == skill_name_format2.ToUpper()) { found = true; }
+                                if (found)
+                                {
+                                    SkillTreeNode tree_node = obj.TryCast<SkillTreeNode>();                                    
+                                    nodes.Add(new node_structure { name = obj.name, id = tree_node.id });
+                                }
+                            }
+                        }
                     }
                 }
+                if (nodes.Count == 0) { main.LoggerInstance.Msg("No Nodes Found for : Name " + skill_name + " : Format1 = " + skill_name_format + ", Format2 = " + skill_name_format2); }
+                else { main.LoggerInstance.Msg(nodes.Count + " Nodes Found for : Name " + skill_name + " : Format1 = " + skill_name_format + ", Format2 = " + skill_name_format2); }
             }
 
             return nodes;
@@ -110,6 +180,38 @@ namespace LastEpochMods.Mods
                         }
                         break;
                     }
+                }
+            }
+        }
+        public static void EditPassivePoints(ushort value, Main main)
+        {
+            foreach (UnityEngine.Object obj in Functions.GetCharacter_Objets())
+            {
+                System.Type type = obj.GetActualType();
+                if (type == typeof(LocalTreeData))
+                {
+                    main.LoggerInstance.Msg("Set Passive Tree Points to " + value);
+                    LocalTreeData tree_data = obj.TryCast<LocalTreeData>();
+                    tree_data.passiveTree.pointsEarnt = value;
+                    break;
+                }
+            }
+        }
+        public static void EditSkillsPoints(byte value, Main main)
+        {
+            foreach (UnityEngine.Object obj in Functions.GetCharacter_Objets())
+            {
+                System.Type type = obj.GetActualType();
+                if (type == typeof(LocalTreeData))
+                {
+                    main.LoggerInstance.Msg("Set Passive Tree Points to " + value);
+                    LocalTreeData tree_data = obj.TryCast<LocalTreeData>();
+                    foreach (LocalTreeData.SkillTreeData skill_tree_data in tree_data.specialisedSkillTrees)
+                    {
+                        main.LoggerInstance.Msg("Set " + skill_tree_data.ability.abilityName + " Level to : " + value);
+                        skill_tree_data.level = value;
+                    }
+                    break;
                 }
             }
         }
