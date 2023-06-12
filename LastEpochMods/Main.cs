@@ -172,7 +172,7 @@ namespace LastEpochMods
                         if ((obj.name == "MainPlayer(Clone)") && (obj.GetActualType() == typeof(StatBuffs)))
                         {
                             float duration = 255;
-                            SP propertie = SP.Damage;
+                            SP propertie = SP.Intelligence;
                             float added_value = 255;
                             float increase_value = 255;
                             Il2CppSystem.Collections.Generic.List<float> more_values = null;
