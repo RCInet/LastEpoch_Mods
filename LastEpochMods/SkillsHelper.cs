@@ -4,9 +4,9 @@ using System.Linq;
 using UMA.AssetBundles;
 using UniverseLib;
 
-namespace LastEpochMods.Mods
+namespace LastEpochMods
 {
-    public class Skills_Mods
+    public class SkillsHelper
     {
         public struct skill_structure
         {
@@ -36,7 +36,7 @@ namespace LastEpochMods.Mods
 
             return tree_data;
         }
-        public static System.Collections.Generic.List<skill_structure> GetAllSkills()
+        private static System.Collections.Generic.List<skill_structure> GetAllSkills()
         {
             System.Collections.Generic.List<skill_structure> skills = new System.Collections.Generic.List<skill_structure>();
             foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.Object)))
@@ -69,7 +69,7 @@ namespace LastEpochMods.Mods
 
             return skills;
         }
-        public static System.Collections.Generic.List<node_structure> GetAllNode(string skill_name, Main main)
+        private static System.Collections.Generic.List<node_structure> GetAllNode(string skill_name, Main main)
         {
             System.Collections.Generic.List<node_structure> nodes = new System.Collections.Generic.List<node_structure>();
             if ((skill_name != "") && (skill_name != "BasicPlayerAttack"))
@@ -159,62 +159,7 @@ namespace LastEpochMods.Mods
 
             return nodes;
         }
-
-        public static void EditNode(string skill_name, int node_id, int points_allocated, Main main)
-        {
-            LocalTreeData tree_data = GetCharacter_TreeData();
-            if (tree_data != null)
-            {
-                foreach (LocalTreeData.SkillTreeData specialized in tree_data.specialisedSkillTrees)
-                {
-                    if (skill_name.Contains(specialized.ability.name))
-                    {
-                        foreach (LocalTreeData.NodeData node_data in specialized.nodes)
-                        {
-                            if (node_id == node_data.id)
-                            {
-                                node_data.pointsAllocated = (byte)points_allocated;
-                                main.LoggerInstance.Msg("Skill : " + specialized.ability.name + ", NodeId = " + node_id + ", Points = " + points_allocated);
-                                break;
-                            }                            
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-        public static void EditPassivePoints(ushort value, Main main)
-        {
-            foreach (UnityEngine.Object obj in Functions.GetCharacter_Objets())
-            {
-                System.Type type = obj.GetActualType();
-                if (type == typeof(LocalTreeData))
-                {
-                    main.LoggerInstance.Msg("Set Passive Tree Points to " + value);
-                    LocalTreeData tree_data = obj.TryCast<LocalTreeData>();
-                    tree_data.passiveTree.pointsEarnt = value;
-                    break;
-                }
-            }
-        }
-        public static void EditSkillsPoints(byte value, Main main)
-        {
-            foreach (UnityEngine.Object obj in Functions.GetCharacter_Objets())
-            {
-                System.Type type = obj.GetActualType();
-                if (type == typeof(LocalTreeData))
-                {
-                    main.LoggerInstance.Msg("Set Passive Tree Points to " + value);
-                    LocalTreeData tree_data = obj.TryCast<LocalTreeData>();
-                    foreach (LocalTreeData.SkillTreeData skill_tree_data in tree_data.specialisedSkillTrees)
-                    {
-                        main.LoggerInstance.Msg("Set " + skill_tree_data.ability.abilityName + " Level to : " + value);
-                        skill_tree_data.level = value;
-                    }
-                    break;
-                }
-            }
-        }
+               
         public static void Helper_Skills_Nodes(Main main)
         {
             //Get All Skills

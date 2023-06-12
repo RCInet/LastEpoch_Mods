@@ -92,7 +92,7 @@
     <Compile Include="Mods\Character_Mods.cs" />
     <Compile Include="Mods\Items_Mods.cs" />
     <Compile Include="Mods\Scene_Mods.cs" />
-    <Compile Include="Mods\Skills_Mods.cs" />
+    <Compile Include="SkillsHelper.cs" />
     <Compile Include="Mods\UniqueMods.cs" />
     <Compile Include="Scenes.cs" />
     <Compile Include="Main.cs" />

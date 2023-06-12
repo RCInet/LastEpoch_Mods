@@ -135,7 +135,7 @@ namespace LastEpochMods
         {
             if ((Scenes.CurrentName != "") && (!Scenes.MenuNames.Contains(Scenes.CurrentName)))
             {
-                Mods.Skills_Mods.Helper_Skills_Nodes(this);                
+                SkillsHelper.Helper_Skills_Nodes(this);                
             }
             else { LoggerInstance.Msg("Go in game for launching Skills Helper"); }
         }
