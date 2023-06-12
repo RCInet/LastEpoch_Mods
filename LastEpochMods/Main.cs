@@ -164,8 +164,26 @@ namespace LastEpochMods
             }
             else
             {
-                if (!ItemsModsLoaded) { ItemsModsLoaded = true; LoadItemsMods(); }                
-                if (Input.GetKeyDown(KeyCode.F10)) //Launch LevelUp
+                if (!ItemsModsLoaded) { ItemsModsLoaded = true; LoadItemsMods(); }
+                if (Input.GetKeyDown(KeyCode.F9)) //Exemple Buff Character
+                {
+                    foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.Object)))
+                    {
+                        if ((obj.name == "MainPlayer(Clone)") && (obj.GetActualType() == typeof(StatBuffs)))
+                        {
+                            float duration = 255;
+                            SP propertie = SP.Damage;
+                            float added_value = 255;
+                            float increase_value = 255;
+                            Il2CppSystem.Collections.Generic.List<float> more_values = null;
+                            AT tag = AT.Buff;
+                            byte special_tag = 0;
+
+                            obj.TryCast<StatBuffs>().addBuff(duration, propertie, added_value, increase_value, more_values, tag, special_tag);
+                        }
+                    }
+                }
+                else if (Input.GetKeyDown(KeyCode.F10)) //Launch LevelUp
                 {
                     foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.Object)))
                     {

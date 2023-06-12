@@ -178,6 +178,10 @@ namespace LastEpochMods.Mods
                             exp_tracker.NextLevelExperience = NextLevelExperience;
                         }
                     }
+                    else if (type == typeof(StatBuffs))
+                    {
+                                                
+                    }
                 }
             }
         }
