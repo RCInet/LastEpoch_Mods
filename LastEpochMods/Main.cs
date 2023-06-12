@@ -167,14 +167,9 @@ namespace LastEpochMods
                 {
                     foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.Object)))
                     {
-                        if (obj.name == "MainPlayer(Clone)")
+                        if ((obj.name == "MainPlayer(Clone)") && (obj.GetActualType() == typeof(ExperienceTracker)))
                         {
-                            System.Type type = obj.GetActualType();
-                            if (type == typeof(ExperienceTracker))
-                            {
-                                ExperienceTracker exp_tracker = obj.TryCast<ExperienceTracker>();
-                                exp_tracker.LevelUp(true);
-                            }
+                            obj.TryCast<ExperienceTracker>().LevelUp(true);
                         }
                     }
                 }
