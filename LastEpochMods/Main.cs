@@ -29,52 +29,50 @@ namespace LastEpochMods
             Mods.Items_Mods.Unique.UniqueList_Entry_UnlockDropForUndropableOnly = true; //Lock Dropable Item if UnlockDropForAll is set to false
             Mods.Items_Mods.Unique.Enable_LegendaryPotentialLevelMod = true;
             Mods.Items_Mods.Unique.UniqueList_Entry_LegendaryPotentialLevel = 0;
-            Mods.Items_Mods.Unique.Launch();
             //Affixs
             //Mods.Affixs_Mods.MultiplyAffixsRolls(100);
             //Mods.Affixs_Mods.EditAffixRollsByTier(100, 7, 100, 999);
+
+            Mods.Items_Mods.Unique.Launch();
             LoggerInstance.Msg("Items Mods Loaded");
         }
         private void LoadSceneMods() //Scene_Mods (AutoLoad on Scene Change)
-        {            
-            if ((Scenes.CurrentName != "") && (!Scenes.MenuNames.Contains(Scenes.CurrentName)))
-            {
-                //ItemDrop
-                Mods.Scene_Mods.Enable_DeathItemDrop_goldMultiplier = true;
-                Mods.Scene_Mods.DeathItemDrop_goldMultiplier = 99;
-                Mods.Scene_Mods.Enable_DeathItemDrop_ItemMultiplier = true;
-                Mods.Scene_Mods.DeathItemDrop_ItemMultiplier = 2;
-                Mods.Scene_Mods.Enable_DeathItemDrop_Experience = true;
-                Mods.Scene_Mods.DeathItemDrop_Experience = 99999;
-                Mods.Scene_Mods.Enable_DeathItemDrop_AdditionalRare = true;
-                Mods.Scene_Mods.DeathItemDrop_AdditionalRare = true;
-                //MonsterRarityMagic
-                Mods.Scene_Mods.Enable_MonsterRarityMagic_BaseExpMultiplier = true;
-                Mods.Scene_Mods.MonsterRarityMagic_BaseExpMultiplier = 99999;
-                Mods.Scene_Mods.Enable_MonsterRarityMagic_ExpMultiplierPerLevel = true;
-                Mods.Scene_Mods.MonsterRarityMagic_ExpMultiplierPerLevel = 99999;
-                //MonsterRarityRare
-                Mods.Scene_Mods.Enable_MonsterRarityRare_BaseExpMultiplier = true;
-                Mods.Scene_Mods.MonsterRarityRare_BaseExpMultiplier = 99999;
-                Mods.Scene_Mods.Enable_MonsterRarityRare_xpMultiplierPerLevel = true;
-                Mods.Scene_Mods.MonsterRarityRare_xpMultiplierPerLevel = 99999;
-                //SpawnerPlacementRoom
-                Mods.Scene_Mods.Enable_SpawnerPlacementRoom_intendedSpawnerDensity = true;
-                Mods.Scene_Mods.SpawnerPlacementRoom_intendedSpawnerDensity = 9999;
-                //SpawnerPlacementManager
-                Mods.Scene_Mods.Enable_SpawnerPlacementManager_defaultSpawnerDensity = true;
-                Mods.Scene_Mods.SpawnerPlacementManager_defaultSpawnerDensity = 9999;
-                Mods.Scene_Mods.Enable_SpawnerPlacementManager_alwaysRollSpawnerDensity = true;
-                Mods.Scene_Mods.SpawnerPlacementManager_alwaysRollSpawnerDensity = false;
-                Mods.Scene_Mods.Enable_SpawnerPlacementManager_IncreaseExperience = true;
-                Mods.Scene_Mods.SpawnerPlacementManager_IncreaseExperience = 99999;
-                //SkillsTreeNode
-                //Mods.Scene_Mods.Enable_SkillTreeNode_RemoveNodeRequirements = true;
+        {
+            //ItemDrop
+            Mods.Scene_Mods.Enable_DeathItemDrop_goldMultiplier = true;
+            Mods.Scene_Mods.DeathItemDrop_goldMultiplier = 99;
+            Mods.Scene_Mods.Enable_DeathItemDrop_ItemMultiplier = true;
+            Mods.Scene_Mods.DeathItemDrop_ItemMultiplier = 2;
+            Mods.Scene_Mods.Enable_DeathItemDrop_Experience = true;
+            Mods.Scene_Mods.DeathItemDrop_Experience = 99999;
+            Mods.Scene_Mods.Enable_DeathItemDrop_AdditionalRare = true;
+            Mods.Scene_Mods.DeathItemDrop_AdditionalRare = true;
+            //MonsterRarityMagic
+            Mods.Scene_Mods.Enable_MonsterRarityMagic_BaseExpMultiplier = true;
+            Mods.Scene_Mods.MonsterRarityMagic_BaseExpMultiplier = 99999;
+            Mods.Scene_Mods.Enable_MonsterRarityMagic_ExpMultiplierPerLevel = true;
+            Mods.Scene_Mods.MonsterRarityMagic_ExpMultiplierPerLevel = 99999;
+            //MonsterRarityRare
+            Mods.Scene_Mods.Enable_MonsterRarityRare_BaseExpMultiplier = true;
+            Mods.Scene_Mods.MonsterRarityRare_BaseExpMultiplier = 99999;
+            Mods.Scene_Mods.Enable_MonsterRarityRare_xpMultiplierPerLevel = true;
+            Mods.Scene_Mods.MonsterRarityRare_xpMultiplierPerLevel = 99999;
+            //SpawnerPlacementRoom
+            Mods.Scene_Mods.Enable_SpawnerPlacementRoom_intendedSpawnerDensity = true;
+            Mods.Scene_Mods.SpawnerPlacementRoom_intendedSpawnerDensity = 9999;
+            //SpawnerPlacementManager
+            Mods.Scene_Mods.Enable_SpawnerPlacementManager_defaultSpawnerDensity = true;
+            Mods.Scene_Mods.SpawnerPlacementManager_defaultSpawnerDensity = 9999;
+            Mods.Scene_Mods.Enable_SpawnerPlacementManager_alwaysRollSpawnerDensity = true;
+            Mods.Scene_Mods.SpawnerPlacementManager_alwaysRollSpawnerDensity = false;
+            Mods.Scene_Mods.Enable_SpawnerPlacementManager_IncreaseExperience = true;
+            Mods.Scene_Mods.SpawnerPlacementManager_IncreaseExperience = 99999;
+            //SkillsTreeNode
+            //Mods.Scene_Mods.Enable_SkillTreeNode_RemoveNodeRequirements = true;
 
-                Mods.Scene_Mods.Launch();
-                LoggerInstance.Msg("Scene Mods Loaded");
-            }
-        }        
+            Mods.Scene_Mods.Launch();
+            LoggerInstance.Msg("Scene Mods Loaded");
+        }
         private void LoadCharacter_Mods() //Character_Mods (AutoLoad on Scene Change)
         {
             //ItemDrop
@@ -101,25 +99,25 @@ namespace LastEpochMods
             Mods.Character_Mods.Enable_stopWhenOutOfMana = true;
             Mods.Character_Mods.stopWhenOutOfMana = false;
             //Tree Data
-            Mods.Character_Mods.Enable_character_class = true;
+            Mods.Character_Mods.Enable_character_class = false;
             Mods.Character_Mods.character_class = CharacterClassID.Sentinel;
-            Mods.Character_Mods.Enable_character_level = true;
+            Mods.Character_Mods.Enable_character_level = false;
             Mods.Character_Mods.character_level = 100;
-            Mods.Character_Mods.Enable_choosen_mastery = true;
+            Mods.Character_Mods.Enable_choosen_mastery = false;
             Mods.Character_Mods.chosen_mastery = 0;
-            Mods.Character_Mods.Enable_number_of_unlocked_slots = true;
+            Mods.Character_Mods.Enable_number_of_unlocked_slots = false;
             Mods.Character_Mods.number_of_unlocked_slots = 5;
-            Mods.Character_Mods.Enable_passiveTree_pointsEarnt = true;
+            Mods.Character_Mods.Enable_passiveTree_pointsEarnt = false;
             Mods.Character_Mods.passiveTree_pointsEarnt = 65535;
-            Mods.Character_Mods.Enable_skilltree_level = true;
+            Mods.Character_Mods.Enable_skilltree_level = false;
             Mods.Character_Mods.skilltree_level = 255;
             //GoldTracker
-            Mods.Character_Mods.Enable_gold_value = true;
+            Mods.Character_Mods.Enable_gold_value = false;
             Mods.Character_Mods.gold_value = 99999999;
             //CharacterStats
             Mods.Character_Mods.Enable_attack_rate = true;
             Mods.Character_Mods.attack_rate = 255;
-            Mods.Character_Mods.Enable_attributes = true;
+            Mods.Character_Mods.Enable_attributes = false;
             Mods.Character_Mods.attributes_str = 99999999;
             Mods.Character_Mods.attributes_int = 99999999;
             Mods.Character_Mods.attributes_vita = 99999999;
@@ -128,7 +126,9 @@ namespace LastEpochMods
             //ExperienceTracker
             Mods.Character_Mods.Enable_NextLevelExperience = true;
             Mods.Character_Mods.NextLevelExperience = 0;
+
             Mods.Character_Mods.Launch();
+            LoggerInstance.Msg("Character Mods Loaded");
         }
 
         private void LoadSkillsHelper()
@@ -147,11 +147,13 @@ namespace LastEpochMods
             Scenes.CurrentName = sceneName;
             if (UnityExplorerLoaded)
             {
+                if (!ItemsModsLoaded) { ItemsModsLoaded = true; LoadItemsMods(); } //if player go in game before UnityExplorer Initialized
                 if ((Scenes.CurrentName != "") && (!Scenes.MenuNames.Contains(Scenes.CurrentName)))
-                { LoggerInstance.Msg("New Scene : " + sceneName); }
-                if (!ItemsModsLoaded) { ItemsModsLoaded = true; LoadItemsMods(); }                
-                LoadSceneMods();
-                LoadCharacter_Mods();
+                {
+                    LoggerInstance.Msg("New Scene : " + sceneName);
+                    LoadSceneMods();
+                    LoadCharacter_Mods();
+                }
             }
         }
         public override void OnLateUpdate()
