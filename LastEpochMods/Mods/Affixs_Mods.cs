@@ -1,11 +1,4 @@
-﻿using LastEpochMods.Db.Json;
-using MelonLoader;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UniverseLib;
+﻿using UniverseLib;
 
 namespace LastEpochMods.Mods
 {
