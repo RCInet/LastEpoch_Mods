@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="0Harmony, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\Assembly-CSharp.dll</HintPath>
@@ -89,6 +93,7 @@
   <ItemGroup>
     <Compile Include="Functions.cs" />
     <Compile Include="Mods\Affixs_Mods.cs" />
+    <Compile Include="Mods\AutoLoot.cs" />
     <Compile Include="Mods\Character_Mods.cs" />
     <Compile Include="Mods\Items_Mods.cs" />
     <Compile Include="Mods\Scene_Mods.cs" />

@@ -1,4 +1,5 @@
-﻿using MelonLoader;
+﻿using ItemFiltering;
+using MelonLoader;
 using System.Linq;
 using UnityEngine;
 using UniverseLib;
@@ -30,8 +31,8 @@ namespace LastEpochMods
             Mods.Items_Mods.Unique.Enable_LegendaryPotentialLevelMod = true;
             Mods.Items_Mods.Unique.UniqueList_Entry_LegendaryPotentialLevel = 0;
             //Affixs
-            //Mods.Affixs_Mods.MultiplyAffixsRolls(100);
-            //Mods.Affixs_Mods.EditAffixRollsByTier(100, 7, 100, 999);
+            Mods.Affixs_Mods.MultiplyAffixsRolls(100);
+            Mods.Affixs_Mods.EditAffixRollsByTier(100, 7, 100, 999);
 
             Mods.Items_Mods.Unique.Launch();
             LoggerInstance.Msg("Items Mods Loaded");
@@ -139,7 +140,7 @@ namespace LastEpochMods
             }
             else { LoggerInstance.Msg("Go in game for launching Skills Helper"); }
         }
-
+                
         private bool UnityExplorerLoaded = false;
         private bool ItemsModsLoaded = false;
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
@@ -151,9 +152,10 @@ namespace LastEpochMods
                 if ((Scenes.CurrentName != "") && (!Scenes.MenuNames.Contains(Scenes.CurrentName)))
                 {
                     LoggerInstance.Msg("New Scene : " + sceneName);
-                    LoadSceneMods();
-                    LoadCharacter_Mods();
+                    //LoadSceneMods();
+                    //LoadCharacter_Mods();
                 }
+                LoadSceneMods();
             }
         }
         public override void OnLateUpdate()
@@ -194,7 +196,18 @@ namespace LastEpochMods
                         }
                     }
                 }
-                else if (Input.GetKeyDown(KeyCode.F11)) { LoadSkillsHelper(); }
+                else if (Input.GetKeyDown(KeyCode.F11))
+                {
+                    /*foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.Object)))
+                    {
+                        if (obj.GetActualType() == typeof(AbilityMutator))
+                        {
+                            obj.TryCast<AbilityMutator>().RemoveCooldown();
+                        }
+                    }
+                    LoggerInstance.Msg("No Cooldown Loaded");*/
+                }
+                //else if (Input.GetKeyDown(KeyCode.F12)) { LoadSkillsHelper(); }
             }
         }
     }
