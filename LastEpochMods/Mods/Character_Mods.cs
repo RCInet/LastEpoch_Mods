@@ -111,7 +111,7 @@ namespace LastEpochMods.Mods
                             if (Enable_manaCostPerDistance) { ability.manaCostPerDistance = manaCostPerDistance; }
                             if (Enable_minimumManaCost) { ability.minimumManaCost = minimumManaCost; }
                             if (Enable_noManaRegenWhileChanneling) { ability.noManaRegenWhileChanneling = noManaRegenWhileChanneling; }
-                            if (Enable_stopWhenOutOfMana) { ability.stopWhenOutOfMana = stopWhenOutOfMana; }                            
+                            if (Enable_stopWhenOutOfMana) { ability.stopWhenOutOfMana = stopWhenOutOfMana; }
                         }
                     }
                     else if (type == typeof(LocalTreeData))
