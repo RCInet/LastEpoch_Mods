@@ -95,6 +95,7 @@
     <Compile Include="Mods\Affixs_Mods.cs" />
     <Compile Include="Mods\AutoLoot.cs" />
     <Compile Include="Mods\Character_Mods.cs" />
+    <Compile Include="Mods\Dungeons.cs" />
     <Compile Include="Mods\Items_Mods.cs" />
     <Compile Include="Mods\Scene_Mods.cs" />
     <Compile Include="SkillsHelper.cs" />
