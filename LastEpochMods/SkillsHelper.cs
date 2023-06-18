@@ -163,6 +163,7 @@ namespace LastEpochMods
         public static void Helper_Skills_Nodes(Main main)
         {
             //Get All Skills
+            //Main.logger_instance
             main.LoggerInstance.Msg("Get All Skills");
             System.Collections.Generic.List<skill_structure> skills = GetAllSkills();            
             //Get Character TreeData

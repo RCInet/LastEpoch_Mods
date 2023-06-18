@@ -78,10 +78,22 @@
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.InputLegacyModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.InputModule">
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.InputModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityExplorer.ML.IL2CPP">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\Mods\UnityExplorer.ML.IL2CPP.dll</HintPath>
@@ -93,9 +105,7 @@
   <ItemGroup>
     <Compile Include="Functions.cs" />
     <Compile Include="Mods\Affixs_Mods.cs" />
-    <Compile Include="Mods\AutoLoot.cs" />
     <Compile Include="Mods\Character_Mods.cs" />
-    <Compile Include="Mods\Dungeons.cs" />
     <Compile Include="Mods\Items_Mods.cs" />
     <Compile Include="Mods\Scene_Mods.cs" />
     <Compile Include="SkillsHelper.cs" />
@@ -103,9 +113,14 @@
     <Compile Include="Scenes.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Ui\CustomControls.cs" />
+    <Compile Include="Ui\Functions.cs" />
+    <Compile Include="Ui\Menu.cs" />
+    <Compile Include="Ui\Styles.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

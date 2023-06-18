@@ -2,19 +2,23 @@
 using MelonLoader;
 using System.Linq;
 using UnityEngine;
+using UnityExplorer.UI;
 using UniverseLib;
 
 namespace LastEpochMods
 {
     public class Main : MelonMod
     {
+        public static MelonLoader.MelonLogger.Instance logger_instance = null;
+
+
         private void LoadItemsMods() //Items_Mods (AutoLoad after Unity Explorer Init and Scene Change)
         {
             //Basic
-            Mods.Items_Mods.Basic.EquipmentItem_UnlockDropForAll = true;
-            Mods.Items_Mods.Basic.EquipmentItem_UnlockDropForUndropableOnly = true; //Lock Dropable Item if UnlockDropForAll is set to false
-            Mods.Items_Mods.Basic.EquipmentItem_RemoveClassReq = true;
-            Mods.Items_Mods.Basic.EquipmentItem_EditLevelReq = true;
+            //Mods.Items_Mods.Basic.EquipmentItem_UnlockDropForAll = false;
+            //Mods.Items_Mods.Basic.EquipmentItem_UnlockDropForUndropableOnly = false; //Lock Dropable Item if UnlockDropForAll is set to false
+            Mods.Items_Mods.Basic.EquipmentItem_RemoveClassReq = false;
+            Mods.Items_Mods.Basic.EquipmentItem_EditLevelReq = false;
             Mods.Items_Mods.Basic.EquipmentItem_SetLevelReq = 0;
             Mods.Items_Mods.Basic.Launch();
             //Unique Mods
@@ -26,13 +30,13 @@ namespace LastEpochMods
             };
             Mods.UniqueMods.Enable_UniqueMods = true;
             //Unique
-            Mods.Items_Mods.Unique.UniqueList_Entry_UnlockDropForAll = true;
-            Mods.Items_Mods.Unique.UniqueList_Entry_UnlockDropForUndropableOnly = true; //Lock Dropable Item if UnlockDropForAll is set to false
+            //Mods.Items_Mods.Unique.UniqueList_Entry_UnlockDropForAll = false;
+            //Mods.Items_Mods.Unique.UniqueList_Entry_UnlockDropForUndropableOnly = false; //Lock Dropable Item if UnlockDropForAll is set to false
             Mods.Items_Mods.Unique.Enable_LegendaryPotentialLevelMod = true;
             Mods.Items_Mods.Unique.UniqueList_Entry_LegendaryPotentialLevel = 0;
             //Affixs
             Mods.Affixs_Mods.MultiplyAffixsRolls(100);
-            Mods.Affixs_Mods.EditAffixRollsByTier(100, 7, 100, 999);
+            //Mods.Affixs_Mods.EditAffixRollsByTier(100, 7, 100, 999);
 
             Mods.Items_Mods.Unique.Launch();
             LoggerInstance.Msg("Items Mods Loaded");
@@ -40,14 +44,14 @@ namespace LastEpochMods
         private void LoadSceneMods() //Scene_Mods (AutoLoad on Scene Change)
         {
             //ItemDrop
-            Mods.Scene_Mods.Enable_DeathItemDrop_goldMultiplier = true;
+            /*Mods.Scene_Mods.Enable_DeathItemDrop_goldMultiplier = false;
             Mods.Scene_Mods.DeathItemDrop_goldMultiplier = 99;
             Mods.Scene_Mods.Enable_DeathItemDrop_ItemMultiplier = true;
-            Mods.Scene_Mods.DeathItemDrop_ItemMultiplier = 2;
+            Mods.Scene_Mods.DeathItemDrop_ItemMultiplier = 1;*/
             Mods.Scene_Mods.Enable_DeathItemDrop_Experience = true;
             Mods.Scene_Mods.DeathItemDrop_Experience = 99999;
-            Mods.Scene_Mods.Enable_DeathItemDrop_AdditionalRare = true;
-            Mods.Scene_Mods.DeathItemDrop_AdditionalRare = true;
+            /*Mods.Scene_Mods.Enable_DeathItemDrop_AdditionalRare = false;
+            Mods.Scene_Mods.DeathItemDrop_AdditionalRare = true;*/
             //MonsterRarityMagic
             Mods.Scene_Mods.Enable_MonsterRarityMagic_BaseExpMultiplier = true;
             Mods.Scene_Mods.MonsterRarityMagic_BaseExpMultiplier = 99999;
@@ -73,6 +77,8 @@ namespace LastEpochMods
 
             Mods.Scene_Mods.Launch();
             LoggerInstance.Msg("Scene Mods Loaded");
+
+            
         }
         private void LoadCharacter_Mods() //Character_Mods (AutoLoad on Scene Change)
         {
@@ -160,6 +166,7 @@ namespace LastEpochMods
         }
         public override void OnLateUpdate()
         {
+            if (logger_instance == null) { logger_instance = LoggerInstance; }
             if (!UnityExplorerLoaded) 
             {
                 if (UnityExplorer.ObjectExplorer.SceneHandler.SelectedScene != null) { UnityExplorerLoaded = true; }                
@@ -167,7 +174,12 @@ namespace LastEpochMods
             else
             {
                 if (!ItemsModsLoaded) { ItemsModsLoaded = true; LoadItemsMods(); }
-                if (Input.GetKeyDown(KeyCode.F9)) //Exemple Buff Character
+                if (Input.GetKeyDown(KeyCode.F1))
+                {
+                    Ui.Menu.isMenuOpen = !Ui.Menu.isMenuOpen;
+                    LoggerInstance.Msg("Show Menu : " + Ui.Menu.isMenuOpen);
+                }                
+                else if (Input.GetKeyDown(KeyCode.F9)) //Exemple Buff Character
                 {
                     foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.Object)))
                     {
@@ -198,17 +210,19 @@ namespace LastEpochMods
                 }
                 else if (Input.GetKeyDown(KeyCode.F11))
                 {
-                    /*foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.Object)))
-                    {
-                        if (obj.GetActualType() == typeof(AbilityMutator))
-                        {
-                            obj.TryCast<AbilityMutator>().RemoveCooldown();
-                        }
-                    }
-                    LoggerInstance.Msg("No Cooldown Loaded");*/
+                    
                 }
                 //else if (Input.GetKeyDown(KeyCode.F12)) { LoadSkillsHelper(); }
             }
+        }
+        /*public override void OnUpdate()
+        {
+            Ui.Menu.Control();
+        }*/
+
+        public override void OnGUI()
+        {
+            Ui.Menu.Update();
         }
     }
 }

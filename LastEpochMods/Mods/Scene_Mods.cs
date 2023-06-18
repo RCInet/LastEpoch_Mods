@@ -1,9 +1,12 @@
-﻿using Il2CppSystem.Runtime.Remoting;
+﻿using HarmonyLib;
+using Il2CppSystem.Runtime.Remoting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnhollowerBaseLib;
+using UnityEngine;
 using UniverseLib;
 
 namespace LastEpochMods.Mods
@@ -12,9 +15,9 @@ namespace LastEpochMods.Mods
     {
         //ItemDrop
         public static bool Enable_DeathItemDrop_goldMultiplier = true;
-        public static int DeathItemDrop_goldMultiplier = 99;
+        public static float DeathItemDrop_goldMultiplier = 99f;
         public static bool Enable_DeathItemDrop_ItemMultiplier = true;
-        public static int DeathItemDrop_ItemMultiplier = 99;
+        public static float DeathItemDrop_ItemMultiplier = 1f;
         public static bool Enable_DeathItemDrop_Experience = true;
         public static int DeathItemDrop_Experience = 9999;
         public static bool Enable_DeathItemDrop_AdditionalRare = true;
@@ -135,6 +138,133 @@ namespace LastEpochMods.Mods
                     }
                 }
             }
+        }
+
+        public class Waypoints_Mods
+        {
+            #region Unlock
+            [HarmonyPatch(typeof(UIWaypointStandard), "OnPointerEnter")]
+            public class Unlock
+            {
+                [HarmonyPrefix]
+                static void Prefix(UIWaypointStandard __instance, UnityEngine.EventSystems.PointerEventData __0)
+                {
+                    __instance.isActive = true;
+                }
+            }
+            #endregion
+        }
+        public class Dungeons_Mods
+        {
+            #region Initialize
+            [HarmonyPatch(typeof(DungeonZoneManager), "initialise")]
+            public class DungeonZoneManager_initialise
+            {
+                [HarmonyPrefix]
+                static void Prefix(ref DungeonZoneManager __instance)
+                {
+                    //Init Dungeon Here                
+                    __instance.objectiveRevealThresholdModifier = float.MinValue;
+                }
+            }
+            #endregion
+            #region EnterWithoutKey
+            [HarmonyPatch(typeof(ItemContainersManager), "IsOccupiedWithValidDungeonKey")]
+            public class NoKey
+            {
+                [HarmonyPrefix]
+                static void Prefix(ItemContainersManager __instance, bool __result, DungeonID __0)
+                {
+                    if ((__instance != null) && (!__result)) //Add key
+                    {
+                        byte item_type = 104;
+                        Il2CppStructArray<byte> item_id = new Il2CppStructArray<byte>(22);
+                        item_id[0] = 1;
+                        item_id[1] = item_type;
+                        item_id[2] = 0; //id
+                        for (int i = 3; i < item_id.Count; i++) { item_id[i] = 0; }
+
+                        Vector2Int Inventory_position = new Vector2Int { x = 0, y = 0 };
+                        Vector2Int Item_size = new Vector2Int { x = 1, y = 1 };
+                        if (__0 == DungeonID.Dungeon1)
+                        {
+                            item_id[2] = 4;
+                            ItemData item_data = new ItemData
+                            {
+                                itemType = item_type,
+                                subType = 4,
+                                id = item_id
+                            };
+                            ItemContainerEntry item_container_entry = new ItemContainerEntry(item_data, Inventory_position, Item_size, 1);
+                            __instance.dun1Key.content = item_container_entry;
+                        }
+                        else if (__0 == DungeonID.LightlessArbor)
+                        {
+                            item_id[2] = 5;
+                            ItemData item_data = new ItemData
+                            {
+                                itemType = item_type,
+                                subType = 5,
+                                id = item_id
+                            };
+                            ItemContainerEntry item_container_entry = new ItemContainerEntry(item_data, Inventory_position, Item_size, 1);
+                            __instance.lightlessArborDungeonKey.content = item_container_entry;
+                        }
+                        else if (__0 == DungeonID.SoulfireBastion)
+                        {
+                            item_id[2] = 6;
+                            ItemData item_data = new ItemData
+                            {
+                                itemType = item_type,
+                                subType = 6,
+                                id = item_id
+                            };
+                            ItemContainerEntry item_container_entry = new ItemContainerEntry(item_data, Inventory_position, Item_size, 1);
+                            __instance.soulfireBastionDungeonKey.content = item_container_entry;
+                        }
+                    }
+                }
+            }
+            #endregion
+        }
+        public class Monoliths_mods
+        {
+            #region Initialize
+            [HarmonyPatch(typeof(MonolithZoneManager), "initialise")]
+            public class DungeonZoneManager_initialise
+            {
+                [HarmonyPrefix]
+                static void Prefix(ref MonolithZoneManager __instance)
+                {
+                    //Init Monoliths Here                
+                    __instance.objectiveRevealThresholdModifier = float.MinValue;
+                }
+            }
+            #endregion
+            #region BossFarm
+            public static bool BossFarm = true;
+
+            [HarmonyPatch(typeof(MonolithZoneManager), "OnBonusStabilityChanged")]
+            public class MonolithZoneManager_OnBonusStabilityChanged
+            {
+                [HarmonyPrefix]
+                static void Prefix(ref MonolithZoneManager __instance)
+                {
+                    if (BossFarm) { __instance.bonusStablity = __instance.maxBonusStablity; }
+                }
+            }
+            #endregion
+            #region No Die
+            [HarmonyPatch(typeof(EchoWebIsland), "onDiedInEcho")]
+            public class EchoWebIsland_onDiedInEcho
+            {
+                [HarmonyPrefix]
+                public static bool Prefix(ref EchoWebIsland __instance, ref MonolithRun run)
+                {
+                    return false;
+                }
+            }
+            #endregion
         }
     }
 }
