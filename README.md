@@ -2,6 +2,8 @@
 + Autoloot
 + AutoStore Materials
 <br/><br/>
++ Dungeon Without Key
+<br/><br/>
 + Launch Items Mods (AutoLoad when UnityExplorer Initialized or when scene change if user go in game before UnityExplorer Initialized)
 + Remove Level and Class Req for all Items
 + Unlock Drop for all Basic Items or Only Undropable
