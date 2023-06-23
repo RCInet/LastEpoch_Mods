@@ -69,7 +69,7 @@ namespace LastEpochMods
 
             return skills;
         }
-        private static System.Collections.Generic.List<node_structure> GetAllNode(string skill_name, Main main)
+        private static System.Collections.Generic.List<node_structure> GetAllNode(string skill_name)
         {
             System.Collections.Generic.List<node_structure> nodes = new System.Collections.Generic.List<node_structure>();
             if ((skill_name != "") && (skill_name != "BasicPlayerAttack"))
@@ -153,27 +153,27 @@ namespace LastEpochMods
                         }
                     }
                 }
-                if (nodes.Count == 0) { main.LoggerInstance.Msg("No Nodes Found for : Name " + skill_name + " : Format1 = " + skill_name_format + ", Format2 = " + skill_name_format2); }
-                else { main.LoggerInstance.Msg(nodes.Count + " Nodes Found for : Name " + skill_name + " : Format1 = " + skill_name_format + ", Format2 = " + skill_name_format2); }
+                if (nodes.Count == 0) { Main.logger_instance.Msg("No Nodes Found for : Name " + skill_name + " : Format1 = " + skill_name_format + ", Format2 = " + skill_name_format2); }
+                else { Main.logger_instance.Msg(nodes.Count + " Nodes Found for : Name " + skill_name + " : Format1 = " + skill_name_format + ", Format2 = " + skill_name_format2); }
             }
 
             return nodes;
         }
                
-        public static void Helper_Skills_Nodes(Main main)
+        public static void Helper_Skills_Nodes()
         {
             //Get All Skills
             //Main.logger_instance
-            main.LoggerInstance.Msg("Get All Skills");
-            System.Collections.Generic.List<skill_structure> skills = GetAllSkills();            
+            Main.logger_instance.Msg("Get All Skills");
+            System.Collections.Generic.List<skill_structure> skills = GetAllSkills();
             //Get Character TreeData
-            main.LoggerInstance.Msg("Get Character TreeData");
+            Main.logger_instance.Msg("Get Character TreeData");
             LocalTreeData tree_data = GetCharacter_TreeData();
             if (tree_data != null)
             {
                 foreach (LocalTreeData.TreeData specialized in tree_data.specialisedSkillTrees)
                 {
-                    main.LoggerInstance.Msg("");                   
+                    Main.logger_instance.Msg("");                   
                     bool found = false;
                     int i = 0;
                     string skill_name = "";
@@ -182,14 +182,14 @@ namespace LastEpochMods
                         if (s_struct.id == specialized.treeID)
                         {
                             skill_name = s_struct.name;
-                            main.LoggerInstance.Msg("Skill : Name = " + s_struct.name + ", Id = " + specialized.treeID);
+                            Main.logger_instance.Msg("Skill : Name = " + s_struct.name + ", Id = " + specialized.treeID);
                             found = true;
                             break;
                         }
                         i++;
                     }
-                    if (!found) { main.LoggerInstance.Msg("Skill Name not Found, Id = " + specialized.treeID); }
-                    System.Collections.Generic.List<node_structure> nodes = GetAllNode(skill_name, main);
+                    if (!found) { Main.logger_instance.Msg("Skill Name not Found, Id = " + specialized.treeID); }
+                    System.Collections.Generic.List<node_structure> nodes = GetAllNode(skill_name);
                     foreach (LocalTreeData.NodeData n_data in specialized.nodes)
                     {
                         bool node_found = false;
@@ -199,14 +199,14 @@ namespace LastEpochMods
                             {
                                 if (n_data.id == n.id)
                                 {
-                                    main.LoggerInstance.Msg("Node : Name = " + n.name + ", Id = " + n.id);
+                                    Main.logger_instance.Msg("Node : Name = " + n.name + ", Id = " + n.id);
                                     node_found = true;
                                     break;
                                 }
                             }
-                            if (!node_found) { main.LoggerInstance.Msg("Node Name Not Found, Id = " + n_data.id); }
+                            if (!node_found) { Main.logger_instance.Msg("Node Name Not Found, Id = " + n_data.id); }
                         }
-                        else { main.LoggerInstance.Msg("Node Id = " + n_data.id); }
+                        else { Main.logger_instance.Msg("Node Id = " + n_data.id); }
                     }
                 }
             }

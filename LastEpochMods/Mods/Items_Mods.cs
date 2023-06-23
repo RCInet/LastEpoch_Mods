@@ -5,26 +5,46 @@ namespace LastEpochMods.Mods
 {
     public class Items_Mods
     {
+        #region OnSceneChange
         public class Basic
         {
             public static bool EquipmentItem_UnlockDropForAll = false;
             public static bool EquipmentItem_UnlockDropForUndropableOnly = false; //Lock Dropable Item
-            public static bool EquipmentItem_RemoveClassReq = true;
-            public static bool EquipmentItem_EditLevelReq = true;
+            public static bool EquipmentItem_RemoveClassReq = false;
+            public static bool EquipmentItem_EditLevelReq = false;
             public static int EquipmentItem_SetLevelReq = 0;
 
+            private static ItemList basic_items_list = null;
+            private static bool basics_found = false;
+            private static void InitBasicItemList()
+            {
+                if (!basics_found)
+                {
+                    try
+                    {
+                        basic_items_list = ItemList.get();
+                        if (basic_items_list != null)
+                        {
+                            basics_found = true;
+                            Main.logger_instance.Msg("Basic item list found : " + basic_items_list.name);
+                        }
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Main.logger_instance.Msg("Error Basic item list");
+                    }
+                }
+            }
             public static void Launch()
             {
-                UnityEngine.Object obj = Functions.GetObject("MasterItemsList");
-                System.Type type = obj.GetActualType();
-                if (type == typeof(ItemList))
+                if (!basics_found) { InitBasicItemList(); }             
+                if (basic_items_list != null)
                 {
-                    ItemList item_list = obj.TryCast<ItemList>();
                     for (int i = 0; i < 34; i++)
                     {
                         if ((i != 11) && (i != 24))
                         {
-                            Il2CppSystem.Collections.Generic.List<ItemList.EquipmentItem> items = item_list.GetEquipmentSubItems(i);
+                            Il2CppSystem.Collections.Generic.List<ItemList.EquipmentItem> items = basic_items_list.GetEquipmentSubItems(i);
                             foreach (var item in items)
                             {
                                 if (EquipmentItem_UnlockDropForAll) { item.cannotDrop = false; }
@@ -52,16 +72,35 @@ namespace LastEpochMods.Mods
             public static bool UniqueList_Entry_UnlockDropForAll = false;
             public static bool UniqueList_Entry_UnlockDropForUndropableOnly = false; //Lock Dropable Item
             public static bool Enable_LegendaryPotentialLevelMod = false;
-            public static int UniqueList_Entry_LegendaryPotentialLevel = 0;                       
-
+            public static int UniqueList_Entry_LegendaryPotentialLevel = 0;
+            
+            private static UniqueList unique_items_list = null;
+            private static bool uniques_found = false;
+            private static void InitUniqueItemList()
+            {
+                if (!uniques_found)
+                {
+                    try
+                    {
+                        unique_items_list = UniqueList.get();
+                        if (unique_items_list != null)
+                        {
+                            uniques_found = true;
+                            Main.logger_instance.Msg("Unique item list found : " + unique_items_list.name);
+                        }
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Main.logger_instance.Msg("Error Unique item list");
+                    }
+                }
+            }
             public static void Launch()
             {
-                UnityEngine.Object obj = Functions.GetObject("UniqueList");
-                System.Type type = obj.GetActualType();
-                if (type == typeof(UniqueList))
+                if (!uniques_found) { InitUniqueItemList(); }
+                if (unique_items_list != null)
                 {
-                    UniqueList unique_list = obj.TryCast<UniqueList>();
-                    Il2CppSystem.Collections.Generic.List<UniqueList.Entry> Uniques_List_Entry = unique_list.uniques;
+                    Il2CppSystem.Collections.Generic.List<UniqueList.Entry> Uniques_List_Entry = unique_items_list.uniques;
                     foreach (UniqueList.Entry item in Uniques_List_Entry)
                     {
                         if (UniqueList_Entry_UnlockDropForAll) { item.canDropRandomly = true; }
@@ -85,6 +124,8 @@ namespace LastEpochMods.Mods
                 }
             }
         }
+        #endregion
+        #region Functions Patch
         public class AutoLoot
         {
             #region Items
@@ -194,18 +235,21 @@ namespace LastEpochMods.Mods
         }
         public class WeaversWill
         {
-            /*[HarmonyPatch(typeof(ItemData), "RollWeaversWill")]
+            [HarmonyPatch(typeof(ItemData), "RollWeaversWill")]
             public class MaxRoll
             {
                 [HarmonyPrefix]
                 static void Prefix(ItemData __instance, int __result, UniqueList.Entry __0, int __1, int __2)
-                {
-                    UnityExplorer.ExplorerCore.Log("RollWeaversWill");
-                    __1 = 28;
-                    __2 = 100;
-                    __result = 28;
+                {                    
+                    __instance.weaversWill = 28;
+                    //ItemDataUnpacked item = __instance.getAsUnpacked();
+                    //item.weaversWill = 28;
+                    //__1 = 28;
+                    //__2 = 100;
+                    //__result = 28;
                 }
-            }*/
+            }
         }
+        #endregion
     }
 }
