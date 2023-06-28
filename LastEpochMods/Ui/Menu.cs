@@ -52,6 +52,8 @@ namespace LastEpochMods.Ui
                     pos_y += 65;
                     Mods.Items_Mods.Drop_Mods.Roll_Implicit = CustomControls.ByteValue("Implicits", 0, 255, Mods.Items_Mods.Drop_Mods.Roll_Implicit, pos_x, pos_y, Mods.Items_Mods.Drop_Mods.Enable_RollImplicit, Ui.Menu.Btn_ItemsDrop_Implicit_Roll_Click);
                     pos_y += 85;
+                    Mods.Items_Mods.Drop_Mods.Roll_ForgingPotencial = CustomControls.ByteValue("Implicits", 0, 255, Mods.Items_Mods.Drop_Mods.Roll_ForgingPotencial, pos_x, pos_y, Mods.Items_Mods.Drop_Mods.Enable_ForgingPotencial, Ui.Menu.Btn_ItemsDrop_ForginPotencial_Roll_Click);
+                    pos_y += 85;
                     Mods.Items_Mods.Drop_Mods.Roll_AffixValue =CustomControls.ByteValue("Affix Values", 0, 255, Mods.Items_Mods.Drop_Mods.Roll_AffixValue, pos_x, pos_y, Mods.Items_Mods.Drop_Mods.Enable_AffixsValue, Ui.Menu.Btn_ItemsDrop_Affix_Values_Click);
                     pos_y += 85;
                     Mods.Items_Mods.Drop_Mods.Roll_AffixTier = CustomControls.ByteValue("Affix Tier", 1, 7, Mods.Items_Mods.Drop_Mods.Roll_AffixTier, pos_x, pos_y, Mods.Items_Mods.Drop_Mods.Enable_AffixsTier, Ui.Menu.Btn_ItemsDrop_Affix_Tier_Click);
@@ -159,7 +161,7 @@ namespace LastEpochMods.Ui
         #endregion
         #region ItemDrop
         private static bool ShowItemDropSection = false;
-        public static float ItemsDrop_h = 655f;
+        public static float ItemsDrop_h = 740f;
 
         public static void Btn_ItemsDrop_Click()
         {
@@ -193,6 +195,10 @@ namespace LastEpochMods.Ui
         public static void Btn_ItemsDrop_Implicit_Roll_Click()
         {
             Mods.Items_Mods.Drop_Mods.Enable_RollImplicit = !Mods.Items_Mods.Drop_Mods.Enable_RollImplicit;
+        }
+        public static void Btn_ItemsDrop_ForginPotencial_Roll_Click()
+        {
+            Mods.Items_Mods.Drop_Mods.Enable_ForgingPotencial = !Mods.Items_Mods.Drop_Mods.Enable_ForgingPotencial;
         }
         public static void Btn_ItemsDrop_Affix_Values_Click()
         {

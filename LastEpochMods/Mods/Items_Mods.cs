@@ -17,6 +17,9 @@ namespace LastEpochMods.Mods
             public static byte Roll_AffixValue = 255;
             public static bool Enable_AffixsTier = true;
             public static byte Roll_AffixTier = 7;
+            //Forging Potencial
+            public static bool Enable_ForgingPotencial = true;
+            public static byte Roll_ForgingPotencial = 255;
             //Unique Mods
             public static bool Enable_UniqueMod = true;
             public static byte Roll_UniqueMod = 255;
@@ -48,7 +51,7 @@ namespace LastEpochMods.Mods
                     static void Postfix(GenerateItems __instance, ref int __result, ref ItemDataUnpacked __0, int __1, bool __2, bool __3, ref Il2CppSystem.Boolean __4)
                     {
                         if (Enable_RollImplicit)
-                        {
+                        {                            
                             for (int j = 0; j < __0.implicitRolls.Count; j++) //Work only for basic item
                             {
                                 __0.implicitRolls[j] = Roll_Implicit;
@@ -90,6 +93,18 @@ namespace LastEpochMods.Mods
                 }
 
             }
+            public class ForginPotencial
+            {
+                [HarmonyPatch(typeof(GenerateItems), "RollAffixes")]
+                public class Basic
+                {
+                    [HarmonyPostfix]
+                    static void Postfix(GenerateItems __instance, ref int __result, ref ItemDataUnpacked __0, int __1, bool __2, bool __3, ref Il2CppSystem.Boolean __4)
+                    {
+                        if (Enable_ForgingPotencial) { __0.forgingPotential = Roll_ForgingPotencial; }                        
+                    }
+                }
+            }
             public class Affixes
             {
                 [HarmonyPatch(typeof(GenerateItems), "RollAffixes")]
@@ -98,13 +113,6 @@ namespace LastEpochMods.Mods
                     [HarmonyPostfix]
                     static void Postfix(GenerateItems __instance, ref int __result, ref ItemDataUnpacked __0, int __1, bool __2, bool __3, ref Il2CppSystem.Boolean __4)
                     {
-                        /*if (Enable_RollImplicit)
-                        {
-                            for (int j = 0; j < __0.implicitRolls.Count; j++) //Work only for basic item
-                            {
-                                __0.implicitRolls[j] = Roll_Implicit;
-                            }
-                        }*/
                         if ((Enable_AffixsTier) | (Enable_AffixsValue))
                         {
                             int tier_result = System.Convert.ToInt32(Roll_AffixTier) - 1;
@@ -160,20 +168,6 @@ namespace LastEpochMods.Mods
                     [HarmonyPostfix]
                     static void RollWeaversWill(ref ItemData __instance, ref int __result, ref UniqueList.Entry __0, ref int __1, ref int __2)
                     {
-                        /*if (Enable_RollImplicit)
-                        {
-                            for (int i = 0; i < __instance.implicitRolls.Count; i++)
-                            {
-                                __instance.implicitRolls[i] = (byte)Roll_Implicit;
-                            }
-                        }*/
-                        /*if (Enable_UniqueMod)
-                        {
-                            for (int k = 0; k < __instance.uniqueRolls.Count; k++)
-                            {
-                                __instance.uniqueRolls[k] = Roll_UniqueMod;
-                            }
-                        }*/
                         if (Enable_RollWeaverWill) { __result = Roll_Weaver_Will; }
                     }
                 }
@@ -188,20 +182,6 @@ namespace LastEpochMods.Mods
                     [HarmonyPostfix]
                     static void rollLegendaryPotential(ref ItemData __instance, ref int __result, ref UniqueList.Entry __0, ref int __1, ref int __2)
                     {
-                        /*if (Enable_RollImplicit)
-                        {
-                            for (int i = 0; i < __instance.implicitRolls.Count; i++)
-                            {
-                                __instance.implicitRolls[i] = (byte)Roll_Implicit;
-                            }
-                        }*/
-                        /*if (Enable_UniqueMod)
-                        {
-                            for (int k = 0; k < __instance.uniqueRolls.Count; k++)
-                            {
-                                __instance.uniqueRolls[k] = Roll_UniqueMod;
-                            }
-                        }*/
                         if (Enable_RollLegendayPotencial) { __result = Roll_Legendary_Potencial; }
                     }
                 }
