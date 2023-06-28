@@ -16,12 +16,12 @@ namespace LastEpochMods.Mods
                     if (affix_list != null)
                     {
                         affixs_found = true;
-                        Main.logger_instance.Msg("Unique item list found : " + affix_list.name);
+                        Main.logger_instance.Msg("Affixs item list found : " + affix_list.name);
                     }
                 }
                 catch (System.Exception ex)
                 {
-                    Main.logger_instance.Msg("Error Unique item list");
+                    Main.logger_instance.Msg("Error Affixs item list");
                 }
             }
         }
@@ -100,7 +100,7 @@ namespace LastEpochMods.Mods
         public static void Launch()
         {
             Mods.Affixs_Mods.MultiplyAffixsRolls(Affixs_Multiplier);
-            Mods.Affixs_Mods.EditAffixRollsByTier(100, 7, 100, 999); //Edit Affixs Exemple
+            //Mods.Affixs_Mods.EditAffixRollsByTier(100, 7, 100, 999); //Edit Affixs Exemple
         }
     }
 }

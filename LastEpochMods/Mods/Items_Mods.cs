@@ -1,144 +1,229 @@
 ﻿using HarmonyLib;
-using UniverseLib;
 
 namespace LastEpochMods.Mods
 {
     public class Items_Mods
     {
-        #region OnSceneChange
-        public class Basic
+        public class Drop_Mods
         {
-            public static bool EquipmentItem_UnlockDropForAll = false;
-            public static bool EquipmentItem_UnlockDropForUndropableOnly = false; //Lock Dropable Item
-            public static bool EquipmentItem_RemoveClassReq = false;
-            public static bool EquipmentItem_EditLevelReq = false;
-            public static int EquipmentItem_SetLevelReq = 0;
+            //Drop Rarity
+            public static bool Enable_Rarity = true;
+            public static byte GenerateItem_Rarity = 7;
+            //Implicits
+            public static bool Enable_RollImplicit = true;
+            public static byte Roll_Implicit = 255;   
+            //Affixes
+            public static bool Enable_AffixsValue = true;
+            public static byte Roll_AffixValue = 255;
+            public static bool Enable_AffixsTier = true;
+            public static byte Roll_AffixTier = 7;
+            //Unique Mods
+            public static bool Enable_UniqueMod = true;
+            public static byte Roll_UniqueMod = 255;
+            //Legendat Potencial
+            public static bool Enable_RollLegendayPotencial = true;
+            public static int Roll_Legendary_Potencial = 4; //0 to 4
+            //Weaver Will
+            public static bool Enable_RollWeaverWill = true;
+            public static int Roll_Weaver_Will = 28; //5 to 28
 
-            private static ItemList basic_items_list = null;
-            private static bool basics_found = false;
-            private static void InitBasicItemList()
+            public class Rarity
             {
-                if (!basics_found)
+                [HarmonyPatch(typeof(GenerateItems), "RollRarity")]
+                public class Items
                 {
-                    try
+                    [HarmonyPostfix]
+                    static void Postfix(ref byte __result, int __0)
                     {
-                        basic_items_list = ItemList.get();
-                        if (basic_items_list != null)
-                        {
-                            basics_found = true;
-                            Main.logger_instance.Msg("Basic item list found : " + basic_items_list.name);
-                        }
-                    }
-                    catch (System.Exception ex)
-                    {
-                        Main.logger_instance.Msg("Error Basic item list");
+                        if (Enable_Rarity) { __result = GenerateItem_Rarity; }                        
                     }
                 }
             }
-            public static void Launch()
+            public class Implicits
             {
-                if (!basics_found) { InitBasicItemList(); }             
-                if (basic_items_list != null)
+                [HarmonyPatch(typeof(GenerateItems), "RollAffixes")]
+                public class Basic
                 {
-                    for (int i = 0; i < 34; i++)
+                    [HarmonyPostfix]
+                    static void Postfix(GenerateItems __instance, ref int __result, ref ItemDataUnpacked __0, int __1, bool __2, bool __3, ref Il2CppSystem.Boolean __4)
                     {
-                        if ((i != 11) && (i != 24))
+                        if (Enable_RollImplicit)
                         {
-                            Il2CppSystem.Collections.Generic.List<ItemList.EquipmentItem> items = basic_items_list.GetEquipmentSubItems(i);
-                            foreach (var item in items)
+                            for (int j = 0; j < __0.implicitRolls.Count; j++) //Work only for basic item
                             {
-                                if (EquipmentItem_UnlockDropForAll) { item.cannotDrop = false; }
-                                else if (EquipmentItem_UnlockDropForUndropableOnly)
-                                {
-                                    if (item.cannotDrop) { item.cannotDrop = false; }
-                                    else { item.cannotDrop = true; }
-                                }
-                                if (EquipmentItem_RemoveClassReq)
-                                {
-                                    item.classRequirement = ItemList.ClassRequirement.None;
-                                }
-                                if (EquipmentItem_EditLevelReq)
-                                {
-                                    item.levelRequirement = EquipmentItem_SetLevelReq;
-                                }
+                                __0.implicitRolls[j] = Roll_Implicit;
+                            }
+                        }                        
+                    }
+                }
+
+                [HarmonyPatch(typeof(ItemData), "rollLegendaryPotential")]
+                public class Unique_LegendaryPotencial
+                {
+                    [HarmonyPostfix]
+                    static void rollLegendaryPotential(ref ItemData __instance, ref int __result, ref UniqueList.Entry __0, ref int __1, ref int __2)
+                    {
+                        if (Enable_RollImplicit)
+                        {
+                            for (int i = 0; i < __instance.implicitRolls.Count; i++)
+                            {
+                                __instance.implicitRolls[i] = (byte)Roll_Implicit;
+                            }
+                        }                        
+                    }
+                }
+
+                [HarmonyPatch(typeof(ItemData), "RollWeaversWill")]
+                public class Unique_WeaverWill
+                {
+                    [HarmonyPostfix]
+                    static void RollWeaversWill(ref ItemData __instance, ref int __result, ref UniqueList.Entry __0, ref int __1, ref int __2)
+                    {
+                        if (Enable_RollImplicit)
+                        {
+                            for (int i = 0; i < __instance.implicitRolls.Count; i++)
+                            {
+                                __instance.implicitRolls[i] = (byte)Roll_Implicit;
+                            }
+                        }                                              
+                    }
+                }
+
+            }
+            public class Affixes
+            {
+                [HarmonyPatch(typeof(GenerateItems), "RollAffixes")]
+                public class Items
+                {
+                    [HarmonyPostfix]
+                    static void Postfix(GenerateItems __instance, ref int __result, ref ItemDataUnpacked __0, int __1, bool __2, bool __3, ref Il2CppSystem.Boolean __4)
+                    {
+                        /*if (Enable_RollImplicit)
+                        {
+                            for (int j = 0; j < __0.implicitRolls.Count; j++) //Work only for basic item
+                            {
+                                __0.implicitRolls[j] = Roll_Implicit;
+                            }
+                        }*/
+                        if ((Enable_AffixsTier) | (Enable_AffixsValue))
+                        {
+                            int tier_result = System.Convert.ToInt32(Roll_AffixTier) - 1;
+                            for (int i = 0; i < __0.affixes.Count; i++)
+                            {
+                                if (Enable_AffixsTier) { __0.affixes[i].affixTier = (byte)tier_result; }
+                                if (Enable_AffixsValue) { __0.affixes[i].affixRoll = Roll_AffixValue; }
+                            }
+                        }
+                    }
+                }
+            }            
+            public class UniqueMods
+            {
+                [HarmonyPatch(typeof(ItemData), "rollLegendaryPotential")]
+                public class Unique_LegendaryPotencial
+                {
+                    [HarmonyPostfix]
+                    static void rollLegendaryPotential(ref ItemData __instance, ref int __result, ref UniqueList.Entry __0, ref int __1, ref int __2)
+                    {
+                        if (Enable_UniqueMod)
+                        {
+                            for (int k = 0; k < __instance.uniqueRolls.Count; k++)
+                            {
+                                __instance.uniqueRolls[k] = Roll_UniqueMod;
+                            }
+                        }
+                    }
+                }
+
+                [HarmonyPatch(typeof(ItemData), "RollWeaversWill")]
+                public class Unique_WeaverWill
+                {
+                    [HarmonyPostfix]
+                    static void RollWeaversWill(ref ItemData __instance, ref int __result, ref UniqueList.Entry __0, ref int __1, ref int __2)
+                    {
+                        if (Enable_UniqueMod)
+                        {
+                            for (int k = 0; k < __instance.uniqueRolls.Count; k++)
+                            {
+                                __instance.uniqueRolls[k] = Roll_UniqueMod;
                             }
                         }
                     }
                 }
             }
-        }
-        public class Unique
-        {
-            public static bool UniqueList_Entry_UnlockDropForAll = false;
-            public static bool UniqueList_Entry_UnlockDropForUndropableOnly = false; //Lock Dropable Item
-            public static bool Enable_LegendaryPotentialLevelMod = false;
-            public static int UniqueList_Entry_LegendaryPotentialLevel = 0;
-            
-            private static UniqueList unique_items_list = null;
-            private static bool uniques_found = false;
-            private static void InitUniqueItemList()
+            public class WeaverWill
             {
-                if (!uniques_found)
+                #region RollValue
+                [HarmonyPatch(typeof(ItemData), "RollWeaversWill")]
+                public class ItemDataRoll
                 {
-                    try
+                    [HarmonyPostfix]
+                    static void RollWeaversWill(ref ItemData __instance, ref int __result, ref UniqueList.Entry __0, ref int __1, ref int __2)
                     {
-                        unique_items_list = UniqueList.get();
-                        if (unique_items_list != null)
+                        /*if (Enable_RollImplicit)
                         {
-                            uniques_found = true;
-                            Main.logger_instance.Msg("Unique item list found : " + unique_items_list.name);
-                        }
-                    }
-                    catch (System.Exception ex)
-                    {
-                        Main.logger_instance.Msg("Error Unique item list");
-                    }
-                }
-            }
-            public static void Launch()
-            {
-                if (!uniques_found) { InitUniqueItemList(); }
-                if (unique_items_list != null)
-                {
-                    Il2CppSystem.Collections.Generic.List<UniqueList.Entry> Uniques_List_Entry = unique_items_list.uniques;
-                    foreach (UniqueList.Entry item in Uniques_List_Entry)
-                    {
-                        if (UniqueList_Entry_UnlockDropForAll) { item.canDropRandomly = true; }
-                        else if (UniqueList_Entry_UnlockDropForUndropableOnly)
-                        {
-                            if (!item.canDropRandomly) { item.canDropRandomly = true; }
-                            else { item.canDropRandomly = false; }
-                        }
-                        if (Enable_LegendaryPotentialLevelMod)
-                        {
-                            item.effectiveLevelForLegendaryPotential = (byte)UniqueList_Entry_LegendaryPotentialLevel;
-                        }
-                        if (Mods.UniqueMods.Enable_UniqueMods)
-                        {
-                            foreach (Mods.UniqueMods.unique_mod m in Mods.UniqueMods.Uniques_Mods)
+                            for (int i = 0; i < __instance.implicitRolls.Count; i++)
                             {
-                                if (m.id == item.uniqueID) { item.mods = m.mods; break; }
+                                __instance.implicitRolls[i] = (byte)Roll_Implicit;
                             }
-                        }
+                        }*/
+                        /*if (Enable_UniqueMod)
+                        {
+                            for (int k = 0; k < __instance.uniqueRolls.Count; k++)
+                            {
+                                __instance.uniqueRolls[k] = Roll_UniqueMod;
+                            }
+                        }*/
+                        if (Enable_RollWeaverWill) { __result = Roll_Weaver_Will; }
                     }
                 }
+                #endregion
+            }
+            public class LegendaryPotencial
+            {
+                #region RollValue
+                [HarmonyPatch(typeof(ItemData), "rollLegendaryPotential")]
+                public class ItemDataRoll
+                {
+                    [HarmonyPostfix]
+                    static void rollLegendaryPotential(ref ItemData __instance, ref int __result, ref UniqueList.Entry __0, ref int __1, ref int __2)
+                    {
+                        /*if (Enable_RollImplicit)
+                        {
+                            for (int i = 0; i < __instance.implicitRolls.Count; i++)
+                            {
+                                __instance.implicitRolls[i] = (byte)Roll_Implicit;
+                            }
+                        }*/
+                        /*if (Enable_UniqueMod)
+                        {
+                            for (int k = 0; k < __instance.uniqueRolls.Count; k++)
+                            {
+                                __instance.uniqueRolls[k] = Roll_UniqueMod;
+                            }
+                        }*/
+                        if (Enable_RollLegendayPotencial) { __result = Roll_Legendary_Potencial; }
+                    }
+                }
+                #endregion
             }
         }
-        #endregion
-        #region Functions Patch
         public class AutoLoot
         {
-            #region Items
             public static bool AutoPickup_Key = true;
             public static bool AutoPickup_Craft = true;
             public static bool AutoPickup_UniqueAndSet = false;
             public static bool AutoStore_Materials = true;
+            public static bool AutoPickup_Gold = true;
+            public static bool AutoPickup_XpTome = true;
+            public static bool AutoPickup_Pots = false;
 
+            #region Items
             [HarmonyPatch(typeof(GroundItemManager), "dropItemForPlayer")]
             public class Items
             {
                 [HarmonyPostfix]
-                static void Postfix1(GroundItemManager __instance, Actor __0, ItemData __1, UnityEngine.Vector3 __2, bool __3)
+                static void Postfix(ref GroundItemManager __instance, ref Actor __0, ref ItemData __1, ref UnityEngine.Vector3 __2, ref bool __3)
                 {
                     if (__instance != null)
                     {
@@ -147,7 +232,7 @@ namespace LastEpochMods.Mods
                         if ((AutoPickup_Key) && (Item.isKey(__1.itemType))) { pickup = true; }
                         else if ((AutoPickup_Craft) && (ItemList.isCraftingItem(__1.itemType))) { pickup = true; }
                         else if ((AutoPickup_UniqueAndSet) && (Item.rarityIsUniqueSetOrLegendary(__1.rarity))) { pickup = true; }
-
+                        
                         if (pickup)
                         {
                             __instance.pickupItem(__0, item_id);
@@ -161,13 +246,11 @@ namespace LastEpochMods.Mods
             }
             #endregion
             #region Gold
-            public static bool AutoPickup_Gold = true;
-
             [HarmonyPatch(typeof(GroundItemManager), "dropGoldForPlayer")]
             public class Gold
             {
                 [HarmonyPostfix]
-                static void Postfix2(GroundItemManager __instance, Actor __0, int __1, UnityEngine.Vector3 __2, bool __3)
+                static void Postfix(ref GroundItemManager __instance, ref Actor __0, ref int __1, ref UnityEngine.Vector3 __2, ref bool __3)
                 {
                     if ((__instance != null) && (AutoPickup_Gold))
                     {
@@ -185,13 +268,11 @@ namespace LastEpochMods.Mods
             }
             #endregion            
             #region XpTome
-            public static bool AutoPickup_XpTome = true;
-
             [HarmonyPatch(typeof(GroundItemManager), "dropXPTomeForPlayer")]
             public class XpTome
             {
                 [HarmonyPostfix]
-                static void Postfix3(GroundItemManager __instance, Actor __0, int __1, UnityEngine.Vector3 __2, bool __3)
+                static void Postfix3(ref GroundItemManager __instance, ref Actor __0, ref int __1, ref UnityEngine.Vector3 __2, ref bool __3)
                 {
                     if ((__instance != null) && (AutoPickup_XpTome))
                     {
@@ -209,8 +290,6 @@ namespace LastEpochMods.Mods
             }
             #endregion
             #region Pots
-            public static bool AutoPickup_Pots = false;
-
             [HarmonyPatch(typeof(GroundItemManager), "dropPotionForPlayer")]
             public class Potions
             {
@@ -233,23 +312,25 @@ namespace LastEpochMods.Mods
             }
             #endregion            
         }
-        public class WeaversWill
+        public class RemoveReq
         {
-            [HarmonyPatch(typeof(ItemData), "RollWeaversWill")]
-            public class MaxRoll
+            public static bool Remove_LevelReq = true;
+            public static bool Remove_ClassReq = true;
+            public static bool Remove_SubClassReq = true;
+
+            #region RemoveLevelAndClass
+            [HarmonyPatch(typeof(ItemData), "CalculateLevelAndClassRequirement")]
+            public class AllItems
             {
-                [HarmonyPrefix]
-                static void Prefix(ItemData __instance, int __result, UniqueList.Entry __0, int __1, int __2)
-                {                    
-                    __instance.weaversWill = 28;
-                    //ItemDataUnpacked item = __instance.getAsUnpacked();
-                    //item.weaversWill = 28;
-                    //__1 = 28;
-                    //__2 = 100;
-                    //__result = 28;
+                [HarmonyPostfix]
+                static void CalculateLevelAndClassRequirement(ItemData __instance, ref int __result, ref ItemList.ClassRequirement __0, ref ItemList.SubClassRequirement __1)
+                {
+                    if (Remove_LevelReq) { __result = 0; }
+                    if (Remove_ClassReq) { __0 = ItemList.ClassRequirement.None; }
+                    if (Remove_SubClassReq) { __1 = ItemList.SubClassRequirement.None; }
                 }
             }
+            #endregion
         }
-        #endregion
     }
 }

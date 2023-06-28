@@ -1,4 +1,5 @@
 ﻿using UniverseLib;
+using static LE.Dev.ImGuiLayeredGraph;
 
 namespace LastEpochMods.Mods
 {
@@ -11,7 +12,7 @@ namespace LastEpochMods.Mods
         }
         public static System.Collections.Generic.List<unique_mod> Uniques_Mods = new System.Collections.Generic.List<unique_mod>();
         public static bool Enable_UniqueMods = false;
-        
+
         //Exemple Custom Mods
         public static Il2CppSystem.Collections.Generic.List<UniqueItemMod> CustomMods_0()
         {
@@ -108,5 +109,16 @@ namespace LastEpochMods.Mods
 
             return mods;
         }
+
+        public struct ability_mod
+        {
+            public ushort unique_id;
+            public int skill_index;
+        }
+        public static System.Collections.Generic.List<ability_mod> Ability_Mods = new System.Collections.Generic.List<ability_mod>();
+        public static bool Enable_AbilityMods = true;
+
+        
+        
     }
 }

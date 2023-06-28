@@ -1,11 +1,7 @@
-﻿using ItemFiltering;
-using LastEpochMods.Mods;
+﻿using LastEpochMods.Mods;
 using MelonLoader;
 using System.Linq;
-using UMA.AssetBundles;
 using UnityEngine;
-using UnityExplorer.UI;
-using UniverseLib;
 
 namespace LastEpochMods
 {
@@ -24,16 +20,7 @@ namespace LastEpochMods
             {
                 if ((Scenes.CurrentName != "") && (!Scenes.MenuNames.Contains(Scenes.CurrentName)))
                 {
-                    Mods.Affixs_Mods.Launch(); //Affixs Mods
-                    Mods.Items_Mods.Basic.Launch(); //Basic Items Mods                    
-                    Mods.UniqueMods.Enable_UniqueMods = true; //Edit Unique Mods
-                    Mods.UniqueMods.Uniques_Mods = new System.Collections.Generic.List<Mods.UniqueMods.unique_mod>
-                    {
-                        new Mods.UniqueMods.unique_mod { id = 111, mods = Mods.UniqueMods.CustomMods_0() }
-                        //Add more unique here
-                        //new Mods.Items_Mods.Unique.unique_mod { id = UniqueId, mods = CustomMod }
-                    };
-                    Mods.Items_Mods.Unique.Launch(); //unique Items Mods                    
+                    //Mods.Affixs_Mods.Launch(); //Affixs Mods
                     Mods.Scene_Mods.Launch();
                     Mods.Character_Mods.Launch();
                 }
@@ -51,8 +38,17 @@ namespace LastEpochMods
                 if (Input.GetKeyDown(KeyCode.F1)) { Ui.Menu.isMenuOpen = !Ui.Menu.isMenuOpen; }
                 if (!Scenes.MenuNames.Contains(Scenes.CurrentName)) //In game
                 {
-                    if (Input.GetKeyDown(KeyCode.F9)) { Character_Mods.Launch_ExempleBuffCharacter(); }
-                    else if (Input.GetKeyDown(KeyCode.F10)) { Character_Mods.Launch_LevelUp(); }
+                    if (Input.GetKeyDown(KeyCode.F9))
+                    {
+                        InventoryPanelUI.instance.cosmeticPanel.active = true;
+                        //Character_Mods.Launch_ExempleBuffCharacter();
+                    }
+                    else if (Input.GetKeyDown(KeyCode.F10)) { Character_Mods.Launch_LevelUp(); }                    
+                    else if (Input.GetKeyDown(KeyCode.F11))
+                    {
+                        //Mods.Items_Mods.Rolls.Enable_Items_Rolls = !Mods.Items_Mods.Rolls.Enable_Items_Rolls;
+                        //LoggerInstance.Msg(Mods.Items_Mods.Rolls.Enable_Items_Rolls + " Items Roll");
+                    }
                     //else if (Input.GetKeyDown(KeyCode.F12)) { Ability_mods.LoadSkillsHelper(); }
                 }
             }

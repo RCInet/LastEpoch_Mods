@@ -1,12 +1,4 @@
-﻿using Il2CppSystem.Collections.Generic;
-using MelonLoader;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UniverseLib;
+﻿using UniverseLib;
 
 namespace LastEpochMods.Mods
 {
@@ -18,7 +10,7 @@ namespace LastEpochMods.Mods
         public static bool Enable_increase_equipmentshards_droprate = false;
         public static float increase_equipmentshards_droprate = 1;
         public static bool Enable_increase_uniques_droprate = false;
-        public static float increase_uniques_droprate = 10;        
+        public static float increase_uniques_droprate = 255;        
         //Ability List
         public static bool Enable_channel_cost = true;
         public static float channel_cost = 0;
@@ -47,8 +39,12 @@ namespace LastEpochMods.Mods
         public static int attributes_int = 99999999;
         public static int attributes_vita = 99999999;
         public static int attributes_dext = 99999999;
-        public static int attributes_atte = 99999999;        
+        public static int attributes_atte = 99999999;
 
+
+        //Refs for Others Mods
+        //public static ItemContainer inventory = null;
+        //
         public static void Launch_LevelUp()
         {
             foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.Object)))
@@ -163,7 +159,7 @@ namespace LastEpochMods.Mods
                                 }
                             }
                         }
-                    }                    
+                    }
                 }
             }
         }
