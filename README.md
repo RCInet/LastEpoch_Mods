@@ -8,7 +8,7 @@
 - Forgin Potencial
 - Unique Mods
 - Legendary Potencial
-- Weaver WWill
+- Weaver Will
 <br/><br/>
 + Autoloot :
 - Gold
