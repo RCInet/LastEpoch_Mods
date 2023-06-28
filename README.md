@@ -1,24 +1,44 @@
 # LastEpoch Mods
-+ Autoloot
-+ AutoStore Materials
++ ItemDrop :
++ - Rarity
++ - Implicits
++ - Affixes Values
++ - Affixes Tiers
++ - Forgin Potencial
++ - Unique Mods
++ - Legendary Potencial
++ - Weaver WWill
 <br/><br/>
-+ Dungeon Without Key
++ Autoloot :
++ - Gold
++ - Keys
++ - Unique & Set
++ - Xp Tome
++ - Materials
++ - AutoStore Materials
 <br/><br/>
-+ Launch Items Mods (AutoLoad when UnityExplorer Initialized or when scene change if user go in game before UnityExplorer Initialized)
-+ Remove Level and Class Req for all Items
-+ Unlock Drop for all Basic Items or Only Undropable
-+ Unlock Drop for all Uniques Items or Only Undropable
-+ Edit Unique Mods (exemple with woven flesh)
++ Scene :
++ - Density Multiplier
++ - Gold Multiplier
++ - Items multiplier
++ - Experienc Multiplier
++ - Waypoint Unlock
 <br/><br/>
-+ Launch Scene Mods (AutoLoad when scene change)
-+ Gold Multiplier
-+ Item Multiplier
-+ Experience Multiplier
-+ Mob Spawner Density
++ Remove Prerequisites :
++ - Remove Level
++ - Remove Class
++ - Remove subclass
 <br/><br/>
-+ Launch Character Mods (AutoLoad when scene change)
++ Dungeons :
++ - Objective Reveal
++ - Enter Without Key
+<br/><br/>
++ Monoliths :
++ - Override max stability
++ - Objective Reveal
++ - Set ennemies defeat count on start
++ - Complete Objective on start
++ - No lost when die (untested)
 <br/><br/>
 ## Requirements :
 + [Melon Loader 5.7](https://github.com/LavaGang/MelonLoader)
-+ [Unity explorer](https://github.com/sinai-dev/UnityExplorer/)
-+ [Melon Preferences Manager](https://github.com/sinai-dev/MelonPreferencesManager)
