@@ -107,9 +107,6 @@
     <Reference Include="UnityEngine.UI">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
-    <Reference Include="UnityExplorer.ML.IL2CPP">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\Mods\UnityExplorer.ML.IL2CPP.dll</HintPath>
-    </Reference>
     <Reference Include="UniverseLib.IL2CPP.Unhollower">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\UserLibs\UniverseLib.IL2CPP.Unhollower.dll</HintPath>
     </Reference>
