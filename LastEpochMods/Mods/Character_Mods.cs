@@ -1,16 +1,11 @@
-﻿using UniverseLib;
+﻿using HarmonyLib;
+using UMA.AssetBundles;
+using UniverseLib;
 
 namespace LastEpochMods.Mods
 {
     public class Character_Mods
     {
-        //ItemDrop (untested)
-        public static bool Enable_increase_equipment_droprate = false;
-        public static float increase_equipment_droprate = 1;
-        public static bool Enable_increase_equipmentshards_droprate = false;
-        public static float increase_equipmentshards_droprate = 1;
-        public static bool Enable_increase_uniques_droprate = false;
-        public static float increase_uniques_droprate = 255;        
         //Ability List
         public static bool Enable_channel_cost = true;
         public static float channel_cost = 0;
@@ -41,12 +36,8 @@ namespace LastEpochMods.Mods
         public static int attributes_dext = 99999999;
         public static int attributes_atte = 99999999;
 
-
-        //Refs for Others Mods
-        //public static ItemContainer inventory = null;
-        //
         public static void Launch_LevelUp()
-        {
+        {            
             foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.Object)))
             {
                 if ((obj.name == "MainPlayer(Clone)") && (obj.GetActualType() == typeof(ExperienceTracker)))
@@ -80,43 +71,8 @@ namespace LastEpochMods.Mods
             {
                 if (obj.name == "MainPlayer(Clone)")
                 {
-                    System.Type type = obj.GetActualType();
-                    if (type == typeof(ItemDropBonuses))
-                    {
-                        ItemDropBonuses item_drop_bonus = obj.TryCast<ItemDropBonuses>();
-                        if (Enable_increase_equipment_droprate)
-                        {
-                            for (int i = 0; i < item_drop_bonus.increasedEquipmentDroprates.Count; i++)
-                            {
-                                item_drop_bonus.increasedEquipmentDroprates[i] = increase_equipment_droprate;
-                            }
-                        }
-                        if (Enable_increase_equipmentshards_droprate)
-                        {
-                            for (int z = 0; z < item_drop_bonus.increasedEquipmentShardDroprates.Count; z++)
-                            {
-                                item_drop_bonus.increasedEquipmentShardDroprates[z] = increase_equipmentshards_droprate;
-                            }
-                        }
-                        if (Enable_increase_uniques_droprate)
-                        {
-                            item_drop_bonus.increasedUniqueDropRate = increase_uniques_droprate;
-                        }
-                    }                    
-                    else if (type == typeof(PlayerAbilityList))
-                    {
-                        PlayerAbilityList player_ability_list = obj.TryCast<PlayerAbilityList>();
-                        foreach (Ability ability in player_ability_list.equippedAbilities)
-                        {
-                            if (Enable_channel_cost) { ability.channelCost = channel_cost; }
-                            if (Enable_manaCost) { ability.manaCost = manaCost; }
-                            if (Enable_manaCostPerDistance) { ability.manaCostPerDistance = manaCostPerDistance; }
-                            if (Enable_minimumManaCost) { ability.minimumManaCost = minimumManaCost; }
-                            if (Enable_noManaRegenWhileChanneling) { ability.noManaRegenWhileChanneling = noManaRegenWhileChanneling; }
-                            if (Enable_stopWhenOutOfMana) { ability.stopWhenOutOfMana = stopWhenOutOfMana; }
-                        }
-                    }
-                    else if (type == typeof(LocalTreeData))
+                    System.Type type = obj.GetActualType();                    
+                    if (type == typeof(LocalTreeData))
                     {
                         LocalTreeData tree_data = obj.TryCast<LocalTreeData>();
                         if (Enable_number_of_unlocked_slots) { tree_data.numberOfUnlockedSlots = number_of_unlocked_slots; }                        
@@ -128,39 +84,87 @@ namespace LastEpochMods.Mods
                                 skill_tree_data.level = skilltree_level;
                             }
                         }
-                    }
-                    else if (type == typeof(CharacterStats))
+                    }                    
+                }
+            }
+        }
+        
+        public class Stats_Mods
+        {
+            [HarmonyPatch(typeof(CharacterStats), "Update")]
+            public class Character_Stats
+            {
+                [HarmonyPostfix]
+                static void Postfix(ref CharacterStats __instance)
+                {
+                    if (Enable_attack_rate) { __instance.attackRate = attack_rate; }
+                    if (Enable_attributes)
                     {
-                        CharacterStats char_stats = obj.TryCast<CharacterStats>();
-                        if (Enable_attack_rate) { char_stats.attackRate = attack_rate; }
-                        if (Enable_attributes)
+                        foreach (CharacterStats.AttributeValuePair attribute in __instance.attributes)
                         {
-                            foreach (CharacterStats.AttributeValuePair attribute in char_stats.attributes)
+                            if (attribute.attribute.attributeName == CoreAttribute.Attribute.Strength)
                             {
-                                if (attribute.attribute.attributeName == CoreAttribute.Attribute.Strength)
-                                {
-                                    attribute.value = attributes_str;
-                                }
-                                else if (attribute.attribute.attributeName == CoreAttribute.Attribute.Intelligence)
-                                {
-                                    attribute.value = attributes_int;
-                                }
-                                else if (attribute.attribute.attributeName == CoreAttribute.Attribute.Vitality)
-                                {
-                                    attribute.value = attributes_vita;
-                                }
-                                else if (attribute.attribute.attributeName == CoreAttribute.Attribute.Dexterity)
-                                {
-                                    attribute.value = attributes_dext;
-                                }
-                                else if (attribute.attribute.attributeName == CoreAttribute.Attribute.Attunement)
-                                {
-                                    attribute.value = attributes_atte;
-                                }
+                                attribute.value = attributes_str;
+                            }
+                            else if (attribute.attribute.attributeName == CoreAttribute.Attribute.Intelligence)
+                            {
+                                attribute.value = attributes_int;
+                            }
+                            else if (attribute.attribute.attributeName == CoreAttribute.Attribute.Vitality)
+                            {
+                                attribute.value = attributes_vita;
+                            }
+                            else if (attribute.attribute.attributeName == CoreAttribute.Attribute.Dexterity)
+                            {
+                                attribute.value = attributes_dext;
+                            }
+                            else if (attribute.attribute.attributeName == CoreAttribute.Attribute.Attunement)
+                            {
+                                attribute.value = attributes_atte;
                             }
                         }
                     }
                 }
+            }
+        }
+        public class Ability_Mods
+        {
+            public class Cooldown
+            {
+                [HarmonyPatch(typeof(CharacterMutator), "OnAbilityUse")]
+                public class Ability_Cooldown_Prefix
+                {
+                    [HarmonyPrefix]
+                    static bool Postfix(CharacterMutator __instance, AbilityInfo __0, ref AbilityMutator __1, ref float __2, UnityEngine.Vector3 __3, bool __4)
+                    {
+                        if (__1 != null) { __1.RemoveCooldown(); }
+
+                        return true;
+                    }
+                }
+            }
+            public class ManaCost
+            {
+                [HarmonyPatch(typeof(CharacterStats), "onStartedUsingAbility")]
+                public class Character_Stats
+                {
+                    [HarmonyPrefix]
+                    static bool Prefix(CharacterStats __instance, AbilityInfo __0, ref Ability __1, UnityEngine.Vector3 __2)
+                    {
+                        if (Enable_channel_cost) { __1.channelCost = channel_cost; }
+                        if (Enable_manaCost) { __1.manaCost = manaCost; }
+                        if (Enable_manaCostPerDistance) { __1.manaCostPerDistance = manaCostPerDistance; }
+                        if (Enable_minimumManaCost) { __1.minimumManaCost = minimumManaCost; }
+                        if (Enable_noManaRegenWhileChanneling) { __1.noManaRegenWhileChanneling = noManaRegenWhileChanneling; }
+                        if (Enable_stopWhenOutOfMana) { __1.stopWhenOutOfMana = stopWhenOutOfMana; }
+
+                        return true;
+                    }
+                }
+            }
+            public class SkillTree
+            {
+
             }
         }
     }
