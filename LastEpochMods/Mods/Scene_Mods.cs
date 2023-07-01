@@ -7,56 +7,19 @@ namespace LastEpochMods.Mods
 {
     public class Scene_Mods
     {
-        #region OnSceneChange
-        //ItemDrop
-        public static bool Enable_DeathItemDrop_goldMultiplier = false;
-        public static float DeathItemDrop_goldMultiplier = 255f;
-        public static bool Enable_DeathItemDrop_ItemMultiplier = false;
-        public static float DeathItemDrop_ItemMultiplier = 2f;
-        public static bool Enable_DeathItemDrop_Experience = false;
-        public static long DeathItemDrop_Experience = 9999;
-        public static bool Enable_DeathItemDrop_AdditionalRare = false;
-        public static bool DeathItemDrop_AdditionalRare = true;               
+        #region OnSceneChange               
         //SpawnerPlacementManager
         public static bool Enable_SpawnerPlacementManager_defaultSpawnerDensity = true;
-        public static float SpawnerPlacementManager_defaultSpawnerDensity = 2f;
-        public static bool Enable_SpawnerPlacementManager_IncreaseExperience = false;
+        public static float SpawnerPlacementManager_defaultSpawnerDensity = 10f;
+        public static bool Enable_SpawnerPlacementManager_IncreaseExperience = true;
         public static float SpawnerPlacementManager_IncreaseExperience = 255f;
         
         public static void Launch()
-        {
+        {            
             foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.Object)))
             {
                 System.Type type = obj.GetActualType();
-                if (type == typeof(DeathItemDrop))
-                {
-                    if ((Enable_DeathItemDrop_goldMultiplier) | (Enable_DeathItemDrop_ItemMultiplier) |
-                        (Enable_DeathItemDrop_AdditionalRare) | (Enable_DeathItemDrop_Experience))
-                    {
-                        DeathItemDrop drop = obj.TryCast<DeathItemDrop>();
-                        if (Enable_DeathItemDrop_goldMultiplier)
-                        {
-                            drop.overrideBaseGoldDropChance = true;
-                            drop.goldDropChance = 1; //100%
-                            drop.goldMultiplier = DeathItemDrop_goldMultiplier;
-                        }
-                        if (Enable_DeathItemDrop_ItemMultiplier)
-                        {
-                            drop.overrideBaseItemDropChance = true;
-                            drop.itemDropChance = 1; //100%
-                            drop.itemMultiplier = DeathItemDrop_ItemMultiplier;
-                        }
-                        if (Enable_DeathItemDrop_AdditionalRare)
-                        {
-                            drop.guaranteedAdditionalRare = DeathItemDrop_AdditionalRare;
-                        }
-                        if (Enable_DeathItemDrop_Experience)
-                        {
-                            drop.experience = DeathItemDrop_Experience;
-                        }
-                    }
-                }                     
-                else if (type == typeof(SpawnerPlacementManager))
+                if (type == typeof(SpawnerPlacementManager))
                 {
                     if ((Enable_SpawnerPlacementManager_defaultSpawnerDensity) |
                         (Enable_SpawnerPlacementManager_IncreaseExperience))
@@ -64,7 +27,7 @@ namespace LastEpochMods.Mods
                         SpawnerPlacementManager spawner_manager = obj.TryCast<SpawnerPlacementManager>();
                         if (Enable_SpawnerPlacementManager_defaultSpawnerDensity)
                         {
-                            spawner_manager.defaultSpawnerDensity = System.Convert.ToInt32(SpawnerPlacementManager_defaultSpawnerDensity);
+                            spawner_manager.defaultSpawnerDensity = SpawnerPlacementManager_defaultSpawnerDensity;
                             spawner_manager.alwaysRollSpawnerDensity = false;
                         }
                         if (Enable_SpawnerPlacementManager_IncreaseExperience)
@@ -72,11 +35,12 @@ namespace LastEpochMods.Mods
                             spawner_manager.increasedExperience = SpawnerPlacementManager_IncreaseExperience;
                         }
                     }
+                    break;
                 }
             }
         }
         #endregion
-        #region Functions Patch
+        #region Functions Patch        
         public class Waypoints_Mods
         {
             public static bool Enable_Waypoint_Unlock = true;
