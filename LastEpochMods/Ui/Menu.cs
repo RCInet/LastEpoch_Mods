@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Il2CppSystem;
+using UnityEngine;
 
 namespace LastEpochMods.Ui
 {
@@ -46,13 +47,17 @@ namespace LastEpochMods.Ui
                     pos_y = start_y + Menu_Size_h;
                     GUI.DrawTexture(new Rect(pos_x, pos_y, (btn_size_w + (2 * btn_margin_w)), ItemsDrop_h), windowBackground);
                     pos_x += 5f;
+                    Mods.Items_Mods.Drop_Mods.DeathItemDrop_goldMultiplier = CustomControls.FloatValue("Gold Multiplier", 0f, 255f, Mods.Items_Mods.Drop_Mods.DeathItemDrop_goldMultiplier, pos_x, pos_y, Mods.Items_Mods.Drop_Mods.Enable_DeathItemDrop_goldMultiplier, Ui.Menu.Btn_ItemsDrop_OnDeath_GoldMultiplier_Click);
+                    pos_y += 85;
+                    Mods.Items_Mods.Drop_Mods.DeathItemDrop_ItemMultiplier = CustomControls.FloatValue("Items Multiplier", 0f, 255f, Mods.Items_Mods.Drop_Mods.DeathItemDrop_ItemMultiplier, pos_x, pos_y, Mods.Items_Mods.Drop_Mods.Enable_DeathItemDrop_ItemMultiplier, Ui.Menu.Btn_ItemsDrop_OnDeath_ItemsMultiplier_Click);
+                    pos_y += 85;
+                    Mods.Items_Mods.Drop_Mods.DeathItemDrop_Experience = CustomControls.LongValue("Experience Multiplier", 0, Int64.MaxValue, Mods.Items_Mods.Drop_Mods.DeathItemDrop_Experience, pos_x, pos_y, Mods.Items_Mods.Drop_Mods.Enable_DeathItemDrop_Experience, Ui.Menu.Btn_ItemsDrop_OnDeath_Experience_Click);
+                    pos_y += 85;
                     Mods.Items_Mods.Drop_Mods.GenerateItem_Rarity = CustomControls.ByteValue("Item Rarity", 0, 9, Mods.Items_Mods.Drop_Mods.GenerateItem_Rarity, pos_x, pos_y, Mods.Items_Mods.Drop_Mods.Enable_Rarity, Ui.Menu.Btn_ItemsDrop_Rarity_Roll_Click);
-                    pos_y += 80;
-                    CustomControls.RarityInfos(pos_x, pos_y);
-                    pos_y += 65;
+                    pos_y += 85;
                     Mods.Items_Mods.Drop_Mods.Roll_Implicit = CustomControls.ByteValue("Implicits", 0, 255, Mods.Items_Mods.Drop_Mods.Roll_Implicit, pos_x, pos_y, Mods.Items_Mods.Drop_Mods.Enable_RollImplicit, Ui.Menu.Btn_ItemsDrop_Implicit_Roll_Click);
                     pos_y += 85;
-                    Mods.Items_Mods.Drop_Mods.Roll_ForgingPotencial = CustomControls.ByteValue("Implicits", 0, 255, Mods.Items_Mods.Drop_Mods.Roll_ForgingPotencial, pos_x, pos_y, Mods.Items_Mods.Drop_Mods.Enable_ForgingPotencial, Ui.Menu.Btn_ItemsDrop_ForginPotencial_Roll_Click);
+                    Mods.Items_Mods.Drop_Mods.Roll_ForgingPotencial = CustomControls.ByteValue("Forgin Potencial", 0, 255, Mods.Items_Mods.Drop_Mods.Roll_ForgingPotencial, pos_x, pos_y, Mods.Items_Mods.Drop_Mods.Enable_ForgingPotencial, Ui.Menu.Btn_ItemsDrop_ForginPotencial_Roll_Click);
                     pos_y += 85;
                     Mods.Items_Mods.Drop_Mods.Roll_AffixValue =CustomControls.ByteValue("Affix Values", 0, 255, Mods.Items_Mods.Drop_Mods.Roll_AffixValue, pos_x, pos_y, Mods.Items_Mods.Drop_Mods.Enable_AffixsValue, Ui.Menu.Btn_ItemsDrop_Affix_Values_Click);
                     pos_y += 85;
@@ -90,11 +95,7 @@ namespace LastEpochMods.Ui
                     pos_x += 5;
                     Mods.Scene_Mods.SpawnerPlacementManager_defaultSpawnerDensity = CustomControls.FloatValue("Density Multiplier", 0f, 255f, Mods.Scene_Mods.SpawnerPlacementManager_defaultSpawnerDensity, pos_x, pos_y, Mods.Scene_Mods.Enable_SpawnerPlacementManager_defaultSpawnerDensity, Ui.Menu.Btn_Scene_Density_Click);
                     pos_y += 85;
-                    Mods.Scene_Mods.DeathItemDrop_goldMultiplier = CustomControls.FloatValue("Gold Multiplier", 0f, 255f, Mods.Scene_Mods.DeathItemDrop_goldMultiplier, pos_x, pos_y, Mods.Scene_Mods.Enable_DeathItemDrop_goldMultiplier, Ui.Menu.Btn_ItemsDrop_OnDeath_GoldMultiplier_Click);
-                    pos_y += 85;
-                    Mods.Scene_Mods.DeathItemDrop_ItemMultiplier = CustomControls.FloatValue("Items Multiplier", 0f, 255f, Mods.Scene_Mods.DeathItemDrop_ItemMultiplier, pos_x, pos_y, Mods.Scene_Mods.Enable_DeathItemDrop_ItemMultiplier, Ui.Menu.Btn_ItemsDrop_OnDeath_ItemsMultiplier_Click);
-                    pos_y += 85;
-                    Mods.Scene_Mods.DeathItemDrop_Experience = CustomControls.LongValue("Experience Multiplier", long.MinValue, long.MaxValue, Mods.Scene_Mods.DeathItemDrop_Experience, pos_x, pos_y, Mods.Scene_Mods.Enable_DeathItemDrop_Experience, Ui.Menu.Btn_ItemsDrop_OnDeath_Experience_Click);
+                    Mods.Scene_Mods.SpawnerPlacementManager_IncreaseExperience = CustomControls.FloatValue("Experience Multiplier", 0f, 255f, Mods.Scene_Mods.SpawnerPlacementManager_IncreaseExperience, pos_x, pos_y, Mods.Scene_Mods.Enable_SpawnerPlacementManager_IncreaseExperience, Ui.Menu.Btn_Scene_Experience_Click);
                     pos_y += 85;
                     CustomControls.EnableButton("Waypoint Unlock", pos_x, pos_y, Mods.Scene_Mods.Waypoints_Mods.Enable_Waypoint_Unlock, Ui.Menu.Btn_Scene_Waypoint_Unlock_Click);
                 }                
@@ -161,7 +162,7 @@ namespace LastEpochMods.Ui
         #endregion
         #region ItemDrop
         private static bool ShowItemDropSection = false;
-        public static float ItemsDrop_h = 740f;
+        public static float ItemsDrop_h = 935f;
 
         public static void Btn_ItemsDrop_Click()
         {
@@ -174,19 +175,19 @@ namespace LastEpochMods.Ui
         }
         public static void Btn_ItemsDrop_OnDeath_GoldMultiplier_Click()
         {
-            Mods.Scene_Mods.Enable_DeathItemDrop_goldMultiplier = !Mods.Scene_Mods.Enable_DeathItemDrop_goldMultiplier;
+            Mods.Items_Mods.Drop_Mods.Enable_DeathItemDrop_goldMultiplier = !Mods.Items_Mods.Drop_Mods.Enable_DeathItemDrop_goldMultiplier;
         }
         public static void Btn_ItemsDrop_OnDeath_ItemsMultiplier_Click()
         {
-            Mods.Scene_Mods.Enable_DeathItemDrop_ItemMultiplier = !Mods.Scene_Mods.Enable_DeathItemDrop_ItemMultiplier;
+            Mods.Items_Mods.Drop_Mods.Enable_DeathItemDrop_ItemMultiplier = !Mods.Items_Mods.Drop_Mods.Enable_DeathItemDrop_ItemMultiplier;
         }
         public static void Btn_ItemsDrop_OnDeath_AdditionalRare_Click()
         {
-            Mods.Scene_Mods.Enable_DeathItemDrop_AdditionalRare = !Mods.Scene_Mods.Enable_DeathItemDrop_AdditionalRare;
+            Mods.Items_Mods.Drop_Mods.Enable_DeathItemDrop_AdditionalRare = !Mods.Items_Mods.Drop_Mods.Enable_DeathItemDrop_AdditionalRare;
         }
         public static void Btn_ItemsDrop_OnDeath_Experience_Click()
         {
-            Mods.Scene_Mods.Enable_DeathItemDrop_Experience = !Mods.Scene_Mods.Enable_DeathItemDrop_Experience;
+            Mods.Items_Mods.Drop_Mods.Enable_DeathItemDrop_Experience = !Mods.Items_Mods.Drop_Mods.Enable_DeathItemDrop_Experience;
         }
         public static void Btn_ItemsDrop_Rarity_Roll_Click()
         {
@@ -261,7 +262,7 @@ namespace LastEpochMods.Ui
         #endregion
         #region Scenes
         private static bool ShowSceneSection = false;
-        public static float Scene_h = 385f;
+        public static float Scene_h = 215f;
 
         public static void Btn_Scene_Click()
         {
