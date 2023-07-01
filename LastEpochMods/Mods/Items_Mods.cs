@@ -6,6 +6,25 @@ namespace LastEpochMods.Mods
     {
         public class Drop_Mods
         {
+            //Drop Bonuses (Not in Menu)
+            public static bool Enable_increase_equipment_droprate = false;
+            public static float increase_equipment_droprate = 255f;
+            public static bool Enable_increase_equipmentshards_droprate = true;
+            public static float increase_equipmentshards_droprate = 255f;
+            public static bool Enable_increase_uniques_droprate = true;
+            public static float increase_uniques_droprate = 255f;
+            //Gold Multiplier
+            public static bool Enable_DeathItemDrop_goldMultiplier = true;
+            public static float DeathItemDrop_goldMultiplier = 255f;
+            //Item Multiplier
+            public static bool Enable_DeathItemDrop_ItemMultiplier = true;
+            public static float DeathItemDrop_ItemMultiplier = 4f;
+            //Experience Multiplier
+            public static bool Enable_DeathItemDrop_Experience = false;
+            public static long DeathItemDrop_Experience = 9999;
+            //Additional Rare (Not in Menu)
+            public static bool Enable_DeathItemDrop_AdditionalRare = false;
+            public static bool DeathItemDrop_AdditionalRare = true;
             //Drop Rarity
             public static bool Enable_Rarity = true;
             public static byte GenerateItem_Rarity = 7;
@@ -30,6 +49,101 @@ namespace LastEpochMods.Mods
             public static bool Enable_RollWeaverWill = true;
             public static int Roll_Weaver_Will = 28; //5 to 28
 
+            public class Drop_Bonuses
+            {
+                [HarmonyPatch(typeof(ItemDropBonuses), "getIncreasedRarityDropRate")]
+                public class Ability_Cooldown_Prefix
+                {
+                    [HarmonyPrefix]
+                    static bool Prefix(ref ItemDropBonuses __instance, float __result, float __0)
+                    {
+                        if (Enable_increase_equipment_droprate)
+                        {
+                            for (int i = 0; i < __instance.increasedEquipmentDroprates.Count; i++)
+                            {
+                                __instance.increasedEquipmentDroprates[i] = increase_equipment_droprate;
+                            }
+                        }
+                        if (Enable_increase_equipmentshards_droprate)
+                        {
+                            for (int z = 0; z < __instance.increasedEquipmentShardDroprates.Count; z++)
+                            {
+                                __instance.increasedEquipmentShardDroprates[z] = increase_equipmentshards_droprate;
+                            }
+                        }
+                        if (Enable_increase_uniques_droprate)
+                        {
+                            __instance.increasedUniqueDropRate = increase_uniques_droprate;
+                        }
+
+                        return true;
+                    }
+                }
+            }
+            public class GoldMultiplier
+            {
+                [HarmonyPatch(typeof(DeathItemDrop), "Start")]
+                public class Items
+                {
+                    [HarmonyPostfix]
+                    static void Postfix(ref DeathItemDrop __instance)
+                    {
+                        if (Enable_DeathItemDrop_goldMultiplier)
+                        {
+                            __instance.overrideBaseGoldDropChance = true;
+                            __instance.goldDropChance = 1; //100%
+                            __instance.goldMultiplier = DeathItemDrop_goldMultiplier;
+                        }
+                    }
+                }
+            }
+            public class ItemMultiplier
+            {
+                [HarmonyPatch(typeof(DeathItemDrop), "Start")]
+                public class Items
+                {
+                    [HarmonyPostfix]
+                    static void Postfix(ref DeathItemDrop __instance)
+                    {
+                        if (Enable_DeathItemDrop_ItemMultiplier)
+                        {
+                            __instance.overrideBaseItemDropChance = true;
+                            __instance.itemDropChance = 1; //100%
+                            __instance.itemMultiplier = DeathItemDrop_ItemMultiplier;
+                        }                        
+                    }
+                }
+            }
+            public class ExperienceMultiplier
+            {
+                [HarmonyPatch(typeof(DeathItemDrop), "Start")]
+                public class Items
+                {
+                    [HarmonyPostfix]
+                    static void Postfix(ref DeathItemDrop __instance)
+                    {
+                        if (Enable_DeathItemDrop_Experience)
+                        {
+                            __instance.experience = DeathItemDrop_Experience;
+                        }
+                    }
+                }
+            }
+            public class AdditionalRare
+            {
+                [HarmonyPatch(typeof(DeathItemDrop), "Start")]
+                public class Items
+                {
+                    [HarmonyPostfix]
+                    static void Postfix(ref DeathItemDrop __instance)
+                    {
+                        if (Enable_DeathItemDrop_AdditionalRare)
+                        {
+                            __instance.guaranteedAdditionalRare = DeathItemDrop_AdditionalRare;
+                        }                        
+                    }
+                }
+            }
             public class Rarity
             {
                 [HarmonyPatch(typeof(GenerateItems), "RollRarity")]
