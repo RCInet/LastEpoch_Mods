@@ -1,11 +1,14 @@
 # LastEpoch Mods
 - Hit F1 for Menu
 + ItemDrop :
+- Gold Multiplier
+- Items multiplier
+- Experience Multiplier
 - Rarity
 - Implicits
+- Forgin Potencial
 - Affixes Values
 - Affixes Tiers
-- Forgin Potencial
 - Unique Mods
 - Legendary Potencial
 - Weaver Will
@@ -20,9 +23,7 @@
 <br/><br/>
 + Scene :
 - Density Multiplier
-- Gold Multiplier
-- Items multiplier
-- Experienc Multiplier
+- Experience Multiplier
 - Waypoint Unlock
 <br/><br/>
 + Remove Prerequisites :
