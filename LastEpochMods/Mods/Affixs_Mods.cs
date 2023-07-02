@@ -27,7 +27,8 @@ namespace LastEpochMods.Mods
         }
 
         public static bool Enable_Affixs_Multiplier = true;
-        public static int Affixs_Multiplier = 100;
+        public static int Affixs_Multiplier = 10;
+
         public static bool Enable_Edit_Affixs_Rolls = false;
         private static void MultiplyAffixsRolls(int mutiplier)
         {

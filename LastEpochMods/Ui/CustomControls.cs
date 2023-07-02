@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using Il2CppSystem;
+using System.Globalization;
 using UnityEngine;
 
 namespace LastEpochMods.Ui
@@ -29,6 +30,18 @@ namespace LastEpochMods.Ui
             pos_y += h;
             GUI.TextField(new Rect(pos_x, pos_y, w, h), "Rare : 3-4", Styles.Infos_Style());
             GUI.TextField(new Rect(pos_x + 100, pos_y, w, h), "Legendary : 9", Styles.Infos_Style());
+        }
+        public static float IntValue(string text, float minvalue, float maxvalue, int value, float pos_x, float pos_y, bool enable, DelegateFunction function)
+        {
+            EnableButton(text, pos_x, pos_y, enable, function);
+            float temp_value = value;
+            GUI.DrawTexture(new Rect(pos_x, (pos_y + 40), 140, 40), Menu.texture_grey);
+            temp_value = GUI.HorizontalSlider(new Rect(pos_x, (pos_y + 40 + 20), 140, 20), temp_value, minvalue, maxvalue);
+            string value_str = GUI.TextArea(new Rect((pos_x + 140), (pos_y + 40), 60, 40), temp_value.ToString(), Styles.TextArea_Style());
+            try { temp_value = float.Parse(value_str, CultureInfo.InvariantCulture.NumberFormat); }
+            catch { }
+
+            return temp_value;
         }
         public static float FloatValue(string text, float minvalue, float maxvalue, float value, float pos_x, float pos_y, bool enable, DelegateFunction function)
         {
@@ -78,6 +91,23 @@ namespace LastEpochMods.Ui
                 temp_value = float.Parse(value_str, CultureInfo.InvariantCulture.NumberFormat);
                 result = (byte)temp_value;
             }
+            catch { }
+
+            return result;
+        }
+        public static ushort UshortValue(string text, int minvalue, int maxvalue, ushort value, float pos_x, float pos_y, bool enable, DelegateFunction function)
+        {
+            ushort result = value;
+            int multiplier = maxvalue / 255;
+            EnableButton(text, pos_x, pos_y, enable, function);
+            float temp_value = (System.Convert.ToSingle(value) / multiplier);
+            GUI.DrawTexture(new Rect(pos_x, (pos_y + 40), 140, 40), Menu.texture_grey);
+            float min = 0;
+            float max = 255;
+            temp_value = GUI.HorizontalSlider(new Rect(pos_x, (pos_y + 40 + 20), 140, 20), temp_value, min, max);
+            result = (ushort)(temp_value * multiplier);
+            string value_str = GUI.TextArea(new Rect((pos_x + 140), (pos_y + 40), 60, 40), (temp_value * multiplier).ToString(), Styles.TextArea_Style());
+            try { result = ushort.Parse(value_str, CultureInfo.InvariantCulture.NumberFormat); }
             catch { }
 
             return result;

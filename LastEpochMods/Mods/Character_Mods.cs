@@ -7,18 +7,11 @@ namespace LastEpochMods.Mods
     public class Character_Mods
     {
         //Ability List
-        public static bool Enable_channel_cost = true;
-        public static float channel_cost = 0;
         public static bool Enable_manaCost = true;
-        public static float manaCost = 0;
-        public static bool Enable_manaCostPerDistance = true;
-        public static float manaCostPerDistance = 0;
-        public static bool Enable_minimumManaCost = true;
-        public static float minimumManaCost = 0;
+        public static bool Enable_channel_cost = true;        
         public static bool Enable_noManaRegenWhileChanneling = true;
-        public static bool noManaRegenWhileChanneling = false;
         public static bool Enable_stopWhenOutOfMana = true;
-        public static bool stopWhenOutOfMana = false;
+        public static bool Enable_RemoveCooldown = true;
         //Tree Data        
         public static bool Enable_number_of_unlocked_slots = false;
         public static byte number_of_unlocked_slots = 5;
@@ -28,7 +21,10 @@ namespace LastEpochMods.Mods
         public static byte skilltree_level = 255;        
         //CharacterStats
         public static bool Enable_attack_rate = true;
-        public static float attack_rate = 255;
+        public static float attack_rate = 255f;
+        public static bool Enable_leach_rate = true;
+        public static float leach_rate = 255f;
+
         public static bool Enable_attributes = false;
         public static int attributes_str = 99999999;
         public static int attributes_int = 99999999;
@@ -96,8 +92,9 @@ namespace LastEpochMods.Mods
             {
                 [HarmonyPostfix]
                 static void Postfix(ref CharacterStats __instance)
-                {
+                {                    
                     if (Enable_attack_rate) { __instance.attackRate = attack_rate; }
+                    if (Enable_leach_rate) { __instance.increasedLeechRate = leach_rate; }
                     if (Enable_attributes)
                     {
                         foreach (CharacterStats.AttributeValuePair attribute in __instance.attributes)
@@ -137,7 +134,7 @@ namespace LastEpochMods.Mods
                     [HarmonyPrefix]
                     static bool Postfix(CharacterMutator __instance, AbilityInfo __0, ref AbilityMutator __1, ref float __2, UnityEngine.Vector3 __3, bool __4)
                     {
-                        if (__1 != null) { __1.RemoveCooldown(); }
+                        if ( (Enable_RemoveCooldown) && (__1 != null)) { __1.RemoveCooldown(); }
 
                         return true;
                     }
@@ -151,12 +148,15 @@ namespace LastEpochMods.Mods
                     [HarmonyPrefix]
                     static bool Prefix(CharacterStats __instance, AbilityInfo __0, ref Ability __1, UnityEngine.Vector3 __2)
                     {
-                        if (Enable_channel_cost) { __1.channelCost = channel_cost; }
-                        if (Enable_manaCost) { __1.manaCost = manaCost; }
-                        if (Enable_manaCostPerDistance) { __1.manaCostPerDistance = manaCostPerDistance; }
-                        if (Enable_minimumManaCost) { __1.minimumManaCost = minimumManaCost; }
-                        if (Enable_noManaRegenWhileChanneling) { __1.noManaRegenWhileChanneling = noManaRegenWhileChanneling; }
-                        if (Enable_stopWhenOutOfMana) { __1.stopWhenOutOfMana = stopWhenOutOfMana; }
+                        if (Enable_channel_cost) { __1.channelCost = 0f; }
+                        if (Enable_manaCost)
+                        {
+                            __1.manaCost = 0f;
+                            __1.minimumManaCost = 0f;
+                            __1.manaCostPerDistance = 0f;
+                        }
+                        if (Enable_noManaRegenWhileChanneling) { __1.noManaRegenWhileChanneling = false; }
+                        if (Enable_stopWhenOutOfMana) { __1.stopWhenOutOfMana = false; }
 
                         return true;
                     }
