@@ -44,3 +44,4 @@
 <br/><br/>
 ## Requirements :
 + [Melon Loader 5.7](https://github.com/LavaGang/MelonLoader)
++ [UniverseLib](https://github.com/sinai-dev/UniverseLib)
