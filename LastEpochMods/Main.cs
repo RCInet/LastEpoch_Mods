@@ -20,7 +20,7 @@ namespace LastEpochMods
             {
                 if ((Scenes.CurrentName != "") && (!Scenes.MenuNames.Contains(Scenes.CurrentName)))
                 {
-                    //Mods.Affixs_Mods.Launch(); //Affixs Mods
+                    Mods.Affixs_Mods.Launch();
                     Mods.Scene_Mods.Launch();
                     Mods.Character_Mods.Launch();
                 }

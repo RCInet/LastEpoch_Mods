@@ -5,8 +5,8 @@ namespace LastEpochMods.Mods
     public class Affixs_Mods
     {
         private static AffixList affix_list = null;
-        private static bool affixs_found = false;
-        private static void InitAffixsList()
+        //private static bool affixs_found = false;
+        /*private static void InitAffixsList()
         {
             if (!affixs_found)
             {
@@ -24,7 +24,7 @@ namespace LastEpochMods.Mods
                     Main.logger_instance.Msg("Error Affixs item list");
                 }
             }
-        }
+        }*/
 
         public static bool Enable_Affixs_Multiplier = true;
         public static int Affixs_Multiplier = 10;
@@ -34,7 +34,9 @@ namespace LastEpochMods.Mods
         {
             if (Enable_Affixs_Multiplier)
             {
-                if (!affixs_found) { InitAffixsList(); }
+                //if (!affixs_found) { InitAffixsList(); }
+
+                affix_list = AffixList.get();
                 if (affix_list != null)
                 {
                     foreach (AffixList.SingleAffix s_affix in affix_list.singleAffixes)
@@ -62,7 +64,8 @@ namespace LastEpochMods.Mods
         {
             if (Enable_Edit_Affixs_Rolls)
             {
-                if (!affixs_found) { InitAffixsList(); }
+                //if (!affixs_found) { InitAffixsList(); }
+                affix_list = AffixList.get();
                 if (affix_list != null)
                 {
                     bool found = false;
