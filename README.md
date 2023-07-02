@@ -46,7 +46,9 @@
 + Install Melon Loader 5.7
 + Launch your game once
 + Extract "UniverseLib.Il2Cpp.Unhollower.zip" in "YourGame\UserLibs\"
-+ Launch your game, Hit F1, edit options
++ Launch your game
++ Wait "Game Loaded" in console
++ Hit F1, edit options and enjoy
 <br/><br/>
 ## Requirements :
 + [Melon Loader 5.7](https://github.com/LavaGang/MelonLoader)
