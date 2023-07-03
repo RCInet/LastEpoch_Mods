@@ -1,6 +1,7 @@
 ﻿using LastEpochMods.Mods;
 using MelonLoader;
 using System.Linq;
+using UMA.CharacterSystem.Examples;
 using UnityEngine;
 
 namespace LastEpochMods
@@ -11,7 +12,16 @@ namespace LastEpochMods
         public static bool UniverseLibLoaded = false;
         public override void OnInitializeMelon()
         {
-            logger_instance = LoggerInstance;
+            logger_instance = LoggerInstance;            
+        }
+        public void UniverseLib_OnInitialized()
+        {
+            UniverseLibLoaded = true;
+            LoggerInstance.Msg("Mods init completed");
+        }
+        public void UniverseLib_LogHandler(string message, LogType type)
+        {
+            LoggerInstance.Msg("UniverseLib : " + message);
         }
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
@@ -28,10 +38,26 @@ namespace LastEpochMods
         }
         public override void OnLateUpdate()
         {
-            if ((!UniverseLibLoaded) && (UniverseLib.Universe.CurrentGlobalState == UniverseLib.Universe.GlobalState.SetupCompleted))
-            {
-                UniverseLibLoaded = true;
-                LoggerInstance.Msg("Game Loaded");
+            if (!Config.Data.mods_config_loaded) { Config.Data.mods_config_loaded = true; Config.Load.Mods(); }
+            if (!UniverseLibLoaded)
+            {                
+                if (UniverseLib.Universe.CurrentGlobalState == UniverseLib.Universe.GlobalState.SetupCompleted)
+                {
+                    UniverseLibLoaded = true;
+                    LoggerInstance.Msg("UnityExplorer found");
+                    LoggerInstance.Msg("Mods init completed");
+                }
+                else if (UniverseLib.Universe.CurrentGlobalState == UniverseLib.Universe.GlobalState.WaitingToSetup)
+                {
+                    float startupDelay = 1f;
+                    UniverseLib.Config.UniverseLibConfig config = new UniverseLib.Config.UniverseLibConfig()
+                    {
+                        Disable_EventSystem_Override = false,
+                        Force_Unlock_Mouse = true,
+                        Unhollowed_Modules_Folder = System.IO.Directory.GetCurrentDirectory() + @"\MelonLoader\"
+                    };
+                    UniverseLib.Universe.Init(startupDelay, UniverseLib_OnInitialized, UniverseLib_LogHandler, config);
+                }
             }
             if (UniverseLibLoaded)
             {
@@ -45,7 +71,7 @@ namespace LastEpochMods
                     }
                     else if (Input.GetKeyDown(KeyCode.F10)) { Character_Mods.Launch_LevelUp(); }                    
                     else if (Input.GetKeyDown(KeyCode.F11))
-                    {
+                    {                        
                         //Mods.Items_Mods.Rolls.Enable_Items_Rolls = !Mods.Items_Mods.Rolls.Enable_Items_Rolls;
                         //LoggerInstance.Msg(Mods.Items_Mods.Rolls.Enable_Items_Rolls + " Items Roll");
                     }
@@ -55,7 +81,8 @@ namespace LastEpochMods
         }
         public override void OnGUI()
         {
-            if (Ui.Menu.isMenuOpen) { Ui.Menu.Update(); }            
+            Ui.Menu.Update();
+            //if (Ui.Menu.isMenuOpen) { Ui.Menu.Update(); }            
         }        
     }
 }
