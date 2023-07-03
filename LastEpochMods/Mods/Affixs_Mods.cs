@@ -5,17 +5,16 @@ namespace LastEpochMods.Mods
     public class Affixs_Mods
     {
         private static AffixList affix_list = null;
-        public static bool Enable_Affixs_Multiplier = true;
-        public static int Affixs_Multiplier = 10;
+        
 
         public static void Launch()
         {
-            Mods.Affixs_Mods.MultiplyAffixsRolls(Affixs_Multiplier);
+            Mods.Affixs_Mods.MultiplyAffixsRolls(Config.Data.mods_config.affixs.Affixs_Multiplier);
             //Mods.Affixs_Mods.EditAffixRollsByTier(100, 7, 100, 999); //Edit Affixs Exemple
         }
         private static void MultiplyAffixsRolls(int mutiplier)
         {
-            if (Enable_Affixs_Multiplier)
+            if (Config.Data.mods_config.affixs.Enable_Affixs_Multiplier)
             {
                 affix_list = AffixList.get();
                 if (affix_list != null)

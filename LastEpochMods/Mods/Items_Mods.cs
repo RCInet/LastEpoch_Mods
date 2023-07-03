@@ -6,49 +6,6 @@ namespace LastEpochMods.Mods
     {
         public class Drop_Mods
         {
-            //Drop Bonuses (Not in Menu)
-            public static bool Enable_increase_equipment_droprate = false;
-            public static float increase_equipment_droprate = 255f;
-            public static bool Enable_increase_equipmentshards_droprate = true;
-            public static float increase_equipmentshards_droprate = 255f;
-            public static bool Enable_increase_uniques_droprate = true;
-            public static float increase_uniques_droprate = 255f;
-            //Gold Multiplier
-            public static bool Enable_DeathItemDrop_goldMultiplier = true;
-            public static float DeathItemDrop_goldMultiplier = 255f;
-            //Item Multiplier
-            public static bool Enable_DeathItemDrop_ItemMultiplier = true;
-            public static float DeathItemDrop_ItemMultiplier = 4f;
-            //Experience Multiplier
-            public static bool Enable_DeathItemDrop_Experience = false;
-            public static long DeathItemDrop_Experience = 9999;
-            //Additional Rare (Not in Menu)
-            public static bool Enable_DeathItemDrop_AdditionalRare = false;
-            public static bool DeathItemDrop_AdditionalRare = true;
-            //Drop Rarity
-            public static bool Enable_Rarity = true;
-            public static byte GenerateItem_Rarity = 7;
-            //Implicits
-            public static bool Enable_RollImplicit = true;
-            public static byte Roll_Implicit = 255;   
-            //Affixes
-            public static bool Enable_AffixsValue = true;
-            public static byte Roll_AffixValue = 255;
-            public static bool Enable_AffixsTier = true;
-            public static byte Roll_AffixTier = 7;
-            //Forging Potencial
-            public static bool Enable_ForgingPotencial = true;
-            public static byte Roll_ForgingPotencial = 255;
-            //Unique Mods
-            public static bool Enable_UniqueMod = true;
-            public static byte Roll_UniqueMod = 255;
-            //Legendat Potencial
-            public static bool Enable_RollLegendayPotencial = true;
-            public static int Roll_Legendary_Potencial = 4; //0 to 4
-            //Weaver Will
-            public static bool Enable_RollWeaverWill = true;
-            public static int Roll_Weaver_Will = 28; //5 to 28
-
             public class Drop_Bonuses
             {
                 [HarmonyPatch(typeof(ItemDropBonuses), "getIncreasedRarityDropRate")]
@@ -57,23 +14,23 @@ namespace LastEpochMods.Mods
                     [HarmonyPrefix]
                     static bool Prefix(ref ItemDropBonuses __instance, float __result, float __0)
                     {
-                        if (Enable_increase_equipment_droprate)
+                        if (Config.Data.mods_config.items.Enable_increase_equipment_droprate)
                         {
                             for (int i = 0; i < __instance.increasedEquipmentDroprates.Count; i++)
                             {
-                                __instance.increasedEquipmentDroprates[i] = increase_equipment_droprate;
+                                __instance.increasedEquipmentDroprates[i] = Config.Data.mods_config.items.increase_equipment_droprate;
                             }
                         }
-                        if (Enable_increase_equipmentshards_droprate)
+                        if (Config.Data.mods_config.items.Enable_increase_equipmentshards_droprate)
                         {
                             for (int z = 0; z < __instance.increasedEquipmentShardDroprates.Count; z++)
                             {
-                                __instance.increasedEquipmentShardDroprates[z] = increase_equipmentshards_droprate;
+                                __instance.increasedEquipmentShardDroprates[z] = Config.Data.mods_config.items.increase_equipmentshards_droprate;
                             }
                         }
-                        if (Enable_increase_uniques_droprate)
+                        if (Config.Data.mods_config.items.Enable_increase_uniques_droprate)
                         {
-                            __instance.increasedUniqueDropRate = increase_uniques_droprate;
+                            __instance.increasedUniqueDropRate = Config.Data.mods_config.items.increase_uniques_droprate;
                         }
 
                         return true;
@@ -88,11 +45,11 @@ namespace LastEpochMods.Mods
                     [HarmonyPostfix]
                     static void Postfix(ref DeathItemDrop __instance)
                     {
-                        if (Enable_DeathItemDrop_goldMultiplier)
+                        if (Config.Data.mods_config.items.Enable_DeathItemDrop_goldMultiplier)
                         {
                             __instance.overrideBaseGoldDropChance = true;
                             __instance.goldDropChance = 1; //100%
-                            __instance.goldMultiplier = DeathItemDrop_goldMultiplier;
+                            __instance.goldMultiplier = Config.Data.mods_config.items.DeathItemDrop_goldMultiplier;
                         }
                     }
                 }
@@ -105,11 +62,11 @@ namespace LastEpochMods.Mods
                     [HarmonyPostfix]
                     static void Postfix(ref DeathItemDrop __instance)
                     {
-                        if (Enable_DeathItemDrop_ItemMultiplier)
+                        if (Config.Data.mods_config.items.Enable_DeathItemDrop_ItemMultiplier)
                         {
                             __instance.overrideBaseItemDropChance = true;
                             __instance.itemDropChance = 1; //100%
-                            __instance.itemMultiplier = DeathItemDrop_ItemMultiplier;
+                            __instance.itemMultiplier = Config.Data.mods_config.items.DeathItemDrop_ItemMultiplier;
                         }                        
                     }
                 }
@@ -122,9 +79,9 @@ namespace LastEpochMods.Mods
                     [HarmonyPostfix]
                     static void Postfix(ref DeathItemDrop __instance)
                     {
-                        if (Enable_DeathItemDrop_Experience)
+                        if (Config.Data.mods_config.items.Enable_DeathItemDrop_Experience)
                         {
-                            __instance.experience = DeathItemDrop_Experience;
+                            __instance.experience = Config.Data.mods_config.items.DeathItemDrop_Experience;
                         }
                     }
                 }
@@ -137,9 +94,9 @@ namespace LastEpochMods.Mods
                     [HarmonyPostfix]
                     static void Postfix(ref DeathItemDrop __instance)
                     {
-                        if (Enable_DeathItemDrop_AdditionalRare)
+                        if (Config.Data.mods_config.items.Enable_DeathItemDrop_AdditionalRare)
                         {
-                            __instance.guaranteedAdditionalRare = DeathItemDrop_AdditionalRare;
+                            __instance.guaranteedAdditionalRare = Config.Data.mods_config.items.DeathItemDrop_AdditionalRare;
                         }                        
                     }
                 }
@@ -152,7 +109,7 @@ namespace LastEpochMods.Mods
                     [HarmonyPostfix]
                     static void Postfix(ref byte __result, int __0)
                     {
-                        if (Enable_Rarity) { __result = GenerateItem_Rarity; }                        
+                        if (Config.Data.mods_config.items.Enable_Rarity) { __result = Config.Data.mods_config.items.GenerateItem_Rarity; }                        
                     }
                 }
             }
@@ -164,11 +121,11 @@ namespace LastEpochMods.Mods
                     [HarmonyPostfix]
                     static void Postfix(GenerateItems __instance, ref int __result, ref ItemDataUnpacked __0, int __1, bool __2, bool __3, ref Il2CppSystem.Boolean __4)
                     {
-                        if (Enable_RollImplicit)
+                        if (Config.Data.mods_config.items.Enable_RollImplicit)
                         {                            
                             for (int j = 0; j < __0.implicitRolls.Count; j++) //Work only for basic item
                             {
-                                __0.implicitRolls[j] = Roll_Implicit;
+                                __0.implicitRolls[j] = Config.Data.mods_config.items.Roll_Implicit;
                             }
                         }                        
                     }
@@ -180,11 +137,11 @@ namespace LastEpochMods.Mods
                     [HarmonyPostfix]
                     static void rollLegendaryPotential(ref ItemData __instance, ref int __result, ref UniqueList.Entry __0, ref int __1, ref int __2)
                     {
-                        if (Enable_RollImplicit)
+                        if (Config.Data.mods_config.items.Enable_RollImplicit)
                         {
                             for (int i = 0; i < __instance.implicitRolls.Count; i++)
                             {
-                                __instance.implicitRolls[i] = (byte)Roll_Implicit;
+                                __instance.implicitRolls[i] = (byte)Config.Data.mods_config.items.Roll_Implicit;
                             }
                         }                        
                     }
@@ -196,11 +153,11 @@ namespace LastEpochMods.Mods
                     [HarmonyPostfix]
                     static void RollWeaversWill(ref ItemData __instance, ref int __result, ref UniqueList.Entry __0, ref int __1, ref int __2)
                     {
-                        if (Enable_RollImplicit)
+                        if (Config.Data.mods_config.items.Enable_RollImplicit)
                         {
                             for (int i = 0; i < __instance.implicitRolls.Count; i++)
                             {
-                                __instance.implicitRolls[i] = (byte)Roll_Implicit;
+                                __instance.implicitRolls[i] = (byte)Config.Data.mods_config.items.Roll_Implicit;
                             }
                         }                                              
                     }
@@ -215,7 +172,7 @@ namespace LastEpochMods.Mods
                     [HarmonyPostfix]
                     static void Postfix(GenerateItems __instance, ref int __result, ref ItemDataUnpacked __0, int __1, bool __2, bool __3, ref Il2CppSystem.Boolean __4)
                     {
-                        if (Enable_ForgingPotencial) { __0.forgingPotential = Roll_ForgingPotencial; }                        
+                        if (Config.Data.mods_config.items.Enable_ForgingPotencial) { __0.forgingPotential = Config.Data.mods_config.items.Roll_ForgingPotencial; }                        
                     }
                 }
             }
@@ -227,13 +184,13 @@ namespace LastEpochMods.Mods
                     [HarmonyPostfix]
                     static void Postfix(GenerateItems __instance, ref int __result, ref ItemDataUnpacked __0, int __1, bool __2, bool __3, ref Il2CppSystem.Boolean __4)
                     {
-                        if ((Enable_AffixsTier) | (Enable_AffixsValue))
+                        if ((Config.Data.mods_config.items.Enable_AffixsTier) | (Config.Data.mods_config.items.Enable_AffixsValue))
                         {
-                            int tier_result = System.Convert.ToInt32(Roll_AffixTier) - 1;
+                            int tier_result = System.Convert.ToInt32(Config.Data.mods_config.items.Roll_AffixTier) - 1;
                             for (int i = 0; i < __0.affixes.Count; i++)
                             {
-                                if (Enable_AffixsTier) { __0.affixes[i].affixTier = (byte)tier_result; }
-                                if (Enable_AffixsValue) { __0.affixes[i].affixRoll = Roll_AffixValue; }
+                                if (Config.Data.mods_config.items.Enable_AffixsTier) { __0.affixes[i].affixTier = (byte)tier_result; }
+                                if (Config.Data.mods_config.items.Enable_AffixsValue) { __0.affixes[i].affixRoll = Config.Data.mods_config.items.Roll_AffixValue; }
                             }
                         }
                     }
@@ -247,11 +204,11 @@ namespace LastEpochMods.Mods
                     [HarmonyPostfix]
                     static void rollLegendaryPotential(ref ItemData __instance, ref int __result, ref UniqueList.Entry __0, ref int __1, ref int __2)
                     {
-                        if (Enable_UniqueMod)
+                        if (Config.Data.mods_config.items.Enable_UniqueMod)
                         {
                             for (int k = 0; k < __instance.uniqueRolls.Count; k++)
                             {
-                                __instance.uniqueRolls[k] = Roll_UniqueMod;
+                                __instance.uniqueRolls[k] = Config.Data.mods_config.items.Roll_UniqueMod;
                             }
                         }
                     }
@@ -263,11 +220,11 @@ namespace LastEpochMods.Mods
                     [HarmonyPostfix]
                     static void RollWeaversWill(ref ItemData __instance, ref int __result, ref UniqueList.Entry __0, ref int __1, ref int __2)
                     {
-                        if (Enable_UniqueMod)
+                        if (Config.Data.mods_config.items.Enable_UniqueMod)
                         {
                             for (int k = 0; k < __instance.uniqueRolls.Count; k++)
                             {
-                                __instance.uniqueRolls[k] = Roll_UniqueMod;
+                                __instance.uniqueRolls[k] = Config.Data.mods_config.items.Roll_UniqueMod;
                             }
                         }
                     }
@@ -282,7 +239,7 @@ namespace LastEpochMods.Mods
                     [HarmonyPostfix]
                     static void RollWeaversWill(ref ItemData __instance, ref int __result, ref UniqueList.Entry __0, ref int __1, ref int __2)
                     {
-                        if (Enable_RollWeaverWill) { __result = Roll_Weaver_Will; }
+                        if (Config.Data.mods_config.items.Enable_RollWeaverWill) { __result = Config.Data.mods_config.items.Roll_Weaver_Will; }
                     }
                 }
                 #endregion
@@ -296,7 +253,7 @@ namespace LastEpochMods.Mods
                     [HarmonyPostfix]
                     static void rollLegendaryPotential(ref ItemData __instance, ref int __result, ref UniqueList.Entry __0, ref int __1, ref int __2)
                     {
-                        if (Enable_RollLegendayPotencial) { __result = Roll_Legendary_Potencial; }
+                        if (Config.Data.mods_config.items.Enable_RollLegendayPotencial) { __result = Config.Data.mods_config.items.Roll_Legendary_Potencial; }
                     }
                 }
                 #endregion
@@ -304,14 +261,6 @@ namespace LastEpochMods.Mods
         }
         public class AutoLoot
         {
-            public static bool AutoPickup_Key = true;
-            public static bool AutoPickup_Craft = true;
-            public static bool AutoPickup_UniqueAndSet = false;
-            public static bool AutoStore_Materials = true;
-            public static bool AutoPickup_Gold = true;
-            public static bool AutoPickup_XpTome = true;
-            public static bool AutoPickup_Pots = false;
-
             #region Items
             [HarmonyPatch(typeof(GroundItemManager), "dropItemForPlayer")]
             public class Items
@@ -323,14 +272,14 @@ namespace LastEpochMods.Mods
                     {
                         System.UInt32 item_id = __instance.nextItemId - 1;
                         bool pickup = false;
-                        if ((AutoPickup_Key) && (Item.isKey(__1.itemType))) { pickup = true; }
-                        else if ((AutoPickup_Craft) && (ItemList.isCraftingItem(__1.itemType))) { pickup = true; }
-                        else if ((AutoPickup_UniqueAndSet) && (Item.rarityIsUniqueSetOrLegendary(__1.rarity))) { pickup = true; }
+                        if ((Config.Data.mods_config.auto_loot.AutoPickup_Key) && (Item.isKey(__1.itemType))) { pickup = true; }
+                        else if ((Config.Data.mods_config.auto_loot.AutoPickup_Craft) && (ItemList.isCraftingItem(__1.itemType))) { pickup = true; }
+                        else if ((Config.Data.mods_config.auto_loot.AutoPickup_UniqueAndSet) && (Item.rarityIsUniqueSetOrLegendary(__1.rarity))) { pickup = true; }
                         
                         if (pickup)
                         {
                             __instance.pickupItem(__0, item_id);
-                            if ((AutoStore_Materials) && (ItemList.isCraftingItem(__1.itemType)))
+                            if ((Config.Data.mods_config.auto_loot.AutoStore_Materials) && (ItemList.isCraftingItem(__1.itemType)))
                             {
                                 InventoryPanelUI.instance.StoreMaterialsButtonPress();
                             }
@@ -346,7 +295,7 @@ namespace LastEpochMods.Mods
                 [HarmonyPostfix]
                 static void Postfix(ref GroundItemManager __instance, ref Actor __0, ref int __1, ref UnityEngine.Vector3 __2, ref bool __3)
                 {
-                    if ((__instance != null) && (AutoPickup_Gold))
+                    if ((__instance != null) && (Config.Data.mods_config.auto_loot.AutoPickup_Gold))
                     {
                         System.UInt32 gold_id = __instance.nextGoldId - 1;
                         foreach (GoldPickupInteraction gold_pickup_interaction in __instance.activeGoldPiles)
@@ -368,7 +317,7 @@ namespace LastEpochMods.Mods
                 [HarmonyPostfix]
                 static void Postfix3(ref GroundItemManager __instance, ref Actor __0, ref int __1, ref UnityEngine.Vector3 __2, ref bool __3)
                 {
-                    if ((__instance != null) && (AutoPickup_XpTome))
+                    if ((__instance != null) && (Config.Data.mods_config.auto_loot.AutoPickup_XpTome))
                     {
                         System.UInt32 tome_id = __instance.nextXpTomeId - 1;
                         foreach (PickupExperiencePotionInteraction pick_exp_pot_interaction in __instance.activeXPTomes)
@@ -390,7 +339,7 @@ namespace LastEpochMods.Mods
                 [HarmonyPostfix]
                 static void Postfix(GroundItemManager __instance, Actor __0, UnityEngine.Vector3 __1, bool __2)
                 {
-                    if ((__instance != null) && (AutoPickup_Pots))
+                    if ((__instance != null) && (Config.Data.mods_config.auto_loot.AutoPickup_Pots))
                     {
                         System.UInt32 pot_id = __instance.nextPotionId - 1;
                         foreach (PotionPickupInteraction pick_pot_interaction in __instance.activePotions)
@@ -408,10 +357,6 @@ namespace LastEpochMods.Mods
         }
         public class RemoveReq
         {
-            public static bool Remove_LevelReq = true;
-            public static bool Remove_ClassReq = true;
-            public static bool Remove_SubClassReq = true;
-
             #region RemoveLevelAndClass
             [HarmonyPatch(typeof(ItemData), "CalculateLevelAndClassRequirement")]
             public class AllItems
@@ -419,9 +364,9 @@ namespace LastEpochMods.Mods
                 [HarmonyPostfix]
                 static void CalculateLevelAndClassRequirement(ItemData __instance, ref int __result, ref ItemList.ClassRequirement __0, ref ItemList.SubClassRequirement __1)
                 {
-                    if (Remove_LevelReq) { __result = 0; }
-                    if (Remove_ClassReq) { __0 = ItemList.ClassRequirement.None; }
-                    if (Remove_SubClassReq) { __1 = ItemList.SubClassRequirement.None; }
+                    if (Config.Data.mods_config.items.Remove_LevelReq) { __result = 0; }
+                    if (Config.Data.mods_config.items.Remove_ClassReq) { __0 = ItemList.ClassRequirement.None; }
+                    if (Config.Data.mods_config.items.Remove_SubClassReq) { __1 = ItemList.SubClassRequirement.None; }
                 }
             }
             #endregion

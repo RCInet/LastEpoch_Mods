@@ -7,13 +7,7 @@ namespace LastEpochMods.Mods
 {
     public class Scene_Mods
     {
-        #region OnSceneChange               
-        //SpawnerPlacementManager
-        public static bool Enable_SpawnerPlacementManager_defaultSpawnerDensity = true;
-        public static float SpawnerPlacementManager_defaultSpawnerDensity = 10f;
-        public static bool Enable_SpawnerPlacementManager_IncreaseExperience = true;
-        public static float SpawnerPlacementManager_IncreaseExperience = 255f;
-        
+        #region OnSceneChange
         public static void Launch()
         {            
             foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.Object)))
@@ -21,18 +15,18 @@ namespace LastEpochMods.Mods
                 System.Type type = obj.GetActualType();
                 if (type == typeof(SpawnerPlacementManager))
                 {
-                    if ((Enable_SpawnerPlacementManager_defaultSpawnerDensity) |
-                        (Enable_SpawnerPlacementManager_IncreaseExperience))
+                    if ((Config.Data.mods_config.scene.Enable_SpawnerPlacementManager_defaultSpawnerDensity) |
+                        (Config.Data.mods_config.scene.Enable_SpawnerPlacementManager_IncreaseExperience))
                     {
                         SpawnerPlacementManager spawner_manager = obj.TryCast<SpawnerPlacementManager>();
-                        if (Enable_SpawnerPlacementManager_defaultSpawnerDensity)
+                        if (Config.Data.mods_config.scene.Enable_SpawnerPlacementManager_defaultSpawnerDensity)
                         {
-                            spawner_manager.defaultSpawnerDensity = SpawnerPlacementManager_defaultSpawnerDensity;
+                            spawner_manager.defaultSpawnerDensity = Config.Data.mods_config.scene.SpawnerPlacementManager_defaultSpawnerDensity;
                             spawner_manager.alwaysRollSpawnerDensity = false;
                         }
-                        if (Enable_SpawnerPlacementManager_IncreaseExperience)
+                        if (Config.Data.mods_config.scene.Enable_SpawnerPlacementManager_IncreaseExperience)
                         {
-                            spawner_manager.increasedExperience = SpawnerPlacementManager_IncreaseExperience;
+                            spawner_manager.increasedExperience = Config.Data.mods_config.scene.SpawnerPlacementManager_IncreaseExperience;
                         }
                     }
                     break;
@@ -43,8 +37,6 @@ namespace LastEpochMods.Mods
         #region Functions Patch        
         public class Waypoints_Mods
         {
-            public static bool Enable_Waypoint_Unlock = true;
-
             #region Unlock
             [HarmonyPatch(typeof(UIWaypointStandard), "OnPointerEnter")]
             public class Unlock
@@ -52,7 +44,7 @@ namespace LastEpochMods.Mods
                 [HarmonyPrefix]
                 static void Prefix(UIWaypointStandard __instance, UnityEngine.EventSystems.PointerEventData __0)
                 {
-                    if (Enable_Waypoint_Unlock)
+                    if (Config.Data.mods_config.scene.Enable_Waypoint_Unlock)
                     {
                         __instance.isActive = true;
                     }                    
@@ -62,10 +54,6 @@ namespace LastEpochMods.Mods
         }
         public class Dungeons_Mods
         {
-            public static bool Enable_Dungeons_WithoutKey = true;
-            private static bool CreateKey = false; //True = create a key, False = Bypass Result
-            public static bool Enable_Dungeons_ObjectiveReveal = true;
-
             #region Initialize
             [HarmonyPatch(typeof(DungeonZoneManager), "initialise")]
             public class DungeonZoneManager_initialise
@@ -73,7 +61,7 @@ namespace LastEpochMods.Mods
                 [HarmonyPostfix]
                 static void initialise(ref DungeonZoneManager __instance)
                 {
-                    if (Enable_Dungeons_ObjectiveReveal) { __instance.objectiveRevealThresholdModifier = float.MaxValue; }
+                    if (Config.Data.mods_config.scene.Enable_Dungeons_ObjectiveReveal) { __instance.objectiveRevealThresholdModifier = float.MaxValue; }
                     
                 }
             }
@@ -86,7 +74,7 @@ namespace LastEpochMods.Mods
                 [HarmonyPrefix]
                 static void Prefix(ItemContainersManager __instance, bool __result, DungeonID __0)
                 {
-                    if ((Enable_Dungeons_WithoutKey) && (CreateKey))
+                    if ((Config.Data.mods_config.scene.Enable_Dungeons_WithoutKey) && (Config.Data.mods_config.scene.CreateKey))
                     {
                         if ((__instance != null) && (!__result))
                         {
@@ -128,7 +116,7 @@ namespace LastEpochMods.Mods
                 [HarmonyPostfix]
                 static void Postfix(ref ItemContainersManager __instance, ref bool __result, ref DungeonID __0)
                 {
-                    if ((Enable_Dungeons_WithoutKey) && (!CreateKey)) { __result = true; }
+                    if ((Config.Data.mods_config.scene.Enable_Dungeons_WithoutKey) && (!Config.Data.mods_config.scene.CreateKey)) { __result = true; }
                 }
                 #endregion
             }
@@ -136,16 +124,6 @@ namespace LastEpochMods.Mods
         }
         public class Monoliths_mods
         {
-            public static bool Enable_Monolith_Stability = true;
-            public static bool Enable_Monolith_Overide_Max_Stability = false;
-            public static int Max_Stability = 100;
-            public static bool Enable_Monolith_EnnemiesDefeat_OnStart = true;
-            public static float Monolith_EnnemiesDefeat_OnStart = 500f;
-            public static bool Enable_Monolith_ObjectiveReveal = true;
-            public static bool Enable_Monolith_Complete_Objective = false;            
-            
-            public static bool Enable_Monolith_NoDie = true;
-
             #region Initialize
             [HarmonyPatch(typeof(MonolithZoneManager), "initialise")]
             public class DungeonZoneManager_initialise
@@ -153,11 +131,11 @@ namespace LastEpochMods.Mods
                 [HarmonyPostfix]
                 static void initialise(ref MonolithZoneManager __instance, ref StatefulQuestList __0)
                 {
-                    if (Enable_Monolith_Overide_Max_Stability) { __instance.maxBonusStablity = Max_Stability; }                    
-                    if (Enable_Monolith_Stability) { __instance.bonusStablity = __instance.maxBonusStablity; }                    
-                    if (Enable_Monolith_EnnemiesDefeat_OnStart) { __instance.enemiesDefeated = Monolith_EnnemiesDefeat_OnStart; }
-                    if (Enable_Monolith_ObjectiveReveal) { __instance.objectiveRevealThresholdModifier = float.MaxValue; }                    
-                    if (Enable_Monolith_Complete_Objective) { __instance.CompleteObjective(); }
+                    if (Config.Data.mods_config.scene.Enable_Monolith_Overide_Max_Stability) { __instance.maxBonusStablity = Config.Data.mods_config.scene.Max_Stability; }                    
+                    if (Config.Data.mods_config.scene.Enable_Monolith_Stability) { __instance.bonusStablity = __instance.maxBonusStablity; }                    
+                    if (Config.Data.mods_config.scene.Enable_Monolith_EnnemiesDefeat_OnStart) { __instance.enemiesDefeated = Config.Data.mods_config.scene.Monolith_EnnemiesDefeat_OnStart; }
+                    if (Config.Data.mods_config.scene.Enable_Monolith_ObjectiveReveal) { __instance.objectiveRevealThresholdModifier = float.MaxValue; }                    
+                    if (Config.Data.mods_config.scene.Enable_Monolith_Complete_Objective) { __instance.CompleteObjective(); }
                 }
             }
             #endregion
@@ -168,7 +146,7 @@ namespace LastEpochMods.Mods
                 [HarmonyPrefix]
                 static void Prefix(ref MonolithZoneManager __instance)
                 {
-                    if (Enable_Monolith_Stability)
+                    if (Config.Data.mods_config.scene.Enable_Monolith_Stability)
                     {
                         __instance.bonusStablity = __instance.maxBonusStablity;
                     }
@@ -183,7 +161,7 @@ namespace LastEpochMods.Mods
                 public static bool Prefix(ref EchoWebIsland __instance, ref MonolithRun run)
                 {
                     bool result = true;
-                    if (Enable_Monolith_NoDie) { result =  false; }
+                    if (Config.Data.mods_config.scene.Enable_Monolith_NoDie) { result =  false; }
                     
                     return result;
                 }

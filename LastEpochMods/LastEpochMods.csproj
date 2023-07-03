@@ -113,6 +113,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\Data.cs" />
+    <Compile Include="Config\Load.cs" />
+    <Compile Include="Config\Save.cs" />
     <Compile Include="Functions.cs" />
     <Compile Include="Mods\Ability_mods.cs" />
     <Compile Include="Mods\Affixs_Mods.cs" />
