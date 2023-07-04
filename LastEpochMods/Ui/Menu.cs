@@ -67,7 +67,6 @@ namespace LastEpochMods.Ui
                     pos_y = start_y + Menu_Size_h + 170;
                     GUI.DrawTexture(new Rect(pos_x, pos_y, (btn_size_w + (2 * btn_margin_w)), item_data_h), windowBackground);
                     pos_x += 5;
-
                     Config.Data.mods_config.items.GenerateItem_Rarity = CustomControls.ByteValue("Rarity", 0, 9, Config.Data.mods_config.items.GenerateItem_Rarity, pos_x, pos_y, Config.Data.mods_config.items.Enable_Rarity, Ui.Menu.Btn_ItemsDrop_Rarity_Roll_Click);
                     pos_y += 85;
                     Config.Data.mods_config.items.Roll_Implicit = CustomControls.ByteValue("Implicits", 0, 255, Config.Data.mods_config.items.Roll_Implicit, pos_x, pos_y, Config.Data.mods_config.items.Enable_RollImplicit, Ui.Menu.Btn_ItemsDrop_Implicit_Roll_Click);
@@ -473,7 +472,7 @@ namespace LastEpochMods.Ui
         #endregion
         #region Scenes
         private static bool ShowSceneSection = false;
-        public static float Scene_h = 350f;
+        public static float Scene_h = 305f;
 
         public static void Btn_Scene_Click()
         {
