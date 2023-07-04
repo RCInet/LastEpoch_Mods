@@ -125,9 +125,11 @@ namespace LastEpochMods.Ui
                     pos_y += 85;
                     Config.Data.mods_config.character.leach_rate = CustomControls.FloatValue("Leach Rate", 0, 255, Config.Data.mods_config.character.leach_rate, pos_x, pos_y, Config.Data.mods_config.character.Enable_leach_rate, Ui.Menu.Btn_Character_LeachRate_Click);
                     pos_y += 85;
-                    if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Skills", Styles.Button_Style(ShowSkillsSection))) { Btn_Skills_Click(); }
+                    if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Skills", Styles.Button_Style(ShowSkillsSection))) { Ui.Menu.Btn_Skills_Click(); }
                     pos_y += 45;
-                    if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Tree", Styles.Button_Style(ShowTreeSection))) { Btn_Tree_Click(); }
+                    if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Tree", Styles.Button_Style(ShowTreeSection))) { Ui.Menu.Btn_Tree_Click(); }
+                    pos_y += 45;
+                    CustomControls.EnableButton("Unlock Cosmetic", pos_x, pos_y, Config.Data.mods_config.character.Enable_Cosmetic_Btn, Ui.Menu.Btn_Cosmetic_Click);                    
                 }
                 else { ShowSkillsSection = false; ShowTreeSection = false; }
                 if (ShowSkillsSection)
@@ -391,7 +393,7 @@ namespace LastEpochMods.Ui
         #endregion
         #region Character
         private static bool ShowCharacterSection = false;
-        public static float Character_h = 260f;
+        public static float Character_h = 305f;
 
         public static void Btn_Character_Click()
         {
@@ -468,7 +470,11 @@ namespace LastEpochMods.Ui
         {
             Config.Data.mods_config.character.Enable_passiveTree_pointsEarnt = !Config.Data.mods_config.character.Enable_passiveTree_pointsEarnt;            
         }
-        #endregion        
+        public static void Btn_Cosmetic_Click()
+        {
+            Config.Data.mods_config.character.Enable_Cosmetic_Btn = !Config.Data.mods_config.character.Enable_Cosmetic_Btn;
+        }
+        #endregion
         #endregion
         #region Scenes
         private static bool ShowSceneSection = false;

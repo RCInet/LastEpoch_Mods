@@ -44,6 +44,7 @@ namespace LastEpochMods.Config
             public float attack_rate;
             public bool Enable_leach_rate;
             public float leach_rate;
+            public bool Enable_Cosmetic_Btn;
         }
         public struct Scene_Structure
         {

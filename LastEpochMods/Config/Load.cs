@@ -112,7 +112,8 @@ namespace LastEpochMods.Config
                     Enable_attack_rate = true,
                     attack_rate = 255f,
                     Enable_leach_rate = true,
-                    leach_rate = 255f
+                    leach_rate = 255f,
+                    Enable_Cosmetic_Btn = true
                 },
                 affixs = new Data.Affixs_Structure
                 {

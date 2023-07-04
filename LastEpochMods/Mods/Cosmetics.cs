@@ -11,15 +11,18 @@ namespace LastEpochMods.Mods
             public class OnEnable
             {
                 [HarmonyPostfix]
-                static void Postfix(ref InventoryPanelUI __instance)
+                static void Postfix(InventoryPanelUI __instance)
                 {
-                    foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(TabUIElement)))
+                    if (Config.Data.mods_config.character.Enable_Cosmetic_Btn)
                     {
-                        System.Type type = obj.GetActualType();
-                        if (obj.name == "AppearanceTab")
+                        foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(TabUIElement)))
                         {
-                            obj.TryCast<TabUIElement>().isDisabled = false;                            
-                            break;
+                            System.Type type = obj.GetActualType();
+                            if (obj.name == "AppearanceTab")
+                            {
+                                obj.TryCast<TabUIElement>().isDisabled = false;
+                                break;
+                            }
                         }
                     }
                 }
