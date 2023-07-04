@@ -120,6 +120,8 @@
     <Compile Include="Mods\Ability_mods.cs" />
     <Compile Include="Mods\Affixs_Mods.cs" />
     <Compile Include="Mods\Character_Mods.cs" />
+    <Compile Include="Mods\Developer.cs" />
+    <Compile Include="Mods\Gambling.cs" />
     <Compile Include="Mods\Items\HeadHunter.cs" />
     <Compile Include="Mods\Items_Mods.cs" />
     <Compile Include="Mods\Scene_Mods.cs" />

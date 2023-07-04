@@ -104,12 +104,22 @@ namespace LastEpochMods.Mods
             public class Rarity
             {
                 [HarmonyPatch(typeof(GenerateItems), "RollRarity")]
-                public class Items
+                public class RollRarity
                 {
                     [HarmonyPostfix]
                     static void Postfix(ref byte __result, int __0)
                     {
                         if (Config.Data.mods_config.items.Enable_Rarity) { __result = Config.Data.mods_config.items.GenerateItem_Rarity; }                        
+                    }
+                }
+
+                [HarmonyPatch(typeof(GenerateItems), "initialiseRandomItemData")]
+                public class initialiseRandomItemData
+                {
+                    [HarmonyPostfix]
+                    static void Postfix(GenerateItems __instance, ref ItemDataUnpacked __result, bool __0, int __1, bool __2, ItemLocationTag __3, int __4, int __5, int __6, int __7, int __8, bool __9, int __10)
+                    {
+                        if (Config.Data.mods_config.items.Enable_Rarity) { __result.rarity = Config.Data.mods_config.items.GenerateItem_Rarity; }
                     }
                 }
             }

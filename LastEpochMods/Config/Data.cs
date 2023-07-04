@@ -82,42 +82,30 @@ namespace LastEpochMods.Config
             public float increase_equipmentshards_droprate;
             public bool Enable_increase_uniques_droprate;
             public float increase_uniques_droprate;
-            //Gold Multiplier
             public bool Enable_DeathItemDrop_goldMultiplier;
             public float DeathItemDrop_goldMultiplier;
-            //Item Multiplier
             public bool Enable_DeathItemDrop_ItemMultiplier;
             public float DeathItemDrop_ItemMultiplier;
-            //Experience Multiplier
             public bool Enable_DeathItemDrop_Experience;
             public long DeathItemDrop_Experience;
-            //Additional Rare (Not in Menu)
             public bool Enable_DeathItemDrop_AdditionalRare;
             public bool DeathItemDrop_AdditionalRare;
-            //Drop Rarity
             public bool Enable_Rarity;
             public byte GenerateItem_Rarity;
-            //Implicits
             public bool Enable_RollImplicit;
             public byte Roll_Implicit;
-            //Affixes
             public bool Enable_AffixsValue;
             public byte Roll_AffixValue;
             public bool Enable_AffixsTier;
             public byte Roll_AffixTier;
-            //Forging Potencial
             public bool Enable_ForgingPotencial;
             public byte Roll_ForgingPotencial;
-            //Unique Mods
             public bool Enable_UniqueMod;
             public byte Roll_UniqueMod;
-            //Legendat Potencial
             public bool Enable_RollLegendayPotencial;
             public int Roll_Legendary_Potencial;
-            //Weaver Will
             public bool Enable_RollWeaverWill;
             public int Roll_Weaver_Will;
-            //Remove Req
             public bool Remove_LevelReq;
             public bool Remove_ClassReq;
             public bool Remove_SubClassReq;

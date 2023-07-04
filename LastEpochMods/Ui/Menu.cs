@@ -37,8 +37,10 @@ namespace LastEpochMods.Ui
                 if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Scene", Styles.Button_Style(ShowSceneSection))) { Btn_Scene_Click(); }
                 pos_x += btn_size_w + btn_margin_w;
                 if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Items", Styles.Button_Style(ShowItemsSection))) { Btn_Items_Click(); }
-                pos_x += btn_size_w + btn_margin_w;                
-                                
+                pos_x += btn_size_w + btn_margin_w;
+                if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Dev Mode", Styles.Button_Style(Mods.Developer.DevLoaded))) { Mods.Developer.ShowHide_Dev(); }
+                pos_x += btn_size_w + btn_margin_w;
+
                 //Drop
                 if (ShowItemDropSection)
                 {
@@ -252,12 +254,8 @@ namespace LastEpochMods.Ui
         #region Menu
         public static bool isMenuOpen;
         public static int WindowId = 0;
-        public static Rect Menu_Window_Rect = new Rect(5f, 5f, 825f, 860f);
-        private static float Menu_Size_h = 50f;
-
-        //Menu Refs
-        private static float margin_x = 10f;
-        private static float margin_y = 10f;
+        public static Rect Menu_Window_Rect = new Rect(5f, 5f, 1030f, 860f);
+        private static float Menu_Size_h = 50f;                
         private static float btn_size_w = 200f;
         private static float btn_size_h = 40f;
         private static float btn_margin_w = 5f;
@@ -475,7 +473,7 @@ namespace LastEpochMods.Ui
         #endregion
         #region Scenes
         private static bool ShowSceneSection = false;
-        public static float Scene_h = 305f;
+        public static float Scene_h = 350f;
 
         public static void Btn_Scene_Click()
         {
@@ -491,7 +489,7 @@ namespace LastEpochMods.Ui
         public static void Btn_Scene_Experience_Click()
         {
             Config.Data.mods_config.scene.Enable_SpawnerPlacementManager_IncreaseExperience = !Config.Data.mods_config.scene.Enable_SpawnerPlacementManager_IncreaseExperience;            
-        }
+        }        
         public static void Btn_Scene_Waypoint_Unlock_Click()
         {
             Config.Data.mods_config.scene.Enable_Waypoint_Unlock = !Config.Data.mods_config.scene.Enable_Waypoint_Unlock;            

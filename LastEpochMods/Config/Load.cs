@@ -16,7 +16,8 @@ namespace LastEpochMods.Config
             Data.mods_config = new Data.Mods_Structure();
             if (!File.Exists(Data.path + Data.filename))
             {
-                Data.mods_config = DefaultConfig(); Save.Mods();
+                Data.mods_config = DefaultConfig();
+                Save.Mods();
                 Main.logger_instance.Msg("Config not found : Default Values");
             }
             else
