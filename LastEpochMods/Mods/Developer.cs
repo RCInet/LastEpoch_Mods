@@ -10,26 +10,34 @@ namespace LastEpochMods.Mods
 {
     public class Developer
     {
-        public static bool DevLoaded = false;        
+        public static bool DevLoaded = false;
         public static void ShowHide_Dev()
         {
-            if (!Remove_Hide) { Remove_Hide = Remove_HideInBuilds(); }
-            if (Remove_Hide)
+            if (Scenes.MenuNames.Contains(Scenes.CurrentName))
             {
-                bool show = true;
-                if (DevLoaded) { show = false; }
-                foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.GameObject)))
+                Main.logger_instance.Msg("DeveloperMode : Launch a character before Enable/Disable");
+            }
+            else
+            {
+                if (!Remove_Hide) { Remove_Hide = Remove_HideInBuilds(); }
+                if (Remove_Hide)
                 {
-                    if (obj.name == "DeveloperMode")
+                    bool show = true;
+                    if (DevLoaded) { show = false; }
+                    foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.GameObject)))
                     {
-                        UnityEngine.GameObject game_object = obj.TryCast<UnityEngine.GameObject>();
-                        game_object.active = show;
-                        DevLoaded = show;
-                        break;
+                        if (obj.name == "DeveloperMode")
+                        {
+                            UnityEngine.GameObject game_object = obj.TryCast<UnityEngine.GameObject>();
+                            game_object.active = show;
+                            DevLoaded = show;
+                            Main.logger_instance.Msg("DeveloperMode : Enable = " + show);
+                            break;
+                        }
                     }
                 }
+                else { Main.logger_instance.Msg("DeveloperMode : Can't enable Developer Mode without Disable HideInBuilds"); }
             }
-            else { Main.logger_instance.Msg("DeveloperMode : Can't Enable without Disable HideInBuilds"); }
         }
 
         private static bool Remove_Hide = false;
