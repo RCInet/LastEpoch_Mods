@@ -1,10 +1,4 @@
-﻿using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UniverseLib;
+﻿using System.Linq;
 
 namespace LastEpochMods.Mods
 {
@@ -28,8 +22,7 @@ namespace LastEpochMods.Mods
                     {
                         if (obj.name == "DeveloperMode")
                         {
-                            UnityEngine.GameObject game_object = obj.TryCast<UnityEngine.GameObject>();
-                            game_object.active = show;
+                            obj.TryCast<UnityEngine.GameObject>().active = show;
                             DevLoaded = show;
                             Main.logger_instance.Msg("DeveloperMode : Enable = " + show);
                             break;
@@ -48,8 +41,7 @@ namespace LastEpochMods.Mods
             {
                 if (obj.name == "DeveloperMode")
                 {
-                    HideInBuilds hide_in_build = obj.TryCast<HideInBuilds>();
-                    hide_in_build.enabled = false;
+                    obj.TryCast<HideInBuilds>().enabled = false;
                     result = true;
                     break;
                 }                

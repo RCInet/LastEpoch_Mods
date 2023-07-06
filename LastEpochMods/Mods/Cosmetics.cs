@@ -1,10 +1,26 @@
 ﻿using HarmonyLib;
+using LE.Deprecated;
+using LE.Services.Cosmetics;
+using UnityEngine.UI;
 using UniverseLib;
 
 namespace LastEpochMods.Mods
 {
     public class Cosmetics
     {
+        public struct cosmetic_list_structure
+        {
+            public System.Collections.Generic.List<LE.Services.Cosmetics.CosmeticItem> cosmetics_items;
+            public System.Collections.Generic.List<LE.Services.Cosmetics.CosmeticBackSlot> cosmetics_backslot;
+            public System.Collections.Generic.List<LE.Services.Cosmetics.CosmeticPet> cosmetics_pets;
+            public System.Collections.Generic.List<LE.Services.Cosmetics.CosmeticPortal> cosmetics_portals;
+        }
+        public struct cosmetic_slot_structure
+        {
+            public CosmeticItemSlot slot;
+            public string name;
+        }
+
         public class EnableBtn
         {
             [HarmonyPatch(typeof(InventoryPanelUI), "OnEnable")]
@@ -13,76 +29,156 @@ namespace LastEpochMods.Mods
                 [HarmonyPostfix]
                 static void Postfix(InventoryPanelUI __instance)
                 {
-                    if (Config.Data.mods_config.character.Enable_Cosmetic_Btn)
+                    bool disable = true;
+                    if (Config.Data.mods_config.character.Enable_Cosmetic_Btn) { disable = false; }
+                    foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(TabUIElement)))
                     {
-                        foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(TabUIElement)))
+                        if (obj.name == "AppearanceTab")
                         {
-                            System.Type type = obj.GetActualType();
-                            if (obj.name == "AppearanceTab")
-                            {
-                                obj.TryCast<TabUIElement>().isDisabled = false;
-                                break;
-                            }
+                            TabUIElement appearance_tab = obj.TryCast<TabUIElement>();
+                            appearance_tab.isDisabled = disable;
+                            break;
+                        }
+                    }
+                    foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.CanvasGroup)))
+                    {
+                        if (obj.name == "AppearanceTab")
+                        {
+                            UnityEngine.CanvasGroup canvas_group = obj.TryCast<UnityEngine.CanvasGroup>();
+                            canvas_group.enabled = disable;
+                            break;
                         }
                     }
                 }
             }
-        }
 
-        /*private static InventoryPanelUI inventory_panel_ui = null;
-        private static UnityEngine.GameObject blessing_panel = null;
-        private static UnityEngine.GameObject inventory_panel = null;
-        private static UnityEngine.GameObject cosmetic_panel = null;
-        private static void Init_Refs()
-        {
-            foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(InventoryPanelUI)))
+            [HarmonyPatch(typeof(BottomScreenMenu), "OnEnable")]
+            public class OnEnableMenuBtns
             {
-                System.Type type = obj.GetActualType();
-                if (obj.name == "InventoryPanel(Clone)")
+                [HarmonyPostfix]
+                static void Postfix(BottomScreenMenu __instance)
                 {
-                    inventory_panel_ui = obj.TryCast<InventoryPanelUI>();
-                    blessing_panel = inventory_panel_ui.blessingPanel;
-                    inventory_panel = inventory_panel_ui.inventoryPanel;
-                    cosmetic_panel = inventory_panel_ui.cosmeticPanel;                    
-                    break;
+                    bool disable = true;
+                    if (Config.Data.mods_config.character.Enable_Cosmetic_Btn) { disable = false; }
+                    foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.UI.Button)))
+                    {
+                        if (obj.name == "Cosmetics")
+                        {
+                            Selectable appearance_tab = obj.TryCast<Selectable>();
+                            appearance_tab.interactable = !disable;
+                            break;
+                        }
+                    }
+                    foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.CanvasGroup)))
+                    {
+                        if (obj.name == "Cosmetics")
+                        {
+                            UnityEngine.CanvasGroup canvas_group = obj.TryCast<UnityEngine.CanvasGroup>();
+                            canvas_group.enabled = disable;
+                            break;
+                        }
+                    }
                 }
             }
-        }*/
 
-        /*public static void GetAllCosmetics()
+        }
+        public class Get
         {
-            if (cosmetic_panel == null) { Init_Refs(); }
-            if (cosmetic_panel != null)
+            public static cosmetic_list_structure Cosmetics()
             {
-                cosmetic_panel.petSlots.Clear();
-                foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(CosmeticItemSlot)))
+                cosmetic_list_structure cosmetic_list = new cosmetic_list_structure
+                {
+                    cosmetics_items = new System.Collections.Generic.List<LE.Services.Cosmetics.CosmeticItem>(),
+                    cosmetics_backslot = new System.Collections.Generic.List<LE.Services.Cosmetics.CosmeticBackSlot>(),
+                    cosmetics_pets = new System.Collections.Generic.List<LE.Services.Cosmetics.CosmeticPet>(),
+                    cosmetics_portals = new System.Collections.Generic.List<LE.Services.Cosmetics.CosmeticPortal>()
+                };
+                foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(LE.Services.Cosmetics.Cosmetic)))
                 {
                     System.Type type = obj.GetActualType();
-                    if (type == typeof(CosmeticItemSlot))
+                    if (type == typeof(CosmeticItem)) { cosmetic_list.cosmetics_items.Add(obj.TryCast<CosmeticItem>()); }
+                    else if (type == typeof(CosmeticBackSlot)) { cosmetic_list.cosmetics_backslot.Add(obj.TryCast<CosmeticBackSlot>()); }
+                    else if (type == typeof(CosmeticPet)) { cosmetic_list.cosmetics_pets.Add(obj.TryCast<CosmeticPet>()); }
+                    else if (type == typeof(CosmeticPortal)) { cosmetic_list.cosmetics_portals.Add(obj.TryCast<CosmeticPortal>()); }
+                }
+
+                Main.logger_instance.Msg("Found : " + cosmetic_list.cosmetics_items.Count + " items");
+                Main.logger_instance.Msg("Found : " + cosmetic_list.cosmetics_backslot.Count + " back");
+                Main.logger_instance.Msg("Found : " + cosmetic_list.cosmetics_pets.Count + " pets");
+                Main.logger_instance.Msg("Found : " + cosmetic_list.cosmetics_portals.Count + " portal");
+
+                return cosmetic_list;
+            }
+            public static System.Collections.Generic.List<cosmetic_slot_structure> Slots()
+            {
+                System.Collections.Generic.List<cosmetic_slot_structure>  cosmetic_slot_list = new System.Collections.Generic.List<cosmetic_slot_structure>();
+                Il2CppSystem.Collections.Generic.List<CosmeticItemSlot> cosmetic_slots = null;                
+                Il2CppSystem.Collections.Generic.List<CosmeticItemSlot> pet_slots = null;
+                CosmeticItemSlot portal_slots = null;
+                foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(InventoryPanelUI)))
+                {
+                    System.Type type = obj.GetActualType();
+                    if (obj.name == "InventoryPanel(Clone)")
                     {
-                        CosmeticItemSlot cosmetic_item_slot = obj.TryCast<CosmeticItemSlot>();
-                        CosmeticType cosmetic_type = cosmetic_item_slot.cosmeticType;
-                        if (cosmetic_type == CosmeticType.PET)
+                        cosmetic_slots = obj.TryCast<InventoryPanelUI>().cosmeticPanel.GetComponent<CosmeticPanelUI>().equipSlots;
+                        foreach (CosmeticItemSlot slot in cosmetic_slots)
                         {
-                            cosmetic_panel.petSlots.Add(cosmetic_item_slot);
-                        }
-                        else if (cosmetic_type == CosmeticType.PORTAL)
-                        {
-                            
-                        }
-                        else if (cosmetic_type == CosmeticType.ITEM)
-                        {
-                            foreach (CosmeticItemSlot slot in cosmetic_panel.equipSlots)
+                            cosmetic_slot_list.Add(new cosmetic_slot_structure
                             {
-                                if ((obj.name == "Helmet") && (cosmetic_item_slot.cosmeticSlot == LE.Networking.Cosmetics.CosmeticEquipSlot.Helm))
-                                {
-                                    
-                                }
-                            }
+                                name = slot.cosmeticSlotName,
+                                slot = slot
+                            });
                         }
+
+                        pet_slots = obj.TryCast<InventoryPanelUI>().cosmeticPanel.GetComponent<CosmeticPanelUI>().petSlots;
+                        foreach (CosmeticItemSlot slot in cosmetic_slots)
+                        {
+                            cosmetic_slot_list.Add(new cosmetic_slot_structure
+                            {
+                                name = slot.cosmeticSlotName,
+                                slot = slot
+                            });
+                        }
+
+                        portal_slots = obj.TryCast<InventoryPanelUI>().cosmeticPanel.GetComponent<CosmeticPanelUI>().portalSlot;
+                        cosmetic_slot_list.Add(new cosmetic_slot_structure
+                        {
+                            name = portal_slots.cosmeticSlotName,
+                            slot = portal_slots
+                        });
+
+                        break;
                     }
                 }
+
+                return cosmetic_slot_list;
             }
-        }*/
+        }
+        public class Add
+        {
+            public static void DefaultCosmetic()
+            {
+                cosmetic_list_structure cosmetics = Get.Cosmetics();
+                foreach (cosmetic_slot_structure slot_struct in Get.Slots())
+                {
+                    if (slot_struct.slot.cosmeticSlotName == "Back Cosmetics")
+                    {
+                        slot_struct.slot.SetCosmetic(cosmetics.cosmetics_backslot[0].TryCast<LE.Services.Cosmetics.Cosmetic>());
+                    }
+                    else if (slot_struct.slot.cosmeticSlotName == "Pet Slot 1")
+                    {
+                        slot_struct.slot.SetCosmetic(cosmetics.cosmetics_pets[0].TryCast<LE.Services.Cosmetics.Cosmetic>());
+                    }
+                    else if (slot_struct.slot.cosmeticSlotName == "Pet Slot 2")
+                    {
+                        slot_struct.slot.SetCosmetic(cosmetics.cosmetics_pets[1].TryCast<LE.Services.Cosmetics.Cosmetic>());
+                    }
+                    else if (slot_struct.slot.cosmeticSlotName == "Portal Cosmetics")
+                    {
+                        slot_struct.slot.SetCosmetic(cosmetics.cosmetics_portals[0].TryCast<LE.Services.Cosmetics.Cosmetic>());
+                    }
+                }                
+            }
+        }
     }
 }
