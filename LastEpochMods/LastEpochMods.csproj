@@ -35,6 +35,7 @@
     <Reference Include="0Harmony, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\0Harmony.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -48,20 +49,28 @@
     </Reference>
     <Reference Include="Il2CppSystem.Core">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\Il2CppSystem.Core.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="LE.Core">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\LE.Core.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="MelonLoader, Version=0.5.7.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\MelonLoader.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="MicrotransactionSystem">
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\MicrotransactionSystem.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Sirenix.Serialization">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\Sirenix.Serialization.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -77,6 +86,10 @@
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnhollowerBaseLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Unity.Addressables">
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\Unity.Addressables.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.dll</HintPath>
@@ -84,13 +97,16 @@
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.AIModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ARModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.ARModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -99,30 +115,39 @@
     </Reference>
     <Reference Include="UnityEngine.DirectorModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.DirectorModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.DSPGraphModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.DSPGraphModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.GameCenterModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.GameCenterModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.GridModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.GridModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.HotReloadModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.HotReloadModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.Il2CppAssetBundleManager">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.Il2CppAssetBundleManager.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.Il2CppImageConversionManager">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.Il2CppImageConversionManager.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -131,45 +156,59 @@
     </Reference>
     <Reference Include="UnityEngine.InputModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.InputModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.SharedInternalsModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.SharedInternalsModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.SpriteMaskModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.SpriteMaskModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.SpriteShapeModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.SpriteShapeModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.SubsystemsModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.SubsystemsModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TextCoreModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.TextCoreModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TilemapModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.TilemapModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TLSModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.TLSModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UIElementsModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.UIElementsModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UIModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.UIModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UmbraModule">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnityEngine.UmbraModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UniverseLib.IL2CPP.Unhollower">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\UserLibs\UniverseLib.IL2CPP.Unhollower.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -177,14 +216,27 @@
     <Compile Include="Config\Load.cs" />
     <Compile Include="Config\Save.cs" />
     <Compile Include="Functions.cs" />
-    <Compile Include="Mods\Ability_mods.cs" />
+    <Compile Include="Hooks\Bottom_Screen_Menu.cs" />
+    <Compile Include="Hooks\Character_Mutator.cs" />
+    <Compile Include="Hooks\Character_Stats.cs" />
+    <Compile Include="Hooks\Cosmetic_Item_Object.cs" />
+    <Compile Include="Hooks\Cosmetic_Item_Slot.cs" />
+    <Compile Include="Hooks\Death_Item_Drop.cs" />
+    <Compile Include="Hooks\Dungeon_Zone_Manager.cs" />
+    <Compile Include="Hooks\Gambling_Container.cs" />
+    <Compile Include="Hooks\Generate_Items.cs" />
+    <Compile Include="Hooks\Ground_Item_Manager.cs" />
+    <Compile Include="Hooks\Inventory_Panel_UI.cs" />
+    <Compile Include="Hooks\Item_Data.cs" />
+    <Compile Include="Hooks\Item_Drop_Bonuses.cs" />
+    <Compile Include="Hooks\Monolith_Zone_Manager.cs" />
+    <Compile Include="Hooks\UI_Waypoint_Standard.cs" />
+    <Compile Include="Hooks\UnityEngine_UI_Button.cs" />
     <Compile Include="Mods\Affixs_Mods.cs" />
     <Compile Include="Mods\Character_Mods.cs" />
     <Compile Include="Mods\Cosmetics.cs" />
     <Compile Include="Mods\Developer.cs" />
-    <Compile Include="Mods\Gambling.cs" />
     <Compile Include="Mods\Items\HeadHunter.cs" />
-    <Compile Include="Mods\Items_Mods.cs" />
     <Compile Include="Mods\Scene_Mods.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

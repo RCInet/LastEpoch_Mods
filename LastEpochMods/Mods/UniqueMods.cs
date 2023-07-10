@@ -117,8 +117,5 @@ namespace LastEpochMods.Mods
         }
         public static System.Collections.Generic.List<ability_mod> Ability_Mods = new System.Collections.Generic.List<ability_mod>();
         public static bool Enable_AbilityMods = true;
-
-        
-        
     }
 }

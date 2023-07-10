@@ -60,9 +60,8 @@ namespace LastEpochMods
             {
                 if (Input.GetKeyDown(KeyCode.F1)) { Ui.Menu.isMenuOpen = !Ui.Menu.isMenuOpen; }
                 if (!Scenes.MenuNames.Contains(Scenes.CurrentName)) //In game
-                {
-                    if (Input.GetKeyDown(KeyCode.F9)) { Mods.Cosmetics.Add.DefaultCosmetic(); }
-                    //if (Input.GetKeyDown(KeyCode.F10)) { Mods.Character_Mods.Launch_LevelUp(); }
+                {                    
+                    if (Input.GetKeyDown(KeyCode.F10)) { Mods.Character_Mods.Launch_LevelUp(); }
                 }
             }
         }

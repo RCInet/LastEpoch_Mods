@@ -1,13 +1,139 @@
 ﻿using HarmonyLib;
-using LE.Deprecated;
-using LE.Services.Cosmetics;
+using System.Xml.Linq;
 using UnityEngine.UI;
 using UniverseLib;
+using static MelonLoader.MelonLogger;
 
 namespace LastEpochMods.Mods
 {
     public class Cosmetics
     {
+        public static string current_slot_name = "";
+        public static void AddCosmeticToSlot(CosmeticItemObject cosmetic_obj)
+        {
+            Main.logger_instance.Msg("Debug : AddCosmeticToSlot : Slot = " + current_slot_name);
+            foreach (UnityEngine.Object new_obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(CosmeticItemSlot)))
+            {
+                string new_slot_name = "";
+                System.Type type = new_obj.GetActualType();
+                if (type == typeof(CosmeticItemSlot))
+                {
+                    try
+                    {
+                        new_slot_name = new_obj.TryCast<CosmeticItemSlot>().gameObject.name;
+                        if (current_slot_name == new_slot_name)
+                        {
+                            Main.logger_instance.Msg("Debug : Slot Found : " + new_slot_name);
+                            CosmeticItemSlot cosmetic_item_slot = new_obj.TryCast<CosmeticItemSlot>();
+
+                            cosmetic_item_slot.cosmeticDisplayImage = cosmetic_obj.itemImage;
+                            //cosmetic_item_slot.ItemTypeInfoTooltip = cosmetic_obj.ItemTypeInfoTooltip;
+                            cosmetic_item_slot.SetCosmetic(cosmetic_obj.storedCosmetic);
+                            //cosmetic_item_slot.SetSprite(cosmetic_obj.itemImage.sprite);
+                            cosmetic_item_slot.SetItemTypeTooltip(cosmetic_obj.storedCosmetic);
+                            //cosmetic_item_slot.
+
+
+                            //cosmetic_obj.enabled = true;
+                            //cosmetic_obj.currentSelection = ;
+                            //cosmetic_obj.overlayFadeImage
+
+                            /*for (int i = 0; i < cosmetic_item_slot.transform.childCount; i++)
+                            {
+                                UnityEngine.GameObject game_object = cosmetic_item_slot.transform.GetChild(i).gameObject;
+                                if (game_object.name == "CosmeticItemImage")
+                                {
+                                    game_object.GetComponent<UnityEngine.UI.Image>().sprite = cosmetic_obj.itemImage.sprite;
+                                    break;
+                                }
+                            }*/
+                            //break;
+                        }
+                    }
+                    catch { Main.logger_instance.Msg("Error"); }
+                }
+            }
+        }
+        public static void GetPoints()
+        {
+            Main.logger_instance.Msg("Debug : GetPoints");
+            //Set Points
+        }
+        public static void OpenShop()
+        {
+            Main.logger_instance.Msg("Debug : OpenShop");
+            RemoveShopDropdown();
+            foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.GameObject)))
+            {
+                if (obj.name == "InventoryPanel(Clone)")
+                {
+                    obj.TryCast<UnityEngine.GameObject>().gameObject.active = false;
+                }
+                else if (obj.name == "Flyout Selection Window")
+                {
+                    obj.TryCast<UnityEngine.GameObject>().gameObject.active = false;
+                }
+                else if (obj.name == "CosmeticsStore")
+                {
+                    obj.TryCast<UnityEngine.GameObject>().gameObject.active = true;
+                }
+            }
+        }
+        public static void CloseShop()
+        {
+            Main.logger_instance.Msg("Debug : CloseShop");
+            foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.GameObject)))
+            {
+                if (obj.name == "InventoryPanel(Clone)")
+                {
+                    obj.TryCast<UnityEngine.GameObject>().gameObject.active = true;
+                }
+                else if (obj.name == "CosmeticsStore")
+                {
+                    obj.TryCast<UnityEngine.GameObject>().gameObject.active = false;
+                }
+            }
+        }
+        public static void RemoveShopDropdown()
+        {
+            foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.GameObject)))
+            {
+                if (obj.name == "CosmeticsStore")
+                {
+                    UnityEngine.GameObject game_object = obj.TryCast<UnityEngine.GameObject>();
+                    for (int i = 0; i < game_object.transform.childCount; i++)
+                    {
+                        string name = game_object.transform.GetChild(i).gameObject.name;
+                        if (name == "Dropdown")
+                        {
+                            game_object.transform.GetChild(i).TryCast<UnityEngine.GameObject>().gameObject.active = false;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        public static void BuyCosmetic()
+        {
+            Main.logger_instance.Msg("Debug : BuyCosmetic");
+            //Add Cosmetic to cosmeticsmanager
+        }
+        public static void ShowTab()
+        {
+            Main.logger_instance.Msg("Debug : ShowTab");
+        }
+        public static void SelectCosmeticTab()
+        {
+            foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(TabUIController)))
+            {
+                if (obj.name == "Header")
+                {
+                    obj.TryCast<TabUIController>().Select(2, false);
+                    break;
+                }
+            }
+        }
+
         public struct cosmetic_list_structure
         {
             public System.Collections.Generic.List<LE.Services.Cosmetics.CosmeticItem> cosmetics_items;
@@ -21,67 +147,6 @@ namespace LastEpochMods.Mods
             public string name;
         }
 
-        public class EnableBtn
-        {
-            [HarmonyPatch(typeof(InventoryPanelUI), "OnEnable")]
-            public class OnEnable
-            {
-                [HarmonyPostfix]
-                static void Postfix(InventoryPanelUI __instance)
-                {
-                    bool disable = true;
-                    if (Config.Data.mods_config.character.Enable_Cosmetic_Btn) { disable = false; }
-                    foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(TabUIElement)))
-                    {
-                        if (obj.name == "AppearanceTab")
-                        {
-                            TabUIElement appearance_tab = obj.TryCast<TabUIElement>();
-                            appearance_tab.isDisabled = disable;
-                            break;
-                        }
-                    }
-                    foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.CanvasGroup)))
-                    {
-                        if (obj.name == "AppearanceTab")
-                        {
-                            UnityEngine.CanvasGroup canvas_group = obj.TryCast<UnityEngine.CanvasGroup>();
-                            canvas_group.enabled = disable;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            [HarmonyPatch(typeof(BottomScreenMenu), "OnEnable")]
-            public class OnEnableMenuBtns
-            {
-                [HarmonyPostfix]
-                static void Postfix(BottomScreenMenu __instance)
-                {
-                    bool disable = true;
-                    if (Config.Data.mods_config.character.Enable_Cosmetic_Btn) { disable = false; }
-                    foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.UI.Button)))
-                    {
-                        if (obj.name == "Cosmetics")
-                        {
-                            Selectable appearance_tab = obj.TryCast<Selectable>();
-                            appearance_tab.interactable = !disable;
-                            break;
-                        }
-                    }
-                    foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.CanvasGroup)))
-                    {
-                        if (obj.name == "Cosmetics")
-                        {
-                            UnityEngine.CanvasGroup canvas_group = obj.TryCast<UnityEngine.CanvasGroup>();
-                            canvas_group.enabled = disable;
-                            break;
-                        }
-                    }
-                }
-            }
-
-        }
         public class Get
         {
             public static cosmetic_list_structure Cosmetics()
@@ -96,10 +161,10 @@ namespace LastEpochMods.Mods
                 foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(LE.Services.Cosmetics.Cosmetic)))
                 {
                     System.Type type = obj.GetActualType();
-                    if (type == typeof(CosmeticItem)) { cosmetic_list.cosmetics_items.Add(obj.TryCast<CosmeticItem>()); }
-                    else if (type == typeof(CosmeticBackSlot)) { cosmetic_list.cosmetics_backslot.Add(obj.TryCast<CosmeticBackSlot>()); }
-                    else if (type == typeof(CosmeticPet)) { cosmetic_list.cosmetics_pets.Add(obj.TryCast<CosmeticPet>()); }
-                    else if (type == typeof(CosmeticPortal)) { cosmetic_list.cosmetics_portals.Add(obj.TryCast<CosmeticPortal>()); }
+                    if (type == typeof(LE.Services.Cosmetics.CosmeticItem)) { cosmetic_list.cosmetics_items.Add(obj.TryCast<LE.Services.Cosmetics.CosmeticItem>()); }
+                    else if (type == typeof(LE.Services.Cosmetics.CosmeticBackSlot)) { cosmetic_list.cosmetics_backslot.Add(obj.TryCast<LE.Services.Cosmetics.CosmeticBackSlot>()); }
+                    else if (type == typeof(LE.Services.Cosmetics.CosmeticPet)) { cosmetic_list.cosmetics_pets.Add(obj.TryCast<LE.Services.Cosmetics.CosmeticPet>()); }
+                    else if (type == typeof(LE.Services.Cosmetics.CosmeticPortal)) { cosmetic_list.cosmetics_portals.Add(obj.TryCast<LE.Services.Cosmetics.CosmeticPortal>()); }
                 }
 
                 Main.logger_instance.Msg("Found : " + cosmetic_list.cosmetics_items.Count + " items");
@@ -111,8 +176,8 @@ namespace LastEpochMods.Mods
             }
             public static System.Collections.Generic.List<cosmetic_slot_structure> Slots()
             {
-                System.Collections.Generic.List<cosmetic_slot_structure>  cosmetic_slot_list = new System.Collections.Generic.List<cosmetic_slot_structure>();
-                Il2CppSystem.Collections.Generic.List<CosmeticItemSlot> cosmetic_slots = null;                
+                System.Collections.Generic.List<cosmetic_slot_structure> cosmetic_slot_list = new System.Collections.Generic.List<cosmetic_slot_structure>();
+                Il2CppSystem.Collections.Generic.List<CosmeticItemSlot> cosmetic_slots = null;
                 Il2CppSystem.Collections.Generic.List<CosmeticItemSlot> pet_slots = null;
                 CosmeticItemSlot portal_slots = null;
                 foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(InventoryPanelUI)))
@@ -177,7 +242,7 @@ namespace LastEpochMods.Mods
                     {
                         slot_struct.slot.SetCosmetic(cosmetics.cosmetics_portals[0].TryCast<LE.Services.Cosmetics.Cosmetic>());
                     }
-                }                
+                }
             }
         }
     }

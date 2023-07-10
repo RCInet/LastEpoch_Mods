@@ -6,13 +6,6 @@ namespace LastEpochMods.Mods
 {
     public class Character_Mods
     {
-        public static bool Enable_attributes = false;
-        public static int attributes_str = 99999999;
-        public static int attributes_int = 99999999;
-        public static int attributes_vita = 99999999;
-        public static int attributes_dext = 99999999;
-        public static int attributes_atte = 99999999;
-
         public static void Launch_LevelUp()
         {            
             foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.Object)))
@@ -63,89 +56,6 @@ namespace LastEpochMods.Mods
                         }
                     }                    
                 }
-            }
-        }
-        
-        public class Stats_Mods
-        {
-            [HarmonyPatch(typeof(CharacterStats), "Update")]
-            public class Character_Stats
-            {
-                [HarmonyPostfix]
-                static void Postfix(ref CharacterStats __instance)
-                {                    
-                    if (Config.Data.mods_config.character.Enable_attack_rate) { __instance.attackRate = Config.Data.mods_config.character.attack_rate; }
-                    if (Config.Data.mods_config.character.Enable_leach_rate) { __instance.increasedLeechRate = Config.Data.mods_config.character.leach_rate; }
-                    if (Enable_attributes)
-                    {
-                        foreach (CharacterStats.AttributeValuePair attribute in __instance.attributes)
-                        {
-                            if (attribute.attribute.attributeName == CoreAttribute.Attribute.Strength)
-                            {
-                                attribute.value = attributes_str;
-                            }
-                            else if (attribute.attribute.attributeName == CoreAttribute.Attribute.Intelligence)
-                            {
-                                attribute.value = attributes_int;
-                            }
-                            else if (attribute.attribute.attributeName == CoreAttribute.Attribute.Vitality)
-                            {
-                                attribute.value = attributes_vita;
-                            }
-                            else if (attribute.attribute.attributeName == CoreAttribute.Attribute.Dexterity)
-                            {
-                                attribute.value = attributes_dext;
-                            }
-                            else if (attribute.attribute.attributeName == CoreAttribute.Attribute.Attunement)
-                            {
-                                attribute.value = attributes_atte;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        public class Ability_Mods
-        {
-            public class Cooldown
-            {
-                [HarmonyPatch(typeof(CharacterMutator), "OnAbilityUse")]
-                public class Ability_Cooldown_Prefix
-                {
-                    [HarmonyPrefix]
-                    static bool Postfix(CharacterMutator __instance, AbilityInfo __0, ref AbilityMutator __1, ref float __2, UnityEngine.Vector3 __3, bool __4)
-                    {
-                        if ( (Config.Data.mods_config.character.Enable_RemoveCooldown) && (__1 != null)) { __1.RemoveCooldown(); }
-
-                        return true;
-                    }
-                }
-            }
-            public class ManaCost
-            {
-                [HarmonyPatch(typeof(CharacterStats), "onStartedUsingAbility")]
-                public class Character_Stats
-                {
-                    [HarmonyPrefix]
-                    static bool Prefix(CharacterStats __instance, AbilityInfo __0, ref Ability __1, UnityEngine.Vector3 __2)
-                    {
-                        if (Config.Data.mods_config.character.Enable_channel_cost) { __1.channelCost = 0f; }
-                        if (Config.Data.mods_config.character.Enable_manaCost)
-                        {
-                            __1.manaCost = 0f;
-                            __1.minimumManaCost = 0f;
-                            __1.manaCostPerDistance = 0f;
-                        }
-                        if (Config.Data.mods_config.character.Enable_noManaRegenWhileChanneling) { __1.noManaRegenWhileChanneling = false; }
-                        if (Config.Data.mods_config.character.Enable_stopWhenOutOfMana) { __1.stopWhenOutOfMana = false; }
-
-                        return true;
-                    }
-                }
-            }
-            public class SkillTree
-            {
-
             }
         }
     }
