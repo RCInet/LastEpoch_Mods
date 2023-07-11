@@ -17,7 +17,7 @@ namespace LastEpochMods.Hooks
             static void Postfix(BottomScreenMenu __instance)
             {
                 bool disable = true;
-                if (Config.Data.mods_config.character.Enable_Cosmetic_Btn) { disable = false; }
+                if (Config.Data.mods_config.character.cosmetic.Enable_Cosmetic_Btn) { disable = false; }
                 foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.UI.Button)))
                 {
                     if (obj.name == "Cosmetics")

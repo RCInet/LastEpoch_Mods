@@ -215,7 +215,7 @@
     <Compile Include="Config\Data.cs" />
     <Compile Include="Config\Load.cs" />
     <Compile Include="Config\Save.cs" />
-    <Compile Include="Functions.cs" />
+    <Compile Include="Hooks\Ability_Stats_Mutator_Manager.cs" />
     <Compile Include="Hooks\Bottom_Screen_Menu.cs" />
     <Compile Include="Hooks\Character_Mutator.cs" />
     <Compile Include="Hooks\Character_Stats.cs" />
@@ -229,22 +229,23 @@
     <Compile Include="Hooks\Inventory_Panel_UI.cs" />
     <Compile Include="Hooks\Item_Data.cs" />
     <Compile Include="Hooks\Item_Drop_Bonuses.cs" />
+    <Compile Include="Hooks\Local_Tree_Data.cs" />
     <Compile Include="Hooks\Monolith_Zone_Manager.cs" />
     <Compile Include="Hooks\UI_Waypoint_Standard.cs" />
     <Compile Include="Hooks\UnityEngine_UI_Button.cs" />
-    <Compile Include="Mods\Affixs_Mods.cs" />
-    <Compile Include="Mods\Character_Mods.cs" />
+    <Compile Include="Mods\Exemples.cs" />
+    <Compile Include="Mods\Character.cs" />
     <Compile Include="Mods\Cosmetics.cs" />
     <Compile Include="Mods\Developer.cs" />
     <Compile Include="Mods\Items\HeadHunter.cs" />
-    <Compile Include="Mods\Scene_Mods.cs" />
+    <Compile Include="OnSceneChanged\Affix_List.cs" />
+    <Compile Include="OnSceneChanged\Local_Tree_Data.cs" />
+    <Compile Include="OnSceneChanged\Spawner_Placement_Manager.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SkillsHelper.cs" />
-    <Compile Include="Mods\UniqueMods.cs" />
     <Compile Include="Scenes.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

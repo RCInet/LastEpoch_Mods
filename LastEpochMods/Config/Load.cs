@@ -22,8 +22,17 @@ namespace LastEpochMods.Config
             }
             else
             {
-                Data.mods_config = JsonConvert.DeserializeObject<Data.Mods_Structure>(File.ReadAllText(Data.path + Data.filename));
-                Main.logger_instance.Msg("Config Loaded");
+                try
+                {
+                    Data.mods_config = JsonConvert.DeserializeObject<Data.Mods_Structure>(File.ReadAllText(Data.path + Data.filename));
+                    Main.logger_instance.Msg("Config Loaded");
+                }
+                catch
+                {
+                    Data.mods_config = DefaultConfig();
+                    Save.Mods();
+                    Main.logger_instance.Msg("Config Outdated : Default Values");
+                }                
             }
             Data.mods_config_duplicate = Data.mods_config; //Use to check for data changed
         }
@@ -98,22 +107,57 @@ namespace LastEpochMods.Config
                 },
                 character = new Data.Character_Structure
                 {
-                    Enable_manaCost = true,
-                    Enable_channel_cost = true,
-                    Enable_noManaRegenWhileChanneling = true,
-                    Enable_stopWhenOutOfMana = true,
-                    Enable_RemoveCooldown = true,
-                    Enable_number_of_unlocked_slots = false,
-                    number_of_unlocked_slots = 5,
-                    Enable_passiveTree_pointsEarnt = false,
-                    passiveTree_pointsEarnt = 65535,
-                    Enable_skilltree_level = false,
-                    skilltree_level = 255,
-                    Enable_attack_rate = true,
-                    attack_rate = 255f,
-                    Enable_leach_rate = true,
-                    leach_rate = 255f,
-                    Enable_Cosmetic_Btn = true
+                    skills = new Data.Skills_structure
+                    {
+                        Enable_manaCost = true,
+                        Enable_channel_cost = true,
+                        Enable_noManaRegenWhileChanneling = true,
+                        Enable_stopWhenOutOfMana = true,
+                        Enable_RemoveCooldown = true
+                    },
+                    skilltree = new Data.SkillTree_structure
+                    {
+                        Enable_skilltree_level = false,
+                        skilltree_level = 255,
+                        Disable_node_requirement = true
+                    },
+                    passivetree = new Data.PassiveTree_structure
+                    {
+                        Enable_passiveTree_pointsEarnt = false,
+                        passiveTree_pointsEarnt = 255
+                    },
+                    slots = new Data.Slots_structure
+                    {
+                        Enable_number_of_unlocked_slots = false,
+                        number_of_unlocked_slots = 5
+                    },
+                    companions = new Data.Companion_structure
+                    {
+                        Enable_companion_limit = false,
+                        companion_limit = 255,
+                        wolf = new Data.Wolf_structure
+                        {
+                            Enable_summon_max = true,
+                            Enable_override_limit = true,
+                            summon_limit = 255
+                        },
+                        scorpion = new Data.Scorpion_structure
+                        {
+                            Enable_baby_quantity = true,
+                            baby_quantity = 255
+                        }
+                    },
+                    characterstats = new Data.CharacterStats_structure
+                    {
+                        Enable_attack_rate = true,
+                        attack_rate = 255f,
+                        Enable_leach_rate = true,
+                        leach_rate = 255f
+                    },
+                    cosmetic = new Data.Cosmetic_structure
+                    {
+                        Enable_Cosmetic_Btn = true
+                    }                    
                 },
                 affixs = new Data.Affixs_Structure
                 {

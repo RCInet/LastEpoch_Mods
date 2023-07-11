@@ -1,9 +1,4 @@
 ﻿using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LastEpochMods.Hooks
 {
@@ -22,8 +17,8 @@ namespace LastEpochMods.Hooks
             [HarmonyPostfix]
             static void Postfix(ref CharacterStats __instance)
             {
-                if (Config.Data.mods_config.character.Enable_attack_rate) { __instance.attackRate = Config.Data.mods_config.character.attack_rate; }
-                if (Config.Data.mods_config.character.Enable_leach_rate) { __instance.increasedLeechRate = Config.Data.mods_config.character.leach_rate; }
+                if (Config.Data.mods_config.character.characterstats.Enable_attack_rate) { __instance.attackRate = Config.Data.mods_config.character.characterstats.attack_rate; }
+                if (Config.Data.mods_config.character.characterstats.Enable_leach_rate) { __instance.increasedLeechRate = Config.Data.mods_config.character.characterstats.leach_rate; }
                 if (Enable_attributes)
                 {
                     foreach (CharacterStats.AttributeValuePair attribute in __instance.attributes)
@@ -52,5 +47,19 @@ namespace LastEpochMods.Hooks
                 }
             }
         }
+        
+        [HarmonyPatch(typeof(CharacterStats), "getMaximumCompanions")]
+        public class getMaximumCompanions
+        {
+            [HarmonyPostfix]
+            static void Postfix(CharacterStats __instance, ref int __result)
+            {
+                if (Config.Data.mods_config.character.companions.Enable_companion_limit)
+                {
+                    __result = Config.Data.mods_config.character.companions.companion_limit;
+                }                    
+            }
+        }
+
     }
 }

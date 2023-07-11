@@ -1,8 +1,4 @@
-﻿using HarmonyLib;
-using System.Xml.Linq;
-using UnityEngine.UI;
-using UniverseLib;
-using static MelonLoader.MelonLogger;
+﻿using UniverseLib;
 
 namespace LastEpochMods.Mods
 {

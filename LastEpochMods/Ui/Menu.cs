@@ -121,15 +121,15 @@ namespace LastEpochMods.Ui
                     pos_y = start_y + Menu_Size_h;
                     GUI.DrawTexture(new Rect(pos_x, pos_y, (btn_size_w + (2 * btn_margin_w)), Character_h), windowBackground);
                     pos_x += 5;
-                    Config.Data.mods_config.character.attack_rate = CustomControls.FloatValue("Attack Rate", 0, 255, Config.Data.mods_config.character.attack_rate, pos_x, pos_y, Config.Data.mods_config.character.Enable_attack_rate, Ui.Menu.Btn_Character_AttackRate_Click);
+                    Config.Data.mods_config.character.characterstats.attack_rate = CustomControls.FloatValue("Attack Rate", 0, 255, Config.Data.mods_config.character.characterstats.attack_rate, pos_x, pos_y, Config.Data.mods_config.character.characterstats.Enable_attack_rate, Ui.Menu.Btn_Character_AttackRate_Click);
                     pos_y += 85;
-                    Config.Data.mods_config.character.leach_rate = CustomControls.FloatValue("Leach Rate", 0, 255, Config.Data.mods_config.character.leach_rate, pos_x, pos_y, Config.Data.mods_config.character.Enable_leach_rate, Ui.Menu.Btn_Character_LeachRate_Click);
+                    Config.Data.mods_config.character.characterstats.leach_rate = CustomControls.FloatValue("Leach Rate", 0, 255, Config.Data.mods_config.character.characterstats.leach_rate, pos_x, pos_y, Config.Data.mods_config.character.characterstats.Enable_leach_rate, Ui.Menu.Btn_Character_LeachRate_Click);
                     pos_y += 85;
                     if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Skills", Styles.Button_Style(ShowSkillsSection))) { Ui.Menu.Btn_Skills_Click(); }
                     pos_y += 45;
                     if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Tree", Styles.Button_Style(ShowTreeSection))) { Ui.Menu.Btn_Tree_Click(); }
                     pos_y += 45;
-                    CustomControls.EnableButton("Unlock Cosmetic", pos_x, pos_y, Config.Data.mods_config.character.Enable_Cosmetic_Btn, Ui.Menu.Btn_Cosmetic_Click);                    
+                    CustomControls.EnableButton("Unlock Cosmetic", pos_x, pos_y, Config.Data.mods_config.character.cosmetic.Enable_Cosmetic_Btn, Ui.Menu.Btn_Cosmetic_Click);                    
                 }
                 else { ShowSkillsSection = false; ShowTreeSection = false; }
                 if (ShowSkillsSection)
@@ -138,28 +138,51 @@ namespace LastEpochMods.Ui
                     pos_y = start_y + Menu_Size_h + 170;
                     GUI.DrawTexture(new Rect(pos_x, pos_y, (btn_size_w + (2 * btn_margin_w)), Skills_h), windowBackground);
                     pos_x += 5;
-                    Config.Data.mods_config.character.number_of_unlocked_slots = CustomControls.ByteValue("Unlocked Slots", 0, 5, Config.Data.mods_config.character.number_of_unlocked_slots, pos_x, pos_y, Config.Data.mods_config.character.Enable_number_of_unlocked_slots, Ui.Menu.Btn_Character_NbUnlockedSlot_Click);
-                    pos_y += 85;
-                    Config.Data.mods_config.character.skilltree_level = CustomControls.ByteValue("Skills Points", 0, 255, Config.Data.mods_config.character.skilltree_level, pos_x, pos_y, Config.Data.mods_config.character.Enable_skilltree_level, Ui.Menu.Btn_Character_SkillTree_Click);
+                    Config.Data.mods_config.character.skilltree.skilltree_level = CustomControls.ByteValue("Skills Level", 0, 255, Config.Data.mods_config.character.skilltree.skilltree_level, pos_x, pos_y, Config.Data.mods_config.character.skilltree.Enable_skilltree_level, Ui.Menu.Btn_Character_SkillTree_Level_Click);
                     pos_y += 85;
                     if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Remove", Styles.Button_Style(ShowSkillsRemoveSection))) { Btn_SkillsRemove_Click(); }
                     pos_y += 45;
-                    CustomControls.EnableButton("Channel : ManaRegen", pos_x, pos_y, Config.Data.mods_config.character.Enable_noManaRegenWhileChanneling, Ui.Menu.Btn_Character_NoManaWhileChanneling_Click);
+                    if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Companions", Styles.Button_Style(ShowSkillsCompanionsSection))) { Btn_Companion_Click(); }
                     pos_y += 45;
-                    CustomControls.EnableButton("NoMana : Don't Stop", pos_x, pos_y, Config.Data.mods_config.character.Enable_stopWhenOutOfMana, Ui.Menu.Btn_Character_StopWhenOutMana_Click);
+                    CustomControls.EnableButton("Channel : ManaRegen", pos_x, pos_y, Config.Data.mods_config.character.skills.Enable_noManaRegenWhileChanneling, Ui.Menu.Btn_Character_NoManaWhileChanneling_Click);
+                    pos_y += 45;
+                    CustomControls.EnableButton("NoMana : Don't Stop", pos_x, pos_y, Config.Data.mods_config.character.skills.Enable_stopWhenOutOfMana, Ui.Menu.Btn_Character_StopWhenOutMana_Click);
+                    pos_y += 45;
                 }
-                else { ShowSkillsRemoveSection = false; }
+                else
+                {
+                    ShowSkillsRemoveSection = false;
+                    ShowSkillsCompanionsSection = false;
+                }
+                if (ShowSkillsCompanionsSection)
+                {
+                    pos_x = start_x + ((btn_size_w + btn_margin_w) * 3);
+                    pos_y = start_y + Menu_Size_h + 300;
+                    GUI.DrawTexture(new Rect(pos_x, pos_y, (btn_size_w + (2 * btn_margin_w)), companion_h), windowBackground);
+                    pos_x += 5;
+                    Config.Data.mods_config.character.companions.companion_limit = (int)CustomControls.IntValue("Maximum Companion", 0f, 255f, Config.Data.mods_config.character.companions.companion_limit, pos_x, pos_y, Config.Data.mods_config.character.companions.Enable_companion_limit, Ui.Menu.Btn_Character_MaximumCompanion_Click);
+                    pos_y += 85;
+                    CustomControls.EnableButton("Wolf : SummonMax", pos_x, pos_y, Config.Data.mods_config.character.companions.wolf.Enable_summon_max, Ui.Menu.Btn_Character_Wolf_SummonMax_Click);
+                    pos_y += 45;
+                    Config.Data.mods_config.character.companions.wolf.summon_limit = (int)CustomControls.IntValue("Wolf : limit", 0f, 255f, Config.Data.mods_config.character.companions.wolf.summon_limit, pos_x, pos_y, Config.Data.mods_config.character.companions.wolf.Enable_override_limit, Ui.Menu.Btn_Character_Wolf_OverrideLimit_Click);
+                    pos_y += 85;
+                    Config.Data.mods_config.character.companions.scorpion.baby_quantity = (int)CustomControls.IntValue("Baby Scorpion : limit", 0f, 255f, Config.Data.mods_config.character.companions.scorpion.baby_quantity, pos_x, pos_y, Config.Data.mods_config.character.companions.scorpion.Enable_baby_quantity, Ui.Menu.Btn_Character_Scorpion_BabySummonMax_Click);
+                    pos_y += 85;
+                }
                 if (ShowSkillsRemoveSection)
                 {
                     pos_x = start_x + ((btn_size_w + btn_margin_w) * 3);
-                    pos_y = start_y + Menu_Size_h + 340;
+                    pos_y = start_y + Menu_Size_h + 255;
                     GUI.DrawTexture(new Rect(pos_x, pos_y, (btn_size_w + (2 * btn_margin_w)), SkillsRemove_h), windowBackground);
                     pos_x += 5;
-                    CustomControls.EnableButton("Mana Cost", pos_x, pos_y, Config.Data.mods_config.character.Enable_manaCost, Ui.Menu.Btn_Character_ManaCost_Click);
+                    CustomControls.EnableButton("Mana Cost", pos_x, pos_y, Config.Data.mods_config.character.skills.Enable_manaCost, Ui.Menu.Btn_Character_ManaCost_Click);
                     pos_y += 45;
-                    CustomControls.EnableButton("Channel Cost", pos_x, pos_y, Config.Data.mods_config.character.Enable_channel_cost, Ui.Menu.Btn_Character_ChannelCost_Click);
+                    CustomControls.EnableButton("Channel Cost", pos_x, pos_y, Config.Data.mods_config.character.skills.Enable_channel_cost, Ui.Menu.Btn_Character_ChannelCost_Click);
                     pos_y += 45;
-                    CustomControls.EnableButton("Cooldown", pos_x, pos_y, Config.Data.mods_config.character.Enable_RemoveCooldown, Ui.Menu.Btn_Character_RemoveCooldown_Click);
+                    CustomControls.EnableButton("Cooldown", pos_x, pos_y, Config.Data.mods_config.character.skills.Enable_RemoveCooldown, Ui.Menu.Btn_Character_RemoveCooldown_Click);
+                    pos_y += 45;
+                    CustomControls.EnableButton("Node Requirement", pos_x, pos_y, Config.Data.mods_config.character.skilltree.Disable_node_requirement, Ui.Menu.Btn_Character_RemoveNodeRequirement_Click);
+                    pos_y += 45;
                 }
                 if (ShowTreeSection)
                 {
@@ -167,7 +190,7 @@ namespace LastEpochMods.Ui
                     pos_y = start_y + Menu_Size_h + 215;
                     GUI.DrawTexture(new Rect(pos_x, pos_y, (btn_size_w + (2 * btn_margin_w)), Tree_h), windowBackground);
                     pos_x += 5;
-                    Config.Data.mods_config.character.passiveTree_pointsEarnt = CustomControls.UshortValue("Passive Tree Points", 0, 65535, Config.Data.mods_config.character.passiveTree_pointsEarnt, pos_x, pos_y, Config.Data.mods_config.character.Enable_passiveTree_pointsEarnt, Ui.Menu.Btn_Character_PassivePointsEarn_Click);
+                    Config.Data.mods_config.character.passivetree.passiveTree_pointsEarnt = CustomControls.UshortValue("Passive Tree Points", 0, 255, Config.Data.mods_config.character.passivetree.passiveTree_pointsEarnt, pos_x, pos_y, Config.Data.mods_config.character.passivetree.Enable_passiveTree_pointsEarnt, Ui.Menu.Btn_Character_PassivePointsEarn_Click);
                 }
                 //Scene
                 if (ShowSceneSection)
@@ -404,15 +427,15 @@ namespace LastEpochMods.Ui
         }
         public static void Btn_Character_AttackRate_Click()
         {
-            Config.Data.mods_config.character.Enable_attack_rate = !Config.Data.mods_config.character.Enable_attack_rate;            
+            Config.Data.mods_config.character.characterstats.Enable_attack_rate = !Config.Data.mods_config.character.characterstats.Enable_attack_rate;            
         }
         public static void Btn_Character_LeachRate_Click()
         {
-            Config.Data.mods_config.character.Enable_leach_rate = !Config.Data.mods_config.character.Enable_leach_rate;            
+            Config.Data.mods_config.character.characterstats.Enable_leach_rate = !Config.Data.mods_config.character.characterstats.Enable_leach_rate;            
         }
         #region Skills
         private static bool ShowSkillsSection = false;
-        public static float Skills_h = 305;
+        public static float Skills_h = 265;
 
         public static void Btn_Skills_Click()
         {
@@ -421,39 +444,69 @@ namespace LastEpochMods.Ui
         }
         #region Remove
         private static bool ShowSkillsRemoveSection = false;
-        public static float SkillsRemove_h = 135;
+        public static float SkillsRemove_h = 180;
 
         public static void Btn_SkillsRemove_Click()
         {
+            ShowSkillsCompanionsSection = false;
             ShowSkillsRemoveSection = !ShowSkillsRemoveSection;
         }
         public static void Btn_Character_NbUnlockedSlot_Click()
         {
-            Config.Data.mods_config.character.Enable_number_of_unlocked_slots = !Config.Data.mods_config.character.Enable_number_of_unlocked_slots;            
+            Config.Data.mods_config.character.slots.Enable_number_of_unlocked_slots = !Config.Data.mods_config.character.slots.Enable_number_of_unlocked_slots;            
         }
         public static void Btn_Character_ManaCost_Click()
         {
-            Config.Data.mods_config.character.Enable_manaCost = !Config.Data.mods_config.character.Enable_manaCost;            
+            Config.Data.mods_config.character.skills.Enable_manaCost = !Config.Data.mods_config.character.skills.Enable_manaCost;            
         }
         public static void Btn_Character_ChannelCost_Click()
         {
-            Config.Data.mods_config.character.Enable_channel_cost = !Config.Data.mods_config.character.Enable_channel_cost;            
+            Config.Data.mods_config.character.skills.Enable_channel_cost = !Config.Data.mods_config.character.skills.Enable_channel_cost;            
         }
         public static void Btn_Character_NoManaWhileChanneling_Click()
         {
-            Config.Data.mods_config.character.Enable_noManaRegenWhileChanneling = !Config.Data.mods_config.character.Enable_noManaRegenWhileChanneling;            
+            Config.Data.mods_config.character.skills.Enable_noManaRegenWhileChanneling = !Config.Data.mods_config.character.skills.Enable_noManaRegenWhileChanneling;            
         }
         public static void Btn_Character_StopWhenOutMana_Click()
         {
-            Config.Data.mods_config.character.Enable_stopWhenOutOfMana = !Config.Data.mods_config.character.Enable_stopWhenOutOfMana;            
+            Config.Data.mods_config.character.skills.Enable_stopWhenOutOfMana = !Config.Data.mods_config.character.skills.Enable_stopWhenOutOfMana;            
         }
         public static void Btn_Character_RemoveCooldown_Click()
         {
-            Config.Data.mods_config.character.Enable_RemoveCooldown = !Config.Data.mods_config.character.Enable_RemoveCooldown;            
+            Config.Data.mods_config.character.skills.Enable_RemoveCooldown = !Config.Data.mods_config.character.skills.Enable_RemoveCooldown;            
         }
-        public static void Btn_Character_SkillTree_Click()
+        public static void Btn_Character_RemoveNodeRequirement_Click()
         {
-            Config.Data.mods_config.character.Enable_skilltree_level = !Config.Data.mods_config.character.Enable_skilltree_level;            
+            Config.Data.mods_config.character.skilltree.Disable_node_requirement = !Config.Data.mods_config.character.skilltree.Disable_node_requirement;
+        }
+        public static void Btn_Character_SkillTree_Level_Click()
+        {
+            Config.Data.mods_config.character.skilltree.Enable_skilltree_level = !Config.Data.mods_config.character.skilltree.Enable_skilltree_level;            
+        }
+        #endregion
+        #region Companions
+        private static bool ShowSkillsCompanionsSection = false;
+        public static float companion_h = 300;
+        public static void Btn_Companion_Click()
+        {
+            ShowSkillsRemoveSection = false;
+            ShowSkillsCompanionsSection = !ShowSkillsCompanionsSection;
+        }
+        public static void Btn_Character_MaximumCompanion_Click()
+        {
+            Config.Data.mods_config.character.companions.Enable_companion_limit = !Config.Data.mods_config.character.companions.Enable_companion_limit;
+        }
+        public static void Btn_Character_Wolf_SummonMax_Click()
+        {
+            Config.Data.mods_config.character.companions.wolf.Enable_summon_max = !Config.Data.mods_config.character.companions.wolf.Enable_summon_max;
+        }
+        public static void Btn_Character_Wolf_OverrideLimit_Click()
+        {
+            Config.Data.mods_config.character.companions.wolf.Enable_override_limit = !Config.Data.mods_config.character.companions.wolf.Enable_override_limit;
+        }
+        public static void Btn_Character_Scorpion_BabySummonMax_Click()
+        {
+            Config.Data.mods_config.character.companions.scorpion.Enable_baby_quantity = !Config.Data.mods_config.character.companions.scorpion.Enable_baby_quantity;
         }
         #endregion
         #endregion
@@ -468,11 +521,11 @@ namespace LastEpochMods.Ui
         }
         public static void Btn_Character_PassivePointsEarn_Click()
         {
-            Config.Data.mods_config.character.Enable_passiveTree_pointsEarnt = !Config.Data.mods_config.character.Enable_passiveTree_pointsEarnt;            
+            Config.Data.mods_config.character.passivetree.Enable_passiveTree_pointsEarnt = !Config.Data.mods_config.character.passivetree.Enable_passiveTree_pointsEarnt;            
         }
         public static void Btn_Cosmetic_Click()
         {
-            Config.Data.mods_config.character.Enable_Cosmetic_Btn = !Config.Data.mods_config.character.Enable_Cosmetic_Btn;
+            Config.Data.mods_config.character.cosmetic.Enable_Cosmetic_Btn = !Config.Data.mods_config.character.cosmetic.Enable_Cosmetic_Btn;
         }
         #endregion
         #endregion

@@ -1,10 +1,73 @@
 ﻿using UniverseLib;
-using static LE.Dev.ImGuiLayeredGraph;
 
 namespace LastEpochMods.Mods
 {
-    public class UniqueMods
+    public class Exemples
     {
+        #region character
+        public static void Launch_ExempleBuffCharacter()
+        {
+            foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.Object)))
+            {
+                if ((obj.name == "MainPlayer(Clone)") && (obj.GetActualType() == typeof(StatBuffs)))
+                {
+                    float duration = 255;
+                    SP propertie = SP.Intelligence;
+                    float added_value = 255;
+                    float increase_value = 255;
+                    Il2CppSystem.Collections.Generic.List<float> more_values = null;
+                    AT tag = AT.Buff;
+                    byte special_tag = 0;
+
+                    obj.TryCast<StatBuffs>().addBuff(duration, propertie, added_value, increase_value, more_values, tag, special_tag);
+                }
+            }
+        }
+        #endregion
+        #region Affixs
+        public static bool Enable_Edit_Affixs_Rolls = false;
+        private static void EditAffixRollsByTier(int affix_id, int tier, int min, int max)
+        {
+            if (Enable_Edit_Affixs_Rolls)
+            {
+                AffixList affix_list = AffixList.get();
+                if (affix_list != null)
+                {
+                    bool found = false;
+                    foreach (AffixList.SingleAffix s_affix in affix_list.singleAffixes)
+                    {
+                        if (s_affix.affixId == affix_id)
+                        {
+                            if (((tier - 1) > -1) && (s_affix.tiers.Count > (tier - 1)))
+                            {
+                                s_affix.tiers[(tier - 1)].maxRoll = max;
+                                s_affix.tiers[(tier - 1)].minRoll = min;
+                            }
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                    {
+                        foreach (AffixList.MultiAffix m_affix in affix_list.multiAffixes)
+                        {
+                            if (m_affix.affixId == affix_id)
+                            {
+                                if (((tier - 1) > -1) && (m_affix.tiers.Count > (tier - 1)))
+                                {
+                                    m_affix.tiers[(tier - 1)].maxRoll = max;
+                                    m_affix.tiers[(tier - 1)].minRoll = min;
+                                }
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        #endregion
+        #region Unique
         public struct unique_mod
         {
             public int id;
@@ -16,7 +79,7 @@ namespace LastEpochMods.Mods
         //Exemple Custom Mods
         public static Il2CppSystem.Collections.Generic.List<UniqueItemMod> CustomMods_0()
         {
-            Il2CppSystem.Collections.Generic.List<UniqueItemMod> mods = new Il2CppSystem.Collections.Generic.List<UniqueItemMod>();            
+            Il2CppSystem.Collections.Generic.List<UniqueItemMod> mods = new Il2CppSystem.Collections.Generic.List<UniqueItemMod>();
             mods.Add(new UniqueItemMod
             {
                 type = BaseStats.ModType.INCREASED,
@@ -117,5 +180,6 @@ namespace LastEpochMods.Mods
         }
         public static System.Collections.Generic.List<ability_mod> Ability_Mods = new System.Collections.Generic.List<ability_mod>();
         public static bool Enable_AbilityMods = true;
+        #endregion
     }
 }

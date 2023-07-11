@@ -1,5 +1,4 @@
-﻿using Il2CppSystem;
-using System.Globalization;
+﻿using System.Globalization;
 using UnityEngine;
 
 namespace LastEpochMods.Ui

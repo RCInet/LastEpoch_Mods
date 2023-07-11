@@ -1,6 +1,5 @@
 ﻿using MelonLoader;
 using System.Linq;
-using UnityEngine;
 
 namespace LastEpochMods
 {
@@ -17,7 +16,7 @@ namespace LastEpochMods
             UniverseLibLoaded = true;
             LoggerInstance.Msg("Mods init completed");
         }
-        public void UniverseLib_LogHandler(string message, LogType type)
+        public void UniverseLib_LogHandler(string message, UnityEngine.LogType type)
         {
             LoggerInstance.Msg("UniverseLib : " + message);
         }
@@ -28,9 +27,9 @@ namespace LastEpochMods
             {
                 if ((Scenes.CurrentName != "") && (!Scenes.MenuNames.Contains(Scenes.CurrentName)))
                 {
-                    Mods.Affixs_Mods.Launch();
-                    Mods.Scene_Mods.Launch();
-                    Mods.Character_Mods.Launch();
+                    OnSceneChanged.Affix_List.Init();
+                    OnSceneChanged.Spawner_Placement_Manager.Init();
+                    OnSceneChanged.Local_Tree_Data.Init();
                 }
             }
         }
@@ -58,10 +57,10 @@ namespace LastEpochMods
             }
             else
             {
-                if (Input.GetKeyDown(KeyCode.F1)) { Ui.Menu.isMenuOpen = !Ui.Menu.isMenuOpen; }
+                if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.F1)) { Ui.Menu.isMenuOpen = !Ui.Menu.isMenuOpen; }
                 if (!Scenes.MenuNames.Contains(Scenes.CurrentName)) //In game
                 {                    
-                    if (Input.GetKeyDown(KeyCode.F10)) { Mods.Character_Mods.Launch_LevelUp(); }
+                    if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.F10)) { Mods.Character.Launch_LevelUp(); }
                 }
             }
         }

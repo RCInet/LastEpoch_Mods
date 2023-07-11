@@ -29,22 +29,66 @@ namespace LastEpochMods.Config
         }
         public struct Character_Structure
         {
-            public bool Enable_manaCost;
-            public bool Enable_channel_cost;
-            public bool Enable_noManaRegenWhileChanneling;
-            public bool Enable_stopWhenOutOfMana;
-            public bool Enable_RemoveCooldown;       
+            public Skills_structure skills;
+            public SkillTree_structure skilltree;
+            public PassiveTree_structure passivetree;
+            public Companion_structure companions;
+            public CharacterStats_structure characterstats;
+            public Cosmetic_structure cosmetic;
+            public Slots_structure slots;
+        }
+        public struct Slots_structure
+        {
             public bool Enable_number_of_unlocked_slots;
             public byte number_of_unlocked_slots;
-            public bool Enable_passiveTree_pointsEarnt;
-            public ushort passiveTree_pointsEarnt;
-            public bool Enable_skilltree_level;
-            public byte skilltree_level;
+        }
+        public struct Cosmetic_structure
+        {
+            public bool Enable_Cosmetic_Btn;
+        }
+        public struct CharacterStats_structure
+        {
             public bool Enable_attack_rate;
             public float attack_rate;
             public bool Enable_leach_rate;
             public float leach_rate;
-            public bool Enable_Cosmetic_Btn;
+        }
+        public struct Skills_structure
+        {
+            public bool Enable_manaCost;
+            public bool Enable_channel_cost;
+            public bool Enable_noManaRegenWhileChanneling;
+            public bool Enable_stopWhenOutOfMana;
+            public bool Enable_RemoveCooldown;
+        }
+        public struct SkillTree_structure
+        {
+            public bool Enable_skilltree_level;
+            public byte skilltree_level;
+            public bool Disable_node_requirement;
+        }
+        public struct PassiveTree_structure
+        {
+            public bool Enable_passiveTree_pointsEarnt;
+            public ushort passiveTree_pointsEarnt;
+        }
+        public struct Companion_structure
+        {
+            public bool Enable_companion_limit;
+            public int companion_limit;
+            public Wolf_structure wolf;
+            public Scorpion_structure scorpion;
+        }
+        public struct Wolf_structure
+        {
+            public bool Enable_summon_max;
+            public bool Enable_override_limit;
+            public int summon_limit;
+        }
+        public struct Scorpion_structure
+        {
+            public bool Enable_baby_quantity;
+            public int baby_quantity;
         }
         public struct Scene_Structure
         {
