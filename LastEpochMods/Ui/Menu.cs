@@ -71,7 +71,7 @@ namespace LastEpochMods.Ui
                     pos_y += 85;
                     Config.Data.mods_config.items.Roll_Implicit = CustomControls.ByteValue("Implicits", 0, 255, Config.Data.mods_config.items.Roll_Implicit, pos_x, pos_y, Config.Data.mods_config.items.Enable_RollImplicit, Ui.Menu.Btn_ItemsDrop_Implicit_Roll_Click);
                     pos_y += 85;
-                    Config.Data.mods_config.items.Roll_ForgingPotencial = CustomControls.ByteValue("Forgin Potencial", 0, 255, Config.Data.mods_config.items.Roll_ForgingPotencial, pos_x, pos_y, Config.Data.mods_config.items.Enable_ForgingPotencial, Ui.Menu.Btn_ItemsDrop_ForginPotencial_Roll_Click);
+                    Config.Data.mods_config.items.Roll_ForgingPotencial = (int)CustomControls.IntValue("Forgin Potencial", 0f, 255f, Config.Data.mods_config.items.Roll_ForgingPotencial, pos_x, pos_y, Config.Data.mods_config.items.Enable_ForgingPotencial, Ui.Menu.Btn_ItemsDrop_ForginPotencial_Roll_Click);
                     pos_y += 85;
                     Config.Data.mods_config.items.Roll_AffixValue = CustomControls.ByteValue("Affix Values", 0, 255, Config.Data.mods_config.items.Roll_AffixValue, pos_x, pos_y, Config.Data.mods_config.items.Enable_AffixsValue, Ui.Menu.Btn_ItemsDrop_Affix_Values_Click);
                     pos_y += 85;

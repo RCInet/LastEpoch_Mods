@@ -144,7 +144,7 @@ namespace LastEpochMods.Config
             public bool Enable_AffixsTier;
             public byte Roll_AffixTier;
             public bool Enable_ForgingPotencial;
-            public byte Roll_ForgingPotencial;
+            public int Roll_ForgingPotencial;
             public bool Enable_UniqueMod;
             public byte Roll_UniqueMod;
             public bool Enable_RollLegendayPotencial;

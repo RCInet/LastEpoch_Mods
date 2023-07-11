@@ -27,10 +27,6 @@ namespace LastEpochMods.Hooks
                         __0.implicitRolls[j] = Config.Data.mods_config.items.Roll_Implicit;
                     }
                 }
-                if (Config.Data.mods_config.items.Enable_ForgingPotencial)
-                {
-                    __0.forgingPotential = Config.Data.mods_config.items.Roll_ForgingPotencial;
-                }
                 if ((Config.Data.mods_config.items.Enable_AffixsTier) | (Config.Data.mods_config.items.Enable_AffixsValue))
                 {
                     int tier_result = System.Convert.ToInt32(Config.Data.mods_config.items.Roll_AffixTier) - 1;
@@ -42,6 +38,18 @@ namespace LastEpochMods.Hooks
                 }
             }
         }
-
+        
+        [HarmonyPatch(typeof(GenerateItems), "rollForgingPotential")]
+        public class rollForgingPotential
+        {
+            [HarmonyPostfix]
+            static void Postfix(ref int __result, ItemDataUnpacked __0, int __1, bool __2, GenerateItems.VendorType __3)
+            {
+                if (Config.Data.mods_config.items.Enable_ForgingPotencial)
+                {
+                    __result = Config.Data.mods_config.items.Roll_ForgingPotencial;
+                }                
+            }
+        }
     }
 }
