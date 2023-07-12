@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 namespace LastEpochMods.Ui
 {
@@ -7,7 +8,10 @@ namespace LastEpochMods.Ui
         public static Texture2D windowBackground = null;
         public static Texture2D texture_grey = null;
         public static Texture2D texture_green = null;
+        public static bool lock_movement = false;
 
+        
+        
         public static void Update()
         {
             if (!Config.Data.mods_config.Equals(Config.Data.mods_config_duplicate))
@@ -58,7 +62,12 @@ namespace LastEpochMods.Ui
                     pos_y += 45;
                     if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Bonuses", Styles.Button_Style(ShowBonusesSection))) { Btn_Bonuses_Click(); }
                     pos_y += 45;
-                    Config.Data.mods_config.items.DeathItemDrop_Experience = CustomControls.LongValue("Experience Multiplier", 0, 9999, Config.Data.mods_config.items.DeathItemDrop_Experience, pos_x, pos_y, Config.Data.mods_config.items.Enable_DeathItemDrop_Experience, Ui.Menu.Btn_ItemsDrop_OnDeath_Experience_Click);                    
+                    Config.Data.mods_config.items.DeathItemDrop_Experience = CustomControls.LongValue("Experience Multiplier", 0, 9999, Config.Data.mods_config.items.DeathItemDrop_Experience, pos_x, pos_y, Config.Data.mods_config.items.Enable_DeathItemDrop_Experience, Ui.Menu.Btn_ItemsDrop_OnDeath_Experience_Click);
+                    pos_y += 85;
+                    CustomControls.EnableButton("Range Pickup", pos_x, pos_y, Config.Data.mods_config.items.Enable_pickup_range, Ui.Menu.Btn_Items_Enable_PickupRange_Click);
+                    pos_y += 45;
+                    CustomControls.DropUnique(pos_x, pos_y);
+                    pos_y += 85;
                 }
                 else { ShowItemDataSection = false; ShowAutoPickupSection = false; ShowBonusesSection = false; }
                 if (ShowItemDataSection)
@@ -71,7 +80,7 @@ namespace LastEpochMods.Ui
                     pos_y += 85;
                     Config.Data.mods_config.items.Roll_Implicit = CustomControls.ByteValue("Implicits", 0, 255, Config.Data.mods_config.items.Roll_Implicit, pos_x, pos_y, Config.Data.mods_config.items.Enable_RollImplicit, Ui.Menu.Btn_ItemsDrop_Implicit_Roll_Click);
                     pos_y += 85;
-                    Config.Data.mods_config.items.Roll_ForgingPotencial = (int)CustomControls.IntValue("Forgin Potencial", 0f, 255f, Config.Data.mods_config.items.Roll_ForgingPotencial, pos_x, pos_y, Config.Data.mods_config.items.Enable_ForgingPotencial, Ui.Menu.Btn_ItemsDrop_ForginPotencial_Roll_Click);
+                    Config.Data.mods_config.items.Roll_ForgingPotencial = CustomControls.IntValue("Forgin Potencial", 0, 255, Config.Data.mods_config.items.Roll_ForgingPotencial, pos_x, pos_y, Config.Data.mods_config.items.Enable_ForgingPotencial, Ui.Menu.Btn_ItemsDrop_ForginPotencial_Roll_Click);
                     pos_y += 85;
                     Config.Data.mods_config.items.Roll_AffixValue = CustomControls.ByteValue("Affix Values", 0, 255, Config.Data.mods_config.items.Roll_AffixValue, pos_x, pos_y, Config.Data.mods_config.items.Enable_AffixsValue, Ui.Menu.Btn_ItemsDrop_Affix_Values_Click);
                     pos_y += 85;
@@ -100,6 +109,8 @@ namespace LastEpochMods.Ui
                     CustomControls.EnableButton("Materials", pos_x, pos_y, Config.Data.mods_config.auto_loot.AutoPickup_Craft, Ui.Menu.Btn_AutoPickup_Materials_Click);
                     pos_y += 45;
                     CustomControls.EnableButton("AutoStore Materials", pos_x, pos_y, Config.Data.mods_config.auto_loot.AutoStore_Materials, Ui.Menu.Btn_AutoSrore_Materials_Click);
+                    pos_y += 45;
+                    CustomControls.EnableButton("Hide Notifications", pos_x, pos_y, Config.Data.mods_config.auto_loot.Hide_materials_notifications, Ui.Menu.Btn_AutoPickup_Hide_Materials_Click);
                 }
                 if (ShowBonusesSection)
                 {
@@ -129,7 +140,9 @@ namespace LastEpochMods.Ui
                     pos_y += 45;
                     if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Tree", Styles.Button_Style(ShowTreeSection))) { Ui.Menu.Btn_Tree_Click(); }
                     pos_y += 45;
-                    CustomControls.EnableButton("Unlock Cosmetic", pos_x, pos_y, Config.Data.mods_config.character.cosmetic.Enable_Cosmetic_Btn, Ui.Menu.Btn_Cosmetic_Click);                    
+                    CustomControls.EnableButton("Unlock Cosmetic", pos_x, pos_y, Config.Data.mods_config.character.cosmetic.Enable_Cosmetic_Btn, Ui.Menu.Btn_Cosmetic_Click);
+                    pos_y += 45;
+                    CustomControls.EnableButton("Lock Movement", pos_x, pos_y, lock_movement, Ui.Menu.Btn_Lock_Movement_Click);
                 }
                 else { ShowSkillsSection = false; ShowTreeSection = false; }
                 if (ShowSkillsSection)
@@ -149,24 +162,20 @@ namespace LastEpochMods.Ui
                     CustomControls.EnableButton("NoMana : Don't Stop", pos_x, pos_y, Config.Data.mods_config.character.skills.Enable_stopWhenOutOfMana, Ui.Menu.Btn_Character_StopWhenOutMana_Click);
                     pos_y += 45;
                 }
-                else
-                {
-                    ShowSkillsRemoveSection = false;
-                    ShowSkillsCompanionsSection = false;
-                }
+                else { ShowSkillsRemoveSection = false; ShowSkillsCompanionsSection = false; }
                 if (ShowSkillsCompanionsSection)
                 {
                     pos_x = start_x + ((btn_size_w + btn_margin_w) * 3);
                     pos_y = start_y + Menu_Size_h + 300;
                     GUI.DrawTexture(new Rect(pos_x, pos_y, (btn_size_w + (2 * btn_margin_w)), companion_h), windowBackground);
                     pos_x += 5;
-                    Config.Data.mods_config.character.companions.companion_limit = (int)CustomControls.IntValue("Maximum Companion", 0f, 255f, Config.Data.mods_config.character.companions.companion_limit, pos_x, pos_y, Config.Data.mods_config.character.companions.Enable_companion_limit, Ui.Menu.Btn_Character_MaximumCompanion_Click);
+                    Config.Data.mods_config.character.companions.companion_limit = CustomControls.IntValue("Maximum Companion", 0, 255, Config.Data.mods_config.character.companions.companion_limit, pos_x, pos_y, Config.Data.mods_config.character.companions.Enable_companion_limit, Ui.Menu.Btn_Character_MaximumCompanion_Click);
                     pos_y += 85;
                     CustomControls.EnableButton("Wolf : SummonMax", pos_x, pos_y, Config.Data.mods_config.character.companions.wolf.Enable_summon_max, Ui.Menu.Btn_Character_Wolf_SummonMax_Click);
                     pos_y += 45;
-                    Config.Data.mods_config.character.companions.wolf.summon_limit = (int)CustomControls.IntValue("Wolf : limit", 0f, 255f, Config.Data.mods_config.character.companions.wolf.summon_limit, pos_x, pos_y, Config.Data.mods_config.character.companions.wolf.Enable_override_limit, Ui.Menu.Btn_Character_Wolf_OverrideLimit_Click);
+                    Config.Data.mods_config.character.companions.wolf.summon_limit = CustomControls.IntValue("Wolf : limit", 0, 255, Config.Data.mods_config.character.companions.wolf.summon_limit, pos_x, pos_y, Config.Data.mods_config.character.companions.wolf.Enable_override_limit, Ui.Menu.Btn_Character_Wolf_OverrideLimit_Click);
                     pos_y += 85;
-                    Config.Data.mods_config.character.companions.scorpion.baby_quantity = (int)CustomControls.IntValue("Baby Scorpion : limit", 0f, 255f, Config.Data.mods_config.character.companions.scorpion.baby_quantity, pos_x, pos_y, Config.Data.mods_config.character.companions.scorpion.Enable_baby_quantity, Ui.Menu.Btn_Character_Scorpion_BabySummonMax_Click);
+                    Config.Data.mods_config.character.companions.scorpion.baby_quantity = CustomControls.IntValue("Baby Scorpion : limit", 0, 255, Config.Data.mods_config.character.companions.scorpion.baby_quantity, pos_x, pos_y, Config.Data.mods_config.character.companions.scorpion.Enable_baby_quantity, Ui.Menu.Btn_Character_Scorpion_BabySummonMax_Click);
                     pos_y += 85;
                 }
                 if (ShowSkillsRemoveSection)
@@ -207,7 +216,9 @@ namespace LastEpochMods.Ui
                     pos_y += 45;
                     if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Dungeons", Styles.Button_Style(ShowDungeonsSection))) { Btn_Dungeons_Click(); }
                     pos_y += 45;
-                    if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Monoliths", Styles.Button_Style(ShowMonolithsSection))) { Btn_Monoliths_Click(); }                    
+                    if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Monoliths", Styles.Button_Style(ShowMonolithsSection))) { Btn_Monoliths_Click(); }
+                    pos_y += 45;
+                    CustomControls.EnableButton("Remove Fog of War", pos_x, pos_y, Config.Data.mods_config.scene.Remove_Fog_Of_War, Ui.Menu.Btn_Craft_Scene_Remove_FogOfWar_Click);                    
                 }
                 else { ShowDungeonsSection = false; ShowMonolithsSection = false; }
                 if (ShowDungeonsSection)
@@ -228,9 +239,11 @@ namespace LastEpochMods.Ui
                     pos_x += 5;
                     CustomControls.EnableButton("Stability Max", pos_x, pos_y, Config.Data.mods_config.scene.Enable_Monolith_Stability, Ui.Menu.Btn_Monolith_Stability_Click);
                     pos_y += 45;
-                    Config.Data.mods_config.scene.Max_Stability = System.Convert.ToInt32(CustomControls.FloatValue("Max Stability", 0f, 255f, Config.Data.mods_config.scene.Max_Stability, pos_x, pos_y, Config.Data.mods_config.scene.Enable_Monolith_Overide_Max_Stability, Ui.Menu.Btn_Monolith_Override_Max_Stability_Click));
+                    Config.Data.mods_config.scene.Monolith_EnemyDensity = CustomControls.FloatValue("Density Modifier", 0f, 255f, Config.Data.mods_config.scene.Monolith_EnemyDensity, pos_x, pos_y, Config.Data.mods_config.scene.Enable_Monolith_EnemyDensity, Ui.Menu.Btn_Scene_Monolith_Density_Click);
                     pos_y += 85;
-                    Config.Data.mods_config.scene.Monolith_EnnemiesDefeat_OnStart = System.Convert.ToInt32(CustomControls.FloatValue("Enemies Defeat", 0f, 255f, Config.Data.mods_config.scene.Monolith_EnnemiesDefeat_OnStart, pos_x, pos_y, Config.Data.mods_config.scene.Enable_Monolith_EnnemiesDefeat_OnStart, Ui.Menu.Btn_Monolith_Enemies_Defeat_OnStart_Click));
+                    Config.Data.mods_config.scene.Max_Stability = CustomControls.IntValue("Max Stability", 0, 255, Config.Data.mods_config.scene.Max_Stability, pos_x, pos_y, Config.Data.mods_config.scene.Enable_Monolith_Overide_Max_Stability, Ui.Menu.Btn_Monolith_Override_Max_Stability_Click);
+                    pos_y += 85;
+                    Config.Data.mods_config.scene.Monolith_EnnemiesDefeat_OnStart = CustomControls.FloatValue("Enemies Defeat", 0f, 255f, Config.Data.mods_config.scene.Monolith_EnnemiesDefeat_OnStart, pos_x, pos_y, Config.Data.mods_config.scene.Enable_Monolith_EnnemiesDefeat_OnStart, Ui.Menu.Btn_Monolith_Enemies_Defeat_OnStart_Click);
                     pos_y += 85;
                     CustomControls.EnableButton("Objective Reveal", pos_x, pos_y, Config.Data.mods_config.scene.Enable_Monolith_ObjectiveReveal, Ui.Menu.Btn_Monolith_Objective_Reveal_OnStart_Click);
                     pos_y += 45;
@@ -245,16 +258,20 @@ namespace LastEpochMods.Ui
                     pos_y = start_y + Menu_Size_h;
                     GUI.DrawTexture(new Rect(pos_x, pos_y, (btn_size_w + (2 * btn_margin_w)), Items_h), windowBackground);
                     pos_x += 5;
+                    Config.Data.mods_config.affixs.Affixs_Multiplier = CustomControls.IntValue("Affix Multiplier", 0, 255, Config.Data.mods_config.affixs.Affixs_Multiplier, pos_x, pos_y, Config.Data.mods_config.affixs.Enable_Affixs_Multiplier, Ui.Menu.Btn_Affix_Multiplier_Click);
+                    pos_y += 85;                    
+                    CustomControls.EnableButton("Remove Forging Cost", pos_x, pos_y, Config.Data.mods_config.craft.no_cost, Ui.Menu.Btn_Craft_NoForgingPotencialCost_Click);
+                    pos_y += 45;
                     if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Remove Req", Styles.Button_Style(ShowRemoveReqSection))) { Btn_RemoveReq_Click(); }
                     pos_y += 45;
-                    if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Affixs", Styles.Button_Style(ShowAffixsSection))) { Btn_Affixs_Click(); }
-                    pos_y += 45;
+                    Config.Data.mods_config.items.Shop_Rarity = System.Convert.ToInt32(CustomControls.FloatValue("Shop Rarity", 0f, 9f, Config.Data.mods_config.items.Shop_Rarity, pos_x, pos_y, Config.Data.mods_config.items.Enable_Shop_Rarity, Ui.Menu.Btn_Items_Shop_Rarity_Roll_Click));
+                    pos_y += 85;
                 }
-                else { ShowRemoveReqSection = false; ShowAffixsSection = false; }
+                else { ShowRemoveReqSection = false; }
                 if (ShowRemoveReqSection)
                 {
                     pos_x = start_x + ((btn_size_w + btn_margin_w) * 4);
-                    pos_y = start_y + Menu_Size_h;
+                    pos_y = start_y + Menu_Size_h + 130;
                     GUI.DrawTexture(new Rect(pos_x, pos_y, (btn_size_w + (2 * btn_margin_w)), RemoveReq_h), windowBackground);
                     pos_x += 5;
                     CustomControls.EnableButton("Remove Level", pos_x, pos_y, Config.Data.mods_config.items.Remove_LevelReq, Ui.Menu.Btn_Items_Remove_Level_Req_Click);
@@ -262,16 +279,7 @@ namespace LastEpochMods.Ui
                     CustomControls.EnableButton("Remove Class", pos_x, pos_y, Config.Data.mods_config.items.Remove_ClassReq, Ui.Menu.Btn_Items_Remove_Class_Req_Click);
                     pos_y += 45;
                     CustomControls.EnableButton("Remove SubClass", pos_x, pos_y, Config.Data.mods_config.items.Remove_SubClassReq, Ui.Menu.Btn_Items_Remove_SubClass_Req_Click);
-                }
-                if (ShowAffixsSection)
-                {
-                    pos_x = start_x + ((btn_size_w + btn_margin_w) * 4);
-                    pos_y = start_y + Menu_Size_h + 45;
-                    GUI.DrawTexture(new Rect(pos_x, pos_y, (btn_size_w + (2 * btn_margin_w)), Affixs_h), windowBackground);
-                    pos_x += 5;
-                    Config.Data.mods_config.affixs.Affixs_Multiplier = (int)CustomControls.IntValue("multiply Rolls", 0f, 255f, Config.Data.mods_config.affixs.Affixs_Multiplier, pos_x, pos_y, Config.Data.mods_config.affixs.Enable_Affixs_Multiplier, Ui.Menu.Btn_Affix_Multiplier_Click);
-                    pos_y += 85;
-                }
+                }                
             }
         }
         
@@ -287,7 +295,7 @@ namespace LastEpochMods.Ui
         #endregion
         #region ItemDrop
         private static bool ShowItemDropSection = false;
-        public static float ItemsDrop_h = 390f;
+        public static float ItemsDrop_h = 520f;
 
         public static void Btn_ItemsDrop_Click()
         {
@@ -312,6 +320,13 @@ namespace LastEpochMods.Ui
         {
             Config.Data.mods_config.items.Enable_DeathItemDrop_Experience = !Config.Data.mods_config.items.Enable_DeathItemDrop_Experience;            
         }        
+        public static void Btn_Items_Enable_PickupRange_Click()
+        {
+            Config.Data.mods_config.items.Enable_pickup_range = !Config.Data.mods_config.items.Enable_pickup_range;
+        }
+        #region DropUnique
+        
+        #endregion
         #region ItemData
         private static bool ShowItemDataSection = false;
         public static float item_data_h = 680f;
@@ -357,7 +372,7 @@ namespace LastEpochMods.Ui
         #endregion        
         #region AutoLoot
         private static bool ShowAutoPickupSection = false;
-        public static float AutoPickup_h = 270f;
+        public static float AutoPickup_h = 315f;
 
         public static void Btn_AutoPickup_Click()
         {
@@ -389,6 +404,10 @@ namespace LastEpochMods.Ui
         {
             Config.Data.mods_config.auto_loot.AutoStore_Materials = !Config.Data.mods_config.auto_loot.AutoStore_Materials;            
         }
+        public static void Btn_AutoPickup_Hide_Materials_Click()
+        {
+            Config.Data.mods_config.auto_loot.Hide_materials_notifications = !Config.Data.mods_config.auto_loot.Hide_materials_notifications;
+        }
         #endregion
         #region Bonuses
         private static bool ShowBonusesSection = false;
@@ -416,7 +435,7 @@ namespace LastEpochMods.Ui
         #endregion
         #region Character
         private static bool ShowCharacterSection = false;
-        public static float Character_h = 305f;
+        public static float Character_h = 350f;
 
         public static void Btn_Character_Click()
         {
@@ -432,6 +451,10 @@ namespace LastEpochMods.Ui
         public static void Btn_Character_LeachRate_Click()
         {
             Config.Data.mods_config.character.characterstats.Enable_leach_rate = !Config.Data.mods_config.character.characterstats.Enable_leach_rate;            
+        }
+        public static void Btn_Lock_Movement_Click()
+        {
+            lock_movement = !lock_movement;
         }
         #region Skills
         private static bool ShowSkillsSection = false;
@@ -531,7 +554,7 @@ namespace LastEpochMods.Ui
         #endregion
         #region Scenes
         private static bool ShowSceneSection = false;
-        public static float Scene_h = 305f;
+        public static float Scene_h = 350f;
 
         public static void Btn_Scene_Click()
         {
@@ -551,6 +574,10 @@ namespace LastEpochMods.Ui
         public static void Btn_Scene_Waypoint_Unlock_Click()
         {
             Config.Data.mods_config.scene.Enable_Waypoint_Unlock = !Config.Data.mods_config.scene.Enable_Waypoint_Unlock;            
+        }
+        public static void Btn_Craft_Scene_Remove_FogOfWar_Click()
+        {
+            Config.Data.mods_config.scene.Remove_Fog_Of_War = !Config.Data.mods_config.scene.Remove_Fog_Of_War;
         }
         #region Dungeons
         private static bool ShowDungeonsSection = false;
@@ -572,7 +599,7 @@ namespace LastEpochMods.Ui
         #endregion
         #region Monoliths
         private static bool ShowMonolithsSection = false;
-        public static float Monolith_h = 350f;
+        public static float Monolith_h = 435f;
 
         public static void Btn_Monoliths_Click()
         {
@@ -603,11 +630,15 @@ namespace LastEpochMods.Ui
         {
             Config.Data.mods_config.scene.Enable_Monolith_NoDie = !Config.Data.mods_config.scene.Enable_Monolith_NoDie;            
         }
+        public static void Btn_Scene_Monolith_Density_Click()
+        {
+            Config.Data.mods_config.scene.Enable_Monolith_EnemyDensity = !Config.Data.mods_config.scene.Enable_Monolith_EnemyDensity;
+        }
         #endregion
-        #endregion        
+        #endregion
         #region Items
         private static bool ShowItemsSection = false;
-        public static float Items_h = 90;
+        public static float Items_h = 260;
 
         public static void Btn_Items_Click()
         {
@@ -616,13 +647,28 @@ namespace LastEpochMods.Ui
             ShowSceneSection = false;
             ShowItemsSection = !ShowItemsSection;
         }
+        public static void Btn_Affix_Multiplier_Click()
+        {
+            Config.Data.mods_config.affixs.Enable_Affixs_Multiplier = !Config.Data.mods_config.affixs.Enable_Affixs_Multiplier;
+        }
+        public static void Btn_Craft_NoForgingPotencialCost_Click()
+        {
+            Config.Data.mods_config.craft.no_cost = !Config.Data.mods_config.craft.no_cost;
+        }
+        public static void Btn_Craft_Hide_Notifications_Click()
+        {
+            Config.Data.mods_config.craft.Hide_crafting_notifications = !Config.Data.mods_config.craft.Hide_crafting_notifications;
+        }        
+        public static void Btn_Items_Shop_Rarity_Roll_Click()
+        {
+            Config.Data.mods_config.items.Enable_Shop_Rarity = !Config.Data.mods_config.items.Enable_Shop_Rarity;
+        }
         #region Remove Req
         private static bool ShowRemoveReqSection = false;
         public static float RemoveReq_h = 135f;
 
         public static void Btn_RemoveReq_Click()
-        {
-            ShowAffixsSection = false;
+        {            
             ShowRemoveReqSection = !ShowRemoveReqSection;
         }
         public static void Btn_Items_Remove_Level_Req_Click()
@@ -636,20 +682,6 @@ namespace LastEpochMods.Ui
         public static void Btn_Items_Remove_SubClass_Req_Click()
         {
             Config.Data.mods_config.items.Remove_SubClassReq = !Config.Data.mods_config.items.Remove_SubClassReq;            
-        }
-        #endregion
-        #region Affixs
-        private static bool ShowAffixsSection = false;
-        public static float Affixs_h = 85;
-
-        public static void Btn_Affixs_Click()
-        {
-            ShowRemoveReqSection = false;
-            ShowAffixsSection = !ShowAffixsSection;
-        }
-        public static void Btn_Affix_Multiplier_Click()
-        {
-            Config.Data.mods_config.affixs.Enable_Affixs_Multiplier = !Config.Data.mods_config.affixs.Enable_Affixs_Multiplier;            
         }
         #endregion
         #endregion
