@@ -16,9 +16,12 @@ namespace LastEpochMods.Hooks
         {
             [HarmonyPostfix]
             static void Postfix(ref CharacterStats __instance)
-            {
+            {                
                 if (Config.Data.mods_config.character.characterstats.Enable_attack_rate) { __instance.attackRate = Config.Data.mods_config.character.characterstats.attack_rate; }
-                if (Config.Data.mods_config.character.characterstats.Enable_leach_rate) { __instance.increasedLeechRate = Config.Data.mods_config.character.characterstats.leach_rate; }
+                if (Config.Data.mods_config.character.characterstats.Enable_leach_rate)
+                {
+                    __instance.TryCast<BaseStats>().increasedLeechRate = Config.Data.mods_config.character.characterstats.leach_rate;
+                }
                 if (Enable_attributes)
                 {
                     foreach (CharacterStats.AttributeValuePair attribute in __instance.attributes)

@@ -9,7 +9,7 @@ namespace LastEpochMods.Hooks
         {
             [HarmonyPostfix]
             static void Postfix(ref GroundItemManager __instance, ref Actor __0, ref ItemData __1, ref UnityEngine.Vector3 __2, ref bool __3)
-            {
+            {                
                 if (__instance != null)
                 {
                     System.UInt32 item_id = __instance.nextItemId - 1;

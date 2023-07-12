@@ -30,6 +30,7 @@ namespace LastEpochMods
                     OnSceneChanged.Affix_List.Init();
                     OnSceneChanged.Spawner_Placement_Manager.Init();
                     OnSceneChanged.Local_Tree_Data.Init();
+                    Ui.CustomControls.InitDropdowns();
                 }
             }
         }
@@ -59,7 +60,8 @@ namespace LastEpochMods
             {
                 if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.F1)) { Ui.Menu.isMenuOpen = !Ui.Menu.isMenuOpen; }
                 if (!Scenes.MenuNames.Contains(Scenes.CurrentName)) //In game
-                {                    
+                {
+                    if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.F9)) { Mods.Character.DropAllAffix(1); }
                     if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.F10)) { Mods.Character.Launch_LevelUp(); }
                 }
             }
