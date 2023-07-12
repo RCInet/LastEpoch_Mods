@@ -21,6 +21,15 @@ namespace LastEpochMods.Config
             public Scene_Structure scene;
             public Character_Structure character;
             public Affixs_Structure affixs;
+            public Crafting_structure craft;
+        }
+        public struct Crafting_structure
+        {
+            public bool no_cost;
+            public bool only_crit;
+            public bool override_affix_roll;
+            public int affix_roll;
+            public bool Hide_crafting_notifications;
         }
         public struct Affixs_Structure
         {
@@ -107,7 +116,10 @@ namespace LastEpochMods.Config
             public float Monolith_EnnemiesDefeat_OnStart;
             public bool Enable_Monolith_ObjectiveReveal;
             public bool Enable_Monolith_Complete_Objective;
+            public bool Enable_Monolith_EnemyDensity;
+            public float Monolith_EnemyDensity;
             public bool Enable_Monolith_NoDie;
+            public bool Remove_Fog_Of_War;
         }
         public struct AutoLoot_Structure
         {
@@ -118,6 +130,7 @@ namespace LastEpochMods.Config
             public bool AutoPickup_Gold;
             public bool AutoPickup_XpTome;
             public bool AutoPickup_Pots;
+            public bool Hide_materials_notifications;
         }
         public struct Items_Structure
         {
@@ -154,6 +167,9 @@ namespace LastEpochMods.Config
             public bool Remove_LevelReq;
             public bool Remove_ClassReq;
             public bool Remove_SubClassReq;
+            public bool Enable_pickup_range;
+            public bool Enable_Shop_Rarity;
+            public int Shop_Rarity;
         }
     }
 }

@@ -48,7 +48,8 @@ namespace LastEpochMods.Config
                     AutoStore_Materials = true,
                     AutoPickup_Gold = true,
                     AutoPickup_XpTome = true,
-                    AutoPickup_Pots = false
+                    AutoPickup_Pots = false,
+                    Hide_materials_notifications = true
                 },
                 items = new Data.Items_Structure
                 {
@@ -84,7 +85,10 @@ namespace LastEpochMods.Config
                     Roll_Weaver_Will = 28, //5 to 28
                     Remove_LevelReq = true,
                     Remove_ClassReq = true,
-                    Remove_SubClassReq = true
+                    Remove_SubClassReq = true,
+                    Enable_pickup_range = true,
+                    Enable_Shop_Rarity = true,
+                    Shop_Rarity = 7
                 },
                 scene = new Data.Scene_Structure
                 {
@@ -99,11 +103,14 @@ namespace LastEpochMods.Config
                     Enable_Monolith_Stability = true,
                     Enable_Monolith_Overide_Max_Stability = false,
                     Max_Stability = 100,
-                    Enable_Monolith_EnnemiesDefeat_OnStart = true,
-                    Monolith_EnnemiesDefeat_OnStart = 500f,
+                    Enable_Monolith_EnnemiesDefeat_OnStart = false,
+                    Monolith_EnnemiesDefeat_OnStart = 255f,
                     Enable_Monolith_ObjectiveReveal = true,
                     Enable_Monolith_Complete_Objective = false,
-                    Enable_Monolith_NoDie = true
+                    Enable_Monolith_NoDie = true,
+                    Enable_Monolith_EnemyDensity = true,
+                    Monolith_EnemyDensity = 10f,
+                    Remove_Fog_Of_War = true
                 },
                 character = new Data.Character_Structure
                 {
@@ -139,12 +146,12 @@ namespace LastEpochMods.Config
                         {
                             Enable_summon_max = true,
                             Enable_override_limit = true,
-                            summon_limit = 255
+                            summon_limit = 50
                         },
                         scorpion = new Data.Scorpion_structure
                         {
                             Enable_baby_quantity = true,
-                            baby_quantity = 255
+                            baby_quantity = 50
                         }
                     },
                     characterstats = new Data.CharacterStats_structure
@@ -157,12 +164,20 @@ namespace LastEpochMods.Config
                     cosmetic = new Data.Cosmetic_structure
                     {
                         Enable_Cosmetic_Btn = true
-                    }                    
+                    }
                 },
                 affixs = new Data.Affixs_Structure
                 {
-                    Enable_Affixs_Multiplier = true,
+                    Enable_Affixs_Multiplier = false,
                     Affixs_Multiplier = 10
+                },
+                craft = new Data.Crafting_structure
+                {
+                    no_cost = true,
+                    only_crit = false,
+                    override_affix_roll = false,
+                    affix_roll = 255,
+                    Hide_crafting_notifications = true
                 }
             };
 
