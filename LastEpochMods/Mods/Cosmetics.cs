@@ -57,23 +57,26 @@ namespace LastEpochMods.Mods
         }
         public static void OpenShop()
         {
-            Main.logger_instance.Msg("Debug : OpenShop");
-            RemoveShopDropdown();
-            foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.GameObject)))
+            try
             {
-                if (obj.name == "InventoryPanel(Clone)")
+                RemoveShopDropdown();
+                foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.GameObject)))
                 {
-                    obj.TryCast<UnityEngine.GameObject>().gameObject.active = false;
-                }
-                else if (obj.name == "Flyout Selection Window")
-                {
-                    obj.TryCast<UnityEngine.GameObject>().gameObject.active = false;
-                }
-                else if (obj.name == "CosmeticsStore")
-                {
-                    obj.TryCast<UnityEngine.GameObject>().gameObject.active = true;
+                    if (obj.name == "InventoryPanel(Clone)")
+                    {
+                        obj.TryCast<UnityEngine.GameObject>().gameObject.active = false;
+                    }
+                    else if (obj.name == "Flyout Selection Window")
+                    {
+                        obj.TryCast<UnityEngine.GameObject>().gameObject.active = false;
+                    }
+                    else if (obj.name == "CosmeticsStore")
+                    {
+                        obj.TryCast<UnityEngine.GameObject>().gameObject.active = true;
+                    }
                 }
             }
+            catch { }
         }
         public static void CloseShop()
         {
@@ -99,8 +102,7 @@ namespace LastEpochMods.Mods
                     UnityEngine.GameObject game_object = obj.TryCast<UnityEngine.GameObject>();
                     for (int i = 0; i < game_object.transform.childCount; i++)
                     {
-                        string name = game_object.transform.GetChild(i).gameObject.name;
-                        if (name == "Dropdown")
+                        if (game_object.transform.GetChild(i).gameObject.name == "Dropdown")
                         {
                             game_object.transform.GetChild(i).TryCast<UnityEngine.GameObject>().gameObject.active = false;
                             break;
