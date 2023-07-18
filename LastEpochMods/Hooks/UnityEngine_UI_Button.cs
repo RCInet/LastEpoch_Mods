@@ -10,14 +10,36 @@ namespace LastEpochMods.Hooks
             [HarmonyPostfix]
             static void Postfix(ref UnityEngine.UI.Button __instance)
             {
-                if (__instance.name == "OpenShop") { Mods.Cosmetics.OpenShop(); }
-                else if (__instance.name == "GetPoints") { Mods.Cosmetics.GetPoints(); }
-                else if (__instance.name == "Cosmetics") { Mods.Cosmetics.SelectCosmeticTab(); }
-                else if (__instance.name == "OpenCosmeticStore") { Mods.Cosmetics.OpenShop(); }
-                else if (__instance.name == "buyButton") { Mods.Cosmetics.BuyCosmetic(); }
-                else if (__instance.name == "Close Button") { Mods.Cosmetics.CloseShop(); }
-                else if (__instance.name == "getPointsButton") { Mods.Cosmetics.GetPoints(); }
-                else if (__instance.name == "tabButton") { Mods.Cosmetics.ShowTab(); }
+                //Main.logger_instance.Msg("Btn : " + __instance.name);
+
+                bool shop_open = Mods.Cosmetics.IsShopOpen();
+                bool cosmetic_select_open = Mods.Cosmetics.IsCometicSelectOpen();
+                if (Mods.Cosmetics.IsCosmeticPanelOpen)
+                {
+                    if (__instance.name == "OpenShop")
+                    {
+                        Mods.Cosmetics.CloseInventory();
+                        Mods.Cosmetics.OpenShop();
+                    }
+                    else if (__instance.name == "GetPoints") { Mods.Cosmetics.GetPoints(); }
+                }                
+                if (shop_open)
+                {
+                    if ((__instance.name == "Close_Button") || (__instance.name == "Armory"))
+                    {
+                        Mods.Cosmetics.CloseShop();
+                        Mods.Cosmetics.OpenInventory();
+                    }
+                }
+                if (cosmetic_select_open)
+                {
+                    if (__instance.name == "OpenCosmeticStore")
+                    {
+                        Mods.Cosmetics.CloseSelect();
+                        Mods.Cosmetics.OpenShop();
+                    }
+                    //if (__instance.name == "Close_Button") { Mods.Cosmetics.OpenInventory(); }
+                }
             }
         }
     }

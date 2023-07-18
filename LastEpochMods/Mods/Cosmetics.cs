@@ -1,13 +1,169 @@
-﻿using UniverseLib;
+﻿using UnityEngine;
+using UniverseLib;
 
 namespace LastEpochMods.Mods
 {
     public class Cosmetics
     {
-        public static string current_slot_name = "";
+        //InventoryUi
+        public static bool IsCosmeticPanelOpen = false;
+        public static void OpenShop()
+        {
+            try
+            {
+                foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.GameObject)))
+                {
+                    if (obj.name == "MTXShopPanel(Clone)")
+                    {
+                        obj.TryCast<UnityEngine.GameObject>().gameObject.active = true;
+                        break;
+                    }
+                }
+            }
+            catch { }
+        }
+        public static void OpenInventory()
+        {
+            try
+            {
+                foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.GameObject)))
+                {
+                    if (obj.name == "InventoryPanel(Clone)")
+                    {
+                        obj.TryCast<UnityEngine.GameObject>().gameObject.active = true;
+                        break;
+                    }
+                }
+            }
+            catch { }
+        }
+        public static void CloseInventory()
+        {
+            try
+            {
+                foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.GameObject)))
+                {
+                    if (obj.name == "InventoryPanel(Clone)")
+                    {
+                        obj.TryCast<UnityEngine.GameObject>().gameObject.active = false;
+                        break;
+                    }
+                }
+            }
+            catch { }
+        }
+        public static void GetPoints()
+        {            
+            //Set Points
+        }
+
+        //ShopUi
+        public static bool IsShopOpen()
+        {
+            bool result = false;
+            try
+            {
+                foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.GameObject)))
+                {
+                    if (obj.name == "MTXShopPanel(Clone)")
+                    {
+                        result = obj.TryCast<UnityEngine.GameObject>().gameObject.active;
+                        break;
+                    }
+                }
+            }
+            catch { }
+
+            return result;
+        }
+        public static void CloseShop()
+        {
+            foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.GameObject)))
+            {
+                if (obj.name == "MTXShopPanel(Clone)")
+                {
+                    obj.TryCast<UnityEngine.GameObject>().gameObject.active = false;
+                    break;
+                }
+            }
+        }
+
+        //Cosmetic Item Select
+        public static bool IsCometicSelectOpen()
+        {
+            bool result = false;
+            foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.GameObject)))
+            {
+                if (obj.name == "InventoryPanel(Clone)")
+                {
+                    UnityEngine.GameObject flyout_holder = null;
+                    for (int i = 0; i < obj.TryCast<UnityEngine.GameObject>().transform.childCount; i++)
+                    {
+                        string obj_name = obj.TryCast<UnityEngine.GameObject>().transform.GetChild(i).gameObject.name;
+                        if (obj_name == "FlyoutHolder")
+                        {
+                            flyout_holder = obj.TryCast<UnityEngine.GameObject>().transform.GetChild(i).gameObject;                            
+                            bool found = false;
+                            for (int j = 0; j < flyout_holder.transform.childCount; j++)
+                            {
+                                string obj2_name = obj.TryCast<UnityEngine.GameObject>().transform.GetChild(i).gameObject.transform.GetChild(j).gameObject.name;
+                                if (flyout_holder.transform.GetChild(j).gameObject.name == "Flyout Selection Window")
+                                {
+                                    result = obj.TryCast<UnityEngine.GameObject>().transform.GetChild(i).gameObject.transform.GetChild(j).gameObject.active;                                                                        
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found) { Main.logger_instance.Msg("Found Flyout Selection Window is null"); }
+                            break;
+                        }
+                    }
+                    if (flyout_holder == null) { Main.logger_instance.Msg("Flyout Holder Not Found"); }
+
+                    break;
+                }
+            }
+
+            return result;
+        }
+        public static void CloseSelect()
+        {
+            try
+            {
+                foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.GameObject)))
+                {
+                    if (obj.name == "InventoryPanel(Clone)")
+                    {
+                        UnityEngine.GameObject game_object = obj.TryCast<UnityEngine.GameObject>();
+                        UnityEngine.GameObject flyout_holder = null;
+                        for (int i = 0; i < game_object.transform.childCount; i++)
+                        {
+                            if (game_object.transform.GetChild(i).gameObject.name == "FlyoutHolder")
+                            {
+                                flyout_holder = game_object.transform.GetChild(i).TryCast<UnityEngine.GameObject>().gameObject;
+                                break;
+                            }
+                        }
+                        if (flyout_holder != null)
+                        {
+                            for (int i = 0; i < flyout_holder.transform.childCount; i++)
+                            {
+                                if (flyout_holder.transform.GetChild(i).gameObject.name == "Flyout Selection Window")
+                                {
+                                    flyout_holder.transform.GetChild(i).TryCast<UnityEngine.GameObject>().gameObject.active = false;
+                                    break;
+                                }
+                            }
+                        }
+
+                        break;
+                    }
+                }
+            }
+            catch { }
+        }
         public static void AddCosmeticToSlot(CosmeticItemObject cosmetic_obj)
         {
-            Main.logger_instance.Msg("Debug : AddCosmeticToSlot : Slot = " + current_slot_name);
             foreach (UnityEngine.Object new_obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(CosmeticItemSlot)))
             {
                 string new_slot_name = "";
@@ -50,49 +206,10 @@ namespace LastEpochMods.Mods
                 }
             }
         }
-        public static void GetPoints()
-        {
-            Main.logger_instance.Msg("Debug : GetPoints");
-            //Set Points
-        }
-        public static void OpenShop()
-        {
-            try
-            {
-                RemoveShopDropdown();
-                foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.GameObject)))
-                {
-                    if (obj.name == "InventoryPanel(Clone)")
-                    {
-                        obj.TryCast<UnityEngine.GameObject>().gameObject.active = false;
-                    }
-                    else if (obj.name == "Flyout Selection Window")
-                    {
-                        obj.TryCast<UnityEngine.GameObject>().gameObject.active = false;
-                    }
-                    else if (obj.name == "CosmeticsStore")
-                    {
-                        obj.TryCast<UnityEngine.GameObject>().gameObject.active = true;
-                    }
-                }
-            }
-            catch { }
-        }
-        public static void CloseShop()
-        {
-            Main.logger_instance.Msg("Debug : CloseShop");
-            foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.GameObject)))
-            {
-                if (obj.name == "InventoryPanel(Clone)")
-                {
-                    obj.TryCast<UnityEngine.GameObject>().gameObject.active = true;
-                }
-                else if (obj.name == "CosmeticsStore")
-                {
-                    obj.TryCast<UnityEngine.GameObject>().gameObject.active = false;
-                }
-            }
-        }
+
+
+
+        public static string current_slot_name = "";
         public static void RemoveShopDropdown()
         {
             foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.GameObject)))
@@ -219,6 +336,26 @@ namespace LastEpochMods.Mods
         }
         public class Add
         {
+            public static void CosmeticToShop()
+            {
+                try
+                {
+                    foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(UnityEngine.GameObject)))
+                    {
+                        if (obj.name == "MTXShopPanel(Clone)")
+                        {
+                            //Get child "Panels" "All Panel"
+
+                            LE.MicrotransactionSystem.ItemForSale item_for_sale = new LE.MicrotransactionSystem.ItemForSale();
+                            LE.Services.Cosmetics.Cosmetic cosmetic = new LE.Services.Cosmetics.Cosmetic();
+                            LE.UI.MTXStore.AllPanel panel = new LE.UI.MTXStore.AllPanel();
+                            panel.CreateTile(item_for_sale, true, cosmetic);
+                            break;
+                        }
+                    }
+                }
+                catch { }
+            }
             public static void DefaultCosmetic()
             {
                 cosmetic_list_structure cosmetics = Get.Cosmetics();

@@ -221,6 +221,7 @@
     <Compile Include="Hooks\Character_Stats.cs" />
     <Compile Include="Hooks\Cosmetic_Item_Object.cs" />
     <Compile Include="Hooks\Cosmetic_Item_Slot.cs" />
+    <Compile Include="Hooks\Cosmetic_Panel_UI.cs" />
     <Compile Include="Hooks\Crafting_Manager.cs" />
     <Compile Include="Hooks\Crafting_Slot_Manager.cs" />
     <Compile Include="Hooks\Death_Item_Drop.cs" />
@@ -245,7 +246,6 @@
     <Compile Include="Mods\Cosmetics.cs" />
     <Compile Include="Mods\Developer.cs" />
     <Compile Include="Mods\Items\HeadHunter.cs" />
-    <Compile Include="OnSceneChanged\Affix_List.cs" />
     <Compile Include="OnSceneChanged\Local_Tree_Data.cs" />
     <Compile Include="OnSceneChanged\Spawner_Placement_Manager.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -258,6 +258,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Ui\CustomControls.cs" />
     <Compile Include="Ui\Functions.cs" />
+    <Compile Include="Ui\GenerateItem.cs" />
     <Compile Include="Ui\Menu.cs" />
     <Compile Include="Ui\Styles.cs" />
   </ItemGroup>
