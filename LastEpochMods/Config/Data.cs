@@ -20,7 +20,6 @@ namespace LastEpochMods.Config
             public Items_Structure items;
             public Scene_Structure scene;
             public Character_Structure character;
-            public Affixs_Structure affixs;
             public Crafting_structure craft;
         }
         public struct Crafting_structure
@@ -29,13 +28,7 @@ namespace LastEpochMods.Config
             public bool only_crit;
             public bool override_affix_roll;
             public int affix_roll;
-            public bool Hide_crafting_notifications;
-        }
-        public struct Affixs_Structure
-        {
-            public bool Enable_Affixs_Multiplier;
-            public int Affixs_Multiplier;
-        }
+        }        
         public struct Character_Structure
         {
             public Skills_structure skills;
@@ -168,8 +161,8 @@ namespace LastEpochMods.Config
             public bool Remove_ClassReq;
             public bool Remove_SubClassReq;
             public bool Enable_pickup_range;
-            public bool Enable_Shop_Rarity;
-            public int Shop_Rarity;
+            public bool Enable_nb_affixes;
+            public int nb_affixes;
         }
     }
 }

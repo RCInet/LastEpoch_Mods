@@ -25,12 +25,11 @@ namespace LastEpochMods
             Scenes.CurrentName = sceneName;
             if (UniverseLibLoaded)
             {
-                if ((Scenes.CurrentName != "") && (!Scenes.MenuNames.Contains(Scenes.CurrentName)))
-                {
-                    OnSceneChanged.Affix_List.Init();
+                if (Scenes.GameScene())
+                {                    
                     OnSceneChanged.Spawner_Placement_Manager.Init();
                     OnSceneChanged.Local_Tree_Data.Init();
-                    Ui.CustomControls.InitDropdowns();
+                    Ui.GenerateItem.Init();
                 }
             }
         }
@@ -59,9 +58,9 @@ namespace LastEpochMods
             else
             {
                 if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.F1)) { Ui.Menu.isMenuOpen = !Ui.Menu.isMenuOpen; }
-                if (!Scenes.MenuNames.Contains(Scenes.CurrentName)) //In game
+                if (Scenes.GameScene()) //In game
+                //if (!Scenes.MenuNames.Contains(Scenes.CurrentName)) 
                 {
-                    if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.F9)) { Mods.Character.DropAllAffix(1); }
                     if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.F10)) { Mods.Character.Launch_LevelUp(); }
                 }
             }

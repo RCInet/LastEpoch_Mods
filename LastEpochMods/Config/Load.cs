@@ -55,9 +55,9 @@ namespace LastEpochMods.Config
                 {
                     Enable_increase_equipment_droprate = false,
                     increase_equipment_droprate = 255f,
-                    Enable_increase_equipmentshards_droprate = true,
+                    Enable_increase_equipmentshards_droprate = false,
                     increase_equipmentshards_droprate = 255f,
-                    Enable_increase_uniques_droprate = true,
+                    Enable_increase_uniques_droprate = false,
                     increase_uniques_droprate = 255f,
                     Enable_DeathItemDrop_goldMultiplier = true,
                     DeathItemDrop_goldMultiplier = 255f,
@@ -87,8 +87,8 @@ namespace LastEpochMods.Config
                     Remove_ClassReq = true,
                     Remove_SubClassReq = true,
                     Enable_pickup_range = true,
-                    Enable_Shop_Rarity = true,
-                    Shop_Rarity = 7
+                    Enable_nb_affixes = true,
+                    nb_affixes = 4,
                 },
                 scene = new Data.Scene_Structure
                 {
@@ -100,15 +100,15 @@ namespace LastEpochMods.Config
                     Enable_Dungeons_WithoutKey = true,
                     CreateKey = false, //True = create a key, False = Bypass Result
                     Enable_Dungeons_ObjectiveReveal = true,
-                    Enable_Monolith_Stability = true,
+                    Enable_Monolith_Stability = false,
                     Enable_Monolith_Overide_Max_Stability = false,
                     Max_Stability = 100,
                     Enable_Monolith_EnnemiesDefeat_OnStart = false,
                     Monolith_EnnemiesDefeat_OnStart = 255f,
-                    Enable_Monolith_ObjectiveReveal = true,
+                    Enable_Monolith_ObjectiveReveal = false,
                     Enable_Monolith_Complete_Objective = false,
-                    Enable_Monolith_NoDie = true,
-                    Enable_Monolith_EnemyDensity = true,
+                    Enable_Monolith_NoDie = false,
+                    Enable_Monolith_EnemyDensity = false,
                     Monolith_EnemyDensity = 10f,
                     Remove_Fog_Of_War = true
                 },
@@ -116,11 +116,11 @@ namespace LastEpochMods.Config
                 {
                     skills = new Data.Skills_structure
                     {
-                        Enable_manaCost = true,
-                        Enable_channel_cost = true,
-                        Enable_noManaRegenWhileChanneling = true,
-                        Enable_stopWhenOutOfMana = true,
-                        Enable_RemoveCooldown = true
+                        Enable_manaCost = false,
+                        Enable_channel_cost = false,
+                        Enable_noManaRegenWhileChanneling = false,
+                        Enable_stopWhenOutOfMana = false,
+                        Enable_RemoveCooldown = false
                     },
                     skilltree = new Data.SkillTree_structure
                     {
@@ -165,19 +165,13 @@ namespace LastEpochMods.Config
                     {
                         Enable_Cosmetic_Btn = true
                     }
-                },
-                affixs = new Data.Affixs_Structure
-                {
-                    Enable_Affixs_Multiplier = false,
-                    Affixs_Multiplier = 10
-                },
+                },                
                 craft = new Data.Crafting_structure
                 {
                     no_cost = true,
                     only_crit = false,
                     override_affix_roll = false,
-                    affix_roll = 255,
-                    Hide_crafting_notifications = true
+                    affix_roll = 255
                 }
             };
 

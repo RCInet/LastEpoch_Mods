@@ -22,20 +22,6 @@ namespace LastEpochMods.Hooks
             [HarmonyPostfix]
             static void Postfix(ref ItemData __instance, ref int __result, ref UniqueList.Entry __0, ref int __1, ref int __2)
             {
-                if (Config.Data.mods_config.items.Enable_RollImplicit)
-                {
-                    for (int i = 0; i < __instance.implicitRolls.Count; i++)
-                    {
-                        __instance.implicitRolls[i] = (byte)Config.Data.mods_config.items.Roll_Implicit;
-                    }
-                }
-                if (Config.Data.mods_config.items.Enable_UniqueMod)
-                {
-                    for (int k = 0; k < __instance.uniqueRolls.Count; k++)
-                    {
-                        __instance.uniqueRolls[k] = Config.Data.mods_config.items.Roll_UniqueMod;
-                    }
-                }
                 if (Config.Data.mods_config.items.Enable_RollLegendayPotencial)
                 {
                     __result = Config.Data.mods_config.items.Roll_Legendary_Potencial;
@@ -49,23 +35,41 @@ namespace LastEpochMods.Hooks
             [HarmonyPostfix]
             static void Postfix(ref ItemData __instance, ref int __result, ref UniqueList.Entry __0, ref int __1, ref int __2)
             {
+                if (Config.Data.mods_config.items.Enable_RollWeaverWill)
+                {
+                    __result = Config.Data.mods_config.items.Roll_Weaver_Will;
+                }
+            }
+        }
+               
+        [HarmonyPatch(typeof(ItemData), "randomiseImplicitRolls")]
+        public class randomiseImplicitRolls
+        {
+            [HarmonyPostfix]
+            static void Postfix(ref ItemData __instance)
+            {
                 if (Config.Data.mods_config.items.Enable_RollImplicit)
                 {
                     for (int i = 0; i < __instance.implicitRolls.Count; i++)
                     {
                         __instance.implicitRolls[i] = (byte)Config.Data.mods_config.items.Roll_Implicit;
                     }
-                }
+                }                
+            }
+        }
+               
+        [HarmonyPatch(typeof(ItemData), "randomiseUniqueRolls")]
+        public class randomiseUniqueRolls
+        {
+            [HarmonyPostfix]
+            static void Postfix(ref ItemData __instance)
+            {
                 if (Config.Data.mods_config.items.Enable_UniqueMod)
                 {
                     for (int k = 0; k < __instance.uniqueRolls.Count; k++)
                     {
                         __instance.uniqueRolls[k] = Config.Data.mods_config.items.Roll_UniqueMod;
                     }
-                }
-                if (Config.Data.mods_config.items.Enable_RollWeaverWill)
-                {
-                    __result = Config.Data.mods_config.items.Roll_Weaver_Will;
                 }
             }
         }

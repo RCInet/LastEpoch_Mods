@@ -57,7 +57,7 @@ namespace LastEpochMods.Ui
         }
         public static GUIStyle TextField_Style()
         {
-            GUIStyle style = new GUIStyle(GUI.skin.textField);
+            GUIStyle style = new GUIStyle(GUI.skin.label);
             style.normal.background = Menu.texture_grey;
             style.normal.textColor = Color.black;
             style.hover.background = Menu.texture_grey;
@@ -70,24 +70,73 @@ namespace LastEpochMods.Ui
 
             return style;
         }
+        public static GUIStyle DropdownLabelMidle_Style()
+        {
+            GUIStyle style = new GUIStyle(GUI.skin.label);
+            style.normal.background = null;
+            style.normal.textColor = Color.black;
+            style.hover.background = null;
+            style.hover.textColor = Color.black;
+            style.focused.background = null;
+            style.focused.textColor = Color.black;
+            style.active.background = null;
+            style.active.textColor = Color.black;
+            style.alignment = TextAnchor.MiddleCenter;
+
+            return style;
+        }
+        public static GUIStyle DropdownLabelLeft_Style()
+        {
+            GUIStyle style = new GUIStyle(GUI.skin.textField);
+            style.normal.background = null;
+            style.normal.textColor = Color.black;
+            style.hover.background = null;
+            style.hover.textColor = Color.black;
+            style.focused.background = null;
+            style.focused.textColor = Color.black;
+            style.active.background = null;
+            style.active.textColor = Color.black;
+            style.alignment = TextAnchor.MiddleLeft;
+
+            return style;
+        }
         public static GUIStyle Button_Style(bool select)
         {
             GUIStyle style = new GUIStyle(GUI.skin.button);
-            if (select)
-            {
-                style.normal.background = Menu.texture_green;
-                style.normal.textColor = Color.black;
-                style.hover.background = style.normal.background;
-                style.hover.textColor = style.normal.textColor;
-            }
+            if (select) { style.normal.background = Menu.texture_green; }
+            else { style.normal.background = Menu.texture_grey; }
+            style.normal.textColor = Color.black;
+            style.hover.background = style.normal.background;
+            style.hover.textColor = style.normal.textColor;
+            style.alignment = TextAnchor.MiddleCenter;
+
+            return style;
+        }
+        public static GUIStyle Unique_Style(bool IsSet)
+        {
+            GUIStyle style = new GUIStyle(GUI.skin.button);
+            if (IsSet) { style.normal.background = Menu.texture_set; }
+            else { style.normal.background = Menu.texture_unique; }
+            style.normal.textColor = Color.black;
+            style.hover.background = style.normal.background;
+            style.hover.textColor = style.normal.textColor;
+            style.alignment = TextAnchor.MiddleLeft;
+
+            return style;
+        }
+        public static GUIStyle Affixs_Style(bool Idol, bool prefix)
+        {
+            GUIStyle style = new GUIStyle(GUI.skin.button);
+            if (Idol) { style.normal.background = Menu.texture_affix_idol; }
             else
             {
-                style.normal.background = Menu.texture_grey;
-                style.normal.textColor = Color.black;
-                style.hover.background = style.normal.background;
-                style.hover.textColor = style.normal.textColor;
+                if (prefix) { style.normal.background = Menu.texture_affix_prefix; }
+                else { style.normal.background = Menu.texture_affix_suffix; }
             }
-            style.alignment = TextAnchor.MiddleCenter;
+            style.normal.textColor = Color.black;
+            style.hover.background = style.normal.background;
+            style.hover.textColor = style.normal.textColor;
+            style.alignment = TextAnchor.MiddleLeft;
 
             return style;
         }

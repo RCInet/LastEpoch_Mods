@@ -8,9 +8,25 @@ namespace LastEpochMods.Ui
         public static Texture2D windowBackground = null;
         public static Texture2D texture_grey = null;
         public static Texture2D texture_green = null;
+        public static Texture2D texture_unique = null;
+        public static Texture2D texture_set = null;
+        public static Texture2D texture_affix_idol = null;
+        public static Texture2D texture_affix_prefix = null;
+        public static Texture2D texture_affix_suffix = null;
+
         public static bool lock_movement = false;
 
-        
+        private static void InitTextures()
+        {
+            if (windowBackground == null) { windowBackground = Functions.MakeTextureFromColor(2, 2, Color.black); }
+            if (texture_grey == null) { texture_grey = Functions.MakeTextureFromColor(2, 2, Color.grey); }
+            if (texture_green == null) { texture_green = Functions.MakeTextureFromColor(2, 2, Color.green); }
+            if (texture_unique == null) { texture_unique = Functions.MakeTextureFromColor(2, 2, Color.grey); }
+            if (texture_set == null) { texture_set = Functions.MakeTextureFromColor(2, 2, Color.green); }
+            if (texture_affix_idol == null) { texture_affix_idol = Functions.MakeTextureFromColor(2, 2, Color.blue); }
+            if (texture_affix_prefix == null) { texture_affix_prefix = Functions.MakeTextureFromColor(2, 2, Color.grey); }
+            if (texture_affix_suffix == null) { texture_affix_suffix = Functions.MakeTextureFromColor(2, 2, Color.yellow); }
+        }
         
         public static void Update()
         {
@@ -19,9 +35,7 @@ namespace LastEpochMods.Ui
                 Config.Data.mods_config_duplicate = Config.Data.mods_config;
                 Config.Save.Mods();
             }
-            if (windowBackground == null) { windowBackground = Functions.MakeTextureFromColor(2, 2, Color.black); }
-            if (texture_grey == null) { texture_grey = Functions.MakeTextureFromColor(2, 2, Color.grey); }
-            if (texture_green == null) { texture_green = Functions.MakeTextureFromColor(2, 2, Color.green); }
+            InitTextures();            
             if (isMenuOpen)
             {
                 GUI.Box(new Rect(0f, 0f, Screen.width, Screen.height), "");
@@ -29,8 +43,7 @@ namespace LastEpochMods.Ui
                 float start_y = 0;
                 float pos_x = start_x;
                 float pos_y = start_y;
-                GUI.DrawTexture(new Rect(pos_x, pos_y, Menu_Window_Rect.width, Menu_Size_h), windowBackground);
-                GUI.depth = 0;
+                GUI.DrawTexture(new Rect(pos_x, pos_y, Menu_Window_Rect.width, Menu_Size_h), windowBackground);                
                 pos_x += btn_margin_w;
                 pos_y += btn_margin_h;
 
@@ -50,33 +63,45 @@ namespace LastEpochMods.Ui
                 {
                     pos_x = start_x;
                     pos_y = start_y + Menu_Size_h;
-                    GUI.DrawTexture(new Rect(pos_x, pos_y, (btn_size_w + (2 * btn_margin_w)), ItemsDrop_h), windowBackground);
+                    float h = ItemsDrop_h;
+                    if (Scenes.GameScene()) { h += 45; }
+                    GUI.DrawTexture(new Rect(pos_x, pos_y, (btn_size_w + (2 * btn_margin_w)), h), windowBackground);
                     pos_x += 5f;
-                    Config.Data.mods_config.items.DeathItemDrop_goldMultiplier = CustomControls.FloatValue("Gold Multiplier", 0f, 255f, Config.Data.mods_config.items.DeathItemDrop_goldMultiplier, pos_x, pos_y, Config.Data.mods_config.items.Enable_DeathItemDrop_goldMultiplier, Ui.Menu.Btn_ItemsDrop_OnDeath_GoldMultiplier_Click);
-                    pos_y += 85;
-                    Config.Data.mods_config.items.DeathItemDrop_ItemMultiplier = CustomControls.FloatValue("Items Multiplier", 0f, 255f, Config.Data.mods_config.items.DeathItemDrop_ItemMultiplier, pos_x, pos_y, Config.Data.mods_config.items.Enable_DeathItemDrop_ItemMultiplier, Ui.Menu.Btn_ItemsDrop_OnDeath_ItemsMultiplier_Click);
-                    pos_y += 85;
-                    if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Item Data", Styles.Button_Style(ShowItemDataSection))) { Btn_ItemData_Click(); }
-                    pos_y += 45;
                     if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Auto Pickup", Styles.Button_Style(ShowAutoPickupSection))) { Btn_AutoPickup_Click(); }
                     pos_y += 45;
                     if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Bonuses", Styles.Button_Style(ShowBonusesSection))) { Btn_Bonuses_Click(); }
                     pos_y += 45;
+                    if (Scenes.GameScene())
+                    {
+                        if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Force Drop", Styles.Button_Style(ShowForceDropSection))) { Btn_ForceDrop_Click(); }
+                        pos_y += 45;
+                    }
+                    if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Item Data", Styles.Button_Style(ShowItemDataSection))) { Btn_ItemData_Click(); }
+                    pos_y += 45;
+                    Config.Data.mods_config.items.DeathItemDrop_goldMultiplier = CustomControls.FloatValue("Gold Multiplier", 0f, 255f, Config.Data.mods_config.items.DeathItemDrop_goldMultiplier, pos_x, pos_y, Config.Data.mods_config.items.Enable_DeathItemDrop_goldMultiplier, Ui.Menu.Btn_ItemsDrop_OnDeath_GoldMultiplier_Click);
+                    pos_y += 85;
+                    Config.Data.mods_config.items.DeathItemDrop_ItemMultiplier = CustomControls.FloatValue("Items Multiplier", 0f, 255f, Config.Data.mods_config.items.DeathItemDrop_ItemMultiplier, pos_x, pos_y, Config.Data.mods_config.items.Enable_DeathItemDrop_ItemMultiplier, Ui.Menu.Btn_ItemsDrop_OnDeath_ItemsMultiplier_Click);
+                    pos_y += 85;
                     Config.Data.mods_config.items.DeathItemDrop_Experience = CustomControls.LongValue("Experience Multiplier", 0, 9999, Config.Data.mods_config.items.DeathItemDrop_Experience, pos_x, pos_y, Config.Data.mods_config.items.Enable_DeathItemDrop_Experience, Ui.Menu.Btn_ItemsDrop_OnDeath_Experience_Click);
                     pos_y += 85;
                     CustomControls.EnableButton("Range Pickup", pos_x, pos_y, Config.Data.mods_config.items.Enable_pickup_range, Ui.Menu.Btn_Items_Enable_PickupRange_Click);
-                    pos_y += 45;
-                    CustomControls.DropUnique(pos_x, pos_y);
-                    pos_y += 85;
                 }
-                else { ShowItemDataSection = false; ShowAutoPickupSection = false; ShowBonusesSection = false; }
+                else
+                {
+                    ShowItemDataSection = false;
+                    ShowAutoPickupSection = false;
+                    ShowBonusesSection = false;
+                    ShowForceDropSection = false;
+                }
                 if (ShowItemDataSection)
                 {
-                    pos_x = start_x + ((btn_size_w + btn_margin_w) * 1);
-                    pos_y = start_y + Menu_Size_h + 170;
+                    pos_x = start_x + ((btn_size_w + btn_margin_w) * 1);                    
+                    float start = start_y + Menu_Size_h + 90;
+                    if (Scenes.GameScene()) { start += 45; }
+                    pos_y = start;
                     GUI.DrawTexture(new Rect(pos_x, pos_y, (btn_size_w + (2 * btn_margin_w)), item_data_h), windowBackground);
                     pos_x += 5;
-                    Config.Data.mods_config.items.GenerateItem_Rarity = CustomControls.ByteValue("Rarity", 0, 9, Config.Data.mods_config.items.GenerateItem_Rarity, pos_x, pos_y, Config.Data.mods_config.items.Enable_Rarity, Ui.Menu.Btn_ItemsDrop_Rarity_Roll_Click);
+                    Config.Data.mods_config.items.GenerateItem_Rarity = CustomControls.ByteValue("Rarity", 0, 8, Config.Data.mods_config.items.GenerateItem_Rarity, pos_x, pos_y, Config.Data.mods_config.items.Enable_Rarity, Ui.Menu.Btn_ItemsDrop_Rarity_Roll_Click);
                     pos_y += 85;
                     Config.Data.mods_config.items.Roll_Implicit = CustomControls.ByteValue("Implicits", 0, 255, Config.Data.mods_config.items.Roll_Implicit, pos_x, pos_y, Config.Data.mods_config.items.Enable_RollImplicit, Ui.Menu.Btn_ItemsDrop_Implicit_Roll_Click);
                     pos_y += 85;
@@ -95,7 +120,7 @@ namespace LastEpochMods.Ui
                 if (ShowAutoPickupSection)
                 {
                     pos_x = start_x + (btn_size_w + btn_margin_w);
-                    pos_y = start_y + Menu_Size_h + 215;
+                    pos_y = start_y + Menu_Size_h;
                     GUI.DrawTexture(new Rect(pos_x, pos_y, (btn_size_w + (2 * btn_margin_w)), AutoPickup_h), windowBackground);
                     pos_x += 5;
                     CustomControls.EnableButton("Gold", pos_x, pos_y, Config.Data.mods_config.auto_loot.AutoPickup_Gold, Ui.Menu.Btn_AutoPickup_Gold_Click);
@@ -115,7 +140,7 @@ namespace LastEpochMods.Ui
                 if (ShowBonusesSection)
                 {
                     pos_x = start_x + (btn_size_w + btn_margin_w);
-                    pos_y = start_y + Menu_Size_h + 260;
+                    pos_y = start_y + Menu_Size_h + 45;
                     GUI.DrawTexture(new Rect(pos_x, pos_y, (btn_size_w + (2 * btn_margin_w)), Bonuses_h), windowBackground);
                     pos_x += 5;
                     Config.Data.mods_config.items.increase_equipment_droprate = CustomControls.FloatValue("Equipement", 0f, 255f, Config.Data.mods_config.items.increase_equipment_droprate, pos_x, pos_y, Config.Data.mods_config.items.Enable_increase_equipment_droprate, Ui.Menu.Btn_Bonuses_Equipement_Click);
@@ -124,6 +149,16 @@ namespace LastEpochMods.Ui
                     pos_y += 85;
                     Config.Data.mods_config.items.increase_uniques_droprate = CustomControls.FloatValue("Unique", 0f, 255f, Config.Data.mods_config.items.increase_uniques_droprate, pos_x, pos_y, Config.Data.mods_config.items.Enable_increase_uniques_droprate, Ui.Menu.Btn_Bonuses_Unique_Click);
                     pos_y += 85;
+                }
+                if ((ShowForceDropSection) && (Scenes.GameScene()))
+                {
+                    pos_x = start_x + (btn_size_w + btn_margin_w);
+                    pos_y = start_y + Menu_Size_h + 90;
+                    int w = 200;
+                    int h = GenerateItem.main.GetSizeH() + 10;
+                    GUI.DrawTexture(new Rect(pos_x, pos_y - 5, (w + (2 * btn_margin_w)), h), windowBackground);
+                    pos_x += 5;                    
+                    GenerateItem.main.UI(pos_x, pos_y, w);
                 }
                 //Character
                 if (ShowCharacterSection)
@@ -237,11 +272,11 @@ namespace LastEpochMods.Ui
                     pos_y = start_y + Menu_Size_h + 260;
                     GUI.DrawTexture(new Rect(pos_x, pos_y, (btn_size_w + (2 * btn_margin_w)), Monolith_h), windowBackground);
                     pos_x += 5;
-                    CustomControls.EnableButton("Stability Max", pos_x, pos_y, Config.Data.mods_config.scene.Enable_Monolith_Stability, Ui.Menu.Btn_Monolith_Stability_Click);
-                    pos_y += 45;
-                    Config.Data.mods_config.scene.Monolith_EnemyDensity = CustomControls.FloatValue("Density Modifier", 0f, 255f, Config.Data.mods_config.scene.Monolith_EnemyDensity, pos_x, pos_y, Config.Data.mods_config.scene.Enable_Monolith_EnemyDensity, Ui.Menu.Btn_Scene_Monolith_Density_Click);
+                    CustomControls.EnableButton("Stability Max on Load", pos_x, pos_y, Config.Data.mods_config.scene.Enable_Monolith_Stability, Ui.Menu.Btn_Monolith_Stability_Click);
+                    pos_y += 45;                    
+                    Config.Data.mods_config.scene.Max_Stability = CustomControls.IntValue("Set Max Stability", 0, 255, Config.Data.mods_config.scene.Max_Stability, pos_x, pos_y, Config.Data.mods_config.scene.Enable_Monolith_Overide_Max_Stability, Ui.Menu.Btn_Monolith_Override_Max_Stability_Click);
                     pos_y += 85;
-                    Config.Data.mods_config.scene.Max_Stability = CustomControls.IntValue("Max Stability", 0, 255, Config.Data.mods_config.scene.Max_Stability, pos_x, pos_y, Config.Data.mods_config.scene.Enable_Monolith_Overide_Max_Stability, Ui.Menu.Btn_Monolith_Override_Max_Stability_Click);
+                    Config.Data.mods_config.scene.Monolith_EnemyDensity = CustomControls.FloatValue("Density Modifier", 0f, 255f, Config.Data.mods_config.scene.Monolith_EnemyDensity, pos_x, pos_y, Config.Data.mods_config.scene.Enable_Monolith_EnemyDensity, Ui.Menu.Btn_Scene_Monolith_Density_Click);
                     pos_y += 85;
                     Config.Data.mods_config.scene.Monolith_EnnemiesDefeat_OnStart = CustomControls.FloatValue("Enemies Defeat", 0f, 255f, Config.Data.mods_config.scene.Monolith_EnnemiesDefeat_OnStart, pos_x, pos_y, Config.Data.mods_config.scene.Enable_Monolith_EnnemiesDefeat_OnStart, Ui.Menu.Btn_Monolith_Enemies_Defeat_OnStart_Click);
                     pos_y += 85;
@@ -257,21 +292,17 @@ namespace LastEpochMods.Ui
                     pos_x = start_x + ((btn_size_w + btn_margin_w) * 3);
                     pos_y = start_y + Menu_Size_h;
                     GUI.DrawTexture(new Rect(pos_x, pos_y, (btn_size_w + (2 * btn_margin_w)), Items_h), windowBackground);
-                    pos_x += 5;
-                    Config.Data.mods_config.affixs.Affixs_Multiplier = CustomControls.IntValue("Affix Multiplier", 0, 255, Config.Data.mods_config.affixs.Affixs_Multiplier, pos_x, pos_y, Config.Data.mods_config.affixs.Enable_Affixs_Multiplier, Ui.Menu.Btn_Affix_Multiplier_Click);
-                    pos_y += 85;                    
+                    pos_x += 5;                  
                     CustomControls.EnableButton("Remove Forging Cost", pos_x, pos_y, Config.Data.mods_config.craft.no_cost, Ui.Menu.Btn_Craft_NoForgingPotencialCost_Click);
                     pos_y += 45;
                     if (GUI.Button(new Rect(pos_x, pos_y, btn_size_w, btn_size_h), "Remove Req", Styles.Button_Style(ShowRemoveReqSection))) { Btn_RemoveReq_Click(); }
                     pos_y += 45;
-                    Config.Data.mods_config.items.Shop_Rarity = System.Convert.ToInt32(CustomControls.FloatValue("Shop Rarity", 0f, 9f, Config.Data.mods_config.items.Shop_Rarity, pos_x, pos_y, Config.Data.mods_config.items.Enable_Shop_Rarity, Ui.Menu.Btn_Items_Shop_Rarity_Roll_Click));
-                    pos_y += 85;
                 }
                 else { ShowRemoveReqSection = false; }
                 if (ShowRemoveReqSection)
                 {
                     pos_x = start_x + ((btn_size_w + btn_margin_w) * 4);
-                    pos_y = start_y + Menu_Size_h + 130;
+                    pos_y = start_y + Menu_Size_h + 45;
                     GUI.DrawTexture(new Rect(pos_x, pos_y, (btn_size_w + (2 * btn_margin_w)), RemoveReq_h), windowBackground);
                     pos_x += 5;
                     CustomControls.EnableButton("Remove Level", pos_x, pos_y, Config.Data.mods_config.items.Remove_LevelReq, Ui.Menu.Btn_Items_Remove_Level_Req_Click);
@@ -279,7 +310,12 @@ namespace LastEpochMods.Ui
                     CustomControls.EnableButton("Remove Class", pos_x, pos_y, Config.Data.mods_config.items.Remove_ClassReq, Ui.Menu.Btn_Items_Remove_Class_Req_Click);
                     pos_y += 45;
                     CustomControls.EnableButton("Remove SubClass", pos_x, pos_y, Config.Data.mods_config.items.Remove_SubClassReq, Ui.Menu.Btn_Items_Remove_SubClass_Req_Click);
-                }                
+                }      
+                //Dropdown
+                if (( ShowItemDropSection) && (ShowForceDropSection) && (Scenes.GameScene()))
+                {
+                    GenerateItem.main.dropdown.DropdownsUI();
+                }
             }
         }
         
@@ -295,7 +331,7 @@ namespace LastEpochMods.Ui
         #endregion
         #region ItemDrop
         private static bool ShowItemDropSection = false;
-        public static float ItemsDrop_h = 520f;
+        public static float ItemsDrop_h = 435f;
 
         public static void Btn_ItemsDrop_Click()
         {
@@ -324,8 +360,82 @@ namespace LastEpochMods.Ui
         {
             Config.Data.mods_config.items.Enable_pickup_range = !Config.Data.mods_config.items.Enable_pickup_range;
         }
-        #region DropUnique
-        
+        #region AutoLoot
+        private static bool ShowAutoPickupSection = false;
+        public static float AutoPickup_h = 315f;
+
+        public static void Btn_AutoPickup_Click()
+        {
+            ShowItemDataSection = false;
+            ShowBonusesSection = false;
+            ShowForceDropSection = false;
+            ShowAutoPickupSection = !ShowAutoPickupSection;
+        }
+        public static void Btn_AutoPickup_Gold_Click()
+        {
+            Config.Data.mods_config.auto_loot.AutoPickup_Gold = !Config.Data.mods_config.auto_loot.AutoPickup_Gold;
+        }
+        public static void Btn_AutoPickup_Key_Click()
+        {
+            Config.Data.mods_config.auto_loot.AutoPickup_Key = !Config.Data.mods_config.auto_loot.AutoPickup_Key;
+        }
+        public static void Btn_AutoPickup_UniqueAndSet_Click()
+        {
+            Config.Data.mods_config.auto_loot.AutoPickup_UniqueAndSet = !Config.Data.mods_config.auto_loot.AutoPickup_UniqueAndSet;
+        }
+        public static void Btn_AutoPickup_XpTome_Click()
+        {
+            Config.Data.mods_config.auto_loot.AutoPickup_XpTome = !Config.Data.mods_config.auto_loot.AutoPickup_XpTome;
+        }
+        public static void Btn_AutoPickup_Materials_Click()
+        {
+            Config.Data.mods_config.auto_loot.AutoPickup_Craft = !Config.Data.mods_config.auto_loot.AutoPickup_Craft;
+        }
+        public static void Btn_AutoSrore_Materials_Click()
+        {
+            Config.Data.mods_config.auto_loot.AutoStore_Materials = !Config.Data.mods_config.auto_loot.AutoStore_Materials;
+        }
+        public static void Btn_AutoPickup_Hide_Materials_Click()
+        {
+            Config.Data.mods_config.auto_loot.Hide_materials_notifications = !Config.Data.mods_config.auto_loot.Hide_materials_notifications;
+        }
+        #endregion
+        #region Bonuses
+        private static bool ShowBonusesSection = false;
+        public static float Bonuses_h = 255f;
+
+        public static void Btn_Bonuses_Click()
+        {
+            ShowItemDataSection = false;
+            ShowAutoPickupSection = false;
+            ShowForceDropSection = false;
+            ShowBonusesSection = !ShowBonusesSection;
+        }
+        public static void Btn_Bonuses_Equipement_Click()
+        {
+            Config.Data.mods_config.items.Enable_increase_equipment_droprate = !Config.Data.mods_config.items.Enable_increase_equipment_droprate;
+        }
+        public static void Btn_Bonuses_Shards_Click()
+        {
+            Config.Data.mods_config.items.Enable_increase_equipmentshards_droprate = !Config.Data.mods_config.items.Enable_increase_equipmentshards_droprate;
+        }
+        public static void Btn_Bonuses_Unique_Click()
+        {
+            Config.Data.mods_config.items.Enable_increase_uniques_droprate = !Config.Data.mods_config.items.Enable_increase_uniques_droprate;
+        }
+        #endregion
+        #region ForceDrop
+        public static bool ShowForceDropSection = false;
+        public static float ForceDrop_h = 350;
+
+        public static void Btn_ForceDrop_Click()
+        {
+            ShowItemDataSection = false;
+            ShowAutoPickupSection = false;
+            ShowBonusesSection = false;
+            Ui.GenerateItem.main.Reset();
+            ShowForceDropSection = !ShowForceDropSection;
+        }
         #endregion
         #region ItemData
         private static bool ShowItemDataSection = false;
@@ -335,6 +445,7 @@ namespace LastEpochMods.Ui
         {
             ShowAutoPickupSection = false;
             ShowBonusesSection = false;
+            ShowForceDropSection = false;
             ShowItemDataSection = !ShowItemDataSection;
         }
         public static void Btn_ItemsDrop_Rarity_Roll_Click()
@@ -369,69 +480,7 @@ namespace LastEpochMods.Ui
         {
             Config.Data.mods_config.items.Enable_RollWeaverWill = !Config.Data.mods_config.items.Enable_RollWeaverWill;            
         }
-        #endregion        
-        #region AutoLoot
-        private static bool ShowAutoPickupSection = false;
-        public static float AutoPickup_h = 315f;
-
-        public static void Btn_AutoPickup_Click()
-        {
-            ShowItemDataSection = false;
-            ShowBonusesSection = false;
-            ShowAutoPickupSection = !ShowAutoPickupSection;            
-        }
-        public static void Btn_AutoPickup_Gold_Click()
-        {
-            Config.Data.mods_config.auto_loot.AutoPickup_Gold = !Config.Data.mods_config.auto_loot.AutoPickup_Gold;            
-        }
-        public static void Btn_AutoPickup_Key_Click()
-        {
-            Config.Data.mods_config.auto_loot.AutoPickup_Key = !Config.Data.mods_config.auto_loot.AutoPickup_Key;            
-        }
-        public static void Btn_AutoPickup_UniqueAndSet_Click()
-        {
-            Config.Data.mods_config.auto_loot.AutoPickup_UniqueAndSet = !Config.Data.mods_config.auto_loot.AutoPickup_UniqueAndSet;            
-        }
-        public static void Btn_AutoPickup_XpTome_Click()
-        {
-            Config.Data.mods_config.auto_loot.AutoPickup_XpTome = !Config.Data.mods_config.auto_loot.AutoPickup_XpTome;            
-        }
-        public static void Btn_AutoPickup_Materials_Click()
-        {
-            Config.Data.mods_config.auto_loot.AutoPickup_Craft = !Config.Data.mods_config.auto_loot.AutoPickup_Craft;            
-        }        
-        public static void Btn_AutoSrore_Materials_Click()
-        {
-            Config.Data.mods_config.auto_loot.AutoStore_Materials = !Config.Data.mods_config.auto_loot.AutoStore_Materials;            
-        }
-        public static void Btn_AutoPickup_Hide_Materials_Click()
-        {
-            Config.Data.mods_config.auto_loot.Hide_materials_notifications = !Config.Data.mods_config.auto_loot.Hide_materials_notifications;
-        }
-        #endregion
-        #region Bonuses
-        private static bool ShowBonusesSection = false;
-        public static float Bonuses_h = 255f;
-
-        public static void Btn_Bonuses_Click()
-        {
-            ShowItemDataSection = false;
-            ShowAutoPickupSection = false;
-            ShowBonusesSection = !ShowBonusesSection;
-        }
-        public static void Btn_Bonuses_Equipement_Click()
-        {
-            Config.Data.mods_config.items.Enable_increase_equipment_droprate = !Config.Data.mods_config.items.Enable_increase_equipment_droprate;            
-        }
-        public static void Btn_Bonuses_Shards_Click()
-        {
-            Config.Data.mods_config.items.Enable_increase_equipmentshards_droprate = !Config.Data.mods_config.items.Enable_increase_equipmentshards_droprate;            
-        }
-        public static void Btn_Bonuses_Unique_Click()
-        {
-            Config.Data.mods_config.items.Enable_increase_uniques_droprate = !Config.Data.mods_config.items.Enable_increase_uniques_droprate;            
-        }
-        #endregion
+        #endregion                
         #endregion
         #region Character
         private static bool ShowCharacterSection = false;
@@ -638,7 +687,7 @@ namespace LastEpochMods.Ui
         #endregion
         #region Items
         private static bool ShowItemsSection = false;
-        public static float Items_h = 260;
+        public static float Items_h = 90;
 
         public static void Btn_Items_Click()
         {
@@ -646,23 +695,11 @@ namespace LastEpochMods.Ui
             ShowCharacterSection = false;
             ShowSceneSection = false;
             ShowItemsSection = !ShowItemsSection;
-        }
-        public static void Btn_Affix_Multiplier_Click()
-        {
-            Config.Data.mods_config.affixs.Enable_Affixs_Multiplier = !Config.Data.mods_config.affixs.Enable_Affixs_Multiplier;
-        }
+        }       
         public static void Btn_Craft_NoForgingPotencialCost_Click()
         {
             Config.Data.mods_config.craft.no_cost = !Config.Data.mods_config.craft.no_cost;
-        }
-        public static void Btn_Craft_Hide_Notifications_Click()
-        {
-            Config.Data.mods_config.craft.Hide_crafting_notifications = !Config.Data.mods_config.craft.Hide_crafting_notifications;
-        }        
-        public static void Btn_Items_Shop_Rarity_Roll_Click()
-        {
-            Config.Data.mods_config.items.Enable_Shop_Rarity = !Config.Data.mods_config.items.Enable_Shop_Rarity;
-        }
+        }                     
         #region Remove Req
         private static bool ShowRemoveReqSection = false;
         public static float RemoveReq_h = 135f;
