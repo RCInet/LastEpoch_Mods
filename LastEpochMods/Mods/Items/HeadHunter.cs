@@ -1,15 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UIElements;
 
 namespace LastEpochMods.Mods.Items
 {
     public class HeadHunter
     {
         public static bool Initialized = false;
-        private static bool Tracker_Initialized = false;
-        private static bool ItemAdd_Initialized = false;
-        private static bool SceneLoaded_Initialized = false;
         public static void Init()
         {
             if (!Tracker_Initialized)
@@ -21,12 +17,21 @@ namespace LastEpochMods.Mods.Items
                 }
                 catch { }
             }
-            if (!ItemAdd_Initialized)
+            if (!BaseItemAdd_Initialized)
             {
                 try
                 {
-                    UniqueList.instance.uniques.Add(Item());
-                    ItemAdd_Initialized = true;
+                    ItemList.instance.EquippableItems[2].subItems.Add(BaseItem());
+                    BaseItemAdd_Initialized = true;
+                }
+                catch { }
+            }
+            if (!UniqueItemAdd_Initialized)
+            {
+                try
+                {
+                    UniqueList.instance.uniques.Add(UniqueItem());
+                    UniqueItemAdd_Initialized = true;
                 }
                 catch { }
             }
@@ -39,22 +44,72 @@ namespace LastEpochMods.Mods.Items
                 }
                 catch { }
             }
-            if ((Tracker_Initialized) && (ItemAdd_Initialized) && (SceneLoaded_Initialized))
+            if ((Tracker_Initialized) && (BaseItemAdd_Initialized) && (UniqueItemAdd_Initialized) && (SceneLoaded_Initialized))
             {
                 Initialized = true;
             }
         }
 
-        //Item
+        #region Initialize
+        private static bool Tracker_Initialized = false;
+        private static bool BaseItemAdd_Initialized = false;
+        private static bool UniqueItemAdd_Initialized = false;
+        private static bool SceneLoaded_Initialized = false;        
+        private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (Scenes.GameScene())
+            {
+                if (!PlayerFinder.getPlayer().GetComponent<HHTracker>())
+                {
+                    PlayerFinder.getPlayer().GetComponent<AbilityEventListener>().add_onKillEvent(OnKillAction);
+                    //PlayerFinder.getPlayer().GetComponent<SummonTracker>().OnMinionKill(OnMinionKillAction);
+                    PlayerFinder.getPlayer().AddComponent<HHTracker>();
+                }
+            }
+        }
+        #endregion
+        #region Base_Item
+        private static int base_id = 99;
+        private static ItemList.EquipmentItem BaseItem()
+        {
+            
+            ItemList.EquipmentImplicit implicit_0 = new ItemList.EquipmentImplicit
+            {
+                implicitMaxValue = 40,
+                implicitValue = 25,
+                property = SP.Health,
+                specialTag = 0,
+                tags = AT.None,
+                type = BaseStats.ModType.ADDED
+            };
+            Il2CppSystem.Collections.Generic.List<ItemList.EquipmentImplicit> implicits = new Il2CppSystem.Collections.Generic.List<ItemList.EquipmentImplicit>();
+            implicits.Add(implicit_0);
+
+            ItemList.EquipmentItem item = new ItemList.EquipmentItem();
+            
+            item.classRequirement = ItemList.ClassRequirement.None;
+            item.implicits = implicits;
+            item.subClassRequirement = ItemList.SubClassRequirement.None;
+            item.cannotDrop = true;
+            item.itemTags = ItemLocationTag.None;
+            item.levelRequirement = 40;
+            item.name = "Leather Belt";
+            item.subTypeID = base_id;
+            
+            return item;
+        }
+        #endregion
+        #region Unique_Item
         private static System.Drawing.Bitmap icon = Properties.Resources.Headhunter;
-        public const float BuffDuration = 20f;        
+        public const float BuffDuration = 20f;
+        public static string unique_name = "Headhunter";
         private static ushort unique_id = 513;
-        private static UniqueList.Entry Item()
+        private static UniqueList.Entry UniqueItem()
         {
             UniqueList.Entry item = new UniqueList.Entry
             {
-                name = "Headhunter",
-                displayName = "Headhunter",
+                name = unique_name,
+                displayName = unique_name,
                 uniqueID = unique_id,
                 isSetItem = false,
                 setID = 0,
@@ -83,7 +138,7 @@ namespace LastEpochMods.Mods.Items
         private static Il2CppSystem.Collections.Generic.List<byte> Get_SubType()
         {
             Il2CppSystem.Collections.Generic.List<byte> result = new Il2CppSystem.Collections.Generic.List<byte>();
-            byte r = 1; //Leather Belt
+            byte r = (byte)base_id;
             result.Add(r);
 
             return result;
@@ -94,11 +149,20 @@ namespace LastEpochMods.Mods.Items
             result.Add(new UniqueItemMod
             {
                 canRoll = true,
-                property = SP.AllAttributes,
+                property = SP.Strength,
                 tags = AT.None,
                 type = BaseStats.ModType.ADDED,
-                maxValue = 10,
-                value = 5
+                maxValue = 55,
+                value = 40
+            });
+            result.Add(new UniqueItemMod
+            {
+                canRoll = true,
+                property = SP.Dexterity,
+                tags = AT.None,
+                type = BaseStats.ModType.ADDED,
+                maxValue = 55,
+                value = 40
             });
             result.Add(new UniqueItemMod
             {
@@ -117,6 +181,7 @@ namespace LastEpochMods.Mods.Items
             Il2CppSystem.Collections.Generic.List<UniqueModDisplayListEntry> result = new Il2CppSystem.Collections.Generic.List<UniqueModDisplayListEntry>();
             result.Add(new UniqueModDisplayListEntry(0));
             result.Add(new UniqueModDisplayListEntry(1));
+            result.Add(new UniqueModDisplayListEntry(2));
             result.Add(new UniqueModDisplayListEntry(128));
 
             return result;
@@ -131,8 +196,66 @@ namespace LastEpochMods.Mods.Items
 
             return result;
         }
+        public static Sprite UniqueSprite()
+        {
+            Sprite sprite = null;
+            try
+            {
+                System.IO.MemoryStream stream = new System.IO.MemoryStream();
+                Properties.Resources.Headhunter.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                Texture2D icon = new Texture2D(1, 1);
+                ImageConversion.LoadImage(icon, stream.ToArray(), true);
+                sprite = Sprite.Create(icon, new Rect(0, 0, icon.width, icon.height), Vector2.zero);
+            }
+            catch { }
 
-        //Buffs
+            return sprite;
+        }
+        #endregion
+        #region Buffs
+        private static bool Enable_RandomBuffs = true;
+        private static void GenerateBuffs(Actor playerActor)
+        {
+            int NbBuff = Random.Range(0, 10);
+            for (int i = 0; i < NbBuff; i++)
+            {
+                Buff b = Generate_RandomBuff();
+                bool update = false;
+                foreach (Buff buff in playerActor.statBuffs.buffs)
+                {
+                    if (buff.name == b.name)
+                    {
+                        update = true;
+                        string msg = "";
+                        if (buff.name.Contains("Increase"))
+                        {
+                            float value = buff.stat.increasedValue;
+                            if ((value + 1) > 255) { value = 255; }
+                            else { value = value + 1; }
+                            buff.stat.increasedValue = value;
+                            msg = "Increase Value to ";
+                        }
+                        else
+                        {
+                            float value = buff.stat.addedValue;
+                            if ((value + 1) > 255) { value = 255; }
+                            else { value = value + 1; }
+                            buff.stat.addedValue = value;
+                            msg = "Added Value to ";
+                        }
+                        buff.remainingDuration = BuffDuration;
+                        msg += buff.stat.property.ToString() + " Buff";
+
+                        break;
+                    }
+                }
+                if (!update)
+                {
+                    Main.logger_instance.Msg("Add Buff : " + b.name);
+                    playerActor.statBuffs.addBuff(b);
+                }
+            }
+        }
         private static Buff Generate_RandomBuff()
         {
             float addedValue = 0;
@@ -168,8 +291,28 @@ namespace LastEpochMods.Mods.Items
 
             return result;
         }
+        #endregion
+        #region Steal
+        private static bool Enable_Steal = true;
+        private static void StealBuffFromMobs(Actor playerActor, Actor killedActor)
+        {
+            if ((killedActor.tag == "Enemy") && (killedActor.rarity == Actor.Rarity.Rare) && (!killedActor.data.isBossOrMiniBoss()))
+            {
 
-        //Events        
+                foreach (Buff buff in killedActor.statBuffs.buffs)
+                {
+                    Buff b = buff;
+                    b.remainingDuration = 20;
+                    playerActor.statBuffs.addBuff(b);
+
+                    string name = b.name;
+                    string property = b.stat.property.ToString();
+                    Main.logger_instance.Msg("Add Buff : Name = " + name + ", Property = " + property);
+                }
+            }
+        }
+        #endregion
+        #region Events      
         private static readonly System.Action<Ability, Actor> OnKillAction = new System.Action<Ability, Actor>(OnKill);
         private static void OnKill(Ability ability, Actor killedActor)
         {
@@ -180,94 +323,18 @@ namespace LastEpochMods.Mods.Items
             {
                 if (playerActor.itemContainersManager.hasUniqueEquipped(unique_id))
                 {
-                    //if ((killedActor.tag == "Enemy") && (killedActor.rarity == Actor.Rarity.Rare) && (!killedActor.data.isBossOrMiniBoss()))
-                    //{
-                    //
-                    int NbBuff = Random.Range(0, 10);
-                    for (int i = 0; i < NbBuff;  i++)
-                    {
-                        Buff b = Generate_RandomBuff();
-                        bool update = false;
-                        foreach (Buff buff in playerActor.statBuffs.buffs)
-                        {                            
-                            if (buff.name == b.name)
-                            {
-                                update = true;
-                                string msg = "";
-                                if (buff.name.Contains("Increase"))
-                                {
-                                    float value = buff.stat.increasedValue;
-                                    if ((value + 1) > 255) { value = 255; }
-                                    else {  value = value + 1; }
-                                    buff.stat.increasedValue = value;
-                                    msg = "Increase Value to ";
-                                }
-                                else
-                                {
-                                    float value = buff.stat.addedValue;
-                                    if ((value + 1) > 255) { value = 255; }
-                                    else { value = value + 1; }
-                                    buff.stat.addedValue = value;
-                                    msg = "Added Value to ";
-                                }
-                                buff.remainingDuration = BuffDuration;
-                                msg += buff.stat.property.ToString() + " Buff";
-
-                                break;
-                            }
-                        }
-                        if (!update)
-                        {
-                            Main.logger_instance.Msg("Add Buff : " + b.name);
-                            playerActor.statBuffs.addBuff(b);
-                        }
-                    }
-
-                        /*foreach (Buff buff in killedActor.statBuffs.buffs)
-                        {
-                            Buff b = buff;
-                            b.remainingDuration = 20;
-                            playerActor.statBuffs.addBuff(b);
-
-                        string name = b.name;                        
-                        string property = b.stat.property.ToString();*/
-                        //Main.logger_instance.Msg("Add Buff : Name = " + name + ", Property = " + property);
-                        //}
-                    //}
-                }
-            }
-        }        
-        private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-        {
-            if (Scenes.GameScene())
-            {
-                if (!PlayerFinder.getPlayer().GetComponent<HHTracker>())
-                {
-                    PlayerFinder.getPlayer().GetComponent<AbilityEventListener>().add_onKillEvent(OnKillAction);
-                    PlayerFinder.getPlayer().AddComponent<HHTracker>();
+                    if (Enable_Steal) { StealBuffFromMobs(playerActor, killedActor); }
+                    if (Enable_RandomBuffs) { GenerateBuffs(playerActor); }
                 }
             }
         }
-
-        //Texture 2D
-        private static Texture2D Get_Icon()
+        //Minions Events
+        /*private static readonly System.Action<Summoned, Ability, Actor> OnMinionKillAction = new System.Action<Summoned, Ability, Actor>(OnMinionKill);
+        private static void OnMinionKill(Summoned summmoned, Ability ability, Actor killedActor)
         {
-            System.Drawing.Bitmap image = Properties.Resources.Headhunter;
-            //var a = image.RawFormat;
 
-            System.Drawing.ImageConverter _imageConverter = new System.Drawing.ImageConverter();
-            byte[] bytes = (byte[])_imageConverter.ConvertTo(image, typeof(byte[]));
-
-            Texture2D icon = new Texture2D(2, 2, TextureFormat.ARGB32, false);
-
-            icon.LoadRawTextureData(bytes);
-            icon.Apply();
-
-            // Assign the texture to this GameObject's material.
-            //GetComponent<Renderer>().material.mainTexture = icon;
-            
-            return icon;
-        }
+        }*/
+        #endregion
     }
     public class HHTracker : MonoBehaviour
     {
