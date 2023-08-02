@@ -251,6 +251,7 @@
     <Compile Include="Hooks\Monolith_Zone_Manager.cs" />
     <Compile Include="Hooks\Moving_Player.cs" />
     <Compile Include="Hooks\Notifications_.cs" />
+    <Compile Include="Hooks\Stat_Buff.cs" />
     <Compile Include="Hooks\Ui_Tooltip_Item.cs" />
     <Compile Include="Hooks\UI_Waypoint_Standard.cs" />
     <Compile Include="Hooks\UnityEngine_UI_Button.cs" />

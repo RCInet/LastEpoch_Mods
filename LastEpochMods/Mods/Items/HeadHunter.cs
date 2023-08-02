@@ -103,7 +103,7 @@ namespace LastEpochMods.Mods.Items
         private static System.Drawing.Bitmap icon = Properties.Resources.Headhunter;
         public const float BuffDuration = 20f;
         public static string unique_name = "Headhunter";
-        private static ushort unique_id = 513;
+        public static ushort unique_id = 513;
         private static UniqueList.Entry UniqueItem()
         {
             UniqueList.Entry item = new UniqueList.Entry
@@ -115,7 +115,7 @@ namespace LastEpochMods.Mods.Items
                 setID = 0,
                 overrideLevelRequirement = true,
                 levelRequirement = 40,
-                legendaryType = UniqueList.LegendaryType.WeaversWill,
+                legendaryType = UniqueList.LegendaryType.LegendaryPotential,
                 overrideEffectiveLevelForLegendaryPotential = true,
                 effectiveLevelForLegendaryPotential = 0,
                 canDropRandomly = true,
@@ -191,7 +191,7 @@ namespace LastEpochMods.Mods.Items
             Il2CppSystem.Collections.Generic.List<ItemTooltipDescription> result = new Il2CppSystem.Collections.Generic.List<ItemTooltipDescription>();
             result.Add(new ItemTooltipDescription
             {
-                description = "When you Kill a Rare monster, you gain its Modifiers for 20 seconds"
+                description = "When you Kill a monster, you gain " + Min_Generated + " to " + Max_Generated + " random Modifier(s) stackable for 20 seconds"
             });
 
             return result;
@@ -213,46 +213,84 @@ namespace LastEpochMods.Mods.Items
         }
         #endregion
         #region Buffs
+        public static int Min_Generated = 1;
+        public static int Max_Generated = 5;
         private static bool Enable_RandomBuffs = true;
         private static void GenerateBuffs(Actor playerActor)
         {
-            int NbBuff = Random.Range(0, 10);
+            int NbBuff = Random.Range(Min_Generated, Max_Generated);
             for (int i = 0; i < NbBuff; i++)
             {
                 Buff b = Generate_RandomBuff();
-                bool update = false;
-                foreach (Buff buff in playerActor.statBuffs.buffs)
+                if (playerActor == null) { Main.logger_instance.Msg("playerActor is null"); }
+                else
                 {
-                    if (buff.name == b.name)
+                    if ((playerActor.statBuffs.buffs.Count == 0) || (playerActor.statBuffs.buffs == null))
                     {
-                        update = true;
-                        string msg = "";
-                        if (buff.name.Contains("Increase"))
-                        {
-                            float value = buff.stat.increasedValue;
-                            if ((value + 1) > 255) { value = 255; }
-                            else { value = value + 1; }
-                            buff.stat.increasedValue = value;
-                            msg = "Increase Value to ";
-                        }
-                        else
-                        {
-                            float value = buff.stat.addedValue;
-                            if ((value + 1) > 255) { value = 255; }
-                            else { value = value + 1; }
-                            buff.stat.addedValue = value;
-                            msg = "Added Value to ";
-                        }
-                        buff.remainingDuration = BuffDuration;
-                        msg += buff.stat.property.ToString() + " Buff";
-
-                        break;
+                        playerActor.statBuffs.buffs = new Il2CppSystem.Collections.Generic.List<Buff>();
                     }
-                }
-                if (!update)
-                {
-                    Main.logger_instance.Msg("Add Buff : " + b.name);
-                    playerActor.statBuffs.addBuff(b);
+                    bool already_buff = false;
+                    int z = 0;
+                    string name = "";
+                    foreach (Buff player_buff in playerActor.statBuffs.buffs)
+                    {
+                        if (player_buff.name == b.name)
+                        {                            
+                            bool error = false;
+                            if (playerActor.statBuffs.buffs[z].name.Contains("Add "))
+                            {
+                                name = player_buff.name.Substring(4, player_buff.name.Length - 4);
+                                float new_value = playerActor.statBuffs.buffs[z].stat.addedValue;
+                                if (new_value < 254)
+                                {
+                                    new_value++;
+                                    //Main.logger_instance.Msg("Buff : + " + new_value + " " + name);
+                                    playerActor.statBuffs.buffs[z].stat.addedValue = new_value;
+                                }
+                                else
+                                {
+                                    //Main.logger_instance.Msg(player_buff.name + " Max Value");
+                                    playerActor.statBuffs.buffs[z].stat.addedValue = float.MaxValue;
+                                }                                
+                            }
+                            else if (playerActor.statBuffs.buffs[z].name.Contains("Increase "))
+                            {
+                                name = player_buff.name.Substring(9, player_buff.name.Length - 9);
+                                float new_value = playerActor.statBuffs.buffs[z].stat.increasedValue;
+                                if (new_value < 254)
+                                {
+                                    new_value++;
+                                    int percent = (int)(new_value / 255) * 100;
+                                    //Main.logger_instance.Msg("Increase Buff : + " + percent + " % " + name);
+                                    playerActor.statBuffs.buffs[z].stat.increasedValue = new_value;                                    
+                                }
+                                else
+                                {
+                                    //Main.logger_instance.Msg(player_buff.name + " Max Value");
+                                    playerActor.statBuffs.buffs[z].stat.increasedValue = float.MaxValue;                            
+                                }
+                            }
+                            else
+                            {
+                                //Main.logger_instance.Msg("Not a Headhunter Buff");
+                                error = true;
+                            }
+                            if (!error)
+                            {
+                                //Main.logger_instance.Msg("Reset " + name + " Cooldown");
+                                playerActor.statBuffs.buffs[z].remainingDuration = BuffDuration;
+                                already_buff = true;                                
+                            }
+                            break;
+                        }
+                        z++;
+                    }
+                    if (!already_buff)
+                    {
+                        //Main.logger_instance.Msg("Add Buff : " + b.name);
+                        playerActor.statBuffs.buffs.Add(b);
+                        playerActor.statBuffs.activeBuffNames.Add(b.name, b);
+                    }                    
                 }
             }
         }
@@ -293,7 +331,7 @@ namespace LastEpochMods.Mods.Items
         }
         #endregion
         #region Steal
-        private static bool Enable_Steal = true;
+        private static bool Enable_Steal = false;
         private static void StealBuffFromMobs(Actor playerActor, Actor killedActor)
         {
             if ((killedActor.tag == "Enemy") && (killedActor.rarity == Actor.Rarity.Rare) && (!killedActor.data.isBossOrMiniBoss()))
@@ -307,7 +345,7 @@ namespace LastEpochMods.Mods.Items
 
                     string name = b.name;
                     string property = b.stat.property.ToString();
-                    Main.logger_instance.Msg("Add Buff : Name = " + name + ", Property = " + property);
+                    Main.logger_instance.Msg("Steal Buff : Name = " + name + ", Property = " + property);
                 }
             }
         }
@@ -328,12 +366,6 @@ namespace LastEpochMods.Mods.Items
                 }
             }
         }
-        //Minions Events
-        /*private static readonly System.Action<Summoned, Ability, Actor> OnMinionKillAction = new System.Action<Summoned, Ability, Actor>(OnMinionKill);
-        private static void OnMinionKill(Summoned summmoned, Ability ability, Actor killedActor)
-        {
-
-        }*/
         #endregion
     }
     public class HHTracker : MonoBehaviour
