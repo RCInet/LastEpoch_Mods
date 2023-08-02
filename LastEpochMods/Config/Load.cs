@@ -71,6 +71,10 @@ namespace LastEpochMods.Config
                     GenerateItem_Rarity = 7,
                     Enable_RollImplicit = true,
                     Roll_Implicit = 255,
+                    Enable_SealValue = true,
+                    Roll_SealValue = 255,
+                    Enable_SealTier = true,
+                    Roll_SealTier = 7,
                     Enable_AffixsValue = true,
                     Roll_AffixValue = 255,
                     Enable_AffixsTier = true,
@@ -86,6 +90,7 @@ namespace LastEpochMods.Config
                     Remove_LevelReq = true,
                     Remove_ClassReq = true,
                     Remove_SubClassReq = true,
+                    Remove_set_req = true,
                     Enable_pickup_range = true,
                     Enable_nb_affixes = true,
                     nb_affixes = 4,
@@ -120,7 +125,20 @@ namespace LastEpochMods.Config
                         Enable_channel_cost = false,
                         Enable_noManaRegenWhileChanneling = false,
                         Enable_stopWhenOutOfMana = false,
-                        Enable_RemoveCooldown = false
+                        Enable_RemoveCooldown = false,
+                        Enable_All = false,
+                        Movements = new Data.Movement_Skills_Structure
+                        {
+                            Enable_ImmuneDuringMovement = false,
+                            Enable_NoTarget = false,
+                            Disable_SimplePath = false
+                        },
+                        HealCost = new Data.Skills_Heal_Cost_Structure
+                        {
+                            Enable_Transplant = false,
+                            Enable_MarrowShards = false,
+                            Enable_ReaperForm = false
+                        }
                     },
                     skilltree = new Data.SkillTree_structure
                     {
@@ -154,12 +172,100 @@ namespace LastEpochMods.Config
                             baby_quantity = 50
                         }
                     },
+                    minions = new Data.Minion_structure
+                    {
+                        skeleton = new Data.Skeleton_structure
+                        {
+                            Enable_additionalSkeletonsFromPassives = false,
+                            additionalSkeletonsFromPassives = 50,
+                            Enable_additionalSkeletonsFromSkillTree = false,
+                            additionalSkeletonsFromSkillTree = 50,
+                            Enable_additionalSkeletonsPerCast = false,
+                            additionalSkeletonsPerCast = 50,
+                            Enable_chanceToResummonOnDeath = false,
+                            chanceToResummonOnDeath = 255,
+                            Enable_forceArcher = false,
+                            Enable_forceBrawler = false,
+                            Enable_forceRogue = false,
+                            Enable_forceWarrior = false
+                        },
+                        wraith = new Data.Wraith_structure
+                        {
+                            Enable_additionalMaxWraiths = false,
+                            additionalMaxWraiths = 50,
+                            Enable_delayedWraiths = false,
+                            delayedWraiths = 50,
+                            Enable_limitedTo2Wraiths = false,
+                            Enable_wraithsDoNotDecay = false,
+                            Enable_increasedCastSpeed = false,
+                            increasedCastSpeed = 255
+                        },
+                        mage = new Data.Mage_structure
+                        {
+                            Enable_additionalSkeletonsFromItems = false,
+                            additionalSkeletonsFromItems = 50,
+                            Enable_additionalSkeletonsFromPassives = false,
+                            additionalSkeletonsFromPassives = 50,
+                            Enable_additionalSkeletonsFromSkillTree = false,
+                            additionalSkeletonsFromSkillTree = 50,
+                            Enable_additionalSkeletonsPerCast = false,
+                            additionalSkeletonsPerCast = 50,
+                            Enable_onlySummonOneMage = false,
+                            Enable_singleSummon = false,
+                            Enable_forceCryomancer = false,
+                            Enable_forceDeathKnight = false,
+                            Enable_forcePyromancer = false,
+                            Enable_chanceForTwoExtraProjectiles = false,
+                            chanceForTwoExtraProjectiles = 255,
+                            Enable_doubleProjectiles = false
+                        },
+                        bone_golem = new Data.BoneGolem_structure
+                        {    
+                            Enable_addedGolemsPer4Skeletons = false,
+                            addedGolemsPer4Skeletons = 10,
+                            Enable_twins = false,
+                            Enable_selfResurrectChance = false,
+                            selfResurrectChance = 255,
+                            Enable_increasedFireAuraArea = false,
+                            increasedFireAuraArea = 5,
+                            Enable_increasedMoveSpeed = false,
+                            increasedMoveSpeed = 5,
+                            Enable_hasSlamAttack = false,
+                            Enable_undeadArmorAura = false,
+                            undeadArmorAura = 255,
+                            Enable_undeadMovespeedAura = false,
+                            undeadMovespeedAura = 255                            
+                        },
+                        volatile_zombie = new Data.VolatileZombie_structure
+                        {
+                            Enable_chanceToCastFromMinionDeath = false,
+                            chanceToCastFromMinionDeath = 255,
+                            Enable_chanceToCastInfernalShadeOnDeath = false,
+                            chanceToCastInfernalShadeOnDeath = 255,
+                            Enable_chanceToCastMarrowShardsOnDeath = false,
+                            chanceToCastMarrowShardsOnDeath = 255
+                        },
+                        dread_shade = new Data.DreadShade_structure
+                        {
+                            Enable_Duration = false,
+                            Duration = 255,
+                            Enable_DisableLimit = false,
+                            Enable_DisableHealthDrain = false,
+                            Enable_Max = false,
+                            max = 255,
+                            Enable_ReduceDecay = false,
+                            decay = 255,
+                            Enable_Radius = false,
+                            radius = 5,
+                        }
+                    },
                     characterstats = new Data.CharacterStats_structure
                     {
-                        Enable_attack_rate = true,
+                        Enable_attack_rate = false,
                         attack_rate = 255f,
-                        Enable_leach_rate = true,
-                        leach_rate = 255f
+                        Enable_leach_rate = false,
+                        leach_rate = 255f,
+                        Enable_GodMode = false,
                     },
                     cosmetic = new Data.Cosmetic_structure
                     {

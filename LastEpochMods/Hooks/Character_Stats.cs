@@ -63,6 +63,5 @@ namespace LastEpochMods.Hooks
                 }                    
             }
         }
-
     }
 }

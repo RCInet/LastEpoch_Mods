@@ -1,9 +1,4 @@
 ﻿using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LastEpochMods.Hooks
 {
@@ -13,9 +8,14 @@ namespace LastEpochMods.Hooks
         public class OnEnable
         {
             [HarmonyPostfix]
-            static void Postfix(CosmeticPanelUI __instance)
-            {
-                Mods.Cosmetics.IsCosmeticPanelOpen = true;
+            static void Postfix(ref CosmeticPanelUI __instance)
+            {                
+                Mods.Cosmetics.MtxStore.Get();
+                Mods.Cosmetics.Panel.Hide_Text_GetPoint(__instance);
+                Mods.Cosmetics.Panel.Hide_Btn_GetPoint(__instance);
+                //Mods.Cosmetics.Panel.Hide_Btn_OpenShop(__instance);   
+                Mods.Cosmetics.Panel.IsOpen = true;
+                Mods.Cosmetics.Panel.__instance = __instance;
             }
         }
         
@@ -25,7 +25,8 @@ namespace LastEpochMods.Hooks
             [HarmonyPostfix]
             static void Postfix(CosmeticPanelUI __instance)
             {
-                Mods.Cosmetics.IsCosmeticPanelOpen = false;
+                Mods.Cosmetics.Panel.IsOpen = false;
+                Mods.Cosmetics.Panel.__instance = null;
             }
         }
     }

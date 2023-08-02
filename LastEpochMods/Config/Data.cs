@@ -35,6 +35,7 @@ namespace LastEpochMods.Config
             public SkillTree_structure skilltree;
             public PassiveTree_structure passivetree;
             public Companion_structure companions;
+            public Minion_structure minions;
             public CharacterStats_structure characterstats;
             public Cosmetic_structure cosmetic;
             public Slots_structure slots;
@@ -54,6 +55,7 @@ namespace LastEpochMods.Config
             public float attack_rate;
             public bool Enable_leach_rate;
             public float leach_rate;
+            public bool Enable_GodMode;
         }
         public struct Skills_structure
         {
@@ -62,6 +64,21 @@ namespace LastEpochMods.Config
             public bool Enable_noManaRegenWhileChanneling;
             public bool Enable_stopWhenOutOfMana;
             public bool Enable_RemoveCooldown;
+            public bool Enable_All;
+            public Movement_Skills_Structure Movements;
+            public Skills_Heal_Cost_Structure HealCost;
+        }
+        public struct Skills_Heal_Cost_Structure
+        {
+            public bool Enable_Transplant;
+            public bool Enable_MarrowShards;
+            public bool Enable_ReaperForm;
+        }
+        public struct Movement_Skills_Structure
+        {
+            public bool Enable_NoTarget;
+            public bool Enable_ImmuneDuringMovement;
+            public bool Disable_SimplePath;
         }
         public struct SkillTree_structure
         {
@@ -91,6 +108,99 @@ namespace LastEpochMods.Config
         {
             public bool Enable_baby_quantity;
             public int baby_quantity;
+        }
+        public struct Minion_structure
+        {
+            public Skeleton_structure skeleton;
+            public Mage_structure mage;
+            public Wraith_structure wraith;
+            public BoneGolem_structure bone_golem;
+            public VolatileZombie_structure volatile_zombie;
+            public DreadShade_structure dread_shade;
+        }
+        public struct Skeleton_structure
+        {
+            public bool Enable_additionalSkeletonsFromPassives;
+            public int additionalSkeletonsFromPassives;
+            public bool Enable_additionalSkeletonsFromSkillTree;
+            public int additionalSkeletonsFromSkillTree;
+            public bool Enable_additionalSkeletonsPerCast;
+            public int additionalSkeletonsPerCast;
+            public bool Enable_chanceToResummonOnDeath;
+            public float chanceToResummonOnDeath;
+            public bool Enable_forceArcher;
+            public bool Enable_forceBrawler;
+            public bool Enable_forceRogue;
+            public bool Enable_forceWarrior;
+        }
+        public struct Wraith_structure
+        {
+            public bool Enable_additionalMaxWraiths;
+            public int additionalMaxWraiths;
+            public bool Enable_delayedWraiths;
+            public int delayedWraiths;
+            public bool Enable_limitedTo2Wraiths;
+            public bool Enable_wraithsDoNotDecay;
+            public bool Enable_increasedCastSpeed;
+            public float increasedCastSpeed;
+        }
+        public struct Mage_structure
+        {
+            public bool Enable_additionalSkeletonsFromItems;
+            public int additionalSkeletonsFromItems;
+            public bool Enable_additionalSkeletonsFromPassives;
+            public int additionalSkeletonsFromPassives;
+            public bool Enable_additionalSkeletonsFromSkillTree;
+            public int additionalSkeletonsFromSkillTree;
+            public bool Enable_additionalSkeletonsPerCast;
+            public int additionalSkeletonsPerCast;
+            public bool Enable_onlySummonOneMage;
+            public bool Enable_singleSummon;
+            public bool Enable_forceCryomancer;
+            public bool Enable_forceDeathKnight;
+            public bool Enable_forcePyromancer;
+            public bool Enable_doubleProjectiles;
+            public bool Enable_chanceForTwoExtraProjectiles;
+            public float chanceForTwoExtraProjectiles;
+        }        
+        public struct BoneGolem_structure
+        {
+            public bool Enable_addedGolemsPer4Skeletons;
+            public int addedGolemsPer4Skeletons;
+            public bool Enable_twins;
+            public bool Enable_hasSlamAttack;
+            public bool Enable_selfResurrectChance;
+            public float selfResurrectChance;
+            public bool Enable_increasedFireAuraArea;
+            public float increasedFireAuraArea;
+            public bool Enable_increasedMoveSpeed;
+            public float increasedMoveSpeed;
+            public bool Enable_undeadArmorAura;
+            public float undeadArmorAura;
+            public bool Enable_undeadMovespeedAura;
+            public float undeadMovespeedAura;
+        }
+        public struct VolatileZombie_structure
+        {
+            public bool Enable_chanceToCastFromMinionDeath;
+            public float chanceToCastFromMinionDeath;
+            public bool Enable_chanceToCastInfernalShadeOnDeath;
+            public float chanceToCastInfernalShadeOnDeath;
+            public bool Enable_chanceToCastMarrowShardsOnDeath;
+            public float chanceToCastMarrowShardsOnDeath;
+        }
+        public struct DreadShade_structure
+        {
+            public bool Enable_Duration;
+            public float Duration;
+            public bool Enable_DisableLimit;
+            public bool Enable_DisableHealthDrain;
+            public bool Enable_Max;
+            public int max;
+            public bool Enable_ReduceDecay;
+            public float decay;
+            public bool Enable_Radius;
+            public float radius;
         }
         public struct Scene_Structure
         {
@@ -145,6 +255,10 @@ namespace LastEpochMods.Config
             public byte GenerateItem_Rarity;
             public bool Enable_RollImplicit;
             public byte Roll_Implicit;
+            public bool Enable_SealValue;
+            public byte Roll_SealValue;
+            public bool Enable_SealTier;
+            public byte Roll_SealTier;
             public bool Enable_AffixsValue;
             public byte Roll_AffixValue;
             public bool Enable_AffixsTier;
@@ -162,6 +276,7 @@ namespace LastEpochMods.Config
             public bool Remove_SubClassReq;
             public bool Enable_pickup_range;
             public bool Enable_nb_affixes;
+            public bool Remove_set_req;
             public int nb_affixes;
         }
     }

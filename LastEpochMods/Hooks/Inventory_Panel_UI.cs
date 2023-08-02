@@ -1,23 +1,22 @@
 ﻿using HarmonyLib;
+using UnityEngine;
 
 namespace LastEpochMods.Hooks
 {
     public class Inventory_Panel_UI
-    {
-        [HarmonyPatch(typeof(InventoryPanelUI), "OnEnable")]
-        public class OnEnable
+    {        
+        [HarmonyPatch(typeof(InventoryPanelUI), "Start")]
+        public class Start
         {
             [HarmonyPostfix]
-            static void Postfix(InventoryPanelUI __instance)
+            static void Postfix(ref InventoryPanelUI __instance)
             {
-                bool disable = true;
-                if (Config.Data.mods_config.character.cosmetic.Enable_Cosmetic_Btn) { disable = false; }
+                Mods.Cosmetics.Inventory.__instance = __instance;
                 foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(TabUIElement)))
                 {
                     if (obj.name == "AppearanceTab")
                     {
-                        TabUIElement appearance_tab = obj.TryCast<TabUIElement>();
-                        appearance_tab.isDisabled = disable;
+                        Mods.Cosmetics.Inventory.tabUIElement = obj.TryCast<TabUIElement>();
                         break;
                     }
                 }
@@ -25,11 +24,34 @@ namespace LastEpochMods.Hooks
                 {
                     if (obj.name == "AppearanceTab")
                     {
-                        UnityEngine.CanvasGroup canvas_group = obj.TryCast<UnityEngine.CanvasGroup>();
-                        canvas_group.enabled = disable;
+                        Mods.Cosmetics.Inventory.canvasGroup = obj.TryCast<UnityEngine.CanvasGroup>();
                         break;
                     }
                 }
+                Mods.Cosmetics.Inventory.ShowHideTab();
+            }
+        }
+
+        [HarmonyPatch(typeof(InventoryPanelUI), "OpenInventoryPanel")]
+        public class OpenInventoryPanel
+        {
+            [HarmonyPrefix]
+            static bool Prefix(ref InventoryPanelUI __instance, bool __0)
+            {
+                Mods.Cosmetics.Inventory.IsOpen = true;
+                Mods.Cosmetics.Inventory.ShowHideTab();                
+
+                return true;
+            }
+        }
+
+        [HarmonyPatch(typeof(InventoryPanelUI), "OnDisable")]
+        public class OnDisable
+        {
+            [HarmonyPostfix]
+            static void Postfix(ref InventoryPanelUI __instance)
+            {
+                Mods.Cosmetics.Inventory.IsOpen = false;
             }
         }
     }

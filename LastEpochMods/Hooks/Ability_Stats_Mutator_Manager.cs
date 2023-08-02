@@ -14,6 +14,10 @@ namespace LastEpochMods.Hooks
                 {
                     __instance.canSummonWolvesUpToMaxCompanions = true;
                 }
+                if (Config.Data.mods_config.character.minions.bone_golem.Enable_addedGolemsPer4Skeletons)
+                {
+                    __instance.addedGolemsPer4Skeletons = Config.Data.mods_config.character.minions.bone_golem.addedGolemsPer4Skeletons;
+                }
             }
         }
     }

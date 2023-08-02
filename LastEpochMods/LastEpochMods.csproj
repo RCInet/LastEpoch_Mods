@@ -64,6 +64,9 @@
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\MicrotransactionSystem.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="netstandard">
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\netstandard.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
@@ -84,6 +87,10 @@
     <Reference Include="UnhollowerBaseLib, Version=0.4.18.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UnhollowerBaseLib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UniTask">
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Managed\UniTask.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.Addressables">
@@ -215,12 +222,14 @@
     <Compile Include="Config\Data.cs" />
     <Compile Include="Config\Load.cs" />
     <Compile Include="Config\Save.cs" />
+    <Compile Include="Hooks\Ability_Panel_Icon.cs" />
     <Compile Include="Hooks\Ability_Stats_Mutator_Manager.cs" />
     <Compile Include="Hooks\Bottom_Screen_Menu.cs" />
     <Compile Include="Hooks\Character_Mutator.cs" />
     <Compile Include="Hooks\Character_Stats.cs" />
     <Compile Include="Hooks\Cosmetic_Item_Object.cs" />
     <Compile Include="Hooks\Cosmetic_Item_Slot.cs" />
+    <Compile Include="Hooks\Cosmetic_Manager.cs" />
     <Compile Include="Hooks\Cosmetic_Panel_UI.cs" />
     <Compile Include="Hooks\Crafting_Manager.cs" />
     <Compile Include="Hooks\Crafting_Slot_Manager.cs" />
@@ -231,8 +240,10 @@
     <Compile Include="Hooks\Ground_Item_Label.cs" />
     <Compile Include="Hooks\Ground_Item_Manager.cs" />
     <Compile Include="Hooks\Inventory_Panel_UI.cs" />
+    <Compile Include="Hooks\Item_Containers_manager.cs" />
     <Compile Include="Hooks\Item_Data.cs" />
     <Compile Include="Hooks\Item_Drop_Bonuses.cs" />
+    <Compile Include="Hooks\Item_Equip_Manager.cs" />
     <Compile Include="Hooks\Local_Tree_Data.cs" />
     <Compile Include="Hooks\Minimap_Fog_Of_War.cs" />
     <Compile Include="Hooks\Monolith_Timeline_Panel_Manager.cs" />
@@ -246,7 +257,12 @@
     <Compile Include="Mods\Cosmetics.cs" />
     <Compile Include="Mods\Developer.cs" />
     <Compile Include="Mods\Items\HeadHunter.cs" />
+    <Compile Include="Mods\UI.cs" />
+    <Compile Include="OnSceneChanged\Ability_Mutator.cs" />
+    <Compile Include="OnSceneChanged\GenerateItem.cs" />
+    <Compile Include="OnSceneChanged\Notifications_.cs" />
     <Compile Include="OnSceneChanged\Local_Tree_Data.cs" />
+    <Compile Include="OnSceneChanged\Set_Bonuses_List.cs" />
     <Compile Include="OnSceneChanged\Spawner_Placement_Manager.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -258,7 +274,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Ui\CustomControls.cs" />
     <Compile Include="Ui\Functions.cs" />
-    <Compile Include="Ui\GenerateItem.cs" />
+    <Compile Include="Ui\ForceDrop.cs" />
     <Compile Include="Ui\Menu.cs" />
     <Compile Include="Ui\Styles.cs" />
   </ItemGroup>

@@ -9,7 +9,7 @@ namespace LastEpochMods.Mods
         {
             if (Scenes.MenuNames.Contains(Scenes.CurrentName))
             {
-                Main.logger_instance.Msg("DeveloperMode : Launch a character before Enable/Disable");
+                Main.logger_instance.Error("DeveloperMode : Launch a character before Enable/Disable");
             }
             else
             {
@@ -24,12 +24,11 @@ namespace LastEpochMods.Mods
                         {
                             obj.TryCast<UnityEngine.GameObject>().active = show;
                             DevLoaded = show;
-                            Main.logger_instance.Msg("DeveloperMode : Enable = " + show);
                             break;
                         }
                     }
                 }
-                else { Main.logger_instance.Msg("DeveloperMode : Can't enable Developer Mode without Disable HideInBuilds"); }
+                else { Main.logger_instance.Error("DeveloperMode : Can't enable Developer Mode without Disable HideInBuilds"); }
             }
         }
 

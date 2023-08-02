@@ -16,7 +16,7 @@ namespace LastEpochMods.Ui
         }
         public static void EnableButton(string text, float pos_x, float pos_y, bool enable, DelegateFunction function)
         {
-            GUI.TextField(new Rect(pos_x, pos_y, 140, 40), text, Styles.TextField_Style());
+            GUI.Label(new Rect(pos_x, pos_y, 140, 40), text, Styles.TextField_Style());
             string btn_enable = "Enable";
             if (enable) { btn_enable = "Disable"; }
             if (GUI.Button(new Rect((pos_x + 140), pos_y, 60, 40), btn_enable, Styles.Button_Style(enable))) { function(); }            

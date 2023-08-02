@@ -1,4 +1,6 @@
 ﻿using HarmonyLib;
+using static AffixList;
+using static LastEpochMods.Ui.ForceDrop;
 
 namespace LastEpochMods.Hooks
 {
@@ -8,9 +10,19 @@ namespace LastEpochMods.Hooks
         public class RollRarity
         {
             [HarmonyPostfix]
-            static void Postfix(ref byte __result, int __0)
+            static void Postfix(ref byte __result, ref int __0)
             {
-                if (Config.Data.mods_config.items.Enable_Rarity) { __result = Config.Data.mods_config.items.GenerateItem_Rarity; }
+                if (!Ui.ForceDrop.drop.generating_item)
+                {
+                    if (Config.Data.mods_config.items.Enable_Rarity)
+                    {
+                        byte result = Config.Data.mods_config.items.GenerateItem_Rarity;
+                        if (result < 0) { result = 0; }
+                        else if (result > 9) { result = 9; }
+                        else if ((result > 4) && (result < 7)) { result = 4; }                        
+                        __result = result;
+                    }                    
+                }
             }
         }               
 
@@ -18,41 +30,66 @@ namespace LastEpochMods.Hooks
         public class RollAffixes
         {
             [HarmonyPostfix]
-            static void Postfix(GenerateItems __instance, ref int __result, ref ItemDataUnpacked __0, int __1, ref bool __2, ref bool __3, ref Il2CppSystem.Boolean __4)
+            static void Postfix(GenerateItems __instance, int __result, ref ItemDataUnpacked __0, int __1, bool __2, bool __3, ref Il2CppSystem.Boolean __4)
             {
-                if ((Ui.GenerateItem.drop.generating_random_item) && (__0.affixes.Count > Ui.GenerateItem.affixs.nb_affixs))
-                {
-                    Il2CppSystem.Collections.Generic.List<ItemAffix> new_list = new Il2CppSystem.Collections.Generic.List<ItemAffix>();
-                    for (int z = 0; z < Ui.GenerateItem.affixs.nb_affixs; z++) { new_list.Add(__0.affixes[z]); }
-                    __0.affixes = new_list;
-                }
-                for (int i = 0; i < __0.affixes.Count; i++)
-                {
-                    if (Config.Data.mods_config.items.Enable_AffixsTier)
+                if (!Ui.ForceDrop.drop.generating_item)
+                {                    
+                    if (Config.Data.mods_config.items.Enable_SealTier)
                     {
-                        int tier_result = System.Convert.ToInt32(Config.Data.mods_config.items.Roll_AffixTier) - 1;
-                        __0.affixes[i].affixTier = (byte)tier_result;
+                        int tier_result = System.Convert.ToInt32(Config.Data.mods_config.items.Roll_SealTier) - 1;
+                        __0.AddRandomSealedAffix(tier_result);
                     }
-                    if (Config.Data.mods_config.items.Enable_AffixsValue) { __0.affixes[i].affixRoll = Config.Data.mods_config.items.Roll_AffixValue; }
-                    if (Ui.GenerateItem.drop.generating_random_item)
+                    foreach (ItemAffix aff in __0.affixes)
                     {
-                        bool idol = false;
-                        if ((__0.itemType > 24) && (__0.itemType < 34)) { idol = true; }
-                        System.Collections.Generic.List<int> list = Ui.GenerateItem.affixs.GetIdList(idol);
-                        if (i < list.Count)
+                        if (!aff.isSealedAffix)
                         {
-                            int value = list[i];
-                            if (value > -1)
+                            if (Config.Data.mods_config.items.Enable_AffixsTier)
                             {
-                                __0.affixes[i].affixId = (ushort)value;
-                                __0.affixes[i].affixName = Ui.GenerateItem.affixs.GetNameFromId(value);                                
+                                int tier_result = System.Convert.ToInt32(Config.Data.mods_config.items.Roll_AffixTier) - 1;
+                                aff.affixTier = (byte)tier_result;
+                            }
+                            if (Config.Data.mods_config.items.Enable_AffixsValue)
+                            {
+                                aff.affixRoll = Config.Data.mods_config.items.Roll_AffixValue;
                             }
                         }
                     }
                 }
-
-                //__2 = true; //Can roll uncraftable Tier
-                //__3 = false; //force Exalted
+                else
+                {                    
+                    if (Ui.ForceDrop.affixs.seal.add)
+                    {
+                        __0.AddRandomSealedAffix(Ui.ForceDrop.affixs.seal.tier - 1);
+                    }
+                    int i = 0;
+                    foreach (ItemAffix aff in __0.affixes)
+                    {
+                        if (!aff.isSealedAffix)
+                        {
+                            if (Ui.ForceDrop.affixs.override_tier)
+                            {
+                                aff.affixTier = (byte)(Ui.ForceDrop.affixs.affix_tier - 1);
+                            }
+                            if (Ui.ForceDrop.affixs.override_value)
+                            {
+                                aff.affixRoll = (byte)Ui.ForceDrop.affixs.affix_values;
+                            }
+                            bool idol = false;
+                            if ((__0.itemType > 24) && (__0.itemType < 34)) { idol = true; }
+                            System.Collections.Generic.List<int> list = Ui.ForceDrop.affixs.GetIdList(idol);
+                            if (i < list.Count)
+                            {
+                                int value = list[i];
+                                if (value > -1)
+                                {
+                                    aff.affixId = (ushort)value;
+                                    aff.affixName = Ui.ForceDrop.affixs.GetNameFromId(value);
+                                }
+                            }
+                            i++;
+                        }                        
+                    }
+                }                
             }
         }
 
@@ -62,10 +99,14 @@ namespace LastEpochMods.Hooks
             [HarmonyPostfix]
             static void Postfix(ref int __result, ItemDataUnpacked __0, int __1, bool __2, GenerateItems.VendorType __3)
             {
-                if (Config.Data.mods_config.items.Enable_ForgingPotencial)
+                if (!Ui.ForceDrop.drop.generating_item)
                 {
-                    __result = Config.Data.mods_config.items.Roll_ForgingPotencial;
+                    if (Config.Data.mods_config.items.Enable_ForgingPotencial)
+                    {
+                        __result = Config.Data.mods_config.items.Roll_ForgingPotencial;
+                    }
                 }
+                else { __result = Ui.ForceDrop.forgin_potencial.value; }
             }
         }                 
     }

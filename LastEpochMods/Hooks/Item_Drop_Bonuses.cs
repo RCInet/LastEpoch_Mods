@@ -32,6 +32,5 @@ namespace LastEpochMods.Hooks
                 return true;
             }
         }
-
     }
 }
