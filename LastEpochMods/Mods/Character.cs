@@ -8,7 +8,7 @@ namespace LastEpochMods.Mods
     {
         private static ExperienceTracker ExpTracker = null;
         private static CharacterDataTracker DataTracker = null;
-        private static LocalTreeData TreeData = null;
+        public static LocalTreeData TreeData = null;
         private static BaseHealth Health = null;
         
         private static void GetExpTracker()
@@ -33,7 +33,7 @@ namespace LastEpochMods.Mods
                 }
             }
         }
-        private static void GetLocalTreeData()
+        public static void GetLocalTreeData()
         {
             foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(LocalTreeData)))
             {

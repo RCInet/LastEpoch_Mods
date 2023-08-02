@@ -11,7 +11,23 @@ namespace LastEpochMods.OnSceneChanged
     {
         public static void Init()
         {
-            foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(LocalTreeData)))
+            if (Mods.Character.TreeData == null) { Mods.Character.GetLocalTreeData(); }
+            if (Mods.Character.TreeData != null)
+            {
+                if (Config.Data.mods_config.character.passivetree.Enable_passiveTree_pointsEarnt)
+                {
+                    Mods.Character.TreeData.passiveTree.pointsEarnt = Config.Data.mods_config.character.passivetree.passiveTree_pointsEarnt;
+                }
+                if (Config.Data.mods_config.character.skilltree.Enable_skilltree_level)
+                {
+                    foreach (LocalTreeData.SkillTreeData skill_tree_data in Mods.Character.TreeData.specialisedSkillTrees)
+                    {
+                        skill_tree_data.level = Config.Data.mods_config.character.skilltree.skilltree_level;
+                    }
+                }
+            }
+
+            /*foreach (UnityEngine.Object obj in UniverseLib.RuntimeHelper.FindObjectsOfTypeAll(typeof(LocalTreeData)))
             {
                 if (obj.name == "MainPlayer(Clone)")
                 {
@@ -28,7 +44,7 @@ namespace LastEpochMods.OnSceneChanged
                         }
                     }
                 }
-            }
+            }*/
         }
     }
 }

@@ -44,7 +44,7 @@ namespace LastEpochMods.Hooks
                     }
 
                     //Get Mutator
-                    AbilityMutator ability_mutator = OnSceneChanged.Ability_Mutator.GetMutatorObjectFromAbility(__1);
+                    AbilityMutator ability_mutator = OnSceneChanged.Ability_Mutator.GetMutatorFromAbility(__1);
 
                     if (Config.Data.mods_config.character.skills.Enable_RemoveCooldown) { ability_mutator.RemoveCooldown(); }
                     System.Type type = ability_mutator.GetActualType();
