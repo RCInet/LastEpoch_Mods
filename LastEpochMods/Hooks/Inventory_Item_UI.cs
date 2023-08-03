@@ -10,9 +10,9 @@ namespace LastEpochMods.Hooks
             [HarmonyPostfix]
             static void Postfix(ref UnityEngine.Sprite __result, ItemData __0, ItemUIContext __1)
             {
-                if (__0.TryCast<ItemDataUnpacked>().FullName == Mods.Items.HeadHunter.unique_name)
+                if (__0.TryCast<ItemDataUnpacked>().FullName == Mods.Items.HeadHunter.Unique.unique_name)
                 {
-                    __result = Mods.Items.HeadHunter.UniqueSprite();
+                    __result = Mods.Items.HeadHunter.Unique.Icon();
                 }
             }
         }
