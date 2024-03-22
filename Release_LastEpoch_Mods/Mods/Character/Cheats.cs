@@ -141,6 +141,29 @@ namespace LastEpochMods.Mods.Character
                 }
             }
         }
+        public class AutoPot
+        {
+            public static void Update()
+            {
+                if (Managers.Scenes_Manager.GameScene())
+                {
+                    try
+                    {
+                        if (Managers.Save_Manager.Data.UserData.Character.Cheats.Enable_AutoPot)
+                        {
+                            BaseHealth player_base_health = PlayerFinder.getLocalPlayerHealth().TryCast<BaseHealth>();
+                            int player_health_percent = (int)(player_base_health.currentHealth / player_base_health.maxHealth * 100);
+                            int auto_pot_percent = (int)(Managers.Save_Manager.Data.UserData.Character.Cheats.autoPot / 255 * 100);
+                            if (player_health_percent < auto_pot_percent)
+                            {
+                                PlayerFinder.getPlayerActor().gameObject.GetComponent<HealthPotion>().UsePotion();
+                            }
+                        }
+                    }
+                    catch { }
+                }
+            }
+        }
         public class Blessings
         {
             private static bool adding_blessings = false;

@@ -171,7 +171,7 @@ namespace LastEpochMods.Mods.Items
             [HarmonyPrefix]
             static void Prefix(ref UnityEngine.Vector3 __0, ref int __1)
             {
-                __1 = 255; //Allow Drop if Player already have Max Pots
+                //__1 = 255; //Allow Drop if Player already have Max Pots
                 try
                 {
                     if (Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Pots)
@@ -189,6 +189,7 @@ namespace LastEpochMods.Mods.Items
             [HarmonyPostfix]
             static void Postfix(GroundItemManager __instance, Actor __0, ref UnityEngine.Vector3 __1, bool __2)
             {
+                Main.logger_instance.Msg("dropPotionForPlayer");
                 try
                 {
                     if ((!__instance.IsNullOrDestroyed()) && (Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Pots))

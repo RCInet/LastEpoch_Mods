@@ -58,6 +58,8 @@ namespace LastEpochMods.Managers
             {
                 public bool Enable_leech_rate;
                 public float leech_rate;
+                public bool Enable_AutoPot;
+                public float autoPot;
                 public bool Enable_GodMode;
                 public bool Enable_ChooseBlessingFromBlessingPanel;
                 public bool Enable_LowLife;                
@@ -474,6 +476,8 @@ namespace LastEpochMods.Managers
                             //attack_rate = 0,
                             Enable_leech_rate = false,
                             leech_rate = 0,
+                            Enable_AutoPot = false,
+                            autoPot = 0f,
                             Enable_GodMode = false,
                             Enable_ChooseBlessingFromBlessingPanel = false,
                             Enable_LowLife = false

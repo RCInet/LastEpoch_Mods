@@ -36,6 +36,7 @@
                 Mods.Character.PermanentBuffs.Update();
                 Mods.Character.Cheats.Blessings.Select.Update();
                 Mods.Character.Cheats.GodMode.Update();
+                Mods.Character.Cheats.AutoPot.Update();
 
                 if (UnityEngine.Input.GetKeyDown(Save_Manager.Data.UserData.KeyBinds.HeadhunterBuffs))
                 {

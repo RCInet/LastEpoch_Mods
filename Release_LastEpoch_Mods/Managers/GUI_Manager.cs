@@ -453,7 +453,7 @@ namespace LastEpochMods.Managers
                             float scene_y = Content_Y;
 
                             //Cheats
-                            float character_cheats_h = 630 + (16 * content_margin);
+                            float character_cheats_h = 700 + (16 * content_margin);
                             if (!Mods.Character.Cheats.LevelUp.AlreadyMaxLevel()) { character_cheats_h += 80 + (2 * content_margin); }
                             GUI.DrawTexture(new Rect(scene_x, scene_y, Section_W, character_cheats_h), Textures.black);
                             float section1_x = scene_x + content_margin;
@@ -483,7 +483,8 @@ namespace LastEpochMods.Managers
                                 if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Level Up to Max", Managers.GUI_Manager.Styles.Content_Button()))
                                 { Mods.Character.Cheats.LevelUp.ToMax(); }
                                 section1_y += 40 + content_margin;
-                            }                            
+                            }  
+                            
                             GUI.TextField(new Rect(section1_x, section1_y, ((section1_content_w * 40) / 100) - content_margin, 40), "Leach Rate", Styles.Content_Text());
                             float Cheat_LeechRate_Temp = Save_Manager.Data.UserData.Character.Cheats.leech_rate;
                             Cheat_LeechRate_Temp = GUI.HorizontalSlider(new Rect(section1_x + content_margin, section1_y + 50, section1_content_w - (2 * content_margin), 20), Cheat_LeechRate_Temp, 0f, 255f);
@@ -491,6 +492,17 @@ namespace LastEpochMods.Managers
                             if (GUI.Button(new Rect(section1_x + ((section1_content_w * 60) / 100), section1_y, ((section1_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.Cheats.Enable_leech_rate)))
                             { Save_Manager.Data.UserData.Character.Cheats.Enable_leech_rate = !Save_Manager.Data.UserData.Character.Cheats.Enable_leech_rate; }
                             Save_Manager.Data.UserData.Character.Cheats.leech_rate = (int)Cheat_LeechRate_Temp;
+                            section1_y += 70 + content_margin;
+
+                            //Autpot
+                            GUI.TextField(new Rect(section1_x, section1_y, ((section1_content_w * 40) / 100) - content_margin, 40), "Auto Potion When Health under", Styles.Content_Text());
+                            float Cheat_AutoPot_Temp = Save_Manager.Data.UserData.Character.Cheats.autoPot;
+                            Cheat_AutoPot_Temp = GUI.HorizontalSlider(new Rect(section1_x + content_margin, section1_y + 50, section1_content_w - (2 * content_margin), 20), Cheat_AutoPot_Temp, 0f, 255f);
+                            string AutoPot_Text = (Cheat_AutoPot_Temp / 255 * 100) + " %";
+                            GUI.TextField(new Rect(section1_x + ((section1_content_w * 40) / 100) - (2 * content_margin), section1_y, ((section1_content_w * 20) / 100), 40), AutoPot_Text, Styles.ContentR_Text());
+                            if (GUI.Button(new Rect(section1_x + ((section1_content_w * 60) / 100), section1_y, ((section1_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.Cheats.Enable_AutoPot)))
+                            { Save_Manager.Data.UserData.Character.Cheats.Enable_AutoPot = !Save_Manager.Data.UserData.Character.Cheats.Enable_AutoPot; }
+                            Save_Manager.Data.UserData.Character.Cheats.autoPot = Cheat_AutoPot_Temp;
                             section1_y += 70 + content_margin;
 
                             if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Complete Main Quest", Managers.GUI_Manager.Styles.Content_Button()))
@@ -788,22 +800,7 @@ namespace LastEpochMods.Managers
                             section1_x += content_margin;
                             section1_y += content_margin;
                             float section1_content_w = section1_w - (2 * content_margin);
-
-                            /*GUI.TextField(new Rect(section1_x + content_margin, section1_y, ((section1_content_w * 20) / 100) - content_margin, 40), "Rarity", Styles.Content_Text());
-                            float ItemData_Rarity_Temp = Save_Manager.Data.UserData.Items.ItemData.Roll_Rarity;
-                            ItemData_Rarity_Temp = GUI.HorizontalSlider(new Rect(section1_x + (2 * content_margin), section1_y + 50, section1_content_w - (2 * content_margin), 20), ItemData_Rarity_Temp, 0f, 9f);                            
-                            string rarity_str = "Base item";
-                            int rarity_int = (int)ItemData_Rarity_Temp;
-                            if (rarity_int < 7)
-                            {
-                                if (rarity_int > 0) { rarity_str += " with " + rarity_int + " affix(s)"; }
-                            }
-                            //else 
-                            if (rarity_int == 7) { rarity_str = "Unique"; }
-                            else if (rarity_int == 8) { rarity_str = "Set"; }
-                            else if (rarity_int == 9) { rarity_str = "Legendary"; }
-                            GUI.TextField(new Rect(section1_x + ((section1_content_w * 20) / 100) - (2 * content_margin), section1_y, ((section1_content_w * 40) / 100), 40), rarity_str, Styles.Content_Text());
-                            */
+                                                        
                             float force_w = (section1_content_w - (2 * content_margin)) / 3;
                             if (GUI.Button(new Rect(section1_x, section1_y, force_w, 40), "Unique", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Items.ItemData.ForceUnique)))
                             {
