@@ -31,10 +31,6 @@ namespace LastEpochMods.Managers
         {
             if (Base.Initialized) //Base Initialized
             {
-                /*if (Scenes_Manager.CurrentName == Scenes_Manager.MenuNames[3])
-                {
-                    CharacterSelectionMenu.UI.UpdateGUI();
-                }*/
                 if (Scenes_Manager.GameScene())
                 {
                     if (PauseMenu.Initialized) { PauseMenu.UI.UpdateGUI(); } //Pause Menu UI
@@ -781,7 +777,7 @@ namespace LastEpochMods.Managers
                             float scene_y = mods_content_y;
 
                             //ItemData
-                            float items_data_h = 920 + (5 * content_margin);
+                            float items_data_h = 890 + (5 * content_margin);
                             GUI.DrawTexture(new Rect(scene_x, scene_y, section_w, items_data_h), Textures.black);
                             float section1_x = scene_x + content_margin;
                             float section1_y = scene_y + content_margin;
@@ -793,7 +789,7 @@ namespace LastEpochMods.Managers
                             section1_y += content_margin;
                             float section1_content_w = section1_w - (2 * content_margin);
 
-                            GUI.TextField(new Rect(section1_x + content_margin, section1_y, ((section1_content_w * 20) / 100) - content_margin, 40), "Rarity", Styles.Content_Text());
+                            /*GUI.TextField(new Rect(section1_x + content_margin, section1_y, ((section1_content_w * 20) / 100) - content_margin, 40), "Rarity", Styles.Content_Text());
                             float ItemData_Rarity_Temp = Save_Manager.Data.UserData.Items.ItemData.Roll_Rarity;
                             ItemData_Rarity_Temp = GUI.HorizontalSlider(new Rect(section1_x + (2 * content_margin), section1_y + 50, section1_content_w - (2 * content_margin), 20), ItemData_Rarity_Temp, 0f, 9f);                            
                             string rarity_str = "Base item";
@@ -806,11 +802,28 @@ namespace LastEpochMods.Managers
                             if (rarity_int == 7) { rarity_str = "Unique"; }
                             else if (rarity_int == 8) { rarity_str = "Set"; }
                             else if (rarity_int == 9) { rarity_str = "Legendary"; }
-                            GUI.TextField(new Rect(section1_x + ((section1_content_w * 20) / 100) - (2 * content_margin), section1_y, ((section1_content_w * 40) / 100), 40), rarity_str, Styles.Content_Text());                            
-                            if (GUI.Button(new Rect(section1_x + ((section1_content_w * 60) / 100), section1_y + content_margin, ((section1_content_w * 40) / 100), 40), "Enable / Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Items.ItemData.Enable_Rarity)))
-                            { Save_Manager.Data.UserData.Items.ItemData.Enable_Rarity = !Save_Manager.Data.UserData.Items.ItemData.Enable_Rarity; }
-                            Save_Manager.Data.UserData.Items.ItemData.Roll_Rarity = (byte)ItemData_Rarity_Temp;
-                            section1_y += 70; // + content_margin;
+                            GUI.TextField(new Rect(section1_x + ((section1_content_w * 20) / 100) - (2 * content_margin), section1_y, ((section1_content_w * 40) / 100), 40), rarity_str, Styles.Content_Text());
+                            */
+                            float force_w = (section1_content_w - (2 * content_margin)) / 3;
+                            if (GUI.Button(new Rect(section1_x, section1_y, force_w, 40), "Unique", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Items.ItemData.ForceUnique)))
+                            {
+                                Save_Manager.Data.UserData.Items.ItemData.ForceSet = false;
+                                Save_Manager.Data.UserData.Items.ItemData.ForceLegendary = false;
+                                Save_Manager.Data.UserData.Items.ItemData.ForceUnique = !Save_Manager.Data.UserData.Items.ItemData.ForceUnique;
+                            }
+                            if (GUI.Button(new Rect(section1_x + force_w + content_margin, section1_y, force_w, 40), "Set", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Items.ItemData.ForceSet)))
+                            {
+                                Save_Manager.Data.UserData.Items.ItemData.ForceUnique = false;
+                                Save_Manager.Data.UserData.Items.ItemData.ForceLegendary = false;
+                                Save_Manager.Data.UserData.Items.ItemData.ForceSet = !Save_Manager.Data.UserData.Items.ItemData.ForceSet;
+                            }
+                            if (GUI.Button(new Rect(section1_x + (2 * (force_w + content_margin)), section1_y, force_w, 40), "Legendary", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Items.ItemData.ForceLegendary)))
+                            {
+                                Save_Manager.Data.UserData.Items.ItemData.ForceSet = false;
+                                Save_Manager.Data.UserData.Items.ItemData.ForceUnique = false;
+                                Save_Manager.Data.UserData.Items.ItemData.ForceLegendary = !Save_Manager.Data.UserData.Items.ItemData.ForceLegendary;
+                            }
+                            section1_y += 40; // + content_margin;
 
                             GUI.TextField(new Rect(section1_x + content_margin, section1_y, ((section1_content_w * 40) / 100) - content_margin, 40), "Implicits Values", Styles.Content_Text());
                             float ItemData_Implicits_Temp = Save_Manager.Data.UserData.Items.ItemData.Roll_Implicit;

@@ -90,7 +90,7 @@ namespace LastEpochMods.Mods.Items
                                         ((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Materials) && (ItemList.isCraftingItem(__1.itemType))) ||
                                         ((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_UniqueAndSet) && (Item.rarityIsUniqueSetOrLegendary(__1.rarity))))
                                 {
-                                    __2 = PlayerFinder.getPlayerActor().position();
+                                    //__2 = PlayerFinder.getPlayerActor().position();
                                     __instance.pickupItem(__0, item_id);
                                     if ((Save_Manager.Data.UserData.Items.AutoPickup.AutoStore_Materials) &&
                                         (ItemList.isCraftingItem(__1.itemType)) &&
@@ -164,6 +164,25 @@ namespace LastEpochMods.Mods.Items
             }
         }
 
+        //Potions
+        [HarmonyPatch(typeof(GeneratePotions), "TryToDropPotion")]
+        public class GeneratePotions_TryToDropPotion
+        {
+            [HarmonyPrefix]
+            static void Prefix(ref UnityEngine.Vector3 __0, ref int __1)
+            {
+                __1 = 255; //Allow Drop if Player already have Max Pots
+                try
+                {
+                    if (Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Pots)
+                    {
+                        __0 = PlayerFinder.getPlayerActor().position();
+                    }
+                }                        
+                catch { }
+            }
+        }
+
         [HarmonyPatch(typeof(GroundItemManager), "dropPotionForPlayer")]
         public class dropPotionForPlayer
         {
@@ -179,14 +198,13 @@ namespace LastEpochMods.Mods.Items
                         {
                             if (pick_pot_interaction.id == pot_id)
                             {
-                                __1 = PlayerFinder.getPlayerActor().position();
                                 __instance.pickupPotion(__0, pot_id, pick_pot_interaction);
                                 break;
                             }
                         }
                     }
                 }
-                catch { Main.logger_instance.Error("GroundItemManager:dropPotionForPlayer"); }
+                catch { Main.logger_instance.Error("GroundItemManager:dropPotionForPlayer PostFix"); }
             }
         }
 

@@ -115,13 +115,30 @@ namespace LastEpochMods.Mods.Items
         public class GenerateItems_RollRarity
         {
             [HarmonyPrefix]
-            static bool Prefix(ref byte __result, ref int __0)
+            static bool Prefix(ref byte __result, int __0)
             {
                 if (Scenes_Manager.GameScene())
                 {
                     if (!ForceDrop.ForceDrop.drop.generating_item)
                     {
-                        if (Save_Manager.Data.UserData.Items.ItemData.Enable_Rarity)
+                        if (Save_Manager.Data.UserData.Items.ItemData.ForceUnique)
+                        {
+                            __result = 7;
+                            return false;
+                        }
+                        else if (Save_Manager.Data.UserData.Items.ItemData.ForceSet)
+                        {
+                            __result = 8;
+                            return false;
+                        }
+                        else if (Save_Manager.Data.UserData.Items.ItemData.ForceLegendary)
+                        {
+                            __result = 9;
+                            return false;
+                        }
+                        else { return true; }
+
+                        /*if (Save_Manager.Data.UserData.Items.ItemData.Enable_Rarity)
                         {
                             byte result = Save_Manager.Data.UserData.Items.ItemData.Roll_Rarity;
                             if (result < 0) { result = 0; }
@@ -129,7 +146,7 @@ namespace LastEpochMods.Mods.Items
                             __result = result;
                             return false;
                         }
-                        else { return true; }
+                        else { return true; }*/
                     }
                     else { return true; }
                 }
@@ -142,7 +159,7 @@ namespace LastEpochMods.Mods.Items
         public class GenerateItems_DropItemAtPoint
         {
             [HarmonyPrefix]
-            static void Prefix(GenerateItems __instance, ref ItemDataUnpacked __0, UnityEngine.Vector3 __1, int __2)
+            static void Prefix(GenerateItems __instance, ref ItemDataUnpacked __0, ref UnityEngine.Vector3 __1, int __2)
             {
                 if (Scenes_Manager.GameScene())
                 {
@@ -150,7 +167,6 @@ namespace LastEpochMods.Mods.Items
                     {
                         ItemData item_data = __0.TryCast<ItemData>();
                         int item_type = System.Convert.ToInt32(item_data.itemType);
-                        //Main.logger_instance.Msg("item_type = " + item_type + " : " + __0.itemType);
                         if ((!item_data.isUnique()) && (!item_data.isSet()) && (item_data.itemType < 34))
                         {
                             bool Idol = false;
@@ -171,7 +187,7 @@ namespace LastEpochMods.Mods.Items
                                 __0.AddRandomSealedAffix(seal_tier);
                             }
                             int nb_affixes_wanted = UnityEngine.Random.RandomRangeInt(Save_Manager.Data.UserData.Items.ItemData.Min_affixs, Save_Manager.Data.UserData.Items.ItemData.Max_affixs + 1);
-                            if (Idol) { nb_affixes_wanted = 2; }
+                            if ((Idol) && (!item_data.isUniqueSetOrLegendary())) { nb_affixes_wanted = 2; } //Idol not legendary
 
                             System.Collections.Generic.List<int> eligibles_single_affixes = new System.Collections.Generic.List<int>();
                             System.Collections.Generic.List<int> eligibles_multi_affixes = new System.Collections.Generic.List<int>();
@@ -265,14 +281,23 @@ namespace LastEpochMods.Mods.Items
                                     else { item_rarity = (byte)nb_affixs; }
                                     __0.rarity = item_rarity;
                                 }
-                            }
+                            }                            
                             __0.RefreshIDAndValues();
+                        }
+
+                        //Move item to Player for AutoPickup
+                        if (((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Key) && (Item.isKey(__0.itemType))) ||
+                            ((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Materials) && (ItemList.isCraftingItem(__0.itemType))) ||
+                            //((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Materials) && (ItemList.(__0.itemType))) ||
+                            ((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_UniqueAndSet) && (Item.rarityIsUniqueSetOrLegendary(__0.rarity))))
+                        {
+                            __1 = PlayerFinder.getPlayerActor().position();
                         }
                     }
                 }
             }
         }
-        
+
         [HarmonyPatch(typeof(ItemData), "randomiseImplicitRolls")]
         public class ItemData_randomiseImplicitRolls
         {

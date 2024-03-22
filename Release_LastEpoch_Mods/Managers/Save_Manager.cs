@@ -303,8 +303,11 @@ namespace LastEpochMods.Managers
             }
             public struct ItemData
             {
-                public bool Enable_Rarity;
-                public byte Roll_Rarity;
+                public bool ForceUnique;
+                public bool ForceSet;
+                public bool ForceLegendary;
+                //public bool Enable_Rarity;
+                //public byte Roll_Rarity;
                 public bool Enable_Implicit;
                 public byte Roll_Implicit;
                 public bool Enable_ForgingPotencial;
@@ -542,8 +545,11 @@ namespace LastEpochMods.Managers
                         },
                         ItemData =
                         {
-                            Enable_Rarity = false,
-                            Roll_Rarity = 7,
+                            ForceUnique = false,
+                            ForceSet = false,
+                            ForceLegendary = false,
+                            //Enable_Rarity = false,
+                            //Roll_Rarity = 7,
                             Enable_Implicit = false,
                             Roll_Implicit = 255,
                             Enable_ForgingPotencial = false,
