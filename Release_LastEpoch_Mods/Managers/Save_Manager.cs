@@ -567,7 +567,7 @@ namespace LastEpochMods.Managers
                             //Enable_Min_Affixs = false,
                             Min_affixs = 0,
                             //Enable_Max_Affixs = false,
-                            Max_affixs = 4//,
+                            Max_affixs = 0//,
                             //Allow_6_Affixes = false
                         },
                         Headhunter =
