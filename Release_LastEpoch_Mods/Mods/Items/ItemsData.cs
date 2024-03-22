@@ -103,16 +103,14 @@ namespace LastEpochMods.Mods.Items
                             int max = 4;
                             if (Save_Manager.Data.UserData.Items.ItemData.Min_affixs > max) { max = Save_Manager.Data.UserData.Items.ItemData.Min_affixs; }
                             __result = max;
-                        }
-                        else if ((__0 < 34) && (__result > 2))
-                        {
-                            __result = 2;
                         }                        
+                        else if ((__0 < 34) && (__result > 2)) { __result = 2; } //Idols                      
                     }
                 }
             }
         } 
-            
+        
+        //Need to be replace by ForceUnique ForceSet and ForceLgendary
         [HarmonyPatch(typeof(GenerateItems), "RollRarity")]
         public class GenerateItems_RollRarity
         {
@@ -123,12 +121,10 @@ namespace LastEpochMods.Mods.Items
                 {
                     if (!ForceDrop.ForceDrop.drop.generating_item)
                     {
-                        //Main.logger_instance.Msg("GenerateItems:RollRarity");
                         if (Save_Manager.Data.UserData.Items.ItemData.Enable_Rarity)
                         {
                             byte result = Save_Manager.Data.UserData.Items.ItemData.Roll_Rarity;
                             if (result < 0) { result = 0; }
-                            //else if (result == 9) { result = 7; }
                             else if ((result > 4) && (result < 7)) { result = 4; }
                             __result = result;
                             return false;
@@ -153,9 +149,6 @@ namespace LastEpochMods.Mods.Items
                     if (!ForceDrop.ForceDrop.drop.generating_item)
                     {
                         ItemData item_data = __0.TryCast<ItemData>();
-
-                        //Item.(item_data.itemType);
-
                         int item_type = System.Convert.ToInt32(item_data.itemType);
                         //Main.logger_instance.Msg("item_type = " + item_type + " : " + __0.itemType);
                         if ((!item_data.isUnique()) && (!item_data.isSet()) && (item_data.itemType < 34))
@@ -171,13 +164,15 @@ namespace LastEpochMods.Mods.Items
                             }
                             if (Save_Manager.Data.UserData.Items.ItemData.Force_Seal)
                             {
-                                int seal_tier = UnityEngine.Random.RandomRangeInt(0, 7);
+                                int min_tier = 1;
+                                int max_tier = 8;
+                                if (Idol) { max_tier = 2; }
+                                int seal_tier = UnityEngine.Random.Range(min_tier, max_tier);
                                 __0.AddRandomSealedAffix(seal_tier);
                             }
-                            //int nb_affixes_wanted = Save_Manager.Data.UserData.Items.ItemData.Min_affixs;
                             int nb_affixes_wanted = UnityEngine.Random.RandomRangeInt(Save_Manager.Data.UserData.Items.ItemData.Min_affixs, Save_Manager.Data.UserData.Items.ItemData.Max_affixs + 1);
+                            if (Idol) { nb_affixes_wanted = 2; }
 
-                            if ((Idol) && (nb_affixs > 2)) { nb_affixes_wanted = 2; }
                             System.Collections.Generic.List<int> eligibles_single_affixes = new System.Collections.Generic.List<int>();
                             System.Collections.Generic.List<int> eligibles_multi_affixes = new System.Collections.Generic.List<int>();
                             if (nb_affixs < nb_affixes_wanted)
@@ -198,8 +193,8 @@ namespace LastEpochMods.Mods.Items
                                 if (!aff.isSealedAffix) { nb_affixs++; }
                                 else { nb_seals++; }
                             }
-                            //Main.logger_instance.Msg("Contain : " + nb_seals + " Seal and " + nb_affixs + " Affixes");
-                              
+                            
+                            //Tier and Value //Nedd to add Min Max Tier in Config
                             foreach (ItemAffix aff in __0.affixes)
                             {
                                 if (!aff.isSealedAffix)
@@ -208,6 +203,7 @@ namespace LastEpochMods.Mods.Items
                                     {
                                         aff.affixTier = (byte)(Save_Manager.Data.UserData.Items.ItemData.Roll_AffixTier - 1);
                                     }
+                                    else if (Idol) { aff.affixTier = 1; }
                                     if (Save_Manager.Data.UserData.Items.ItemData.Enable_AffixsValue)
                                     {
                                         aff.affixRoll = Save_Manager.Data.UserData.Items.ItemData.Roll_AffixValue;
@@ -219,6 +215,7 @@ namespace LastEpochMods.Mods.Items
                                     {
                                         aff.affixTier = (byte)(Save_Manager.Data.UserData.Items.ItemData.Roll_SealTier - 1);
                                     }
+                                    else if (Idol) { aff.affixTier = 1; }
                                     if (Save_Manager.Data.UserData.Items.ItemData.Enable_SealValue)
                                     {
                                         aff.affixRoll = Save_Manager.Data.UserData.Items.ItemData.Roll_SealValue;
@@ -228,7 +225,8 @@ namespace LastEpochMods.Mods.Items
                             if ((__0.rarity < nb_affixs) && (!item_data.isUniqueSetOrLegendary()))
                             {
                                 byte item_rarity = 0;
-                                if (nb_affixs > 4) { item_rarity = 4; }
+                                if (Idol) { item_rarity = 2; }
+                                else if (nb_affixs > 4) { item_rarity = 4; }
                                 else { item_rarity = (byte)nb_affixs; }
                                 __0.rarity = item_rarity;
                             }
@@ -247,7 +245,7 @@ namespace LastEpochMods.Mods.Items
                                         float corruption = UnityEngine.Random.Range(0f, 255f);
                                         if (unique.legendaryType == UniqueList.LegendaryType.LegendaryPotential)
                                         {
-                                            int min = UnityEngine.Random.RandomRangeInt(0, 5);                                            
+                                            int min = UnityEngine.Random.Range(0, 5);                                            
                                             float multiplier = UnityEngine.Random.Range(0f, 255f);
                                             bool out_b = false;
                                             __0.rollLegendaryPotential(unique, min, 100, corruption, multiplier, out out_b);
@@ -262,7 +260,8 @@ namespace LastEpochMods.Mods.Items
                                 else //No Unique found = Set rarity to base item
                                 {
                                     byte item_rarity = 0;
-                                    if (nb_affixs > 4) { item_rarity = 4; }
+                                    if (Idol) { item_rarity = 2; }
+                                    else if (nb_affixs > 4) { item_rarity = 4; }
                                     else { item_rarity = (byte)nb_affixs; }
                                     __0.rarity = item_rarity;
                                 }
