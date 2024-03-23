@@ -6,6 +6,7 @@ namespace LastEpochMods.Mods.Items
 {
     public class AutoPickup
     {
+        //AutoStore Materials all 10 sec
         public class AutoStoreMaterialsTimer
         {
             public static void Update()
@@ -44,6 +45,7 @@ namespace LastEpochMods.Mods.Items
             }
         }
 
+        //AutoStore Materials on Inventory Open
         [HarmonyPatch(typeof(InventoryPanelUI), "OnEnable")]
         public class InventoryPanelUI_OnEnable
         {
@@ -60,7 +62,10 @@ namespace LastEpochMods.Mods.Items
                 catch { Main.logger_instance.Error("InventoryPanelUI:OnEnable"); }
             }
         }
-          
+
+        //AutoPickup Materials, Keys and Items without Drop //AutoSell
+        public static ItemFilterManager item_filter_manager = null;
+        public static Actor player_actor = null;
         [HarmonyPatch(typeof(GroundItemManager), "dropItemForPlayer")]
         public class dropItemForPlayer
         {
@@ -68,16 +73,18 @@ namespace LastEpochMods.Mods.Items
             static bool Prefix(ref GroundItemManager __instance, ref Actor __0, ref ItemData __1, ref UnityEngine.Vector3 __2, bool __3)
             {
                 bool result = true;
-                item_filter_pickup = default_item_filter_id;
-                System.UInt32 item_id = __instance.nextItemId - 1;
                 if ((Item.isKey(__1.itemType)) || (ItemList.isCraftingItem(__1.itemType)))
                 {
                     if (((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Key) && (Item.isKey(__1.itemType))) ||
                         ((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Materials) && (ItemList.isCraftingItem(__1.itemType))))
                     {
-                        //Main.logger_instance.Msg("Move Material or Key before Pickup");
                         __2 = PlayerFinder.getPlayerActor().position();
-                        item_filter_pickup = item_id;
+                        ItemContainersManager.instance.attemptToPickupItem(__1, __2);
+                        if ((Save_Manager.Data.UserData.Items.AutoPickup.AutoStore_Materials) && (ItemList.isCraftingItem(__1.itemType)))
+                        {
+                            InventoryPanelUI.instance.StoreMaterialsButtonPress();
+                        }
+                        result = false;
                     }
                 }
                 else if (__1.itemType < 24)
@@ -119,15 +126,15 @@ namespace LastEpochMods.Mods.Items
                             }
                             if ((FilterShow) && (Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Filter))
                             {
-                                //Main.logger_instance.Msg("Move " + item_id + " before Pickup");
                                 __2 = PlayerFinder.getPlayerActor().position();
-                                item_filter_pickup = item_id;
+                                ItemContainersManager.instance.attemptToPickupItem(__1, __2); //Pickup
+                                result = false;
+
                             }
                             else if ((FilterRemove) && (Save_Manager.Data.UserData.Items.Pickup.RemoveItemNotInFilter))
                             {
                                 var price = __1.TryCast<ItemDataUnpacked>().VendorSaleValue;
-                                PlayerFinder.getPlayerActor().goldTracker.modifyGold(price);
-                                //Main.logger_instance.Msg("Sell Item : " + price + " gold");
+                                PlayerFinder.getPlayerActor().goldTracker.modifyGold(price); //Sell
                                 result = false;
                             }
                         }
@@ -135,24 +142,10 @@ namespace LastEpochMods.Mods.Items
                 }
 
                 return result;
-            }
-            [HarmonyPostfix]
-            static void Postfix(ref GroundItemManager __instance, ref Actor __0, ref ItemData __1, ref UnityEngine.Vector3 __2, bool __3)
-            {
-                if (item_filter_pickup != default_item_filter_id)
-                {
-                    System.UInt32 item_id = __instance.nextItemId - 1;
-                    //Main.logger_instance.Msg("Pickup Item");
-                    __instance.pickupItem(__0, item_id);
-
-                    if ((Save_Manager.Data.UserData.Items.AutoPickup.AutoStore_Materials) && (ItemList.isCraftingItem(__1.itemType)))
-                    {
-                        InventoryPanelUI.instance.StoreMaterialsButtonPress();
-                    }
-                }
-            }
+            }            
         }
 
+        //AutoPickup Gold without Drop
         [HarmonyPatch(typeof(GroundItemManager), "dropGoldForPlayer")]
         public class dropGoldForPlayer
         {
@@ -170,26 +163,9 @@ namespace LastEpochMods.Mods.Items
                 }
                 else { return true; }
             }
-            /*[HarmonyPostfix]
-            static void Postfix(ref GroundItemManager __instance, ref Actor __0, ref int __1, ref UnityEngine.Vector3 __2, ref bool __3)
-            {
-                if ((!__instance.IsNullOrDestroyed()) && (Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Gold))
-                {
-                    Main.logger_instance.Msg("GroundItemManager:dropGoldForPlayer");
-                    System.UInt32 gold_id = __instance.nextGoldId - 1;
-                    foreach (GoldPickupInteraction gold_pickup_interaction in __instance.activeGoldPiles)
-                    {
-                        if (gold_pickup_interaction.id == gold_id)
-                        {                            
-                            __instance.pickupGold(__0, gold_id, gold_pickup_interaction);
-                            Main.logger_instance.Msg("Gold Pickup");
-                            break;
-                        }
-                    }
-                }
-            }*/
         }
 
+        //AutoPickup Xp Tome (with drop)
         [HarmonyPatch(typeof(GroundItemManager), "dropXPTomeForPlayer")]
         public class dropXPTomeForPlayer
         {
@@ -212,32 +188,33 @@ namespace LastEpochMods.Mods.Items
             }
         }
 
-        //Move Potion to Player before Drop
+        //Allow Drop if Player already have Max Pots
         [HarmonyPatch(typeof(GeneratePotions), "TryToDropPotion")]
         public class GeneratePotions_TryToDropPotion
         {
             [HarmonyPrefix]
             static void Prefix(ref UnityEngine.Vector3 __0, ref int __1)
             {
-                //__1 = 255; //Allow Drop if Player already have Max Pots
-                try
-                {
-                    if (Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Pots)
-                    {
-                        __0 = PlayerFinder.getPlayerActor().position();
-                    }
-                }                        
-                catch { }
+                __1 = 255;
             }
         }
 
+        //AutoPickup Potions (with drop)
         [HarmonyPatch(typeof(GroundItemManager), "dropPotionForPlayer")]
         public class dropPotionForPlayer
         {
+            [HarmonyPrefix]
+            static void Prefix(GroundItemManager __instance, Actor __0, ref UnityEngine.Vector3 __1, bool __2)
+            {
+                if (Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Pots)
+                {
+                    __1 = PlayerFinder.getPlayerActor().position(); //Move to Player before drop
+                    //Find a way to pickup here and don't drop
+                }
+            }
             [HarmonyPostfix]
             static void Postfix(GroundItemManager __instance, Actor __0, ref UnityEngine.Vector3 __1, bool __2)
             {
-                //Main.logger_instance.Msg("dropPotionForPlayer");
                 try
                 {
                     if ((!__instance.IsNullOrDestroyed()) && (Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Pots))
@@ -256,11 +233,5 @@ namespace LastEpochMods.Mods.Items
                 catch { Main.logger_instance.Error("GroundItemManager:dropPotionForPlayer PostFix"); }
             }
         }
-
-        //From Filter
-        public static ItemFilterManager item_filter_manager = null;
-        public static Actor player_actor = null;
-        public static uint default_item_filter_id = uint.MaxValue;
-        public static uint item_filter_pickup = default_item_filter_id;        
     }
 }
