@@ -63,9 +63,7 @@ namespace LastEpochMods.Mods.Items
             }
         }
 
-        //AutoPickup Materials, Keys and Items without Drop //AutoStore Materials //AutoSell 
-        public static ItemFilterManager item_filter_manager = null;
-        public static Actor player_actor = null;
+        //AutoPickup Materials, Keys and Items without Drop //AutoStore Materials //AutoSell
         [HarmonyPatch(typeof(GroundItemManager), "dropItemForPlayer")]
         public class dropItemForPlayer
         {
@@ -78,65 +76,56 @@ namespace LastEpochMods.Mods.Items
                     if (((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Key) && (Item.isKey(__1.itemType))) ||
                         ((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Materials) && (ItemList.isCraftingItem(__1.itemType))))
                     {
-                        __2 = PlayerFinder.getPlayerActor().position();
+                        __2 = __0.position();
                         bool pickup = ItemContainersManager.instance.attemptToPickupItem(__1, __2);
-                        if (pickup) { result = false; }
-                        if ((Save_Manager.Data.UserData.Items.AutoPickup.AutoStore_Materials) && (ItemList.isCraftingItem(__1.itemType)))
+                        if (pickup)
                         {
-                            InventoryPanelUI.instance.StoreMaterialsButtonPress();
-                        }                                              
+                            if ((Save_Manager.Data.UserData.Items.AutoPickup.AutoStore_Materials) && (ItemList.isCraftingItem(__1.itemType)))
+                            {
+                                InventoryPanelUI.instance.StoreMaterialsButtonPress();
+                            }
+                            result = false;
+                        }
                     }
                 }
-                else if (__1.itemType < 24)
-                {
-                    if (((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Filter) ||
+                else if ((__1.itemType < 24) &&
+                    ((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Filter) ||
                     (Save_Manager.Data.UserData.Items.Pickup.RemoveItemNotInFilter)))
+                {
+                    ItemFilter filter = null;
+                    try { filter = ItemFilterManager.Instance.Filter; }
+                    catch { Main.logger_instance.Error("Error trying to get user Filter"); }
+                    if (!filter.IsNullOrDestroyed())
                     {
-                        ItemFilter filter = null;
-                        try
+                        bool FilterShow = false;
+                        bool FilterHide = false;
+                        foreach (Rule rule in filter.rules)
                         {
-                            if (item_filter_manager.IsNullOrDestroyed()) { item_filter_manager = ItemFilterManager.Instance; }
-                            if (!item_filter_manager.IsNullOrDestroyed())
+                            if ((rule.isEnabled) && (rule.Match(__1.TryCast<ItemDataUnpacked>())) &&
+                                (((rule.levelDependent) && (rule.LevelInBounds(__0.stats.level))) ||
+                                (!rule.levelDependent)))
                             {
-                                if (!item_filter_manager.Filter.IsNullOrDestroyed()) { filter = item_filter_manager.Filter; }
-                            }
-                        }
-                        catch { Main.logger_instance.Error("Error trying to get user Filter"); }
-                        try
-                        {
-                            if (player_actor.IsNullOrDestroyed()) { player_actor = PlayerFinder.getPlayerActor(); }
-                        }
-                        catch { Main.logger_instance.Error("Error trying to get Player Actor"); }                        
-                        if ((!filter.IsNullOrDestroyed()) && (!__0.IsNullOrDestroyed()))
-                        {
-                            bool FilterShow = false;
-                            bool FilterRemove = false;
-                            foreach (Rule rule in filter.rules)
-                            {
-                                if ((rule.isEnabled) && (rule.Match(__1.TryCast<ItemDataUnpacked>())) && (((rule.levelDependent) && (rule.LevelInBounds(player_actor.stats.level))) || (!rule.levelDependent)))
+                                if (rule.type == Rule.RuleOutcome.SHOW) { FilterShow = true; }
+                                else if (rule.type == Rule.RuleOutcome.HIDE)
                                 {
-                                    if (rule.type == Rule.RuleOutcome.SHOW) { FilterShow = true; }
-                                    else if (rule.type == Rule.RuleOutcome.HIDE)
-                                    {
-                                        FilterShow = false;
-                                        FilterRemove = true;
-                                        break;
-                                    }
+                                    FilterShow = false;
+                                    FilterHide = true;
+                                    break;
                                 }
                             }
-                            if ((FilterShow) && (Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Filter))
-                            {
-                                __2 = PlayerFinder.getPlayerActor().position();
-                                bool pickup = ItemContainersManager.instance.attemptToPickupItem(__1, __2); //Pickup
-                                if (pickup) { result = false; }
+                        }
+                        if ((FilterShow) && (Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Filter))
+                        {
+                            __2 = __0.position();
+                            bool pickup = ItemContainersManager.instance.attemptToPickupItem(__1, __2); //Pickup
+                            if (pickup) { result = false; }
 
-                            }
-                            else if ((FilterRemove) && (Save_Manager.Data.UserData.Items.Pickup.RemoveItemNotInFilter))
-                            {
-                                var price = __1.TryCast<ItemDataUnpacked>().VendorSaleValue;
-                                PlayerFinder.getPlayerActor().goldTracker.modifyGold(price); //Sell
-                                result = false;
-                            }
+                        }
+                        else if ((FilterHide) && (Save_Manager.Data.UserData.Items.Pickup.RemoveItemNotInFilter))
+                        {
+                            var price = __1.TryCast<ItemDataUnpacked>().VendorSaleValue;
+                            __0.goldTracker.modifyGold(price);
+                            result = false;
                         }
                     }
                 }
