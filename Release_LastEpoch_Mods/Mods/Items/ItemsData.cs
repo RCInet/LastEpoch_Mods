@@ -286,13 +286,13 @@ namespace LastEpochMods.Mods.Items
                         }
 
                         //Move item to Player for AutoPickup
-                        if (((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Key) && (Item.isKey(__0.itemType))) ||
+                        /*if (((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Key) && (Item.isKey(__0.itemType))) ||
                             ((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Materials) && (ItemList.isCraftingItem(__0.itemType))) ||
                             //((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Materials) && (ItemList.(__0.itemType))) ||
                             ((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_UniqueAndSet) && (Item.rarityIsUniqueSetOrLegendary(__0.rarity))))
                         {
                             __1 = PlayerFinder.getPlayerActor().position();
-                        }
+                        }*/
                     }
                 }
             }

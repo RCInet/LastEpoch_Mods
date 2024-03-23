@@ -256,7 +256,7 @@ namespace LastEpochMods.Managers
             public struct AutoPickup
             {
                 public bool AutoPickup_Key;
-                public bool AutoPickup_UniqueAndSet;                
+                //public bool AutoPickup_UniqueAndSet;                
                 public bool AutoPickup_Materials;
                 public bool AutoStore_Materials;
                 public bool AutoStore_Materials_WithTimer;
@@ -269,6 +269,7 @@ namespace LastEpochMods.Managers
             public struct Pickup
             {
                 public bool Enable_RangePickup;
+                public bool RemoveItemNotInFilter;
             }
             public struct DropNotification
             {
@@ -530,13 +531,14 @@ namespace LastEpochMods.Managers
                             AutoPickup_Gold = false,
                             AutoPickup_Key = false,
                             AutoPickup_Pots = false,
-                            AutoPickup_UniqueAndSet = false,
+                            //AutoPickup_UniqueAndSet = false,
                             AutoPickup_XpTome = false,
-                            AutoPickup_Filter = false
+                            AutoPickup_Filter = false                            
                         },
                         Pickup =
                         {
-                            Enable_RangePickup = false
+                            Enable_RangePickup = false,
+                            RemoveItemNotInFilter = false
                         },
                         DropRate =
                         {

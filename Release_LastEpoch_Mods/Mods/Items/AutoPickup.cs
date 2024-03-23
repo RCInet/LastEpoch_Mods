@@ -59,49 +59,97 @@ namespace LastEpochMods.Mods.Items
                 }
                 catch { Main.logger_instance.Error("InventoryPanelUI:OnEnable"); }
             }
-        }        
-
+        }
+          
         [HarmonyPatch(typeof(GroundItemManager), "dropItemForPlayer")]
         public class dropItemForPlayer
         {
-            [HarmonyPostfix]
-            static void Postfix(ref GroundItemManager __instance, ref Actor __0, ref ItemData __1, ref UnityEngine.Vector3 __2, bool __3)
+            [HarmonyPrefix]
+            static bool Prefix(ref GroundItemManager __instance, ref Actor __0, ref ItemData __1, ref UnityEngine.Vector3 __2, bool __3)
             {
-                try
+                bool result = true;
+                item_filter_pickup = default_item_filter_id;
+                System.UInt32 item_id = __instance.nextItemId - 1;
+                if ((Item.isKey(__1.itemType)) || (ItemList.isCraftingItem(__1.itemType)))
                 {
-                    if (!__instance.IsNullOrDestroyed())
+                    if (((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Key) && (Item.isKey(__1.itemType))) ||
+                        ((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Materials) && (ItemList.isCraftingItem(__1.itemType))))
                     {
-                        bool pickup_with_filter = false;
-                        System.UInt32 item_id = __instance.nextItemId - 1;
-                        if (Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Filter)
+                        //Main.logger_instance.Msg("Move Material or Key before Pickup");
+                        __2 = PlayerFinder.getPlayerActor().position();
+                        item_filter_pickup = item_id;
+                    }
+                }
+                else if (__1.itemType < 24)
+                {
+                    if (((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Filter) ||
+                    (Save_Manager.Data.UserData.Items.Pickup.RemoveItemNotInFilter)))
+                    {
+                        ItemFilter filter = null;
+                        try
                         {
-                            if (item_id == item_filter_id) { pickup_with_filter = true; }
-                        }
-                        if (pickup_with_filter)
-                        {
-                            __2 = PlayerFinder.getPlayerActor().position();
-                            __instance.pickupItem(__0, item_id);
-                        }
-                        else
-                        {
-                            if ((!__0.IsNullOrDestroyed()) && (!__1.IsNullOrDestroyed()))
+                            if (item_filter_manager.IsNullOrDestroyed()) { item_filter_manager = ItemFilterManager.Instance; }
+                            if (!item_filter_manager.IsNullOrDestroyed())
                             {
-                                if (((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Key) && (Item.isKey(__1.itemType))) ||
-                                        ((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Materials) && (ItemList.isCraftingItem(__1.itemType))) ||
-                                        ((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_UniqueAndSet) && (Item.rarityIsUniqueSetOrLegendary(__1.rarity))))
+                                if (!item_filter_manager.Filter.IsNullOrDestroyed()) { filter = item_filter_manager.Filter; }
+                            }
+                        }
+                        catch { Main.logger_instance.Error("Error trying to get user Filter"); }
+                        try
+                        {
+                            if (player_actor.IsNullOrDestroyed()) { player_actor = PlayerFinder.getPlayerActor(); }
+                        }
+                        catch { Main.logger_instance.Error("Error trying to get Player Actor"); }                        
+                        if ((!filter.IsNullOrDestroyed()) && (!__0.IsNullOrDestroyed()))
+                        {
+                            bool FilterShow = false;
+                            bool FilterRemove = false;
+                            foreach (Rule rule in filter.rules)
+                            {
+                                if ((rule.isEnabled) && (rule.Match(__1.TryCast<ItemDataUnpacked>())) && (((rule.levelDependent) && (rule.LevelInBounds(player_actor.stats.level))) || (!rule.levelDependent)))
                                 {
-                                    //__2 = PlayerFinder.getPlayerActor().position();
-                                    __instance.pickupItem(__0, item_id);
-                                    if ((Save_Manager.Data.UserData.Items.AutoPickup.AutoStore_Materials) &&
-                                        (ItemList.isCraftingItem(__1.itemType)) &&
-                                        (!InventoryPanelUI.instance.IsNullOrDestroyed()))
-                                    { InventoryPanelUI.instance.StoreMaterialsButtonPress(); }
+                                    if (rule.type == Rule.RuleOutcome.SHOW) { FilterShow = true; }
+                                    else if (rule.type == Rule.RuleOutcome.HIDE)
+                                    {
+                                        FilterShow = false;
+                                        FilterRemove = true;
+                                        break;
+                                    }
                                 }
+                            }
+                            if ((FilterShow) && (Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Filter))
+                            {
+                                //Main.logger_instance.Msg("Move " + item_id + " before Pickup");
+                                __2 = PlayerFinder.getPlayerActor().position();
+                                item_filter_pickup = item_id;
+                            }
+                            else if ((FilterRemove) && (Save_Manager.Data.UserData.Items.Pickup.RemoveItemNotInFilter))
+                            {
+                                var price = __1.TryCast<ItemDataUnpacked>().VendorSaleValue;
+                                PlayerFinder.getPlayerActor().goldTracker.modifyGold(price);
+                                //Main.logger_instance.Msg("Sell Item : " + price + " gold");
+                                result = false;
                             }
                         }
                     }
                 }
-                catch { Main.logger_instance.Error("GroundItemManager:dropItemForPlayer"); }
+
+                return result;
+            }
+            [HarmonyPostfix]
+            static void Postfix(ref GroundItemManager __instance, ref Actor __0, ref ItemData __1, ref UnityEngine.Vector3 __2, bool __3)
+            {
+                if (item_filter_pickup != default_item_filter_id)
+                {
+                    System.UInt32 item_id = __instance.nextItemId - 1;
+                    //Main.logger_instance.Msg("Pickup Item");
+                    __instance.pickupItem(__0, item_id);
+
+                    if ((Save_Manager.Data.UserData.Items.AutoPickup.AutoStore_Materials) && (ItemList.isCraftingItem(__1.itemType)))
+                    {
+                        InventoryPanelUI.instance.StoreMaterialsButtonPress();
+                    }
+                }
             }
         }
 
@@ -164,7 +212,7 @@ namespace LastEpochMods.Mods.Items
             }
         }
 
-        //Potions
+        //Move Potion to Player before Drop
         [HarmonyPatch(typeof(GeneratePotions), "TryToDropPotion")]
         public class GeneratePotions_TryToDropPotion
         {
@@ -189,7 +237,7 @@ namespace LastEpochMods.Mods.Items
             [HarmonyPostfix]
             static void Postfix(GroundItemManager __instance, Actor __0, ref UnityEngine.Vector3 __1, bool __2)
             {
-                Main.logger_instance.Msg("dropPotionForPlayer");
+                //Main.logger_instance.Msg("dropPotionForPlayer");
                 try
                 {
                     if ((!__instance.IsNullOrDestroyed()) && (Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Pots))
@@ -212,55 +260,7 @@ namespace LastEpochMods.Mods.Items
         //From Filter
         public static ItemFilterManager item_filter_manager = null;
         public static Actor player_actor = null;
-        public static uint default_item_filter_id = 9999;
-        public static uint item_filter_id = default_item_filter_id;
-        [HarmonyPatch(typeof(GroundItemVisuals), "initialise", new System.Type[] { typeof(ItemDataUnpacked), typeof(uint), typeof(GroundItemLabel), typeof(GroundItemRarityVisuals), typeof(bool) })]
-        private static class GroundItemVisuals_initialise
-        {
-            [HarmonyPostfix]
-            private static void Postfix(GroundItemVisuals __instance, ItemDataUnpacked __0, uint __1, GroundItemLabel __2, GroundItemRarityVisuals __3, bool __4)
-            {
-                item_filter_id = default_item_filter_id;
-                if (Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Filter)
-                {
-                    ItemFilter filter = null;
-                    try
-                    {
-                        if (item_filter_manager.IsNullOrDestroyed()) { item_filter_manager = ItemFilterManager.Instance; }
-                        if (!item_filter_manager.IsNullOrDestroyed())
-                        {
-                            if (!item_filter_manager.Filter.IsNullOrDestroyed()) { filter = item_filter_manager.Filter; }
-                        }
-                    }
-                    catch { Main.logger_instance.Error("Error trying to get user Filter"); }
-                    try
-                    {
-                        if (player_actor.IsNullOrDestroyed()) { player_actor = PlayerFinder.getPlayerActor(); }                        
-                    }
-                    catch { Main.logger_instance.Error("Error trying to get Player Actor"); }
-                    bool Show = false;
-                    if ((!filter.IsNullOrDestroyed()) && (!__0.IsNullOrDestroyed()))
-                    {
-                        try
-                        {
-                            foreach (Rule rule in filter.rules)
-                            {
-                                if ((rule.isEnabled) && (rule.Match(__0)) && (((rule.levelDependent) && (rule.LevelInBounds(player_actor.stats.level))) || (!rule.levelDependent)))
-                                {
-                                    if (rule.type == Rule.RuleOutcome.SHOW) { Show = true; }
-                                    else if (rule.type == Rule.RuleOutcome.HIDE) { Show = false; }
-                                }
-                            }
-                        }
-                        catch { Main.logger_instance.Error("Error check rules"); }
-                    }
-                    if (Show) //&& (!player_actor.IsNullOrDestroyed()))
-                    {
-                        try { item_filter_id = __1; }
-                        catch { Main.logger_instance.Error("Error pickup item : " + __1); }
-                    }
-                }
-            }
-        }
+        public static uint default_item_filter_id = uint.MaxValue;
+        public static uint item_filter_pickup = default_item_filter_id;        
     }
 }
