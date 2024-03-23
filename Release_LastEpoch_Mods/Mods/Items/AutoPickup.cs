@@ -63,7 +63,7 @@ namespace LastEpochMods.Mods.Items
             }
         }
 
-        //AutoPickup Materials, Keys and Items without Drop //AutoSell
+        //AutoPickup Materials, Keys and Items without Drop //AutoStore Materials //AutoSell 
         public static ItemFilterManager item_filter_manager = null;
         public static Actor player_actor = null;
         [HarmonyPatch(typeof(GroundItemManager), "dropItemForPlayer")]
@@ -79,12 +79,12 @@ namespace LastEpochMods.Mods.Items
                         ((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Materials) && (ItemList.isCraftingItem(__1.itemType))))
                     {
                         __2 = PlayerFinder.getPlayerActor().position();
-                        ItemContainersManager.instance.attemptToPickupItem(__1, __2);
+                        bool pickup = ItemContainersManager.instance.attemptToPickupItem(__1, __2);
+                        if (pickup) { result = false; }
                         if ((Save_Manager.Data.UserData.Items.AutoPickup.AutoStore_Materials) && (ItemList.isCraftingItem(__1.itemType)))
                         {
                             InventoryPanelUI.instance.StoreMaterialsButtonPress();
-                        }
-                        result = false;
+                        }                                              
                     }
                 }
                 else if (__1.itemType < 24)
@@ -127,8 +127,8 @@ namespace LastEpochMods.Mods.Items
                             if ((FilterShow) && (Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Filter))
                             {
                                 __2 = PlayerFinder.getPlayerActor().position();
-                                ItemContainersManager.instance.attemptToPickupItem(__1, __2); //Pickup
-                                result = false;
+                                bool pickup = ItemContainersManager.instance.attemptToPickupItem(__1, __2); //Pickup
+                                if (pickup) { result = false; }
 
                             }
                             else if ((FilterRemove) && (Save_Manager.Data.UserData.Items.Pickup.RemoveItemNotInFilter))
