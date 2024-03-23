@@ -447,6 +447,7 @@ namespace LastEpochMods.Managers
                         Section_2_X = Section_1_X + Section_W + ui_margin;
                         Section_3_X = Section_2_X + Section_W + ui_margin;
 
+
                         if (BaseMenu.Character.Show)
                         {
                             float scene_x = Section_1_X;
@@ -466,36 +467,48 @@ namespace LastEpochMods.Managers
                             section1_y += content_margin;
                             float section1_content_w = section1_w - (2 * content_margin);
 
-                            if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "GodMode", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.Cheats.Enable_GodMode)))
-                            { Save_Manager.Data.UserData.Character.Cheats.Enable_GodMode = !Save_Manager.Data.UserData.Character.Cheats.Enable_GodMode; }
-                            section1_y += 40 + content_margin;
+                            section1_y += CustomControls.Toggle(section1_x, section1_y, section1_content_w, "GodMode", ref Save_Manager.Data.UserData.Character.Cheats.Enable_GodMode);
 
-                            if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Force Low Life", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.Cheats.Enable_LowLife)))
+                            /*if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "GodMode", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.Cheats.Enable_GodMode)))
+                            { Save_Manager.Data.UserData.Character.Cheats.Enable_GodMode = !Save_Manager.Data.UserData.Character.Cheats.Enable_GodMode; }
+                            section1_y += 40 + content_margin;*/
+
+                            section1_y += CustomControls.Toggle(section1_x, section1_y, section1_content_w, "Force Low Life", ref Save_Manager.Data.UserData.Character.Cheats.Enable_LowLife);
+
+                            /*if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Force Low Life", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.Cheats.Enable_LowLife)))
                             { Save_Manager.Data.UserData.Character.Cheats.Enable_LowLife = !Save_Manager.Data.UserData.Character.Cheats.Enable_LowLife; }
-                            section1_y += 40 + content_margin;
+                            section1_y += 40 + content_margin;*/
 
                             if (!Mods.Character.Cheats.LevelUp.AlreadyMaxLevel())
                             {
-                                if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Level Up", Managers.GUI_Manager.Styles.Content_Button()))
-                                { Mods.Character.Cheats.LevelUp.Once(); }
-                                section1_y += 40 + content_margin;
+                                section1_y += CustomControls.Function(section1_x, section1_y, section1_content_w, "Level Up", Mods.Character.Cheats.LevelUp.Once);
 
-                                if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Level Up to Max", Managers.GUI_Manager.Styles.Content_Button()))
+                                /*if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Level Up", Managers.GUI_Manager.Styles.Content_Button()))
+                                { Mods.Character.Cheats.LevelUp.Once(); }
+                                section1_y += 40 + content_margin;*/
+
+                                section1_y += CustomControls.Function(section1_x, section1_y, section1_content_w, "Level Up to Max", Mods.Character.Cheats.LevelUp.ToMax);
+
+                                /*if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Level Up to Max", Managers.GUI_Manager.Styles.Content_Button()))
                                 { Mods.Character.Cheats.LevelUp.ToMax(); }
-                                section1_y += 40 + content_margin;
-                            }  
-                            
-                            GUI.TextField(new Rect(section1_x, section1_y, ((section1_content_w * 40) / 100) - content_margin, 40), "Leach Rate", Styles.Content_Text());
+                                section1_y += 40 + content_margin;*/
+                            }
+
+                            section1_y += CustomControls.Toggle_FloatValue(section1_x, section1_y, section1_content_w, "Leach Rate", ref Save_Manager.Data.UserData.Character.Cheats.leech_rate, ref Save_Manager.Data.UserData.Character.Cheats.Enable_leech_rate);
+
+                            /*GUI.TextField(new Rect(section1_x, section1_y, ((section1_content_w * 40) / 100) - content_margin, 40), "Leach Rate", Styles.Content_Text());
                             float Cheat_LeechRate_Temp = Save_Manager.Data.UserData.Character.Cheats.leech_rate;
                             Cheat_LeechRate_Temp = GUI.HorizontalSlider(new Rect(section1_x + content_margin, section1_y + 50, section1_content_w - (2 * content_margin), 20), Cheat_LeechRate_Temp, 0f, 255f);
                             GUI.TextField(new Rect(section1_x + ((section1_content_w * 40) / 100) - (2 * content_margin), section1_y, ((section1_content_w * 20) / 100), 40), Cheat_LeechRate_Temp.ToString(), Styles.ContentR_Text());
                             if (GUI.Button(new Rect(section1_x + ((section1_content_w * 60) / 100), section1_y, ((section1_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.Cheats.Enable_leech_rate)))
                             { Save_Manager.Data.UserData.Character.Cheats.Enable_leech_rate = !Save_Manager.Data.UserData.Character.Cheats.Enable_leech_rate; }
                             Save_Manager.Data.UserData.Character.Cheats.leech_rate = (int)Cheat_LeechRate_Temp;
-                            section1_y += 70 + content_margin;
+                            section1_y += 70 + content_margin;*/
+
+                            section1_y += CustomControls.Toggle_FloatPercent(section1_x, section1_y, section1_content_w, "Auto Potion When Health under", 0f, 255f, false, ref Save_Manager.Data.UserData.Character.Cheats.autoPot, ref Save_Manager.Data.UserData.Character.Cheats.Enable_AutoPot);
 
                             //Autpot
-                            GUI.TextField(new Rect(section1_x, section1_y, ((section1_content_w * 40) / 100) - content_margin, 40), "Auto Potion When Health under", Styles.Content_Text());
+                            /*GUI.TextField(new Rect(section1_x, section1_y, ((section1_content_w * 40) / 100) - content_margin, 40), "Auto Potion When Health under", Styles.Content_Text());
                             float Cheat_AutoPot_Temp = Save_Manager.Data.UserData.Character.Cheats.autoPot;
                             Cheat_AutoPot_Temp = GUI.HorizontalSlider(new Rect(section1_x + content_margin, section1_y + 50, section1_content_w - (2 * content_margin), 20), Cheat_AutoPot_Temp, 0f, 255f);
                             string AutoPot_Text = (Cheat_AutoPot_Temp / 255 * 100) + " %";
@@ -503,58 +516,78 @@ namespace LastEpochMods.Managers
                             if (GUI.Button(new Rect(section1_x + ((section1_content_w * 60) / 100), section1_y, ((section1_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.Cheats.Enable_AutoPot)))
                             { Save_Manager.Data.UserData.Character.Cheats.Enable_AutoPot = !Save_Manager.Data.UserData.Character.Cheats.Enable_AutoPot; }
                             Save_Manager.Data.UserData.Character.Cheats.autoPot = Cheat_AutoPot_Temp;
-                            section1_y += 70 + content_margin;
+                            section1_y += 70 + content_margin;*/
 
-                            if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Complete Main Quest", Managers.GUI_Manager.Styles.Content_Button()))
+                            section1_y += CustomControls.Function(section1_x, section1_y, section1_content_w, "Complete Main Quest", Mods.Character.Campaign.CompleteCampaign);
+
+                            /*if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Complete Main Quest", Managers.GUI_Manager.Styles.Content_Button()))
                             { Mods.Character.Campaign.CompleteCampaign(); }
-                            section1_y += 40 + content_margin;
+                            section1_y += 40 + content_margin;*/
 
                             if (Mods.Character.Cheats.Masteries.IsMastered())
                             {
-                                if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Reset Masterie", Managers.GUI_Manager.Styles.Content_Button()))
+                                section1_y += CustomControls.Function(section1_x, section1_y, section1_content_w, "Reset Masterie", Mods.Character.Cheats.Masteries.Reset);
+
+                                /*if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Reset Masterie", Managers.GUI_Manager.Styles.Content_Button()))
                                 { Mods.Character.Cheats.Masteries.Reset(); }
-                                section1_y += 40 + content_margin;
+                                section1_y += 40 + content_margin;*/
                             }
                             else
                             {
-                                if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Choose Masterie", Managers.GUI_Manager.Styles.Content_Button()))
+                                section1_y += CustomControls.Function(section1_x, section1_y, section1_content_w, "Choose Masterie", Mods.Character.Cheats.Masteries.ChooseNewOne);
+
+                                /*if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Choose Masterie", Managers.GUI_Manager.Styles.Content_Button()))
                                 { Mods.Character.Cheats.Masteries.ChooseNewOne(); }
-                                section1_y += 40 + content_margin;
+                                section1_y += 40 + content_margin;*/
                             }
 
-                            if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Add 99 All Runes", Managers.GUI_Manager.Styles.Content_Button()))
+                            section1_y += CustomControls.Function(section1_x, section1_y, section1_content_w, "Add 99 All Runes", Mods.Character.Cheats.Materials.GetAllRunesX99);
+
+                            /*if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Add 99 All Runes", Managers.GUI_Manager.Styles.Content_Button()))
                             { Mods.Character.Cheats.Materials.GetAllRunesX99(); }
-                            section1_y += 40 + content_margin;
+                            section1_y += 40 + content_margin;*/
 
-                            if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Add 99 All Glyphs", Managers.GUI_Manager.Styles.Content_Button()))
+                            section1_y += CustomControls.Function(section1_x, section1_y, section1_content_w, "Add 99 All Glyphs", Mods.Character.Cheats.Materials.GetAllGlyphsX99);
+
+                            /*if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Add 99 All Glyphs", Managers.GUI_Manager.Styles.Content_Button()))
                             { Mods.Character.Cheats.Materials.GetAllGlyphsX99(); }
-                            section1_y += 40 + content_margin;
+                            section1_y += 40 + content_margin;*/
 
-                            if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Add 10 All Affix", Managers.GUI_Manager.Styles.Content_Button()))
+                            section1_y += CustomControls.Function(section1_x, section1_y, section1_content_w, "Add 10 All Affix", Mods.Character.Cheats.Materials.GetAllShardsX10);
+
+                            /*if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Add 10 All Affix", Managers.GUI_Manager.Styles.Content_Button()))
                             { Mods.Character.Cheats.Materials.GetAllShardsX10(); }
-                            section1_y += 40 + content_margin;
+                            section1_y += 40 + content_margin;*/
 
-                            if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Discover All Blessings", Managers.GUI_Manager.Styles.Content_Button()))
+                            section1_y += CustomControls.Function(section1_x, section1_y, section1_content_w, "Discover All Blessings", Mods.Character.Cheats.Blessings.DiscoverAllBlessings);
+
+                            /*if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Discover All Blessings", Managers.GUI_Manager.Styles.Content_Button()))
                             { Mods.Character.Cheats.Blessings.DiscoverAllBlessings(); }
-                            section1_y += 40 + content_margin;
+                            section1_y += 40 + content_margin;*/
 
-                            if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Allow Choosing Blessing in Panel", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.Cheats.Enable_ChooseBlessingFromBlessingPanel)))
+                            section1_y += CustomControls.Toggle(section1_x, section1_y, section1_content_w, "Allow Choosing Blessing in Panel", ref Save_Manager.Data.UserData.Character.Cheats.Enable_ChooseBlessingFromBlessingPanel);
+
+                            /*if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Allow Choosing Blessing in Panel", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.Cheats.Enable_ChooseBlessingFromBlessingPanel)))
                             { Save_Manager.Data.UserData.Character.Cheats.Enable_ChooseBlessingFromBlessingPanel = !Save_Manager.Data.UserData.Character.Cheats.Enable_ChooseBlessingFromBlessingPanel; }
-                            section1_y += 40 + content_margin;
+                            section1_y += 40 + content_margin;*/
                                                         
                             GUI.TextField(new Rect(section1_x, section1_y, section1_content_w, 20), "* Implicit values can be override with ItemData", Styles.Content_Infos());
                             section1_y += 20 + content_margin;
-                            
-                            if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Unlock all Idols", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.CharacterSelectectionMenu.Enable_UnlockAllIdols)))
+
+                            section1_y += CustomControls.Toggle(section1_x, section1_y, section1_content_w, "Unlock all Idols", ref Save_Manager.Data.UserData.CharacterSelectectionMenu.Enable_UnlockAllIdols);
+
+                            /*if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Unlock all Idols", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.CharacterSelectectionMenu.Enable_UnlockAllIdols)))
                             { Save_Manager.Data.UserData.CharacterSelectectionMenu.Enable_UnlockAllIdols = !Save_Manager.Data.UserData.CharacterSelectectionMenu.Enable_UnlockAllIdols; }
-                            section1_y += 40 + content_margin;
+                            section1_y += 40 + content_margin;*/
 
                             GUI.TextField(new Rect(section1_x, section1_y, section1_content_w, 20), "* You have to load your character with this option enable", Styles.Content_Infos());
                             section1_y += 20 + content_margin;
 
-                            if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Allow Use Moded Item SubType", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.CharacterSelectectionMenu.UniqueSubTypeFromSave)))
+                            section1_y += CustomControls.Toggle(section1_x, section1_y, section1_content_w, "Allow Use Moded Item SubType", ref Save_Manager.Data.UserData.CharacterSelectectionMenu.UniqueSubTypeFromSave);
+
+                            /*if (GUI.Button(new Rect(section1_x, section1_y, section1_content_w, 40), "Allow Use Moded Item SubType", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.CharacterSelectectionMenu.UniqueSubTypeFromSave)))
                             { Save_Manager.Data.UserData.CharacterSelectectionMenu.UniqueSubTypeFromSave = !Save_Manager.Data.UserData.CharacterSelectectionMenu.UniqueSubTypeFromSave; }
-                            section1_y += 40 + content_margin;
+                            section1_y += 40 + content_margin;*/
 
                             GUI.TextField(new Rect(section1_x, section1_y, section1_content_w, 20), "* You have to load your character with this option enable", Styles.Content_Infos());
                             
@@ -589,13 +622,17 @@ namespace LastEpochMods.Managers
                             Mods.Character.Data.Deaths = (int)Character_Data_Death_Temp;
                             section2_y += 70 + content_margin;
 
-                            if (GUI.Button(new Rect(section2_x, section2_y, section2_content_w, 40), "Died", Managers.GUI_Manager.Styles.Content_Enable_Button(Mods.Character.Data.Died)))
-                            { Mods.Character.Data.Died = !Mods.Character.Data.Died; }
-                            section2_y += 40 + content_margin;
+                            section2_y += CustomControls.Toggle(section2_x, section2_y, section2_content_w, "Died", ref Mods.Character.Data.Died);
 
-                            if (GUI.Button(new Rect(section2_x, section2_y, section2_content_w, 40), "Hardcore", Managers.GUI_Manager.Styles.Content_Enable_Button(Mods.Character.Data.Hardcore)))
+                            /*if (GUI.Button(new Rect(section2_x, section2_y, section2_content_w, 40), "Died", Managers.GUI_Manager.Styles.Content_Enable_Button(Mods.Character.Data.Died)))
+                            { Mods.Character.Data.Died = !Mods.Character.Data.Died; }
+                            section2_y += 40 + content_margin;*/
+
+                            section2_y += CustomControls.Toggle(section2_x, section2_y, section2_content_w, "Hardcore", ref Mods.Character.Data.Hardcore);
+
+                            /*if (GUI.Button(new Rect(section2_x, section2_y, section2_content_w, 40), "Hardcore", Managers.GUI_Manager.Styles.Content_Enable_Button(Mods.Character.Data.Hardcore)))
                             { Mods.Character.Data.Hardcore = !Mods.Character.Data.Hardcore; }
-                            section2_y += 40 + content_margin;
+                            section2_y += 40 + content_margin;*/
 
                             GUI.TextField(new Rect(section2_x, section2_y, ((section2_content_w * 60) / 100) - content_margin, 40), "Lantern Luminance", Styles.Content_Text());
                             float Character_Data_LanternLuminance_Temp = Mods.Character.Data.LanternLuminance;
@@ -604,9 +641,11 @@ namespace LastEpochMods.Managers
                             Mods.Character.Data.LanternLuminance = Character_Data_LanternLuminance_Temp;
                             section2_y += 70 + content_margin;
 
-                            if (GUI.Button(new Rect(section2_x, section2_y, section2_content_w, 40), "Masochist", Managers.GUI_Manager.Styles.Content_Enable_Button(Mods.Character.Data.Masochist)))
+                            section2_y += CustomControls.Toggle(section2_x, section2_y, section2_content_w, "Masochist", ref Mods.Character.Data.Masochist);
+
+                            /*if (GUI.Button(new Rect(section2_x, section2_y, section2_content_w, 40), "Masochist", Managers.GUI_Manager.Styles.Content_Enable_Button(Mods.Character.Data.Masochist)))
                             { Mods.Character.Data.Masochist = !Mods.Character.Data.Masochist; }
-                            section2_y += 40 + content_margin;
+                            section2_y += 40 + content_margin;*/
 
                             GUI.TextField(new Rect(section2_x, section2_y, ((section2_content_w * 60) / 100) - content_margin, 40), "Monolith Depth", Styles.Content_Text());
                             float Character_Data_MonolithDepht_Temp = Mods.Character.Data.MonolithDepth;
@@ -615,17 +654,23 @@ namespace LastEpochMods.Managers
                             Mods.Character.Data.MonolithDepth = (int)Character_Data_MonolithDepht_Temp;
                             section2_y += 70 + content_margin;
 
-                            if (GUI.Button(new Rect(section2_x, section2_y, section2_content_w, 40), "Portal Unlocked", Managers.GUI_Manager.Styles.Content_Enable_Button(Mods.Character.Data.PortalUnlocked)))
+                            section2_y += CustomControls.Toggle(section2_x, section2_y, section2_content_w, "Portal Unlocked", ref Mods.Character.Data.PortalUnlocked);
+
+                            /*if (GUI.Button(new Rect(section2_x, section2_y, section2_content_w, 40), "Portal Unlocked", Managers.GUI_Manager.Styles.Content_Enable_Button(Mods.Character.Data.PortalUnlocked)))
                             { Mods.Character.Data.PortalUnlocked = !Mods.Character.Data.PortalUnlocked; }
-                            section2_y += 40 + content_margin;
+                            section2_y += 40 + content_margin;*/
 
-                            if (GUI.Button(new Rect(section2_x, section2_y, section2_content_w, 40), "Solo Challenge", Managers.GUI_Manager.Styles.Content_Enable_Button(Mods.Character.Data.SoloChallenge)))
+                            section2_y += CustomControls.Toggle(section2_x, section2_y, section2_content_w, "Solo Challenge", ref Mods.Character.Data.SoloChallenge);
+
+                            /*if (GUI.Button(new Rect(section2_x, section2_y, section2_content_w, 40), "Solo Challenge", Managers.GUI_Manager.Styles.Content_Enable_Button(Mods.Character.Data.SoloChallenge)))
                             { Mods.Character.Data.SoloChallenge = !Mods.Character.Data.SoloChallenge; }
-                            section2_y += 40 + content_margin;
+                            section2_y += 40 + content_margin;*/
 
-                            if (GUI.Button(new Rect(section2_x, section2_y, section2_content_w, 40), "Solo Character Challenge", Managers.GUI_Manager.Styles.Content_Enable_Button(Mods.Character.Data.SoloCharacterChallenge)))
+                            section2_y += CustomControls.Toggle(section2_x, section2_y, section2_content_w, "Solo Character Challenge", ref Mods.Character.Data.SoloCharacterChallenge);
+
+                            /*if (GUI.Button(new Rect(section2_x, section2_y, section2_content_w, 40), "Solo Character Challenge", Managers.GUI_Manager.Styles.Content_Enable_Button(Mods.Character.Data.SoloCharacterChallenge)))
                             { Mods.Character.Data.SoloCharacterChallenge = !Mods.Character.Data.SoloCharacterChallenge; }
-                            section2_y += 40 + content_margin;
+                            section2_y += 40 + content_margin;*/
 
                             GUI.TextField(new Rect(section2_x, section2_y, ((section2_content_w * 60) / 100) - content_margin, 40), "Soul Embers", Styles.Content_Text());
                             float Character_Data_SoulEmbers_Temp = Mods.Character.Data.SoulEmbers;
@@ -633,10 +678,12 @@ namespace LastEpochMods.Managers
                             GUI.TextField(new Rect(section2_x + ((section2_content_w * 60) / 100) - (2 * content_margin), section2_y, ((section2_content_w * 40) / 100), 40), Character_Data_SoulEmbers_Temp.ToString(), Styles.ContentR_Text());
                             Mods.Character.Data.SoulEmbers = (int)Character_Data_SoulEmbers_Temp;
                             section2_y += 70 + content_margin;
-                            
-                            if (GUI.Button(new Rect(section2_x, section2_y, section2_content_w, 40), "Save", Managers.GUI_Manager.Styles.Content_Button()))
+
+                            section2_y += CustomControls.Function(section2_x, section2_y, section2_content_w, "Save", Mods.Character.Data.Save);
+
+                            /*if (GUI.Button(new Rect(section2_x, section2_y, section2_content_w, 40), "Save", Managers.GUI_Manager.Styles.Content_Button()))
                             { Mods.Character.Data.Save(); }
-                            section2_y += 40 + content_margin;
+                            section2_y += 40 + content_margin;*/
 
                             //Permanent Buffs
                             scene_x += Section_W + ui_margin;
@@ -652,7 +699,9 @@ namespace LastEpochMods.Managers
                             section3_y += content_margin;
                             float section3_content_w = section3_w - (2 * content_margin);
 
-                            GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Move Speed", Styles.Content_Text());
+                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Move Speed",0f, 10f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.MoveSpeed_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_MoveSpeed_Buff);
+
+                            /*GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Move Speed", Styles.Content_Text());
                             float Perm_MoveSpeed_Temp = Save_Manager.Data.UserData.Character.PermanentBuffs.MoveSpeed_Buff_Value;
                             string Perm_MoveSpeed_str = "+ " + (Perm_MoveSpeed_Temp * 100) + " %";
                             Perm_MoveSpeed_Temp = GUI.HorizontalSlider(new Rect(section3_x + content_margin, section3_y + 50, section3_content_w - (2 * content_margin), 20), Perm_MoveSpeed_Temp, 0f, 10f);
@@ -660,9 +709,11 @@ namespace LastEpochMods.Managers
                             if (GUI.Button(new Rect(section3_x + ((section3_content_w * 60) / 100), section3_y, ((section3_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_MoveSpeed_Buff)))
                             { Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_MoveSpeed_Buff = !Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_MoveSpeed_Buff; }
                             Save_Manager.Data.UserData.Character.PermanentBuffs.MoveSpeed_Buff_Value = Perm_MoveSpeed_Temp;
-                            section3_y += 70 + content_margin;
+                            section3_y += 70 + content_margin;*/
 
-                            GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Damage", Styles.Content_Text());
+                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Damage", 0f, 10f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Damage_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Damage_Buff);
+
+                            /*GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Damage", Styles.Content_Text());
                             float Perm_Damage_Temp = Save_Manager.Data.UserData.Character.PermanentBuffs.Damage_Buff_Value;
                             string Perm_Damage_str = "+ " + (Perm_Damage_Temp * 100) + " %";
                             Perm_Damage_Temp = GUI.HorizontalSlider(new Rect(section3_x + content_margin, section3_y + 50, section3_content_w - (2 * content_margin), 20), Perm_Damage_Temp, 0f, 10f);
@@ -670,9 +721,11 @@ namespace LastEpochMods.Managers
                             if (GUI.Button(new Rect(section3_x + ((section3_content_w * 60) / 100), section3_y, ((section3_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Damage_Buff)))
                             { Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Damage_Buff = !Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Damage_Buff; }
                             Save_Manager.Data.UserData.Character.PermanentBuffs.Damage_Buff_Value = Perm_Damage_Temp;
-                            section3_y += 70 + content_margin;
+                            section3_y += 70 + content_margin;*/
 
-                            GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Attack Speed", Styles.Content_Text());
+                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Attack Speed", 0f, 10f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.AttackSpeed_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_AttackSpeed_Buff);
+
+                            /*GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Attack Speed", Styles.Content_Text());
                             float Perm_AttackRate_Temp = Save_Manager.Data.UserData.Character.PermanentBuffs.AttackSpeed_Buff_Value;
                             string Perm_AttackRate_str = "+ " + (Perm_AttackRate_Temp * 100) + " %";
                             Perm_AttackRate_Temp = GUI.HorizontalSlider(new Rect(section3_x + content_margin, section3_y + 50, section3_content_w - (2 * content_margin), 20), Perm_AttackRate_Temp, 0f, 10f);
@@ -680,9 +733,11 @@ namespace LastEpochMods.Managers
                             if (GUI.Button(new Rect(section3_x + ((section3_content_w * 60) / 100), section3_y, ((section3_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_AttackSpeed_Buff)))
                             { Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_AttackSpeed_Buff = !Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_AttackSpeed_Buff; }
                             Save_Manager.Data.UserData.Character.PermanentBuffs.AttackSpeed_Buff_Value = Perm_AttackRate_Temp;
-                            section3_y += 70 + content_margin;
+                            section3_y += 70 + content_margin;*/
 
-                            GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Casting Speed", Styles.Content_Text());
+                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Casting Speed", 0f, 10f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.CastSpeed_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CastSpeed_Buff);
+
+                            /*GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Casting Speed", Styles.Content_Text());
                             float Perm_CastingRate_Temp = Save_Manager.Data.UserData.Character.PermanentBuffs.CastSpeed_Buff_Value;
                             string Perm_CastingRate_str = "+ " + (Perm_CastingRate_Temp * 100) + " %";
                             Perm_CastingRate_Temp = GUI.HorizontalSlider(new Rect(section3_x + content_margin, section3_y + 50, section3_content_w - (2 * content_margin), 20), Perm_CastingRate_Temp, 0f, 10f);
@@ -690,9 +745,11 @@ namespace LastEpochMods.Managers
                             if (GUI.Button(new Rect(section3_x + ((section3_content_w * 60) / 100), section3_y, ((section3_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CastSpeed_Buff)))
                             { Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CastSpeed_Buff = !Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CastSpeed_Buff; }
                             Save_Manager.Data.UserData.Character.PermanentBuffs.CastSpeed_Buff_Value = Perm_CastingRate_Temp;
-                            section3_y += 70 + content_margin;
+                            section3_y += 70 + content_margin;*/
 
-                            GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Critical Chance", Styles.Content_Text());
+                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Critical Chance", 0f, 0.95f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.CriticalChance_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CriticalChance_Buff);
+
+                            /*GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Critical Chance", Styles.Content_Text());
                             float Perm_CritChance_Temp = Save_Manager.Data.UserData.Character.PermanentBuffs.CriticalChance_Buff_Value;
                             string Perm_CritChance_str = "+ " + (Perm_CritChance_Temp * 100) + " %";
                             Perm_CritChance_Temp = GUI.HorizontalSlider(new Rect(section3_x + content_margin, section3_y + 50, section3_content_w - (2 * content_margin), 20), Perm_CritChance_Temp, 0f, 0.95f);
@@ -700,9 +757,11 @@ namespace LastEpochMods.Managers
                             if (GUI.Button(new Rect(section3_x + ((section3_content_w * 60) / 100), section3_y, ((section3_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CriticalChance_Buff)))
                             { Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CriticalChance_Buff = !Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CriticalChance_Buff; }
                             Save_Manager.Data.UserData.Character.PermanentBuffs.CriticalChance_Buff_Value = Perm_CritChance_Temp;
-                            section3_y += 70 + content_margin;
+                            section3_y += 70 + content_margin;*/
 
-                            GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Critical Multiplier", Styles.Content_Text());
+                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Critical Multiplier", 0f, 255f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.CriticalMultiplier_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CriticalMultiplier_Buff);
+
+                            /*GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Critical Multiplier", Styles.Content_Text());
                             float Perm_CritMulti_Temp = Save_Manager.Data.UserData.Character.PermanentBuffs.CriticalMultiplier_Buff_Value;
                             string Perm_CritMulti_str = "+ " + (Perm_CritMulti_Temp * 100) + " %";
                             Perm_CritMulti_Temp = GUI.HorizontalSlider(new Rect(section3_x + content_margin, section3_y + 50, section3_content_w - (2 * content_margin), 20), Perm_CritMulti_Temp, 0f, 255f);
@@ -710,9 +769,11 @@ namespace LastEpochMods.Managers
                             if (GUI.Button(new Rect(section3_x + ((section3_content_w * 60) / 100), section3_y, ((section3_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CriticalMultiplier_Buff)))
                             { Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CriticalMultiplier_Buff = !Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CriticalMultiplier_Buff; }
                             Save_Manager.Data.UserData.Character.PermanentBuffs.CriticalMultiplier_Buff_Value = Perm_CritMulti_Temp;
-                            section3_y += 70 + content_margin;
+                            section3_y += 70 + content_margin;*/
 
-                            GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Health Regen", Styles.Content_Text());
+                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Health Regen", 0f, 10f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.HealthRegen_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_HealthRegen_Buff);
+
+                            /*GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Health Regen", Styles.Content_Text());
                             float Perm_HealthRegen_Temp = Save_Manager.Data.UserData.Character.PermanentBuffs.HealthRegen_Buff_Value;
                             string Perm_HealthRegen_str = "+ " + (Perm_HealthRegen_Temp * 100) + " %";
                             Perm_HealthRegen_Temp = GUI.HorizontalSlider(new Rect(section3_x + content_margin, section3_y + 50, section3_content_w - (2 * content_margin), 20), Perm_HealthRegen_Temp, 0f, 10f);
@@ -720,9 +781,11 @@ namespace LastEpochMods.Managers
                             if (GUI.Button(new Rect(section3_x + ((section3_content_w * 60) / 100), section3_y, ((section3_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_HealthRegen_Buff)))
                             { Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_HealthRegen_Buff = !Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_HealthRegen_Buff; }
                             Save_Manager.Data.UserData.Character.PermanentBuffs.HealthRegen_Buff_Value = Perm_HealthRegen_Temp;
-                            section3_y += 70 + content_margin;
+                            section3_y += 70 + content_margin;*/
 
-                            GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Mana Regen", Styles.Content_Text());
+                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Mana Regen", 0f, 10f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.ManaRegen_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_ManaRegen_Buff);
+
+                            /*GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Mana Regen", Styles.Content_Text());
                             float Perm_ManaRegen_Temp = Save_Manager.Data.UserData.Character.PermanentBuffs.ManaRegen_Buff_Value;
                             string Perm_ManaRegen_str = "+ " + (Perm_ManaRegen_Temp * 100) + " %";
                             Perm_ManaRegen_Temp = GUI.HorizontalSlider(new Rect(section3_x + content_margin, section3_y + 50, section3_content_w - (2 * content_margin), 20), Perm_ManaRegen_Temp, 0f, 10f);
@@ -730,9 +793,11 @@ namespace LastEpochMods.Managers
                             if (GUI.Button(new Rect(section3_x + ((section3_content_w * 60) / 100), section3_y, ((section3_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_ManaRegen_Buff)))
                             { Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_ManaRegen_Buff = !Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_ManaRegen_Buff; }
                             Save_Manager.Data.UserData.Character.PermanentBuffs.ManaRegen_Buff_Value = Perm_ManaRegen_Temp;
-                            section3_y += 70 + content_margin;
+                            section3_y += 70 + content_margin;*/
 
-                            GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Strength", Styles.Content_Text());
+                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Strength", 0f, 255f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Str_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Str_Buff);
+
+                            /*GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Strength", Styles.Content_Text());
                             float Perm_Str_Temp = Save_Manager.Data.UserData.Character.PermanentBuffs.Str_Buff_Value;
                             string Perm_Str_str = "+ " + (int)Perm_Str_Temp;
                             Perm_Str_Temp = GUI.HorizontalSlider(new Rect(section3_x + content_margin, section3_y + 50, section3_content_w - (2 * content_margin), 20), Perm_Str_Temp, 0f, 255f);
@@ -740,9 +805,11 @@ namespace LastEpochMods.Managers
                             if (GUI.Button(new Rect(section3_x + ((section3_content_w * 60) / 100), section3_y, ((section3_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Str_Buff)))
                             { Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Str_Buff = !Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Str_Buff; }
                             Save_Manager.Data.UserData.Character.PermanentBuffs.Str_Buff_Value = Perm_Str_Temp;
-                            section3_y += 70 + content_margin;
+                            section3_y += 70 + content_margin;*/
 
-                            GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Intelligence", Styles.Content_Text());
+                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Intelligence", 0f, 255f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Int_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Int_Buff);
+
+                            /*GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Intelligence", Styles.Content_Text());
                             float Perm_Int_Temp = Save_Manager.Data.UserData.Character.PermanentBuffs.Int_Buff_Value;
                             string Perm_Int_str = "+ " + (int)Perm_Int_Temp;
                             Perm_Int_Temp = GUI.HorizontalSlider(new Rect(section3_x + content_margin, section3_y + 50, section3_content_w - (2 * content_margin), 20), Perm_Int_Temp, 0f, 255f);
@@ -750,9 +817,11 @@ namespace LastEpochMods.Managers
                             if (GUI.Button(new Rect(section3_x + ((section3_content_w * 60) / 100), section3_y, ((section3_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Int_Buff)))
                             { Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Int_Buff = !Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Int_Buff; }
                             Save_Manager.Data.UserData.Character.PermanentBuffs.Int_Buff_Value = Perm_Int_Temp;
-                            section3_y += 70 + content_margin;
+                            section3_y += 70 + content_margin;*/
 
-                            GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Dexterity", Styles.Content_Text());
+                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Dexterity", 0f, 255f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Dex_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Dex_Buff);
+
+                            /*GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Dexterity", Styles.Content_Text());
                             float Perm_Dex_Temp = Save_Manager.Data.UserData.Character.PermanentBuffs.Dex_Buff_Value;
                             string Perm_Dex_str = "+ " + (int)Perm_Dex_Temp;
                             Perm_Dex_Temp = GUI.HorizontalSlider(new Rect(section3_x + content_margin, section3_y + 50, section3_content_w - (2 * content_margin), 20), Perm_Dex_Temp, 0f, 255f);
@@ -760,9 +829,11 @@ namespace LastEpochMods.Managers
                             if (GUI.Button(new Rect(section3_x + ((section3_content_w * 60) / 100), section3_y, ((section3_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Dex_Buff)))
                             { Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Dex_Buff = !Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Dex_Buff; }
                             Save_Manager.Data.UserData.Character.PermanentBuffs.Dex_Buff_Value = Perm_Dex_Temp;
-                            section3_y += 70 + content_margin;
+                            section3_y += 70 + content_margin;*/
 
-                            GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Vitality", Styles.Content_Text());
+                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Vitality", 0f, 255f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Vit_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Vit_Buff);
+
+                            /*GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Vitality", Styles.Content_Text());
                             float Perm_Vit_Temp = Save_Manager.Data.UserData.Character.PermanentBuffs.Vit_Buff_Value;
                             string Perm_Vit_str = "+ " + (int)Perm_Vit_Temp;
                             Perm_Vit_Temp = GUI.HorizontalSlider(new Rect(section3_x + content_margin, section3_y + 50, section3_content_w - (2 * content_margin), 20), Perm_Vit_Temp, 0f, 255f);
@@ -770,9 +841,11 @@ namespace LastEpochMods.Managers
                             if (GUI.Button(new Rect(section3_x + ((section3_content_w * 60) / 100), section3_y, ((section3_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Vit_Buff)))
                             { Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Vit_Buff = !Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Vit_Buff; }
                             Save_Manager.Data.UserData.Character.PermanentBuffs.Vit_Buff_Value = Perm_Vit_Temp;
-                            section3_y += 70 + content_margin;
+                            section3_y += 70 + content_margin;*/
 
-                            GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Attunement", Styles.Content_Text());
+                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Attunement", 0f, 255f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Att_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Att_Buff);
+
+                            /*GUI.TextField(new Rect(section3_x, section3_y, ((section3_content_w * 40) / 100) - content_margin, 40), "Attunement", Styles.Content_Text());
                             float Perm_Att_Temp = Save_Manager.Data.UserData.Character.PermanentBuffs.Att_Buff_Value;
                             string Perm_Att_str = "+ " + (int)Perm_Att_Temp;
                             Perm_Att_Temp = GUI.HorizontalSlider(new Rect(section3_x + content_margin, section3_y + 50, section3_content_w - (2 * content_margin), 20), Perm_Att_Temp, 0f, 255f);
@@ -780,7 +853,7 @@ namespace LastEpochMods.Managers
                             if (GUI.Button(new Rect(section3_x + ((section3_content_w * 60) / 100), section3_y, ((section3_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Att_Buff)))
                             { Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Att_Buff = !Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Att_Buff; }
                             Save_Manager.Data.UserData.Character.PermanentBuffs.Att_Buff_Value = Perm_Att_Temp;
-                            section3_y += 70 + content_margin;
+                            section3_y += 70 + content_margin;*/
                         }
                         else if (BaseMenu.Items.Show)
                         {
@@ -968,9 +1041,9 @@ namespace LastEpochMods.Managers
                             { Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Pots = !Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Pots; }
                             section2_y += 40 + content_margin;
 
-                            if (GUI.Button(new Rect(section2_x, section2_y, section2_w - (2 * content_margin), 40), "AutoPickup Unique & Set", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_UniqueAndSet)))
+                            /*if (GUI.Button(new Rect(section2_x, section2_y, section2_w - (2 * content_margin), 40), "AutoPickup Unique & Set", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_UniqueAndSet)))
                             { Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_UniqueAndSet = !Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_UniqueAndSet; }
-                            section2_y += 40 + content_margin;
+                            section2_y += 40 + content_margin;*/
 
                             if (GUI.Button(new Rect(section2_x, section2_y, section2_w - (2 * content_margin), 40), "AutoPickup XpTome", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_XpTome)))
                             { Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_XpTome = !Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_XpTome; }
@@ -986,6 +1059,10 @@ namespace LastEpochMods.Managers
 
                             if (GUI.Button(new Rect(section2_x, section2_y, section2_w - (2 * content_margin), 40), "AutoPickup Filtered Items", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Filter)))
                             { Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Filter = !Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Filter; }
+                            section2_y += 40 + content_margin;
+
+                            if (GUI.Button(new Rect(section2_x, section2_y, section2_w - (2 * content_margin), 40), "Auto Sell", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Items.Pickup.RemoveItemNotInFilter)))
+                            { Save_Manager.Data.UserData.Items.Pickup.RemoveItemNotInFilter = !Save_Manager.Data.UserData.Items.Pickup.RemoveItemNotInFilter; }
                             section2_y += 40 + content_margin;
 
                             if (GUI.Button(new Rect(section2_x, section2_y, section2_w - (2 * content_margin), 40), "Hide Materials Notifications", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Items.DropNotification.Hide_materials_notifications)))
@@ -2206,6 +2283,44 @@ namespace LastEpochMods.Managers
                         }
                     }
                 }
+                public class CustomControls
+                {
+                    public delegate void DelegateFunction();
+
+                    public static float Toggle(float pos_x, float pos_y, float size_w, string text, ref bool toggle)
+                    {
+                        if (GUI.Button(new Rect(pos_x, pos_y, size_w, 40), text, Styles.Content_Enable_Button(toggle))) { toggle = !toggle; }
+
+                        return 40 + content_margin;
+                    }
+                    public static float Function(float pos_x, float pos_y, float size_w, string text, DelegateFunction function)
+                    {
+                        if (GUI.Button(new Rect(pos_x, pos_y, size_w, 40), text, Styles.Content_Button())) { function(); }
+
+                        return 40 + content_margin;
+                    }
+                    public static float Toggle_FloatValue(float pos_x, float pos_y, float size_w, string text, ref float value, ref bool toggle)
+                    {
+                        GUI.TextField(new Rect(pos_x, pos_y, ((size_w * 40) / 100) - content_margin, 40), text, Styles.Content_Text());
+                        GUI.TextField(new Rect(pos_x + ((size_w * 40) / 100) - (2 * content_margin), pos_y, ((size_w * 20) / 100), 40), value.ToString(), Styles.ContentR_Text());
+                        if (GUI.Button(new Rect(pos_x + ((size_w * 60) / 100), pos_y, ((size_w * 40) / 100), 40), "Enable/Disable", Styles.Content_Enable_Button(toggle))) { toggle = !toggle; }
+                        value = GUI.HorizontalSlider(new Rect(pos_x + content_margin, pos_y + 50, size_w - (2 * content_margin), 20), value, 0f, 255f);
+
+                        return 70 + content_margin;
+                    }
+                    public static float Toggle_FloatPercent(float pos_x, float pos_y, float size_w, string text, float min, float max, bool multiply, ref float value, ref bool toggle)
+                    {
+                        GUI.TextField(new Rect(pos_x, pos_y, ((size_w * 40) / 100) - content_margin, 40), text, Styles.Content_Text());                        
+                        string TempText = "";
+                        if (!multiply) { TempText = System.Convert.ToInt32(value / 255 * 100) + " %"; }
+                        else { TempText = (value * 100) + " %"; }
+                        GUI.TextField(new Rect(pos_x + ((size_w * 40) / 100) - (2 * content_margin), pos_y, ((size_w * 20) / 100), 40), TempText, Styles.ContentR_Text());
+                        if (GUI.Button(new Rect(pos_x + ((size_w * 60) / 100), pos_y, ((size_w * 40) / 100), 40), "Enable/Disable", Styles.Content_Enable_Button(toggle))) { toggle = !toggle; }
+                        value = GUI.HorizontalSlider(new Rect(pos_x + content_margin, pos_y + 50, size_w - (2 * content_margin), 20), value, 0f, 255f);
+                        
+                        return 70 + content_margin;
+                    }
+                }
             }
             public class Functions
             {
@@ -2823,6 +2938,10 @@ namespace LastEpochMods.Managers
                 if (enable) { btn_enable = "Disable"; }
                 if (GUI.Button(new Rect((pos_x + 140), pos_y, 60, 40), btn_enable, Styles.Button_Style(enable))) { function(); }
             }
+           
+
+
+
             public static void RarityInfos(float pos_x, float pos_y)
             {
                 float w = 100f;
@@ -2836,6 +2955,7 @@ namespace LastEpochMods.Managers
                 GUI.TextField(new Rect(pos_x, pos_y, w, h), "Rare : 3-4", Styles.Infos_Style());
                 GUI.TextField(new Rect(pos_x + 100, pos_y, w, h), "Legendary : 9", Styles.Infos_Style());
             }
+            
             public static int IntValue(string text, int minvalue, int maxvalue, int value, float pos_x, float pos_y, bool enable, DelegateFunction function)
             {
                 float multiplier = maxvalue / 255;
