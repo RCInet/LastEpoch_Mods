@@ -5,7 +5,7 @@ using LastEpochMods.Managers;
 namespace LastEpochMods.Mods.Items
 {
     public class AutoPickup
-    {
+    { 
         //AutoStore Materials all 10 sec
         public class AutoStoreMaterialsTimer
         {
@@ -76,8 +76,7 @@ namespace LastEpochMods.Mods.Items
                     if (((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Key) && (Item.isKey(__1.itemType))) ||
                         ((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Materials) && (ItemList.isCraftingItem(__1.itemType))))
                     {
-                        __2 = __0.position();
-                        bool pickup = ItemContainersManager.instance.attemptToPickupItem(__1, __2);
+                        bool pickup = ItemContainersManager.instance.attemptToPickupItem(__1, __0.position()); // __2);
                         if (pickup)
                         {
                             if ((Save_Manager.Data.UserData.Items.AutoPickup.AutoStore_Materials) && (ItemList.isCraftingItem(__1.itemType)))
@@ -116,15 +115,13 @@ namespace LastEpochMods.Mods.Items
                         }
                         if ((FilterShow) && (Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Filter))
                         {
-                            __2 = __0.position();
-                            bool pickup = ItemContainersManager.instance.attemptToPickupItem(__1, __2); //Pickup
+                            bool pickup = ItemContainersManager.instance.attemptToPickupItem(__1, __0.position()); //__2); //Pickup
                             if (pickup) { result = false; }
 
                         }
                         else if ((FilterHide) && (Save_Manager.Data.UserData.Items.Pickup.RemoveItemNotInFilter))
                         {
-                            var price = __1.TryCast<ItemDataUnpacked>().VendorSaleValue;
-                            __0.goldTracker.modifyGold(price);
+                            __0.goldTracker.modifyGold(__1.TryCast<ItemDataUnpacked>().VendorSaleValue);
                             result = false;
                         }
                     }
