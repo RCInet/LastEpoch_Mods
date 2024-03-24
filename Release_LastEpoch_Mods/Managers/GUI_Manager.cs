@@ -377,6 +377,8 @@ namespace LastEpochMods.Managers
                 public static float ui_margin = 15;
                 public static float content_margin = 5;
 
+                public static Vector2 permanentbuffs_scrollview = Vector2.zero;
+
                 public static void UpdateGUI()
                 {
                     if ((Functions.IsPauseMenuOpen()) || (ForceOpen))
@@ -560,33 +562,51 @@ namespace LastEpochMods.Managers
 
                             //Permanent Buffs
                             scene_x += Section_W + ui_margin;
-                            float Skills_h = 950 + (17 * content_margin);
-                            GUI.DrawTexture(new Rect(scene_x, scene_y, Section_W, Skills_h), Textures.black);
+
+                            int nb_buff = 13; //Use this to calculate Size
+                            float Max_h = Screen.height * 90 / 100;
+                            float Title_h = 40 + (2 * content_margin);
+                            float Max_Content_h = (nb_buff * 70) + ((nb_buff - 1) * content_margin);
+                            float Window_w = Section_W;
+                            float Window_h = Title_h + Max_Content_h + content_margin;                            
+                            if (Window_h > Max_h) { Window_h = Max_h; }                            
+                            float Content_w = Window_w - (2 * content_margin);
+                            float Content_h = Window_h - Title_h - content_margin;
+                            GUI.DrawTexture(new Rect(scene_x, scene_y, Window_w, Window_h), Textures.black);
                             float section3_x = scene_x + content_margin;
                             float section3_y = scene_y + content_margin;
-                            float section3_w = Section_W - (2 * content_margin);
-                            GUI.TextField(new Rect(section3_x, section3_y, section3_w, 40), "Permanent Buffs", Styles.Content_Title());
-                            section3_y += 40 + content_margin;
-                            GUI.DrawTexture(new Rect(section3_x, section3_y, section3_w, (Skills_h - 40 - (3 * content_margin))), Textures.grey);
+                            GUI.TextField(new Rect(section3_x, section3_y, Content_w, 40), "Permanent Buffs", Styles.Content_Title());
+                            section3_y += 40 + content_margin;                            
+                            GUI.DrawTexture(new Rect(section3_x, section3_y, Content_w, Content_h), Textures.grey);
                             section3_x += content_margin;
                             section3_y += content_margin;
-                            float section3_content_w = section3_w - (2 * content_margin);
-
-                            //
-
-                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Move Speed",0f, 20f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.MoveSpeed_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_MoveSpeed_Buff);
-                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Damage", 0f, 255f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Damage_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Damage_Buff);
-                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Attack Speed", 0f, 10f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.AttackSpeed_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_AttackSpeed_Buff);
-                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Casting Speed", 0f, 10f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.CastSpeed_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CastSpeed_Buff);
-                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Critical Chance", 0f, 0.95f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.CriticalChance_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CriticalChance_Buff);
-                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Critical Multiplier", 0f, 255f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.CriticalMultiplier_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CriticalMultiplier_Buff);
-                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Health Regen", 0f, 10f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.HealthRegen_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_HealthRegen_Buff);
-                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Mana Regen", 0f, 10f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.ManaRegen_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_ManaRegen_Buff);
-                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Strength", 0f, 255f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Str_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Str_Buff);
-                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Intelligence", 0f, 255f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Int_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Int_Buff);
-                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Dexterity", 0f, 255f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Dex_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Dex_Buff);
-                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Vitality", 0f, 255f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Vit_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Vit_Buff);
-                            section3_y += CustomControls.Toggle_FloatPercent(section3_x, section3_y, section3_content_w, "Attunement", 0f, 255f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Att_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Att_Buff);
+                            float New_Content_w = Content_w - (2 * content_margin);
+                            float New_Content_h = Content_h - (2 * content_margin);
+                            float View_h = Max_Content_h;
+                            float scrollview_w = New_Content_w;
+                            if (Max_Content_h > New_Content_h)
+                            {
+                                scrollview_w -= 20;
+                                section3_y += 5;
+                                View_h = New_Content_h - content_margin;                                
+                            }                            
+                            permanentbuffs_scrollview = GUI.BeginScrollView(new Rect(section3_x, section3_y, New_Content_w, View_h), permanentbuffs_scrollview, new Rect(0, 0, scrollview_w, Max_Content_h));
+                            float new_pos_x = 0;
+                            float new_pos_y = 0;
+                            new_pos_y += CustomControls.Toggle_FloatPercent(new_pos_x, new_pos_y, scrollview_w, "Move Speed",0f, 20f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.MoveSpeed_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_MoveSpeed_Buff);
+                            new_pos_y += CustomControls.Toggle_FloatPercent(new_pos_x, new_pos_y, scrollview_w, "Damage", 0f, 255f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Damage_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Damage_Buff);
+                            new_pos_y += CustomControls.Toggle_FloatPercent(new_pos_x, new_pos_y, scrollview_w, "Attack Speed", 0f, 10f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.AttackSpeed_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_AttackSpeed_Buff);
+                            new_pos_y += CustomControls.Toggle_FloatPercent(new_pos_x, new_pos_y, scrollview_w, "Casting Speed", 0f, 10f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.CastSpeed_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CastSpeed_Buff);
+                            new_pos_y += CustomControls.Toggle_FloatPercent(new_pos_x, new_pos_y, scrollview_w, "Critical Chance", 0f, 0.95f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.CriticalChance_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CriticalChance_Buff);
+                            new_pos_y += CustomControls.Toggle_FloatPercent(new_pos_x, new_pos_y, scrollview_w, "Critical Multiplier", 0f, 255f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.CriticalMultiplier_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CriticalMultiplier_Buff);
+                            new_pos_y += CustomControls.Toggle_FloatPercent(new_pos_x, new_pos_y, scrollview_w, "Health Regen", 0f, 10f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.HealthRegen_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_HealthRegen_Buff);
+                            new_pos_y += CustomControls.Toggle_FloatPercent(new_pos_x, new_pos_y, scrollview_w, "Mana Regen", 0f, 10f, true, ref Save_Manager.Data.UserData.Character.PermanentBuffs.ManaRegen_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_ManaRegen_Buff);
+                            new_pos_y += CustomControls.Toggle_FloatValue(new_pos_x, new_pos_y, scrollview_w, "Strength", ref Save_Manager.Data.UserData.Character.PermanentBuffs.Str_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Str_Buff);
+                            new_pos_y += CustomControls.Toggle_FloatValue(new_pos_x, new_pos_y, scrollview_w, "Intelligence", ref Save_Manager.Data.UserData.Character.PermanentBuffs.Int_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Int_Buff);
+                            new_pos_y += CustomControls.Toggle_FloatValue(new_pos_x, new_pos_y, scrollview_w, "Dexterity", ref Save_Manager.Data.UserData.Character.PermanentBuffs.Dex_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Dex_Buff);
+                            new_pos_y += CustomControls.Toggle_FloatValue(new_pos_x, new_pos_y, scrollview_w, "Vitality", ref Save_Manager.Data.UserData.Character.PermanentBuffs.Vit_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Vit_Buff);
+                            new_pos_y += CustomControls.Toggle_FloatValue(new_pos_x, new_pos_y, scrollview_w, "Attunement", ref Save_Manager.Data.UserData.Character.PermanentBuffs.Att_Buff_Value, ref Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Att_Buff);
+                            GUI.EndScrollView();
                         }
                         else if (BaseMenu.Items.Show)
                         {
@@ -2035,7 +2055,7 @@ namespace LastEpochMods.Managers
                     public static float Toggle_FloatValue(float pos_x, float pos_y, float size_w, string text, ref float value, ref bool toggle)
                     {
                         GUI.TextField(new Rect(pos_x, pos_y, ((size_w * 40) / 100) - content_margin, 40), text, Styles.Content_Text());
-                        GUI.TextField(new Rect(pos_x + ((size_w * 40) / 100) - (2 * content_margin), pos_y, ((size_w * 20) / 100), 40), value.ToString(), Styles.ContentR_Text());
+                        GUI.TextField(new Rect(pos_x + ((size_w * 40) / 100) - (2 * content_margin), pos_y, ((size_w * 20) / 100), 40), "+ " + value.ToString(), Styles.ContentR_Text());
                         if (GUI.Button(new Rect(pos_x + ((size_w * 60) / 100), pos_y, ((size_w * 40) / 100), 40), "Enable/Disable", Styles.Content_Enable_Button(toggle))) { toggle = !toggle; }
                         value = GUI.HorizontalSlider(new Rect(pos_x + content_margin, pos_y + 50, size_w - (2 * content_margin), 20), value, 0f, 255f);
 
