@@ -1071,10 +1071,12 @@ namespace LastEpochMods.Mods.ForceDrop
                         if ((type.GetItemType() > 24) && (type.GetItemType() < 34) && (rarity.dropdown_index < 3)) { is_idol = true; }
                         else { is_idol = false; }
                         rarity.dropdown_index = -1;
-                        rarity.enable = rarity.EnableFromType(type.dropdown_list[type.dropdown_index]);
-                        base_item.dropdown_index = -1;
+                        rarity.enable = true;
+                        //rarity.enable = rarity.EnableFromType(type.dropdown_list[type.dropdown_index]);
+                        base_item.dropdown_index = -1;                        
                         base_item.InitFromType(type.dropdown_list[type.dropdown_index]);
-                        base_item.enable = base_item.EnableFromType(type.dropdown_list[type.dropdown_index]);
+                        base_item.enable = true;                             
+                        //base_item.enable = base_item.EnableFromType(type.dropdown_list[type.dropdown_index]);
                         affixs.enable = false;
                         affixs.seal.enable = false;
                         unique.enable = false;
@@ -1082,8 +1084,10 @@ namespace LastEpochMods.Mods.ForceDrop
                         set.enable = false;
                         legendary.enable = false;
                         unique.UpdateList(type.dropdown_list[type.dropdown_index]);
-                        quantity.enable = quantity.EnableFromType(type.dropdown_list[type.dropdown_index]);
-                        drop.enable = drop.EnableFromType(type.dropdown_list[type.dropdown_index]);
+                        quantity.enable = false;
+                        drop.enable = false;
+                        //quantity.enable = quantity.EnableFromType(type.dropdown_list[type.dropdown_index]);
+                        //drop.enable = drop.EnableFromType(type.dropdown_list[type.dropdown_index]);
                         implicits.enable = false;
                         forgin_potencial.enable = false;
                         legenday_potencial.enable = false;
@@ -1190,7 +1194,6 @@ namespace LastEpochMods.Mods.ForceDrop
             {
                 if (rarity.enable)
                 {
-                    //rarity.pos_y = pos_y;
                     if (GUI.Button(new Rect(pos_x, pos_y, w, 30), ""))
                     {
                         type.show_dropdown = false;
@@ -1314,8 +1317,8 @@ namespace LastEpochMods.Mods.ForceDrop
                         else { affixs.max_nb_affixs = 6f; }
                         implicits.enable = implicits.EnableFromType();
                         forgin_potencial.enable = forgin_potencial.EnableFromType();
-                        affixs.enable = true;
-                        affixs.seal.enable = true;                        
+                        affixs.enable = affixs.EnableFromType(); //true;
+                        affixs.seal.enable = affixs.EnableFromType();  //true;                        
                         quantity.enable = true;
                         drop.enable = true;
                     }
@@ -1384,7 +1387,7 @@ namespace LastEpochMods.Mods.ForceDrop
                         base_item.dropdown_list = new string[base_names.Count];
                         for (int i = 0; i < base_item.dropdown_list.Length; i++) { base_item.dropdown_list[i] = base_names[i]; }
                     }
-                    else { Main.logger_instance.Msg("Error Type Not Found : " + type_name + " Fin"); }
+                    else { Main.logger_instance.Msg("Error Type Not Found : " + type_name); }
                 }
                 else { Main.logger_instance.Msg("Error ItemList is null"); }
             }
@@ -2833,7 +2836,14 @@ namespace LastEpochMods.Mods.ForceDrop
 
                 return result;
             }
-            
+            public static bool EnableFromType()
+            {
+                bool result = false;
+                if (type.dropdown_index < 35) { result = true; }
+
+                return result;
+            }
+
             public static void InitList()
             {
                 prefixs.dropdown_list = null;
@@ -3692,17 +3702,13 @@ namespace LastEpochMods.Mods.ForceDrop
                         int unique_id = 0;
                         int item_sockets = 0;
                         int legendary_potencial = 0;
-                        //bool contain_seal = false;
                         if (rarity.dropdown_index == 0)
                         {
                             item_base_id = base_item.GetIdFromName(type.dropdown_list[type.dropdown_index], base_item.dropdown_list[base_item.dropdown_index]);                            
                             real_rarity = affixs.nb_affixs;                            
                             int rar = real_rarity;
-                            if (rar > 4) { rar = 4; }
-                            //if ((rar == 0) && (affixs.seal.add)) { item_sockets = 1; }
-                            //else { item_sockets = rar; }                            
+                            if (rar > 4) { rar = 4; }                           
                             item_rarity = rar;
-                            //contain_seal = affixs.seal.add;
                         }
                         else if (rarity.dropdown_index == 1)
                         {
@@ -3722,11 +3728,6 @@ namespace LastEpochMods.Mods.ForceDrop
                         {
                             real_rarity = 9;
                             int rar = affixs.nb_affixs;
-                            //if (rar > 4) { rar = 4; }
-                            //item_rarity = rar;
-                            //item_sockets = rar;
-                            //legendary_potencial = affixs.nb_affixs;
-                            //legenday_potencial.value = legendary_potencial;
                             item_base_id = unique.GetBaseIdFromName(legendary.dropdown_list[legendary.dropdown_index]);
                             unique_id = unique.GetIdFromName(legendary.dropdown_list[legendary.dropdown_index]);                            
                             affixs.seal.add = false;
@@ -3765,10 +3766,10 @@ namespace LastEpochMods.Mods.ForceDrop
                             Main.logger_instance.Msg("ForceDrop : Item Generated");
                             Main.logger_instance.Msg("ForceDrop : Set Implicits");
                         }
-                        Roll.item_implicits(ref item);
-                        if ((item_rarity < 5) && (real_rarity != 9))
+
+                        if (implicits.enable) { Roll.item_implicits(ref item); }
+                        if ((forgin_potencial.enable) && (((item_rarity < 5) && (real_rarity != 9))))
                         {
-                            if (ShowDebug) { Main.logger_instance.Msg("ForceDrop : Set Forging Potential"); }                                
                             Roll.item_forgin_potencial(ref item);
                         }
                         if (real_rarity == 9)
@@ -3783,7 +3784,7 @@ namespace LastEpochMods.Mods.ForceDrop
                             item.uniqueID = (ushort)unique_id;
                             item.RefreshIDAndValues();
                         }
-                        if ((item_rarity < 5) || (real_rarity == 9))
+                        if ((affixs.enable) && (((item_rarity < 5) || (real_rarity == 9))))
                         {
                             if (ShowDebug) { Main.logger_instance.Msg("ForceDrop : Set Affixs"); }
                             Roll.item_affixes(ref item);
@@ -3791,23 +3792,21 @@ namespace LastEpochMods.Mods.ForceDrop
                         
                         if (item.rarity > 6)
                         {
-                            if (ShowDebug)
-                            {
-                                Main.logger_instance.Msg("ForceDrop : Set Unique Id to : " + unique_id);
-                                Main.logger_instance.Msg("ForceDrop : Set Unique Rolls");
-                            }
-                            Roll.item_unique_mods(ref item);
+                            if (unique_mods.enable) { Roll.item_unique_mods(ref item); }
                             foreach (UniqueList.Entry unique_item in UniqueList.instance.uniques)
                             {
                                 if (unique_item.uniqueID == unique_id)
                                 {
                                     if (unique_item.legendaryType == UniqueList.LegendaryType.LegendaryPotential)
                                     {
-                                        if (ShowDebug) { Main.logger_instance.Msg("ForceDrop : Set Legendary Potencial"); }
-                                        if (item.rarity == 9) { item.legendaryPotential = (byte)item.affixes.Count; }
-                                        else { Roll.item_legendary_potencial(ref item); }
+                                        if (legenday_potencial.enable)
+                                        {
+                                            if (ShowDebug) { Main.logger_instance.Msg("ForceDrop : Set Legendary Potencial"); }
+                                            if (item.rarity == 9) { item.legendaryPotential = (byte)item.affixes.Count; }
+                                            else { Roll.item_legendary_potencial(ref item); }
+                                        }
                                     }
-                                    else
+                                    else if (weaver_wil.enable)
                                     {
                                         if (ShowDebug) { Main.logger_instance.Msg("ForceDrop : Set Weaver Will"); }                                            
                                         Roll.item_weaver_will(ref item);
