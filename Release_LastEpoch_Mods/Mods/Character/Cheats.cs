@@ -6,7 +6,10 @@ using UnityEngine;
 namespace LastEpochMods.Mods.Character
 {
     public class Cheats
-    {        
+    {
+        private static PlayerHealth player_base_health;
+        private static HealthPotion health_potion;
+
         public class LowLife
         {
             [HarmonyPatch(typeof(CharacterStats), "OnUpdateTick")]
@@ -15,14 +18,11 @@ namespace LastEpochMods.Mods.Character
                 [HarmonyPostfix]
                 static void Postfix(ref CharacterStats __instance, float __0)
                 {
-                    try
+                    if ((Scenes_Manager.GameScene()) && (Save_Manager.Data.UserData.Character.Cheats.Enable_LowLife))
                     {
-                        if (Save_Manager.Data.UserData.Character.Cheats.Enable_LowLife)
-                        {
-                            __instance.TryCast<BaseStats>().atLowHealth = true;
-                        }
+                        __instance.atLowHealth = true;
+                        //__instance.TryCast<BaseStats>().atLowHealth = true;
                     }
-                    catch { Main.logger_instance.Error("LowLife CharacterStats:OnUpdateTick"); }
                 }
             }
         }
@@ -34,22 +34,11 @@ namespace LastEpochMods.Mods.Character
                 [HarmonyPostfix]
                 static void Postfix(ref CharacterStats __instance)
                 {
-                    try
+                    if ((Scenes_Manager.GameScene()) && (Save_Manager.Data.UserData.Character.Cheats.Enable_leech_rate))
                     {
-                        if (Scenes_Manager.GameScene())
-                        {
-                            /*if (Save_Manager.Data.UserData.Character.Cheats.Enable_attack_rate)
-                            {
-                                __instance.attackRate = Save_Manager.Data.UserData.Character.Cheats.attack_rate;
-                            }*/
-                            if (Save_Manager.Data.UserData.Character.Cheats.Enable_leech_rate)
-                            {
-                                __instance.TryCast<BaseStats>().increasedLeechRate = Save_Manager.Data.UserData.Character.Cheats.leech_rate;
-                            }
-                            
-                        }
+                        __instance.increasedLeechRate = Save_Manager.Data.UserData.Character.Cheats.leech_rate;
+                        //__instance.TryCast<BaseStats>().increasedLeechRate = Save_Manager.Data.UserData.Character.Cheats.leech_rate;
                     }
-                    catch { Main.logger_instance.Error("CharacterStats:UpdateStats Error"); }
                 }
             }
         }
@@ -129,15 +118,18 @@ namespace LastEpochMods.Mods.Character
         {
             public static void Update()
             {
-                if (Managers.Scenes_Manager.GameScene())
+                if ((Scenes_Manager.GameScene()) && (Save_Manager.Data.UserData.Character.Cheats.Enable_GodMode))
                 {
                     try
                     {
-                        BaseHealth Health = PlayerFinder.getLocalPlayerHealth();
-                        Health.damageable = !Save_Manager.Data.UserData.Character.Cheats.Enable_GodMode;
-                        Health.canDie = !Save_Manager.Data.UserData.Character.Cheats.Enable_GodMode;
+                        if (player_base_health.IsNullOrDestroyed()) { player_base_health = PlayerFinder.getLocalPlayerHealth(); } //PlayerFinder.getLocalPlayerHealth().TryCast<BaseHealth>(); }
+                        if (!player_base_health.IsNullOrDestroyed())
+                        {
+                            player_base_health.damageable = !Save_Manager.Data.UserData.Character.Cheats.Enable_GodMode;
+                            player_base_health.canDie = !Save_Manager.Data.UserData.Character.Cheats.Enable_GodMode;
+                        }
                     }
-                    catch { Main.logger_instance.Error("GodMode Error -> can't get Local_Player_Health"); }
+                    catch { }
                 }
             }
         }
@@ -145,18 +137,20 @@ namespace LastEpochMods.Mods.Character
         {
             public static void Update()
             {
-                if (Managers.Scenes_Manager.GameScene())
+                if ((Scenes_Manager.GameScene()) &&
+                    (Save_Manager.Data.UserData.Character.Cheats.Enable_AutoPot))
                 {
                     try
                     {
-                        if (Managers.Save_Manager.Data.UserData.Character.Cheats.Enable_AutoPot)
+                        if (player_base_health.IsNullOrDestroyed()) { player_base_health = PlayerFinder.getLocalPlayerHealth(); } //.TryCast<BaseHealth>(); }
+                        if (!player_base_health.IsNullOrDestroyed())
                         {
-                            BaseHealth player_base_health = PlayerFinder.getLocalPlayerHealth().TryCast<BaseHealth>();
                             int player_health_percent = (int)(player_base_health.currentHealth / player_base_health.maxHealth * 100);
-                            int auto_pot_percent = (int)(Managers.Save_Manager.Data.UserData.Character.Cheats.autoPot / 255 * 100);
+                            int auto_pot_percent = (int)(Save_Manager.Data.UserData.Character.Cheats.autoPot / 255 * 100);
                             if (player_health_percent < auto_pot_percent)
                             {
-                                PlayerFinder.getPlayerActor().gameObject.GetComponent<HealthPotion>().UsePotion();
+                                if (health_potion.IsNullOrDestroyed()) { health_potion = PlayerFinder.getPlayerActor().gameObject.GetComponent<HealthPotion>(); }
+                                if (!health_potion.IsNullOrDestroyed()) { health_potion.UsePotion(); }
                             }
                         }
                     }
@@ -222,18 +216,14 @@ namespace LastEpochMods.Mods.Character
 
                 public static void Update()
                 {
-                    if (Save_Manager.Data.UserData.Character.Cheats.Enable_ChooseBlessingFromBlessingPanel)
+                    if (Scenes_Manager.GameScene())
                     {
-                        if (Scenes_Manager.GameScene())
+                        if ((Save_Manager.Data.UserData.Character.Cheats.Enable_ChooseBlessingFromBlessingPanel) &&
+                        (GUI_Manager.BlessingsPanel.Functions.IsBlessingOpen()) && (selected_slot != null))
                         {
-
-                            if (!GUI_Manager.BlessingsPanel.Functions.IsBlessingOpen()) { selected_slot = null; }
-                            if (selected_slot != null)
-                            {
-                                if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.Mouse0)) { AddBlessingToCharacter(selected_slot.referenceBlessingID); }
-                            }
+                            if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.Mouse0)) { AddBlessingToCharacter(selected_slot.referenceBlessingID); }
                         }
-                        else { selected_slot = null; }
+                        else if (selected_slot != null) { selected_slot = null; }
                     }
                 }
 

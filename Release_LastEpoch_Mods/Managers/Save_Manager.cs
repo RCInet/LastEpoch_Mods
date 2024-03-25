@@ -12,7 +12,7 @@ namespace LastEpochMods.Managers
         {
             public static Mods_Structure UserData = new Mods_Structure();
             public static Mods_Structure UserData_duplicate = new Mods_Structure();
-
+                      
             public struct Mods_Structure
             {
                 public KeyBinds KeyBinds;
@@ -283,8 +283,26 @@ namespace LastEpochMods.Managers
                 public bool Remove_set_req;
                 public bool Enable_AllAffixsInAllSlots;
             }
+            public struct Craft_Implicits
+            {
+                public bool Enable_Implicit;
+                public byte Implicit;
+            }
+            public struct Craft_Affixs
+            {
+                public bool Enable_Affix_Tier;
+                public byte Tier;
+                public bool Enable_Affix_Value;
+                public byte Value;
+            }
             public struct Craft
             {
+                public Craft_Implicits[] Implicits;
+                public Craft_Affixs[] Affix;
+                public bool Enable_CritChance;
+                public float CritChance;
+                public bool Enable_LuckyRollChance;
+                public float LuckyRollChance;
                 public bool NoForgingPotentialCost;
                 public bool DontChekCapability;
                 public bool Enable_AddForginpotencial;
@@ -434,7 +452,7 @@ namespace LastEpochMods.Managers
                     try
                     {
                         Data.UserData = JsonConvert.DeserializeObject<Data.Mods_Structure>(File.ReadAllText(path + filename));
-                        Main.logger_instance.Msg("User Config Loaded");
+                        CheckErrors();
                     }
                     catch { }
                 }
@@ -444,6 +462,20 @@ namespace LastEpochMods.Managers
             private static Data.Mods_Structure DefaultConfig()
             {
                 Main.logger_instance.Msg("Default Config Loaded");
+
+                var craft_default_implicit = new Data.Craft_Implicits
+                {
+                    Enable_Implicit = false,
+                    Implicit = 255
+                };
+                var craft_default_affix = new Data.Craft_Affixs
+                {
+                    Enable_Affix_Tier = false,
+                    Tier = 0,
+                    Enable_Affix_Value = false,
+                    Value = 255,
+                };
+
                 Data.Mods_Structure result = new Data.Mods_Structure
                 {
                     KeyBinds =
@@ -517,6 +549,20 @@ namespace LastEpochMods.Managers
                     {
                         Craft =
                         {
+                            Implicits = new Data.Craft_Implicits[3]
+                            {
+                                craft_default_implicit,
+                                craft_default_implicit,
+                                craft_default_implicit
+                            },
+                            Affix = new Data.Craft_Affixs[4]
+                            {
+                                craft_default_affix,
+                                craft_default_affix,
+                                craft_default_affix,
+                                craft_default_affix
+                            },
+
                             NoForgingPotentialCost = false,
                             DontChekCapability = false,
                             Enable_AddForginpotencial = false,
@@ -575,12 +621,8 @@ namespace LastEpochMods.Managers
                             Roll_Legendary_Potencial = 4,
                             Enable_WeaverWill = false,
                             Roll_Weaver_Will = 28,
-                            //Min_Seals = 0,
-                            //Enable_Min_Affixs = false,
                             Min_affixs = 0,
-                            //Enable_Max_Affixs = false,
-                            Max_affixs = 0//,
-                            //Allow_6_Affixes = false
+                            Max_affixs = 4
                         },
                         Headhunter =
                         {
@@ -804,6 +846,40 @@ namespace LastEpochMods.Managers
                 };
 
                 return result;
+            }
+            private static void CheckErrors()
+            {
+                if (Data.UserData.Items.Craft.Implicits == null)
+                {
+                    var craft_default_implicit = new Data.Craft_Implicits
+                    {
+                        Enable_Implicit = false,
+                        Implicit = 255
+                    };
+                    Data.UserData.Items.Craft.Implicits = new Data.Craft_Implicits[3]
+                    {
+                        craft_default_implicit,
+                        craft_default_implicit,
+                        craft_default_implicit
+                    };
+                }
+                if (Data.UserData.Items.Craft.Affix == null)
+                {
+                    var craft_default_affix = new Data.Craft_Affixs
+                    {
+                        Enable_Affix_Tier = false,
+                        Tier = 0,
+                        Enable_Affix_Value = false,
+                        Value = 255,
+                    };
+                    Data.UserData.Items.Craft.Affix = new Data.Craft_Affixs[4]
+                    {
+                        craft_default_affix,
+                        craft_default_affix,
+                        craft_default_affix,
+                        craft_default_affix
+                    };
+                }
             }
         }
         public class Save

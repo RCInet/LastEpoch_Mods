@@ -5,16 +5,14 @@ namespace LastEpochMods.Mods.Items
 {
     public class DropNotifications
     {
-        public static void Update()
+        public static void OnSceneWasLoaded()
         {
-            if (!shard_notification_parent.IsNullOrDestroyed())
+            if ((Save_Manager.Data.UserData.Items.DropNotification.Hide_materials_notifications) &&
+                (!shard_notification_parent.IsNullOrDestroyed()))
             {
-                if (Save_Manager.Data.UserData.Items.DropNotification.Hide_materials_notifications)
-                {
-                    shard_notification_parent.gameObject.active = false;
-                }
-                else { shard_notification_parent.gameObject.active = true; }
+                shard_notification_parent.gameObject.active = false;
             }
+            else { shard_notification_parent.gameObject.active = true; }
         }
 
         private static ShardNotificationParent shard_notification_parent = null;
@@ -24,8 +22,7 @@ namespace LastEpochMods.Mods.Items
             [HarmonyPostfix]
             static void Postfix(ref ShardNotificationParent __instance)
             {
-                try { shard_notification_parent = __instance; }
-                catch { }
+                shard_notification_parent = __instance;
             }
         }
         
@@ -35,12 +32,9 @@ namespace LastEpochMods.Mods.Items
             [HarmonyPrefix]
             static bool Prefix(string __0)
             {
-                try
-                {
-                    if (Save_Manager.Data.UserData.Items.DropNotification.Hide_materials_notifications) { return false; }
-                    else { return true; }
-                }
-                catch { return true; }                
+                if (Save_Manager.Data.UserData.Items.DropNotification.Hide_materials_notifications)
+                { return false; }
+                else { return true; }
             }
         }
 
@@ -50,12 +44,8 @@ namespace LastEpochMods.Mods.Items
             [HarmonyPrefix]
             static bool Prefix(string __0, int __1)
             {
-                try
-                {
-                    if (Save_Manager.Data.UserData.Items.DropNotification.Hide_materials_notifications) { return false; }
-                    else { return true; }
-                }
-                catch { return true; }                
+                if (Save_Manager.Data.UserData.Items.DropNotification.Hide_materials_notifications) { return false; }
+                else { return true; }
             }
         }
 
@@ -65,12 +55,11 @@ namespace LastEpochMods.Mods.Items
             [HarmonyPrefix]
             static bool Prefix(int __0)
             {
-                try
+                if (Save_Manager.Data.UserData.Items.DropNotification.Hide_materials_notifications)
                 {
-                    if (Save_Manager.Data.UserData.Items.DropNotification.Hide_materials_notifications) { return false; }
-                    else { return true; }
+                    return false;
                 }
-                catch { return true; }                
+                else { return true; }
             }
         }
 
@@ -82,7 +71,10 @@ namespace LastEpochMods.Mods.Items
             {
                 try
                 {
-                    if (Save_Manager.Data.UserData.Items.DropNotification.Hide_materials_notifications) { return false; }
+                    if (Save_Manager.Data.UserData.Items.DropNotification.Hide_materials_notifications)
+                    {
+                        return false;
+                    }
                     else { return true; }
                 }
                 catch { return true; }                
@@ -95,12 +87,11 @@ namespace LastEpochMods.Mods.Items
             [HarmonyPrefix]
             static bool Prefix(ref Notifications __instance)
             {
-                try
+                if (Save_Manager.Data.UserData.Items.DropNotification.Hide_materials_notifications)
                 {
-                    if (Save_Manager.Data.UserData.Items.DropNotification.Hide_materials_notifications) { return false; }
-                    else { return true; }
+                    return false;
                 }
-                catch { return true; }
+                else { return true; }
             }
         }
     }

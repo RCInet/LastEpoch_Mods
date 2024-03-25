@@ -3,8 +3,7 @@
 namespace LastEpochMods.Mods.Character
 {
     public class PermanentBuffs
-    {
-        public static System.Collections.Generic.List<PermanentBuff> Buffs;
+    {        
         public struct PermanentBuff
         {
             public string Name;
@@ -56,10 +55,9 @@ namespace LastEpochMods.Mods.Character
         private static bool Enable = false;
         private static bool Running = false;
         private static bool Starting = false;
-
+        private static System.Collections.Generic.List<PermanentBuff> Buffs;
         private static System.DateTime StartTime;
-        private static float Buff_Duration = 255f;
-        
+        private static readonly float Buff_Duration = 255f;
         private static bool PauseMenu = false;
         private static Actor playerActor;
 

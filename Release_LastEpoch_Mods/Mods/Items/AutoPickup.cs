@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using ItemFiltering;
 using LastEpochMods.Managers;
+using System.Runtime.InteropServices;
 
 namespace LastEpochMods.Mods.Items
 {
@@ -13,15 +14,13 @@ namespace LastEpochMods.Mods.Items
             {
                 if (Save_Manager.Data.UserData.Items.AutoPickup.AutoStore_Materials_WithTimer)
                 {
-                    Save_Manager.Data.UserData.Items.AutoPickup.AutoStore_Materials = false;
-                    Save_Manager.Data.UserData.Items.AutoPickup.AutoStore_Materials_WhenOpeningInventory = false;
                     if (!running) { Start(); }
                     if (running)
                     {
                         if (GetElapsedTime() > 10)
                         {
                             InventoryPanelUI.instance.StoreMaterialsButtonPress();
-                            Start();
+                            running = false;
                         }
                     }
                 }
@@ -52,18 +51,15 @@ namespace LastEpochMods.Mods.Items
             [HarmonyPostfix]
             static void Postfix(ref InventoryPanelUI __instance)
             {
-                try
+                if (Save_Manager.Data.UserData.Items.AutoPickup.AutoStore_Materials_WhenOpeningInventory)
                 {
-                    if (Save_Manager.Data.UserData.Items.AutoPickup.AutoStore_Materials_WhenOpeningInventory)
-                    {
-                        __instance.StoreMaterialsButtonPress();
-                    }                        
+                    __instance.StoreMaterialsButtonPress();
                 }
-                catch { Main.logger_instance.Error("InventoryPanelUI:OnEnable"); }
             }
         }
 
         //AutoPickup Materials, Keys and Items without Drop //AutoStore Materials //AutoSell
+        public static ItemFilter filter;
         [HarmonyPatch(typeof(GroundItemManager), "dropItemForPlayer")]
         public class dropItemForPlayer
         {
@@ -91,38 +87,50 @@ namespace LastEpochMods.Mods.Items
                     ((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Filter) ||
                     (Save_Manager.Data.UserData.Items.Pickup.RemoveItemNotInFilter)))
                 {
-                    ItemFilter filter = null;
-                    try { filter = ItemFilterManager.Instance.Filter; }
-                    catch { Main.logger_instance.Error("Error trying to get user Filter"); }
-                    if (!filter.IsNullOrDestroyed())
+                    if (!ItemFilterManager.Instance.IsNullOrDestroyed())
                     {
-                        bool FilterShow = false;
-                        bool FilterHide = false;
-                        foreach (Rule rule in filter.rules)
+                        if (!ItemFilterManager.Instance.Filter.IsNullOrDestroyed())
                         {
-                            if ((rule.isEnabled) && (rule.Match(__1.TryCast<ItemDataUnpacked>())) &&
-                                (((rule.levelDependent) && (rule.LevelInBounds(__0.stats.level))) ||
-                                (!rule.levelDependent)))
+                            if ((filter.IsNullOrDestroyed()) ||
+                                ((!filter.IsNullOrDestroyed()) && (filter.name != ItemFilterManager.Instance.Filter.name)))
                             {
-                                if (rule.type == Rule.RuleOutcome.SHOW) { FilterShow = true; }
-                                else if (rule.type == Rule.RuleOutcome.HIDE)
+                                filter = ItemFilterManager.Instance.Filter;
+                            }
+                            if (!filter.IsNullOrDestroyed())
+                            {
+                                bool FilterShow = false;
+                                bool FilterHide = false;
+                                foreach (Rule rule in filter.rules)
                                 {
-                                    FilterShow = false;
-                                    FilterHide = true;
-                                    break;
+                                    if ((rule.isEnabled) && (rule.Match(__1.TryCast<ItemDataUnpacked>())) &&
+                                        (((rule.levelDependent) && (rule.LevelInBounds(__0.stats.level))) ||
+                                        (!rule.levelDependent)))
+                                    {
+                                        if (rule.type == Rule.RuleOutcome.SHOW) { FilterShow = true; }
+                                        else if (rule.type == Rule.RuleOutcome.HIDE)
+                                        {
+                                            FilterShow = false;
+                                            FilterHide = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if ((FilterShow) && (Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Filter))
+                                {
+                                    bool pickup = ItemContainersManager.instance.attemptToPickupItem(__1, __0.position()); //__2); //Pickup
+                                    if (pickup) { result = false; }
+
+                                }
+                                else if ((FilterHide) && (Save_Manager.Data.UserData.Items.Pickup.RemoveItemNotInFilter))
+                                {
+                                    try
+                                    {
+                                        __0.goldTracker.modifyGold(__1.TryCast<ItemDataUnpacked>().VendorSaleValue);
+                                        result = false;
+                                    }
+                                    catch { } //If error when sell, item drop
                                 }
                             }
-                        }
-                        if ((FilterShow) && (Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Filter))
-                        {
-                            bool pickup = ItemContainersManager.instance.attemptToPickupItem(__1, __0.position()); //__2); //Pickup
-                            if (pickup) { result = false; }
-
-                        }
-                        else if ((FilterHide) && (Save_Manager.Data.UserData.Items.Pickup.RemoveItemNotInFilter))
-                        {
-                            __0.goldTracker.modifyGold(__1.TryCast<ItemDataUnpacked>().VendorSaleValue);
-                            result = false;
                         }
                     }
                 }

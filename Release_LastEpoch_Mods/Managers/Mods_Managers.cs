@@ -14,7 +14,7 @@
                 Mods.Character.Data.Load(); //Load CharacterData for Menu
                 Mods.Scenes.Camera.LoadOnStart();
                 Mods.SkillsTree.Options.Ability_Mutator.Init(); //Init Ability Mutators list
-                Mods.Items.DropNotifications.Update(); //Update Notifications
+                Mods.Items.DropNotifications.OnSceneWasLoaded(); //Update Notifications
                 Mods.Character.PermanentBuffs.OnSceneWasLoaded();
             }
         }

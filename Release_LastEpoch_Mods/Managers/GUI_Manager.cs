@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
+using static LastEpochMods.Mods.ForceDrop.ForceDrop;
 
 namespace LastEpochMods.Managers
 {
@@ -379,6 +380,9 @@ namespace LastEpochMods.Managers
 
                 public static Vector2 permanentbuffs_scrollview = Vector2.zero;
 
+                public static bool CraftShowPrefixes = false;
+                public static bool CraftShowAffixes = false;
+
                 public static void UpdateGUI()
                 {
                     if ((Functions.IsPauseMenuOpen()) || (ForceOpen))
@@ -705,7 +709,7 @@ namespace LastEpochMods.Managers
                             
                             GUI.TextField(new Rect(section1_x + content_margin, section1_y, ((section1_content_w * 40) / 100) - content_margin, 40), "Maximum Affix(s)", Styles.Content_Text());
                             float ItemData_MaxAffixs_Temp = Save_Manager.Data.UserData.Items.ItemData.Max_affixs;
-                            ItemData_MaxAffixs_Temp = GUI.HorizontalSlider(new Rect(section1_x + (2 * content_margin), section1_y + 50, section1_content_w - (2 * content_margin), 20), ItemData_MaxAffixs_Temp, 0f, 20f);
+                            ItemData_MaxAffixs_Temp = GUI.HorizontalSlider(new Rect(section1_x + (2 * content_margin), section1_y + 50, section1_content_w - (2 * content_margin), 20), ItemData_MaxAffixs_Temp, 4f, 20f);
                             GUI.TextField(new Rect(section1_x + ((section1_content_w * 80) / 100) - (2 * content_margin), section1_y, ((section1_content_w * 20) / 100), 40), ItemData_MaxAffixs_Temp.ToString(), Styles.ContentR_Text());
                             Save_Manager.Data.UserData.Items.ItemData.Max_affixs = (int)ItemData_MaxAffixs_Temp;
                             if (Save_Manager.Data.UserData.Items.ItemData.Max_affixs < Save_Manager.Data.UserData.Items.ItemData.Min_affixs)
@@ -849,48 +853,9 @@ namespace LastEpochMods.Managers
                             GUI.TextField(new Rect(section2_x, section2_y, section2_w - (2 * content_margin), 20), "* AutoStore Materials after Drop Need AutoPickup Materials Enable to work", Styles.Content_Infos());
                             section2_y += 20 + content_margin;
 
-                            //Craft
-                            scene_x += section_w + ui_margin;
-                            float items_craft_h = 230 + (9 * content_margin);
-                            float section6_y = scene_y;
-                            GUI.DrawTexture(new Rect(scene_x, section6_y, section_w, items_craft_h), Textures.black);
-                            float section6_x = scene_x + content_margin;
-                            section6_y += content_margin;
-                            float section6_w = section_w - (2 * content_margin);
-                            GUI.TextField(new Rect(section6_x, section6_y, section6_w, 40), "Craft", Styles.Content_Title());
-                            section6_y += 40 + content_margin;
-                            GUI.DrawTexture(new Rect(section6_x, section6_y, section6_w, (items_craft_h - 40 - (3 * content_margin))), Textures.grey);
-                            section6_x += content_margin;
-                            section6_y += content_margin;
-                            float section6_content_w = section6_w - (2 * content_margin);
-
-                            GUI.TextField(new Rect(section6_x + content_margin, section6_y, ((section6_content_w * 40) / 100) - content_margin, 40), "Add Forgin Potencial", Styles.Content_Text());
-                            float AddForginpotencial_Temp = Save_Manager.Data.UserData.Items.Craft.AddForginpotencial;
-                            AddForginpotencial_Temp = GUI.HorizontalSlider(new Rect(section6_x + (2 * content_margin), section6_y + 50, section6_content_w - (2 * content_margin), 20), AddForginpotencial_Temp, 0f, 255f);
-                            string AddForginpotencial_Text = GUI.TextArea(new Rect(section6_x + ((section6_content_w * 40) / 100) - (2 * content_margin), section6_y, ((section1_content_w * 20) / 100), 40), AddForginpotencial_Temp.ToString(), Styles.Content_TextArea());
-                            try { AddForginpotencial_Temp = float.Parse(AddForginpotencial_Text, CultureInfo.InvariantCulture.NumberFormat); }
-                            catch { }
-                            if (GUI.Button(new Rect(section6_x + ((section6_content_w * 60) / 100), section6_y + content_margin, ((section6_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Items.Craft.Enable_AddForginpotencial)))
-                            { Save_Manager.Data.UserData.Items.Craft.Enable_AddForginpotencial = !Save_Manager.Data.UserData.Items.Craft.Enable_AddForginpotencial; }
-                            Save_Manager.Data.UserData.Items.Craft.AddForginpotencial = (byte)AddForginpotencial_Temp;
-                            section6_y += 70 + content_margin;
-
-                            GUI.TextField(new Rect(section6_x, section6_y, section6_w - (2 * content_margin), 20), "* Move an item in Forge", Styles.Content_Infos());
-                            section6_y += 20 + content_margin;
-
-                            if (GUI.Button(new Rect(section6_x, section6_y, section6_w - (2 * content_margin), 40), "No Forgin Potencial Cost", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Items.Craft.NoForgingPotentialCost)))
-                            { Save_Manager.Data.UserData.Items.Craft.NoForgingPotentialCost = !Save_Manager.Data.UserData.Items.Craft.NoForgingPotentialCost; }
-                            section6_y += 40 + content_margin;
-
-                            if (GUI.Button(new Rect(section6_x, section6_y, section6_w - (2 * content_margin), 40), "Don't Check Capability", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Items.Craft.DontChekCapability)))
-                            { Save_Manager.Data.UserData.Items.Craft.DontChekCapability = !Save_Manager.Data.UserData.Items.Craft.DontChekCapability; }
-                            section6_y += 40 + content_margin;
-
-                            GUI.TextField(new Rect(section6_x, section6_y, section6_w - (2 * content_margin), 20), "* Implicits and affixs (values) can be override using Runes and ItemData", Styles.Content_Infos());
-
                             //Remove Req
-                            float removereq_h = 280 + (11 * content_margin);
-                            float section7_y = scene_y + items_craft_h + ui_margin;
+                            float removereq_h = 260 + (11 * content_margin);
+                            float section7_y = scene_y + Items_AutoPickup_h + ui_margin;
                             GUI.DrawTexture(new Rect(scene_x, section7_y, section_w, removereq_h), Textures.black);
                             float section7_x = scene_x + content_margin;
                             section7_y += content_margin;
@@ -924,9 +889,77 @@ namespace LastEpochMods.Managers
 
                             GUI.TextField(new Rect(section7_x, section7_y, section7_w - (2 * content_margin), 20), "* Need to be activate before loading your Character", Styles.Content_Infos());
                             section7_y += 20 + content_margin;
+
+                            //Craft
+                            scene_x += section_w + ui_margin;
+                            float items_craft_h = 270 + (10 * content_margin);
+                            if (CraftShowPrefixes) { items_craft_h += 210 + (3 * content_margin); }
+                            if (CraftShowAffixes) { items_craft_h += 560 + (8 * content_margin); }
+
+                            float section6_y = scene_y;
+                            GUI.DrawTexture(new Rect(scene_x, section6_y, section_w, items_craft_h), Textures.black);
+                            float section6_x = scene_x + content_margin;
+                            section6_y += content_margin;
+                            float section6_w = section_w - (2 * content_margin);
+                            GUI.TextField(new Rect(section6_x, section6_y, section6_w, 40), "Craft", Styles.Content_Title());
+                            section6_y += 40 + content_margin;
+                            GUI.DrawTexture(new Rect(section6_x, section6_y, section6_w, (items_craft_h - 40 - (3 * content_margin))), Textures.grey);
+                            section6_x += content_margin;
+                            section6_y += content_margin;
+                            float section6_content_w = section6_w - (2 * content_margin);
+
+                            GUI.TextField(new Rect(section6_x + content_margin, section6_y, ((section6_content_w * 40) / 100) - content_margin, 40), "Add Forgin Potencial", Styles.Content_Text());
+                            float AddForginpotencial_Temp = Save_Manager.Data.UserData.Items.Craft.AddForginpotencial;
+                            AddForginpotencial_Temp = GUI.HorizontalSlider(new Rect(section6_x + (2 * content_margin), section6_y + 50, section6_content_w - (2 * content_margin), 20), AddForginpotencial_Temp, 0f, 255f);
+                            string AddForginpotencial_Text = GUI.TextArea(new Rect(section6_x + ((section6_content_w * 40) / 100) - (2 * content_margin), section6_y, ((section1_content_w * 20) / 100), 40), AddForginpotencial_Temp.ToString(), Styles.Content_TextArea());
+                            try { AddForginpotencial_Temp = float.Parse(AddForginpotencial_Text, CultureInfo.InvariantCulture.NumberFormat); }
+                            catch { }
+                            if (GUI.Button(new Rect(section6_x + ((section6_content_w * 60) / 100), section6_y + content_margin, ((section6_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Items.Craft.Enable_AddForginpotencial)))
+                            { Save_Manager.Data.UserData.Items.Craft.Enable_AddForginpotencial = !Save_Manager.Data.UserData.Items.Craft.Enable_AddForginpotencial; }
+                            Save_Manager.Data.UserData.Items.Craft.AddForginpotencial = (byte)AddForginpotencial_Temp;
+                            section6_y += 70 + content_margin;
                             
-                            GUI.TextField(new Rect(section7_x, section7_y, section7_w - (2 * content_margin), 20), "** All Affixs in all slots cause Lag in forge and when drop", Styles.Content_Infos());
-                            section7_y += 20 + content_margin;
+                            if (GUI.Button(new Rect(section6_x, section6_y, section6_content_w, 30), "Prefixes", Styles.Content_Enable_Button(CraftShowPrefixes)))
+                            {
+                                CraftShowAffixes = false;
+                                CraftShowPrefixes = !CraftShowPrefixes;
+                            }
+                            section6_y += 30 + content_margin;
+                            if (CraftShowPrefixes)
+                            {
+                                section6_y += CustomControls.Toggle_BytePercent(section6_x, section6_y, section6_content_w, "Implicit 0", 0f, 255f, false, ref Save_Manager.Data.UserData.Items.Craft.Implicits[0].Implicit, ref Save_Manager.Data.UserData.Items.Craft.Implicits[0].Enable_Implicit);
+                                section6_y += CustomControls.Toggle_BytePercent(section6_x, section6_y, section6_content_w, "Implicit 1", 0f, 255f, false, ref Save_Manager.Data.UserData.Items.Craft.Implicits[1].Implicit, ref Save_Manager.Data.UserData.Items.Craft.Implicits[1].Enable_Implicit);
+                                section6_y += CustomControls.Toggle_BytePercent(section6_x, section6_y, section6_content_w, "Implicit 2", 0f, 255f, false, ref Save_Manager.Data.UserData.Items.Craft.Implicits[2].Implicit, ref Save_Manager.Data.UserData.Items.Craft.Implicits[2].Enable_Implicit);
+                            }
+                            if (GUI.Button(new Rect(section6_x, section6_y, section6_content_w, 30), "Affixes", Styles.Content_Enable_Button(CraftShowAffixes)))
+                            {
+                                CraftShowPrefixes = false;
+                                CraftShowAffixes = !CraftShowAffixes;
+                            }
+                            section6_y += 30 + content_margin;
+                            if (CraftShowAffixes)
+                            {
+                                section6_y += CustomControls.Toggle_ByteValue(section6_x, section6_y, section6_content_w, "Affix 0 Tier", 0f, 7f, ref Save_Manager.Data.UserData.Items.Craft.Affix[0].Tier, ref Save_Manager.Data.UserData.Items.Craft.Affix[0].Enable_Affix_Tier);
+                                section6_y += CustomControls.Toggle_BytePercent(section6_x, section6_y, section6_content_w, "Affix 0 Value", 0f, 255f, false, ref Save_Manager.Data.UserData.Items.Craft.Affix[0].Value, ref Save_Manager.Data.UserData.Items.Craft.Affix[0].Enable_Affix_Value);
+                                section6_y += CustomControls.Toggle_ByteValue(section6_x, section6_y, section6_content_w, "Affix 0 Tier", 0f, 7f, ref Save_Manager.Data.UserData.Items.Craft.Affix[1].Tier, ref Save_Manager.Data.UserData.Items.Craft.Affix[1].Enable_Affix_Tier);
+                                section6_y += CustomControls.Toggle_BytePercent(section6_x, section6_y, section6_content_w, "Affix 0 Value", 0f, 255f, false, ref Save_Manager.Data.UserData.Items.Craft.Affix[1].Value, ref Save_Manager.Data.UserData.Items.Craft.Affix[1].Enable_Affix_Value);
+                                section6_y += CustomControls.Toggle_ByteValue(section6_x, section6_y, section6_content_w, "Affix 0 Tier", 0f, 7f, ref Save_Manager.Data.UserData.Items.Craft.Affix[2].Tier, ref Save_Manager.Data.UserData.Items.Craft.Affix[2].Enable_Affix_Tier);
+                                section6_y += CustomControls.Toggle_BytePercent(section6_x, section6_y, section6_content_w, "Affix 0 Value", 0f, 255f, false, ref Save_Manager.Data.UserData.Items.Craft.Affix[2].Value, ref Save_Manager.Data.UserData.Items.Craft.Affix[2].Enable_Affix_Value);
+                                section6_y += CustomControls.Toggle_ByteValue(section6_x, section6_y, section6_content_w, "Affix 0 Tier", 0f, 7f, ref Save_Manager.Data.UserData.Items.Craft.Affix[3].Tier, ref Save_Manager.Data.UserData.Items.Craft.Affix[3].Enable_Affix_Tier);
+                                section6_y += CustomControls.Toggle_BytePercent(section6_x, section6_y, section6_content_w, "Affix 0 Value", 0f, 255f, false, ref Save_Manager.Data.UserData.Items.Craft.Affix[3].Value, ref Save_Manager.Data.UserData.Items.Craft.Affix[3].Enable_Affix_Value);
+                            }
+
+                            if (GUI.Button(new Rect(section6_x, section6_y, section6_w - (2 * content_margin), 40), "No Forgin Potencial Cost", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Items.Craft.NoForgingPotentialCost)))
+                            { Save_Manager.Data.UserData.Items.Craft.NoForgingPotentialCost = !Save_Manager.Data.UserData.Items.Craft.NoForgingPotentialCost; }
+                            section6_y += 40 + content_margin;
+
+                            if (GUI.Button(new Rect(section6_x, section6_y, section6_w - (2 * content_margin), 40), "Don't Check Capability", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Items.Craft.DontChekCapability)))
+                            { Save_Manager.Data.UserData.Items.Craft.DontChekCapability = !Save_Manager.Data.UserData.Items.Craft.DontChekCapability; }
+                            section6_y += 40 + content_margin;
+
+                            GUI.TextField(new Rect(section6_x, section6_y, section6_w - (2 * content_margin), 20), "* Implicits and affixs (values) can be override using Runes and ItemData", Styles.Content_Infos());
+
+                            
                         }
                         else if (BaseMenu.Scenes.Show)
                         {
@@ -2052,6 +2085,32 @@ namespace LastEpochMods.Managers
 
                         return 40 + content_margin;
                     }
+                    public static float Toggle_ByteValue(float pos_x, float pos_y, float size_w, string text, float min, float max, ref byte value, ref bool toggle)
+                    {
+                        GUI.TextField(new Rect(pos_x, pos_y, ((size_w * 40) / 100) - content_margin, 40), text, Styles.Content_Text());
+                        GUI.TextField(new Rect(pos_x + ((size_w * 40) / 100) - (2 * content_margin), pos_y, ((size_w * 20) / 100), 40), value.ToString(), Styles.ContentR_Text());
+                        if (GUI.Button(new Rect(pos_x + ((size_w * 60) / 100), pos_y, ((size_w * 40) / 100), 40), "Enable/Disable", Styles.Content_Enable_Button(toggle))) { toggle = !toggle; }
+                        float temp_value = value;
+                        temp_value = GUI.HorizontalSlider(new Rect(pos_x + content_margin, pos_y + 50, size_w - (2 * content_margin), 20), temp_value, min, max);
+                        value = (byte)temp_value;
+
+                        return 70 + content_margin;
+                    }
+                    public static float Toggle_BytePercent(float pos_x, float pos_y, float size_w, string text, float min, float max, bool multiply, ref byte value, ref bool toggle)
+                    {
+                        GUI.TextField(new Rect(pos_x, pos_y, ((size_w * 40) / 100) - content_margin, 40), text, Styles.Content_Text());
+                        string TempText = "";
+                        if (!multiply) { TempText = System.Convert.ToInt32(value / 255 * 100) + " %"; }
+                        else { TempText = (value * 100) + " %"; }
+                        GUI.TextField(new Rect(pos_x + ((size_w * 40) / 100) - (2 * content_margin), pos_y, ((size_w * 20) / 100), 40), TempText, Styles.ContentR_Text());
+                        if (GUI.Button(new Rect(pos_x + ((size_w * 60) / 100), pos_y, ((size_w * 40) / 100), 40), "Enable/Disable", Styles.Content_Enable_Button(toggle))) { toggle = !toggle; }
+                        float temp_value = value;
+                        temp_value = GUI.HorizontalSlider(new Rect(pos_x + content_margin, pos_y + 50, size_w - (2 * content_margin), 20), temp_value, min, max);
+                        value = (byte)temp_value;
+
+                        return 70 + content_margin;
+                    }
+
                     public static float Toggle_FloatValue(float pos_x, float pos_y, float size_w, string text, ref float value, ref bool toggle)
                     {
                         GUI.TextField(new Rect(pos_x, pos_y, ((size_w * 40) / 100) - content_margin, 40), text, Styles.Content_Text());

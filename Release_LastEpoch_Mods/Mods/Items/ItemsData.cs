@@ -91,22 +91,16 @@ namespace LastEpochMods.Mods.Items
         [HarmonyPatch(typeof(ItemList), "GetItemMaximumAffixes")]
         public class ItemList_GetItemMaximumAffixes
         {
-            [HarmonyPostfix]
-            static void Postfix(ItemList __instance, ref int __result, ref int __0)
+            [HarmonyPrefix]
+            static bool Prefix(ItemList __instance, ref int __result, ref int __0)
             {
-                if (Scenes_Manager.GameScene())
+                if ((Scenes_Manager.GameScene()) && (!ForceDrop.ForceDrop.drop.generating_item) &&
+                    (__0 < 25) && (Save_Manager.Data.UserData.Items.ItemData.Min_affixs > 4))
                 {
-                    if (!ForceDrop.ForceDrop.drop.generating_item)
-                    {
-                        if (__0 < 25)
-                        {
-                            int max = 4;
-                            if (Save_Manager.Data.UserData.Items.ItemData.Min_affixs > max) { max = Save_Manager.Data.UserData.Items.ItemData.Min_affixs; }
-                            __result = max;
-                        }                        
-                        else if ((__0 < 34) && (__result > 2)) { __result = 2; } //Idols                      
-                    }
+                    __result = Save_Manager.Data.UserData.Items.ItemData.Min_affixs;
+                    return false;
                 }
+                else { return true; }
             }
         } 
         
@@ -117,37 +111,11 @@ namespace LastEpochMods.Mods.Items
             [HarmonyPrefix]
             static bool Prefix(ref byte __result, int __0)
             {
-                if (Scenes_Manager.GameScene())
+                if ((Scenes_Manager.GameScene()) && (!ForceDrop.ForceDrop.drop.generating_item))
                 {
-                    if (!ForceDrop.ForceDrop.drop.generating_item)
-                    {
-                        if (Save_Manager.Data.UserData.Items.ItemData.ForceUnique)
-                        {
-                            __result = 7;
-                            return false;
-                        }
-                        else if (Save_Manager.Data.UserData.Items.ItemData.ForceSet)
-                        {
-                            __result = 8;
-                            return false;
-                        }
-                        else if (Save_Manager.Data.UserData.Items.ItemData.ForceLegendary)
-                        {
-                            __result = 9;
-                            return false;
-                        }
-                        else { return true; }
-
-                        /*if (Save_Manager.Data.UserData.Items.ItemData.Enable_Rarity)
-                        {
-                            byte result = Save_Manager.Data.UserData.Items.ItemData.Roll_Rarity;
-                            if (result < 0) { result = 0; }
-                            else if ((result > 4) && (result < 7)) { result = 4; }
-                            __result = result;
-                            return false;
-                        }
-                        else { return true; }*/
-                    }
+                    if (Save_Manager.Data.UserData.Items.ItemData.ForceUnique) { __result = 7; return false; }
+                    else if (Save_Manager.Data.UserData.Items.ItemData.ForceSet) { __result = 8; return false; }
+                    else if (Save_Manager.Data.UserData.Items.ItemData.ForceLegendary) { __result = 9; return false; }
                     else { return true; }
                 }
                 else { return true; }
@@ -155,100 +123,74 @@ namespace LastEpochMods.Mods.Items
         }
 
         //Seal and Affix (Tier and Value)
+        public static System.Collections.Generic.List<int> eligibles_single_affixes = new System.Collections.Generic.List<int>();
+        public static System.Collections.Generic.List<int> eligibles_multi_affixes = new System.Collections.Generic.List<int>();
+        public static int min_tier = 1;
+        public static int max_tier = 8;
         [HarmonyPatch(typeof(GenerateItems), "DropItemAtPoint")]
         public class GenerateItems_DropItemAtPoint
         {
             [HarmonyPrefix]
             static void Prefix(GenerateItems __instance, ref ItemDataUnpacked __0, ref UnityEngine.Vector3 __1, int __2)
             {
-                if (Scenes_Manager.GameScene())
+                if ((Scenes_Manager.GameScene()) && (!ForceDrop.ForceDrop.drop.generating_item) &&
+                    (__0.itemType < 100))
                 {
-                    if (!ForceDrop.ForceDrop.drop.generating_item)
+                    if (__0.itemType < 25)
                     {
-                        ItemData item_data = __0.TryCast<ItemData>();
-                        int item_type = System.Convert.ToInt32(item_data.itemType);
-                        if ((!item_data.isUnique()) && (!item_data.isSet()) && (item_data.itemType < 34))
+                        if ((!__0.isUnique()) && (!__0.isSet())) //Base item and Legendary
                         {
-                            bool Idol = false;
-                            if ((item_type > 24) && (item_type < 34)) { Idol = true; }                            
-                            int nb_seals = 0;
                             int nb_affixs = 0;
-                            foreach (ItemAffix aff in __0.affixes)
+                            if ((Save_Manager.Data.UserData.Items.ItemData.Force_Seal) ||
+                                (Save_Manager.Data.UserData.Items.ItemData.Max_affixs > 4))
                             {
-                                if (!aff.isSealedAffix) { nb_affixs++; }
-                                else { nb_seals++; }
-                            }
-                            if (Save_Manager.Data.UserData.Items.ItemData.Force_Seal)
-                            {
-                                int min_tier = 1;
-                                int max_tier = 8;
-                                if (Idol) { max_tier = 2; }
-                                int seal_tier = UnityEngine.Random.Range(min_tier, max_tier);
-                                __0.AddRandomSealedAffix(seal_tier);
-                            }
-                            int nb_affixes_wanted = UnityEngine.Random.RandomRangeInt(Save_Manager.Data.UserData.Items.ItemData.Min_affixs, Save_Manager.Data.UserData.Items.ItemData.Max_affixs + 1);
-                            if ((Idol) && (!item_data.isUniqueSetOrLegendary())) { nb_affixes_wanted = 2; } //Idol not legendary
-
-                            System.Collections.Generic.List<int> eligibles_single_affixes = new System.Collections.Generic.List<int>();
-                            System.Collections.Generic.List<int> eligibles_multi_affixes = new System.Collections.Generic.List<int>();
-                            if (nb_affixs < nb_affixes_wanted)
-                            {
-                                eligibles_single_affixes = GetEligibles_Single_Affixes(__0);
-                                eligibles_multi_affixes = GetEligibles_Multi_Affixes(__0);
-                            }
-                            for (int i = nb_affixs; i < nb_affixes_wanted; i++)
-                            {
-                                __0.affixes.Add(RandomAffix(eligibles_single_affixes, eligibles_multi_affixes, false));
-                                __0.RefreshIDAndValues();
-                            }
-
-                            nb_seals = 0;
-                            nb_affixs = 0;
-                            foreach (ItemAffix aff in __0.affixes)
-                            {
-                                if (!aff.isSealedAffix) { nb_affixs++; }
-                                else { nb_seals++; }
-                            }
-                            
-                            //Tier and Value //Nedd to add Min Max Tier in Config
-                            foreach (ItemAffix aff in __0.affixes)
-                            {
-                                if (!aff.isSealedAffix)
+                                int nb_seals = 0;
+                                foreach (ItemAffix aff in __0.affixes)
                                 {
-                                    if ((!Idol) && (Save_Manager.Data.UserData.Items.ItemData.Enable_AffixsTier))
+                                    if (!aff.isSealedAffix) { nb_affixs++; }
+                                    else { nb_seals++; }
+                                }
+                                if ((Save_Manager.Data.UserData.Items.ItemData.Force_Seal) && (nb_seals == 0))
+                                {
+                                    __0.AddRandomSealedAffix(UnityEngine.Random.Range(min_tier, max_tier));
+                                }
+                                int nb_affixes_wanted = UnityEngine.Random.RandomRangeInt(Save_Manager.Data.UserData.Items.ItemData.Min_affixs, Save_Manager.Data.UserData.Items.ItemData.Max_affixs + 1);
+                                if (nb_affixs < nb_affixes_wanted)
+                                {
+                                    eligibles_single_affixes = GetEligibles_Single_Affixes(__0);
+                                    eligibles_multi_affixes = GetEligibles_Multi_Affixes(__0);
+                                    for (int i = nb_affixs; i < nb_affixes_wanted; i++)
+                                    {
+                                        __0.affixes.Add(RandomAffix(eligibles_single_affixes, eligibles_multi_affixes, false));
+                                        __0.RefreshIDAndValues();
+                                    }
+                                }
+                            }
+                            if (Save_Manager.Data.UserData.Items.ItemData.Enable_AffixsTier)
+                            {
+                                foreach (ItemAffix aff in __0.affixes)
+                                {
+                                    if (!aff.isSealedAffix)
                                     {
                                         aff.affixTier = (byte)(Save_Manager.Data.UserData.Items.ItemData.Roll_AffixTier - 1);
                                     }
-                                    else if (Idol) { aff.affixTier = 1; }
-                                    if (Save_Manager.Data.UserData.Items.ItemData.Enable_AffixsValue)
+                                    else { aff.affixTier = (byte)(Save_Manager.Data.UserData.Items.ItemData.Roll_SealTier - 1); }
+                                }
+                            }
+                            if (Save_Manager.Data.UserData.Items.ItemData.Enable_AffixsValue)
+                            {
+                                foreach (ItemAffix aff in __0.affixes)
+                                {
+                                    if (!aff.isSealedAffix)
                                     {
                                         aff.affixRoll = Save_Manager.Data.UserData.Items.ItemData.Roll_AffixValue;
                                     }
+                                    else { aff.affixRoll = Save_Manager.Data.UserData.Items.ItemData.Roll_SealValue; }
                                 }
-                                else
-                                {
-                                    if ((!Idol) && (Save_Manager.Data.UserData.Items.ItemData.Enable_SealTier))
-                                    {
-                                        aff.affixTier = (byte)(Save_Manager.Data.UserData.Items.ItemData.Roll_SealTier - 1);
-                                    }
-                                    else if (Idol) { aff.affixTier = 1; }
-                                    if (Save_Manager.Data.UserData.Items.ItemData.Enable_SealValue)
-                                    {
-                                        aff.affixRoll = Save_Manager.Data.UserData.Items.ItemData.Roll_SealValue;
-                                    }
-                                }
-                            }                                                       
-                            if ((__0.rarity < nb_affixs) && (!item_data.isUniqueSetOrLegendary()))
-                            {
-                                byte item_rarity = 0;
-                                if (Idol) { item_rarity = 2; }
-                                else if (nb_affixs > 4) { item_rarity = 4; }
-                                else { item_rarity = (byte)nb_affixs; }
-                                __0.rarity = item_rarity;
                             }
-                            if (__0.sockets < nb_affixs) { __0.sockets = (byte)nb_affixs; }                            
-                            if (item_data.isUniqueSetOrLegendary()) //Legendary
+                            if (__0.isUniqueSetOrLegendary()) //Legendary
                             {
+                                //legendary = true;
                                 System.Collections.Generic.List<ushort> unique_ids = GetEligibles_Unique(__0);
                                 if (unique_ids.Count > 0)
                                 {
@@ -257,11 +199,11 @@ namespace LastEpochMods.Mods.Items
                                     UniqueList.Entry unique = UniqueList.getUnique(__0.uniqueID);
                                     if (unique != null)
                                     {
-                                        //character level
+                                        //float character level = 
                                         float corruption = UnityEngine.Random.Range(0f, 255f);
                                         if (unique.legendaryType == UniqueList.LegendaryType.LegendaryPotential)
                                         {
-                                            int min = UnityEngine.Random.Range(0, 5);                                            
+                                            int min = UnityEngine.Random.Range(0, 5);
                                             float multiplier = UnityEngine.Random.Range(0f, 255f);
                                             bool out_b = false;
                                             __0.rollLegendaryPotential(unique, min, 100, corruption, multiplier, out out_b);
@@ -275,24 +217,36 @@ namespace LastEpochMods.Mods.Items
                                 }
                                 else //No Unique found = Set rarity to base item
                                 {
-                                    byte item_rarity = 0;
-                                    if (Idol) { item_rarity = 2; }
-                                    else if (nb_affixs > 4) { item_rarity = 4; }
-                                    else { item_rarity = (byte)nb_affixs; }
+                                    byte item_rarity = (byte)nb_affixs;
+                                    if (nb_affixs > 4) { item_rarity = 4; }
                                     __0.rarity = item_rarity;
                                 }
-                            }                            
+                            }
+                            __0.RefreshIDAndValues();
+                            //if (legendary) { UniqueList.} //repair unique
+                        }                        
+                    }
+                    else if ((__0.itemType > 24) && (__0.itemType < 34)) //Idols
+                    {
+                        if (Save_Manager.Data.UserData.Items.ItemData.Enable_AffixsValue)
+                        {
+                            foreach (ItemAffix aff in __0.affixes)
+                            {
+                                aff.affixRoll = Save_Manager.Data.UserData.Items.ItemData.Roll_AffixValue;
+                            }
                             __0.RefreshIDAndValues();
                         }
-
-                        //Move item to Player for AutoPickup
-                        /*if (((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Key) && (Item.isKey(__0.itemType))) ||
-                            ((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Materials) && (ItemList.isCraftingItem(__0.itemType))) ||
-                            //((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Materials) && (ItemList.(__0.itemType))) ||
-                            ((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_UniqueAndSet) && (Item.rarityIsUniqueSetOrLegendary(__0.rarity))))
+                    }
+                    else //New Items (have to check this)
+                    {
+                        if (Save_Manager.Data.UserData.Items.ItemData.Enable_AffixsValue)
                         {
-                            __1 = PlayerFinder.getPlayerActor().position();
-                        }*/
+                            foreach (ItemAffix aff in __0.affixes)
+                            {
+                                aff.affixRoll = Save_Manager.Data.UserData.Items.ItemData.Roll_AffixValue;
+                            }
+                            __0.RefreshIDAndValues();
+                        }
                     }
                 }
             }
@@ -301,130 +255,88 @@ namespace LastEpochMods.Mods.Items
         [HarmonyPatch(typeof(ItemData), "randomiseImplicitRolls")]
         public class ItemData_randomiseImplicitRolls
         {
-            [HarmonyPostfix]
-            static void Postfix(ref ItemData __instance)
+            [HarmonyPrefix]
+            static bool Prefix(ref ItemData __instance)
             {
-                if (Scenes_Manager.GameScene())
+                if ((Scenes_Manager.GameScene()) && (!ForceDrop.ForceDrop.drop.generating_item) &&
+                    (Save_Manager.Data.UserData.Items.ItemData.Enable_Implicit))
                 {
-                    if (!ForceDrop.ForceDrop.drop.generating_item)
+                    for (int z = 0; z < __instance.implicitRolls.Count; z++)
                     {
-                        //Main.logger_instance.Msg("ItemData:randomiseImplicitRolls");
-                        if (Save_Manager.Data.UserData.Items.ItemData.Enable_Implicit)
-                        {
-                            for (int z = 0; z < __instance.implicitRolls.Count; z++)
-                            {
-                                __instance.implicitRolls[z] = (byte)Save_Manager.Data.UserData.Items.ItemData.Roll_Implicit;
-                            }
-                        }
-                        __instance.RefreshIDAndValues();
-                    }                    
+                        __instance.implicitRolls[z] = Save_Manager.Data.UserData.Items.ItemData.Roll_Implicit;
+                    }
+                    __instance.RefreshIDAndValues();
+                    return false;
                 }
+                else {  return true; }
             }
         }
 
         [HarmonyPatch(typeof(GenerateItems), "rollForgingPotential")]
         public class GenerateItems_rollForgingPotential
         {
-            [HarmonyPostfix]
-            static void Postfix(ref int __result, ref ItemDataUnpacked __0, int __1, bool __2, GenerateItems.VendorType __3)
+            [HarmonyPrefix]
+            static bool Prefix(ref int __result, ref ItemDataUnpacked __0, int __1, bool __2, GenerateItems.VendorType __3)
             {
-                if (Scenes_Manager.GameScene())
+                if ((Scenes_Manager.GameScene()) && (!ForceDrop.ForceDrop.drop.generating_item) &&
+                    (Save_Manager.Data.UserData.Items.ItemData.Enable_ForgingPotencial))
                 {
-                    if (!ForceDrop.ForceDrop.drop.generating_item)
-                    {
-                        //Main.logger_instance.Msg("ItemData:rollForgingPotential");
-                        if (Save_Manager.Data.UserData.Items.ItemData.Enable_ForgingPotencial)
-                        {
-                            __0.forgingPotential = (byte)Save_Manager.Data.UserData.Items.ItemData.Roll_ForgingPotencial;
-                            __0.RefreshIDAndValues();
-                            __result = __0.forgingPotential;
-                        }
-                    }                    
+                    __result = Save_Manager.Data.UserData.Items.ItemData.Roll_ForgingPotencial;
+                    return false;
                 }
+                else { return true; }
             }
         }
-
-        [HarmonyPatch(typeof(ItemData), "AddRandomSealedAffix")]
-        public class AddRandomSealedAffix
-        {
-            [HarmonyPostfix]
-            static void Postfix(ref ItemData __instance, int __0)
-            {
-                if (Scenes_Manager.GameScene())
-                {
-                    if (!ForceDrop.ForceDrop.drop.generating_item)
-                    {
-                        //Main.logger_instance.Msg("ItemData:AddRandomSealedAffix : Tier = " + __0);
-                    }                    
-                }
-            }
-        }
-
+          
         [HarmonyPatch(typeof(ItemData), "randomiseUniqueRolls")]
         public class randomiseUniqueRolls
         {
-            [HarmonyPostfix]
-            static void Postfix(ref ItemData __instance)
+            [HarmonyPrefix]
+            static bool Prefix(ref ItemData __instance)
             {
-                if (Scenes_Manager.GameScene())
+                if ((Scenes_Manager.GameScene()) && (!ForceDrop.ForceDrop.drop.generating_item) &&
+                    (Save_Manager.Data.UserData.Items.ItemData.Enable_UniqueMod))
                 {
-                    if (!ForceDrop.ForceDrop.drop.generating_item)
+                    for (int k = 0; k < __instance.uniqueRolls.Count; k++)
                     {
-                        //Main.logger_instance.Msg("ItemData:randomiseUniqueRolls");
-                        if (Save_Manager.Data.UserData.Items.ItemData.Enable_UniqueMod)
-                        {
-                            for (int k = 0; k < __instance.uniqueRolls.Count; k++)
-                            {
-                                __instance.uniqueRolls[k] = Save_Manager.Data.UserData.Items.ItemData.Roll_UniqueMod;
-                            }
-                            __instance.RefreshIDAndValues();
-                        }
+                        __instance.uniqueRolls[k] = Save_Manager.Data.UserData.Items.ItemData.Roll_UniqueMod;
                     }
+                    __instance.RefreshIDAndValues();
+                    return false;
                 }
+                else { return true; };
             }
         }
 
         [HarmonyPatch(typeof(ItemData), "rollLegendaryPotential")]
         public class rollLegendaryPotential
         {
-            [HarmonyPostfix]
-            static void Postfix(ref ItemData __instance, ref int __result, UniqueList.Entry __0, int __1, int __2)
+            [HarmonyPrefix]
+            static bool Prefix(ref ItemData __instance, ref int __result, UniqueList.Entry __0, int __1, int __2)
             {
-                if (Scenes_Manager.GameScene())
+                if ((Scenes_Manager.GameScene()) && (!ForceDrop.ForceDrop.drop.generating_item) &&
+                    (Save_Manager.Data.UserData.Items.ItemData.Enable_LegendayPotencial))
                 {
-                    if (!ForceDrop.ForceDrop.drop.generating_item)
-                    {
-                        //Main.logger_instance.Msg("ItemData:rollLegendaryPotential");
-                        if (Save_Manager.Data.UserData.Items.ItemData.Enable_LegendayPotencial)
-                        {
-                            __instance.legendaryPotential = (byte)Save_Manager.Data.UserData.Items.ItemData.Roll_Legendary_Potencial;
-                            __instance.RefreshIDAndValues();
-                            __result = __instance.legendaryPotential;
-                        }
-                    }                    
+                    __result = Save_Manager.Data.UserData.Items.ItemData.Roll_Legendary_Potencial;
+                    return false;
                 }
+                else { return true; };
             }
         }
 
         [HarmonyPatch(typeof(ItemData), "RollWeaversWill")]
         public class RollWeaversWill
         {
-            [HarmonyPostfix]
-            static void Postfix(ref ItemData __instance, ref int __result, UniqueList.Entry __0, int __1, int __2)
+            [HarmonyPrefix]
+            static bool Prefix(ref ItemData __instance, ref int __result, UniqueList.Entry __0, int __1, int __2)
             {
-                if (Scenes_Manager.GameScene())
+                if (( Scenes_Manager.GameScene()) && (!ForceDrop.ForceDrop.drop.generating_item) &&
+                    (Save_Manager.Data.UserData.Items.ItemData.Enable_WeaverWill))
                 {
-                    if (!ForceDrop.ForceDrop.drop.generating_item)
-                    {
-                        //Main.logger_instance.Msg("ItemData:RollWeaversWill");
-                        if (Save_Manager.Data.UserData.Items.ItemData.Enable_WeaverWill)
-                        {
-                            __instance.weaversWill = (byte)Save_Manager.Data.UserData.Items.ItemData.Roll_Weaver_Will;
-                            __instance.RefreshIDAndValues();
-                            __result = __instance.weaversWill;
-                        }
-                    }
+                    __result = Save_Manager.Data.UserData.Items.ItemData.Roll_Weaver_Will;
+                    return false;
                 }
+                else { return true; }
             }
         }
 
@@ -435,22 +347,15 @@ namespace LastEpochMods.Mods.Items
             [HarmonyPrefix]
             static bool Prefix(ref ItemData __instance)
             {
-                if (Scenes_Manager.GameScene())
+                if ((Scenes_Manager.GameScene()) && (!ForceDrop.ForceDrop.drop.generating_item) &&
+                    (Save_Manager.Data.UserData.Items.ItemData.Enable_Implicit))
                 {
-                    //Main.logger_instance.Msg("ItemData:ReRollImplicitRolls");
-                    if (Save_Manager.Data.UserData.Items.ItemData.Enable_Implicit)
+                    for (int z = 0; z < __instance.implicitRolls.Count; z++)
                     {
-                        if (Save_Manager.Data.UserData.Items.ItemData.Enable_Implicit)
-                        {
-                            for (int z = 0; z < __instance.implicitRolls.Count; z++)
-                            {
-                                __instance.implicitRolls[z] = (byte)Save_Manager.Data.UserData.Items.ItemData.Roll_Implicit;
-                            }
-                        }
-                        __instance.RefreshIDAndValues();
-                        return false;
+                        __instance.implicitRolls[z] = Save_Manager.Data.UserData.Items.ItemData.Roll_Implicit;
                     }
-                    else { return true; }
+                    __instance.RefreshIDAndValues();
+                    return false;
                 }
                 else { return true; }
             }
@@ -463,15 +368,12 @@ namespace LastEpochMods.Mods.Items
             [HarmonyPostfix]
             static void Postfix(ref ItemData __instance, bool __0)
             {
-                if (Scenes_Manager.GameScene())
+                if ((Scenes_Manager.GameScene()) && (!ForceDrop.ForceDrop.drop.generating_item) &&
+                    (Save_Manager.Data.UserData.Items.ItemData.Enable_AffixsValue))
                 {
-                    //Main.logger_instance.Msg("ItemData:ReRollAffixRolls");
                     foreach (ItemAffix aff in __instance.affixes)
                     {
-                        if (Save_Manager.Data.UserData.Items.ItemData.Enable_AffixsValue)
-                        {
-                            aff.affixRoll = Save_Manager.Data.UserData.Items.ItemData.Roll_AffixValue;
-                        }
+                        aff.affixRoll = Save_Manager.Data.UserData.Items.ItemData.Roll_AffixValue;
                     }
                     __instance.RefreshIDAndValues();
                 }
