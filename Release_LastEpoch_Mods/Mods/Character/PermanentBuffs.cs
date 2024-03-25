@@ -3,7 +3,7 @@
 namespace LastEpochMods.Mods.Character
 {
     public class PermanentBuffs
-    {        
+    {
         public static System.Collections.Generic.List<PermanentBuff> Buffs;
         public struct PermanentBuff
         {
@@ -21,37 +21,49 @@ namespace LastEpochMods.Mods.Character
 
         public static void OnSceneWasLoaded()
         {
-            InitBuffs();
+            Enable = InitBuffs();
             Running = false;
         }
         public static void Update()
         {
-            if ((Buffs_Initialized) && (!Running)) { StartBuffs(); }
+            if ((Enable) && (!Running)) { StartBuffs(); }
             else if (Running)
             {
                 System.TimeSpan elaspedTime = System.DateTime.Now - StartTime;
                 System.Double seconds = elaspedTime.TotalSeconds;
-                if (seconds > (Buff_Duration - 1)) { StartBuffs(); }
+                if (seconds > (Buff_Duration - 1)) { Running = false; }
                 else if (!GUI_Manager.PauseMenu.Refs.PauseMenu.IsNullOrDestroyed())
                 {
                     if ((PauseMenu) && (!GUI_Manager.PauseMenu.Refs.PauseMenu.active))
                     {
-                        InitBuffs();
-                        StartBuffs();
+                        Enable = InitBuffs();
+                        Running = false;
+                        if (!Enable) { RemoveBuffs(); }
                     }
                     PauseMenu = GUI_Manager.PauseMenu.Refs.PauseMenu.active;
                 }
             }
+            else if (!GUI_Manager.PauseMenu.Refs.PauseMenu.IsNullOrDestroyed()) //When disable
+            {
+                if ((PauseMenu) && (!GUI_Manager.PauseMenu.Refs.PauseMenu.active))
+                {
+                    Enable = InitBuffs();
+                }
+                PauseMenu = GUI_Manager.PauseMenu.Refs.PauseMenu.active;
+            }
         }
 
+        private static bool Enable = false;
         private static bool Running = false;
+        private static bool Starting = false;
+
         private static System.DateTime StartTime;
         private static float Buff_Duration = 255f;
-        private static bool loading = false;
+        
         private static bool PauseMenu = false;
-        private static bool Buffs_Initialized = false;
         private static Actor playerActor;
-        private static void InitBuffs()
+
+        private static bool InitBuffs()
         {
             Buffs = new System.Collections.Generic.List<PermanentBuff>
             {
@@ -160,13 +172,19 @@ namespace LastEpochMods.Mods.Character
                     Toggle = Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Vit_Buff
                 },
             };
-            Buffs_Initialized = true;
+            bool result = false;
+            foreach (PermanentBuff p in Buffs)
+            {
+                if (p.Toggle) { result = true; break; }
+            }
+
+            return result;
         }
         private static void StartBuffs()
         {
-            if (!loading)
+            if (!Starting)
             {
-                loading = true;               
+                Starting = true;
                 if (playerActor.IsNullOrDestroyed()) { playerActor = PlayerFinder.getPlayerActor(); }
                 if (!playerActor.IsNullOrDestroyed())
                 {
@@ -189,9 +207,24 @@ namespace LastEpochMods.Mods.Character
                     }
                     StartTime = System.DateTime.Now;
                     Running = true;
-                    Main.logger_instance.Msg("Buffs Started");
-                }                
-                loading = false;                
+                }
+                Starting = false;
+            }
+        }
+        private static void RemoveBuffs()
+        {
+            if (playerActor.IsNullOrDestroyed()) { playerActor = PlayerFinder.getPlayerActor(); }
+            if (!playerActor.IsNullOrDestroyed())
+            {
+                System.Collections.Generic.List<string> player_buffs = new System.Collections.Generic.List<string>();
+                foreach (Buff player_buff in playerActor.statBuffs.buffs)
+                {
+                    player_buffs.Add(player_buff.name);
+                }
+                foreach (PermanentBuff permanent_buff in Buffs)
+                {
+                    if (player_buffs.Contains(permanent_buff.Name)) { playerActor.statBuffs.removeBuffsWithName(permanent_buff.Name); }
+                }
             }
         }
     }
