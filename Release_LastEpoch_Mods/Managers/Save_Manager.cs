@@ -435,18 +435,18 @@ namespace LastEpochMods.Managers
             }
 
             public static bool Initialized = false;
-            public static void Init()
+            public static async void Init()
             {
                 if (!Initialized)
                 {
                     Main.logger_instance.Msg("Initialize Save_Manager");
                     Initialized = true;
-                    LoadMods();
+                    await System.Threading.Tasks.Task.Run(() => LoadMods());
                 }
             }
             private static void LoadMods()
             {
-                Data.UserData = DefaultConfig();
+                bool error = false;
                 if (File.Exists(path + filename))
                 {
                     try
@@ -454,9 +454,14 @@ namespace LastEpochMods.Managers
                         Data.UserData = JsonConvert.DeserializeObject<Data.Mods_Structure>(File.ReadAllText(path + filename));
                         CheckErrors();
                     }
-                    catch { }
+                    catch { error = true; }
                 }
-                Save.Mods(); //Force save when mods config was update with new options
+                else { error = true; }
+                if (error)
+                {
+                    Data.UserData = DefaultConfig();
+                    Save.Mods();
+                }                
                 Data.UserData_duplicate = Data.UserData; //Use to check for data changed
             }
             private static Data.Mods_Structure DefaultConfig()
@@ -471,7 +476,7 @@ namespace LastEpochMods.Managers
                 var craft_default_affix = new Data.Craft_Affixs
                 {
                     Enable_Affix_Tier = false,
-                    Tier = 0,
+                    Tier = 7,
                     Enable_Affix_Value = false,
                     Value = 255,
                 };
@@ -849,6 +854,7 @@ namespace LastEpochMods.Managers
             }
             private static void CheckErrors()
             {
+                bool data_changed = false;
                 if (Data.UserData.Items.Craft.Implicits == null)
                 {
                     var craft_default_implicit = new Data.Craft_Implicits
@@ -862,6 +868,7 @@ namespace LastEpochMods.Managers
                         craft_default_implicit,
                         craft_default_implicit
                     };
+                    data_changed = true;
                 }
                 if (Data.UserData.Items.Craft.Affix == null)
                 {
@@ -879,7 +886,9 @@ namespace LastEpochMods.Managers
                         craft_default_affix,
                         craft_default_affix
                     };
+                    data_changed = true;
                 }
+                if (data_changed) { Save.Mods(); }
             }
         }
         public class Save

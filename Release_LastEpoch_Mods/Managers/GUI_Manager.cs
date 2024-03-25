@@ -892,7 +892,7 @@ namespace LastEpochMods.Managers
 
                             //Craft
                             scene_x += section_w + ui_margin;
-                            float items_craft_h = 270 + (10 * content_margin);
+                            float items_craft_h = 230 + (9 * content_margin);
                             if (CraftShowPrefixes) { items_craft_h += 210 + (3 * content_margin); }
                             if (CraftShowAffixes) { items_craft_h += 560 + (8 * content_margin); }
 
@@ -939,13 +939,13 @@ namespace LastEpochMods.Managers
                             section6_y += 30 + content_margin;
                             if (CraftShowAffixes)
                             {
-                                section6_y += CustomControls.Toggle_ByteValue(section6_x, section6_y, section6_content_w, "Affix 0 Tier", 0f, 7f, ref Save_Manager.Data.UserData.Items.Craft.Affix[0].Tier, ref Save_Manager.Data.UserData.Items.Craft.Affix[0].Enable_Affix_Tier);
+                                section6_y += CustomControls.Toggle_ByteValue(section6_x, section6_y, section6_content_w, "Affix 0 Tier", 1f, 7f, ref Save_Manager.Data.UserData.Items.Craft.Affix[0].Tier, ref Save_Manager.Data.UserData.Items.Craft.Affix[0].Enable_Affix_Tier);
                                 section6_y += CustomControls.Toggle_BytePercent(section6_x, section6_y, section6_content_w, "Affix 0 Value", 0f, 255f, false, ref Save_Manager.Data.UserData.Items.Craft.Affix[0].Value, ref Save_Manager.Data.UserData.Items.Craft.Affix[0].Enable_Affix_Value);
-                                section6_y += CustomControls.Toggle_ByteValue(section6_x, section6_y, section6_content_w, "Affix 0 Tier", 0f, 7f, ref Save_Manager.Data.UserData.Items.Craft.Affix[1].Tier, ref Save_Manager.Data.UserData.Items.Craft.Affix[1].Enable_Affix_Tier);
+                                section6_y += CustomControls.Toggle_ByteValue(section6_x, section6_y, section6_content_w, "Affix 0 Tier", 1f, 7f, ref Save_Manager.Data.UserData.Items.Craft.Affix[1].Tier, ref Save_Manager.Data.UserData.Items.Craft.Affix[1].Enable_Affix_Tier);
                                 section6_y += CustomControls.Toggle_BytePercent(section6_x, section6_y, section6_content_w, "Affix 0 Value", 0f, 255f, false, ref Save_Manager.Data.UserData.Items.Craft.Affix[1].Value, ref Save_Manager.Data.UserData.Items.Craft.Affix[1].Enable_Affix_Value);
-                                section6_y += CustomControls.Toggle_ByteValue(section6_x, section6_y, section6_content_w, "Affix 0 Tier", 0f, 7f, ref Save_Manager.Data.UserData.Items.Craft.Affix[2].Tier, ref Save_Manager.Data.UserData.Items.Craft.Affix[2].Enable_Affix_Tier);
+                                section6_y += CustomControls.Toggle_ByteValue(section6_x, section6_y, section6_content_w, "Affix 0 Tier", 1f, 7f, ref Save_Manager.Data.UserData.Items.Craft.Affix[2].Tier, ref Save_Manager.Data.UserData.Items.Craft.Affix[2].Enable_Affix_Tier);
                                 section6_y += CustomControls.Toggle_BytePercent(section6_x, section6_y, section6_content_w, "Affix 0 Value", 0f, 255f, false, ref Save_Manager.Data.UserData.Items.Craft.Affix[2].Value, ref Save_Manager.Data.UserData.Items.Craft.Affix[2].Enable_Affix_Value);
-                                section6_y += CustomControls.Toggle_ByteValue(section6_x, section6_y, section6_content_w, "Affix 0 Tier", 0f, 7f, ref Save_Manager.Data.UserData.Items.Craft.Affix[3].Tier, ref Save_Manager.Data.UserData.Items.Craft.Affix[3].Enable_Affix_Tier);
+                                section6_y += CustomControls.Toggle_ByteValue(section6_x, section6_y, section6_content_w, "Affix 0 Tier", 1f, 7f, ref Save_Manager.Data.UserData.Items.Craft.Affix[3].Tier, ref Save_Manager.Data.UserData.Items.Craft.Affix[3].Enable_Affix_Tier);
                                 section6_y += CustomControls.Toggle_BytePercent(section6_x, section6_y, section6_content_w, "Affix 0 Value", 0f, 255f, false, ref Save_Manager.Data.UserData.Items.Craft.Affix[3].Value, ref Save_Manager.Data.UserData.Items.Craft.Affix[3].Enable_Affix_Value);
                             }
 
@@ -953,9 +953,9 @@ namespace LastEpochMods.Managers
                             { Save_Manager.Data.UserData.Items.Craft.NoForgingPotentialCost = !Save_Manager.Data.UserData.Items.Craft.NoForgingPotentialCost; }
                             section6_y += 40 + content_margin;
 
-                            if (GUI.Button(new Rect(section6_x, section6_y, section6_w - (2 * content_margin), 40), "Don't Check Capability", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Items.Craft.DontChekCapability)))
+                            /*if (GUI.Button(new Rect(section6_x, section6_y, section6_w - (2 * content_margin), 40), "Don't Check Capability", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Items.Craft.DontChekCapability)))
                             { Save_Manager.Data.UserData.Items.Craft.DontChekCapability = !Save_Manager.Data.UserData.Items.Craft.DontChekCapability; }
-                            section6_y += 40 + content_margin;
+                            section6_y += 40 + content_margin;*/
 
                             GUI.TextField(new Rect(section6_x, section6_y, section6_w - (2 * content_margin), 20), "* Implicits and affixs (values) can be override using Runes and ItemData", Styles.Content_Infos());
 

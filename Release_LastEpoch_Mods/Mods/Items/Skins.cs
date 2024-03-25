@@ -28,8 +28,7 @@ namespace LastEpochMods.Mods.Items
             if (!Visuals.Character_Loaded) { Visuals.Load(); }
             if (!Lists.Initialized) { Lists.InitList(); }
             if (!CosmeticPanel.Tabs.Initialized) { CosmeticPanel.Tabs.Init(); }
-            if ((Content.NeedToReopen) && (Lists.Initialized))
-            { Content.Open(Content.item_type); Content.NeedToReopen = false; }
+            if ((Content.NeedToReopen) && (Lists.Initialized)) { Content.Open(Content.item_type); Content.NeedToReopen = false; }
         }
         public static void Reset()
         {

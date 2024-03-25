@@ -32,7 +32,6 @@
             if (Scenes_Manager.GameScene())
             {
                 Mods.Items.Skins.Update();
-                //Mods.Scenes.Camera.LoadOnStart();
                 Mods.Items.AutoPickup.AutoStoreMaterialsTimer.Update();
                 Mods.Character.PermanentBuffs.Update();
                 Mods.Character.Cheats.Blessings.Select.Update();

@@ -1139,6 +1139,7 @@ namespace LastEpochMods.Mods.ForceDrop
                     {
                         type.dropdown_list[i] = type_names[i];
                     }
+                    type_names.Clear();
                     //Main.logger_instance.Msg("ForceDrop:InitList -> Found " + type_names.Count + " Types");
                 }
                 //else { Main.logger_instance.Error("ForceDrop:InitList -> can't get itemlist"); }
@@ -2879,6 +2880,7 @@ namespace LastEpochMods.Mods.ForceDrop
                         seal.idol_dropdown_list[j] = name;
                         j++;
                     }
+                    idol_names.Clear();
 
                     affix_names.Sort();
                     prefixs.dropdown_list = new string[affix_names.Count];
@@ -2892,6 +2894,7 @@ namespace LastEpochMods.Mods.ForceDrop
                         seal.dropdown_list[j] = name;
                         j++;
                     }
+                    affix_names.Clear();
                 }
                 else { Main.logger_instance.Error("ForceDrop:InitList -> can't get affixlist"); }
             }

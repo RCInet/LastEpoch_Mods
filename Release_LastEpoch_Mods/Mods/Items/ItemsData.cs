@@ -60,7 +60,7 @@ namespace LastEpochMods.Mods.Items
             {
                 affixName = "",
                 affixId = (byte)affix_id,
-                affixTier = (byte)UnityEngine.Random.RandomRangeInt(0, 8),
+                affixTier = (byte)UnityEngine.Random.RandomRangeInt(0, 7),
                 affixRoll = (byte)UnityEngine.Random.Range(0f, 255f),
                 affixType = 0,
                 affixCountForSetProps = 0,
@@ -125,6 +125,7 @@ namespace LastEpochMods.Mods.Items
         //Seal and Affix (Tier and Value)
         public static System.Collections.Generic.List<int> eligibles_single_affixes = new System.Collections.Generic.List<int>();
         public static System.Collections.Generic.List<int> eligibles_multi_affixes = new System.Collections.Generic.List<int>();
+        public static System.Collections.Generic.List<ushort> eligibles_unique = new System.Collections.Generic.List<ushort>();
         public static int min_tier = 1;
         public static int max_tier = 8;
         [HarmonyPatch(typeof(GenerateItems), "DropItemAtPoint")]
@@ -157,45 +158,58 @@ namespace LastEpochMods.Mods.Items
                                 int nb_affixes_wanted = UnityEngine.Random.RandomRangeInt(Save_Manager.Data.UserData.Items.ItemData.Min_affixs, Save_Manager.Data.UserData.Items.ItemData.Max_affixs + 1);
                                 if (nb_affixs < nb_affixes_wanted)
                                 {
+                                    eligibles_single_affixes = new System.Collections.Generic.List<int>();
                                     eligibles_single_affixes = GetEligibles_Single_Affixes(__0);
+                                    eligibles_multi_affixes = new System.Collections.Generic.List<int>();
                                     eligibles_multi_affixes = GetEligibles_Multi_Affixes(__0);
                                     for (int i = nb_affixs; i < nb_affixes_wanted; i++)
                                     {
                                         __0.affixes.Add(RandomAffix(eligibles_single_affixes, eligibles_multi_affixes, false));
                                         __0.RefreshIDAndValues();
                                     }
+                                    eligibles_single_affixes.Clear();
+                                    eligibles_multi_affixes.Clear();
                                 }
                             }
-                            if (Save_Manager.Data.UserData.Items.ItemData.Enable_AffixsTier)
+                            if ((Save_Manager.Data.UserData.Items.ItemData.Enable_AffixsTier) ||
+                                (Save_Manager.Data.UserData.Items.ItemData.Enable_AffixsValue) ||
+                                (Save_Manager.Data.UserData.Items.ItemData.Enable_SealTier) ||
+                                (Save_Manager.Data.UserData.Items.ItemData.Enable_SealValue))
                             {
                                 foreach (ItemAffix aff in __0.affixes)
                                 {
                                     if (!aff.isSealedAffix)
                                     {
-                                        aff.affixTier = (byte)(Save_Manager.Data.UserData.Items.ItemData.Roll_AffixTier - 1);
+                                        if (Save_Manager.Data.UserData.Items.ItemData.Enable_AffixsTier)
+                                        {
+                                            aff.affixTier = (byte)(Save_Manager.Data.UserData.Items.ItemData.Roll_AffixTier - 1);
+                                        }
+                                        if (Save_Manager.Data.UserData.Items.ItemData.Enable_AffixsValue)
+                                        {
+                                            aff.affixRoll = Save_Manager.Data.UserData.Items.ItemData.Roll_AffixValue;
+                                        }
                                     }
-                                    else { aff.affixTier = (byte)(Save_Manager.Data.UserData.Items.ItemData.Roll_SealTier - 1); }
-                                }
-                            }
-                            if (Save_Manager.Data.UserData.Items.ItemData.Enable_AffixsValue)
-                            {
-                                foreach (ItemAffix aff in __0.affixes)
-                                {
-                                    if (!aff.isSealedAffix)
+                                    else
                                     {
-                                        aff.affixRoll = Save_Manager.Data.UserData.Items.ItemData.Roll_AffixValue;
+                                        if (Save_Manager.Data.UserData.Items.ItemData.Enable_SealTier)
+                                        {
+                                            aff.affixTier = (byte)(Save_Manager.Data.UserData.Items.ItemData.Roll_SealTier - 1);
+                                        }
+                                        if (Save_Manager.Data.UserData.Items.ItemData.Enable_SealValue)
+                                        {
+                                            aff.affixRoll = Save_Manager.Data.UserData.Items.ItemData.Roll_SealValue;
+                                        }
                                     }
-                                    else { aff.affixRoll = Save_Manager.Data.UserData.Items.ItemData.Roll_SealValue; }
                                 }
                             }
                             if (__0.isUniqueSetOrLegendary()) //Legendary
                             {
-                                //legendary = true;
-                                System.Collections.Generic.List<ushort> unique_ids = GetEligibles_Unique(__0);
-                                if (unique_ids.Count > 0)
+                                eligibles_unique = new System.Collections.Generic.List<ushort>();
+                                eligibles_unique = GetEligibles_Unique(__0);
+                                if (eligibles_unique.Count > 0)
                                 {
-                                    int index = UnityEngine.Random.RandomRangeInt(0, unique_ids.Count);
-                                    __0.uniqueID = unique_ids[index];
+                                    int index = UnityEngine.Random.RandomRangeInt(0, eligibles_unique.Count);
+                                    __0.uniqueID = eligibles_unique[index];
                                     UniqueList.Entry unique = UniqueList.getUnique(__0.uniqueID);
                                     if (unique != null)
                                     {
@@ -213,7 +227,10 @@ namespace LastEpochMods.Mods.Items
                                             int min = UnityEngine.Random.RandomRangeInt(0, 29);
                                             __0.RollWeaversWill(unique, min, 100, corruption);
                                         }
+                                        //Fix subtype
+                                        __0.subType = unique.subTypes[0];
                                     }
+                                    eligibles_unique.Clear();
                                 }
                                 else //No Unique found = Set rarity to base item
                                 {
