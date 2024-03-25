@@ -15,6 +15,7 @@
                 Mods.Scenes.Camera.LoadOnStart();
                 Mods.SkillsTree.Options.Ability_Mutator.Init(); //Init Ability Mutators list
                 Mods.Items.DropNotifications.Update(); //Update Notifications
+                Mods.Character.PermanentBuffs.OnSceneWasLoaded();
             }
         }
         public static void OnSceneWasInitialized(string sceneName)
@@ -22,7 +23,7 @@
             if (Scenes_Manager.GameScene())
             {
                 Mods.Items.Skins.CosmeticPanel.Slots.InitSlots(); //Textures
-                Mods.Items.Skins.Config.Init();
+                Mods.Items.Skins.Config.Init();                
             }
         }
         public static void Update()

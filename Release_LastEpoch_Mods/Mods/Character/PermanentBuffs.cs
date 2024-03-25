@@ -3,418 +3,196 @@
 namespace LastEpochMods.Mods.Character
 {
     public class PermanentBuffs
-    {
+    {        
+        public static System.Collections.Generic.List<PermanentBuff> Buffs;
+        public struct PermanentBuff
+        {
+            public string Name;
+            public bool Toggle;
+            public float Value;
+            public SP Propertie;
+            public Buff_Type Type;
+        }
+        public enum Buff_Type
+        {
+            Add,
+            Increase
+        }
+
+        public static void OnSceneWasLoaded()
+        {
+            InitBuffs();
+            Running = false;
+        }
         public static void Update()
         {
-            if (Scenes_Manager.GameScene())
+            if ((Buffs_Initialized) && (!Running)) { StartBuffs(); }
+            else if (Running)
             {
-                MoveSpeed.Update();
-                AttackSpeed.Update();
-                CastingSpeed.Update();
-                Damage.Update();
-                ManaRegen.Update();
-                HealthRegen.Update();
-                CriticalChance.Update();
-                CriticalMultiplier.Update();
-                Strength.Update();
-                Intelligence.Update();
-                Dexterity.Update();
-                Attunement.Update();
-                Vitality.Update();
-            }
-        }
-        
-        public class MoveSpeed
-        {
-            private static readonly string BuffName = "MoveSpeed_Buff";
-            public static void Update()
-            {
-                if (playerActor.IsNullOrDestroyed()) { playerActor = PlayerFinder.getPlayerActor(); }
-                if (!playerActor.IsNullOrDestroyed())
+                System.TimeSpan elaspedTime = System.DateTime.Now - StartTime;
+                System.Double seconds = elaspedTime.TotalSeconds;
+                if (seconds > (Buff_Duration - 1)) { StartBuffs(); }
+                else if (!GUI_Manager.PauseMenu.Refs.PauseMenu.IsNullOrDestroyed())
                 {
-                    BuffState state = GetState(BuffName, Save_Manager.Data.UserData.Character.PermanentBuffs.MoveSpeed_Buff_Value);                    
-                    if (Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_MoveSpeed_Buff)
+                    if ((PauseMenu) && (!GUI_Manager.PauseMenu.Refs.PauseMenu.active))
                     {
-                        if ((state.PlayerAlreadyHaveBuff) && (state.ValueChanged))
-                        {
-                            playerActor.statBuffs.removeBuffsWithName(BuffName);
-                            state.PlayerAlreadyHaveBuff = false;
-                        }
-                        if (!state.PlayerAlreadyHaveBuff)
-                        {
-                            playerActor.statBuffs.addBuff(255f, SP.Movespeed, 0f, Save_Manager.Data.UserData.Character.PermanentBuffs.MoveSpeed_Buff_Value, null, AT.None, 0, BuffName);
-                        }
+                        InitBuffs();
+                        StartBuffs();
                     }
-                    else
-                    {
-                        if (state.PlayerAlreadyHaveBuff) { playerActor.statBuffs.removeBuffsWithName(BuffName); }
-                    }
-                }
-            }
-        }
-        public class CastingSpeed
-        {
-            private static readonly string BuffName = "CastSpeed_Buff";
-            public static void Update()
-            {
-                if (playerActor.IsNullOrDestroyed()) { playerActor = PlayerFinder.getPlayerActor(); }
-                if (!playerActor.IsNullOrDestroyed())
-                {
-                    BuffState state = GetState(BuffName, Save_Manager.Data.UserData.Character.PermanentBuffs.CastSpeed_Buff_Value);
-                    if (Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CastSpeed_Buff)
-                    {
-                        if ((state.PlayerAlreadyHaveBuff) && (state.ValueChanged))
-                        {
-                            playerActor.statBuffs.removeBuffsWithName(BuffName);
-                            state.PlayerAlreadyHaveBuff = false;
-                        }
-                        if (!state.PlayerAlreadyHaveBuff)
-                        {
-                            playerActor.statBuffs.addBuff(255f, SP.CastSpeed, 0f, Save_Manager.Data.UserData.Character.PermanentBuffs.CastSpeed_Buff_Value, null, AT.None, 0, BuffName);
-                        }
-                    }
-                    else
-                    {
-                        if (state.PlayerAlreadyHaveBuff) { playerActor.statBuffs.removeBuffsWithName(BuffName); }
-                    }
-                }
-            }
-        }
-        public class AttackSpeed
-        {
-            private static readonly string BuffName = "AttackSpeed_Buff";
-            public static void Update()
-            {
-                if (playerActor.IsNullOrDestroyed()) { playerActor = PlayerFinder.getPlayerActor(); }
-                if (!playerActor.IsNullOrDestroyed())
-                {
-                    BuffState state = GetState(BuffName, Save_Manager.Data.UserData.Character.PermanentBuffs.AttackSpeed_Buff_Value);
-                    if (Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_AttackSpeed_Buff)
-                    {
-                        if ((state.PlayerAlreadyHaveBuff) && (state.ValueChanged))
-                        {
-                            playerActor.statBuffs.removeBuffsWithName(BuffName);
-                            state.PlayerAlreadyHaveBuff = false;
-                        }
-                        if (!state.PlayerAlreadyHaveBuff)
-                        {
-                            playerActor.statBuffs.addBuff(255f, SP.AttackSpeed, 0f, Save_Manager.Data.UserData.Character.PermanentBuffs.AttackSpeed_Buff_Value, null, AT.None, 0, BuffName);
-                        }
-                    }
-                    else
-                    {
-                        if (state.PlayerAlreadyHaveBuff) { playerActor.statBuffs.removeBuffsWithName(BuffName); }
-                    }
-                }
-            }
-        }
-        public class Damage
-        {
-            private static readonly string BuffName = "Damage_Buff";
-            public static void Update()
-            {
-                if (playerActor.IsNullOrDestroyed()) { playerActor = PlayerFinder.getPlayerActor(); }
-                if (!playerActor.IsNullOrDestroyed())
-                {
-                    BuffState state = GetState(BuffName, Save_Manager.Data.UserData.Character.PermanentBuffs.Damage_Buff_Value);
-                    if (Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Damage_Buff)
-                    {
-                        if ((state.PlayerAlreadyHaveBuff) && (state.ValueChanged))
-                        {
-                            playerActor.statBuffs.removeBuffsWithName(BuffName);
-                            state.PlayerAlreadyHaveBuff = false;
-                        }
-                        if (!state.PlayerAlreadyHaveBuff)
-                        {
-                            playerActor.statBuffs.addBuff(255f, SP.Damage, 0f, Save_Manager.Data.UserData.Character.PermanentBuffs.Damage_Buff_Value, null, AT.None, 0, BuffName);
-                        }
-                    }
-                    else
-                    {
-                        if (state.PlayerAlreadyHaveBuff) { playerActor.statBuffs.removeBuffsWithName(BuffName); }
-                    }
-                }
-            }
-        }
-        public class ManaRegen
-        {
-            private static readonly string BuffName = "ManaRegen_Buff";
-            public static void Update()
-            {
-                if (playerActor.IsNullOrDestroyed()) { playerActor = PlayerFinder.getPlayerActor(); }
-                if (!playerActor.IsNullOrDestroyed())
-                {
-                    BuffState state = GetState(BuffName, Save_Manager.Data.UserData.Character.PermanentBuffs.ManaRegen_Buff_Value);
-                    if (Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_ManaRegen_Buff)
-                    {
-                        if ((state.PlayerAlreadyHaveBuff) && (state.ValueChanged))
-                        {
-                            playerActor.statBuffs.removeBuffsWithName(BuffName);
-                            state.PlayerAlreadyHaveBuff = false;
-                        }
-                        if (!state.PlayerAlreadyHaveBuff)
-                        {
-                            playerActor.statBuffs.addBuff(255f, SP.ManaRegen, 0f, Save_Manager.Data.UserData.Character.PermanentBuffs.ManaRegen_Buff_Value, null, AT.None, 0, BuffName);
-                        }
-                    }
-                    else
-                    {
-                        if (state.PlayerAlreadyHaveBuff) { playerActor.statBuffs.removeBuffsWithName(BuffName); }
-                    }
-                }
-            }
-        }
-        public class HealthRegen
-        {
-            private static readonly string BuffName = "HealthRegen_Buff";
-            public static void Update()
-            {
-                if (playerActor.IsNullOrDestroyed()) { playerActor = PlayerFinder.getPlayerActor(); }
-                if (!playerActor.IsNullOrDestroyed())
-                {
-                    BuffState state = GetState(BuffName, Save_Manager.Data.UserData.Character.PermanentBuffs.HealthRegen_Buff_Value);
-                    if (Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_HealthRegen_Buff)
-                    {
-                        if ((state.PlayerAlreadyHaveBuff) && (state.ValueChanged))
-                        {
-                            playerActor.statBuffs.removeBuffsWithName(BuffName);
-                            state.PlayerAlreadyHaveBuff = false;
-                        }
-                        if (!state.PlayerAlreadyHaveBuff)
-                        {
-                            playerActor.statBuffs.addBuff(255f, SP.HealthRegen, 0f, Save_Manager.Data.UserData.Character.PermanentBuffs.HealthRegen_Buff_Value, null, AT.None, 0, BuffName);
-                        }
-                    }
-                    else
-                    {
-                        if (state.PlayerAlreadyHaveBuff) { playerActor.statBuffs.removeBuffsWithName(BuffName); }
-                    }
-                }
-            }
-        }
-        public class CriticalChance
-        {
-            private static readonly string BuffName = "CriticalChance_Buff";
-            public static void Update()
-            {
-                if (playerActor.IsNullOrDestroyed()) { playerActor = PlayerFinder.getPlayerActor(); }
-                if (!playerActor.IsNullOrDestroyed())
-                {
-                    BuffState state = GetState(BuffName, Save_Manager.Data.UserData.Character.PermanentBuffs.CriticalChance_Buff_Value);
-                    if (Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CriticalChance_Buff)
-                    {
-                        if ((state.PlayerAlreadyHaveBuff) && (state.ValueChanged))
-                        {
-                            playerActor.statBuffs.removeBuffsWithName(BuffName);
-                            state.PlayerAlreadyHaveBuff = false;
-                        }
-                        if (!state.PlayerAlreadyHaveBuff)
-                        {
-                            playerActor.statBuffs.addBuff(255f, SP.CriticalChance, Save_Manager.Data.UserData.Character.PermanentBuffs.CriticalChance_Buff_Value, 0f, null, AT.None, 0, BuffName);
-                        }
-                    }
-                    else
-                    {
-                        if (state.PlayerAlreadyHaveBuff) { playerActor.statBuffs.removeBuffsWithName(BuffName); }
-                    }
-                }
-            }
-        }
-        public class CriticalMultiplier
-        {
-            private static readonly string BuffName = "CriticalMultiplier_Buff";
-            public static void Update()
-            {
-                if (playerActor.IsNullOrDestroyed()) { playerActor = PlayerFinder.getPlayerActor(); }
-                if (!playerActor.IsNullOrDestroyed())
-                {
-                    BuffState state = GetState(BuffName, Save_Manager.Data.UserData.Character.PermanentBuffs.CriticalMultiplier_Buff_Value);
-                    if (Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CriticalMultiplier_Buff)
-                    {
-                        if ((state.PlayerAlreadyHaveBuff) && (state.ValueChanged))
-                        {
-                            playerActor.statBuffs.removeBuffsWithName(BuffName);
-                            state.PlayerAlreadyHaveBuff = false;
-                        }
-                        if (!state.PlayerAlreadyHaveBuff)
-                        {
-                            playerActor.statBuffs.addBuff(255f, SP.CriticalMultiplier, Save_Manager.Data.UserData.Character.PermanentBuffs.CriticalMultiplier_Buff_Value, 0f, null, AT.None, 0, BuffName);
-                        }
-                    }
-                    else
-                    {
-                        if (state.PlayerAlreadyHaveBuff) { playerActor.statBuffs.removeBuffsWithName(BuffName); }
-                    }
-                }
-            }
-        }
-        public class Strength
-        {
-            private static readonly string BuffName = "Strength_Buff";
-            public static void Update()
-            {
-                if (playerActor.IsNullOrDestroyed()) { playerActor = PlayerFinder.getPlayerActor(); }
-                if (!playerActor.IsNullOrDestroyed())
-                {
-                    BuffState state = GetState(BuffName, Save_Manager.Data.UserData.Character.PermanentBuffs.Str_Buff_Value);
-                    if (Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Str_Buff)
-                    {
-                        if ((state.PlayerAlreadyHaveBuff) && (state.ValueChanged))
-                        {
-                            playerActor.statBuffs.removeBuffsWithName(BuffName);
-                            state.PlayerAlreadyHaveBuff = false;
-                        }
-                        if (!state.PlayerAlreadyHaveBuff)
-                        {
-                            playerActor.statBuffs.addBuff(255f, SP.Strength, Save_Manager.Data.UserData.Character.PermanentBuffs.Str_Buff_Value, 0f, null, AT.None, 0, BuffName);
-                        }
-                    }
-                    else
-                    {
-                        if (state.PlayerAlreadyHaveBuff) { playerActor.statBuffs.removeBuffsWithName(BuffName); }
-                    }
-                }
-            }
-        }
-        public class Intelligence
-        {
-            private static readonly string BuffName = "Intelligence_Buff";
-            public static void Update()
-            {
-                if (playerActor.IsNullOrDestroyed()) { playerActor = PlayerFinder.getPlayerActor(); }
-                if (!playerActor.IsNullOrDestroyed())
-                {
-                    BuffState state = GetState(BuffName, Save_Manager.Data.UserData.Character.PermanentBuffs.Int_Buff_Value);
-                    if (Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Int_Buff)
-                    {
-                        if ((state.PlayerAlreadyHaveBuff) && (state.ValueChanged))
-                        {
-                            playerActor.statBuffs.removeBuffsWithName(BuffName);
-                            state.PlayerAlreadyHaveBuff = false;
-                        }
-                        if (!state.PlayerAlreadyHaveBuff)
-                        {
-                            playerActor.statBuffs.addBuff(255f, SP.Intelligence, Save_Manager.Data.UserData.Character.PermanentBuffs.Int_Buff_Value, 0f, null, AT.None, 0, BuffName);
-                        }
-                    }
-                    else
-                    {
-                        if (state.PlayerAlreadyHaveBuff) { playerActor.statBuffs.removeBuffsWithName(BuffName); }
-                    }
-                }
-            }
-        }
-        public class Dexterity
-        {
-            private static readonly string BuffName = "Dexterity_Buff";
-            public static void Update()
-            {
-                if (playerActor.IsNullOrDestroyed()) { playerActor = PlayerFinder.getPlayerActor(); }
-                if (!playerActor.IsNullOrDestroyed())
-                {
-                    BuffState state = GetState(BuffName, Save_Manager.Data.UserData.Character.PermanentBuffs.Dex_Buff_Value);
-                    if (Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Dex_Buff)
-                    {
-                        if ((state.PlayerAlreadyHaveBuff) && (state.ValueChanged))
-                        {
-                            playerActor.statBuffs.removeBuffsWithName(BuffName);
-                            state.PlayerAlreadyHaveBuff = false;
-                        }
-                        if (!state.PlayerAlreadyHaveBuff)
-                        {
-                            playerActor.statBuffs.addBuff(255f, SP.Dexterity, Save_Manager.Data.UserData.Character.PermanentBuffs.Dex_Buff_Value, 0f, null, AT.None, 0, BuffName);
-                        }
-                    }
-                    else
-                    {
-                        if (state.PlayerAlreadyHaveBuff) { playerActor.statBuffs.removeBuffsWithName(BuffName); }
-                    }
-                }
-            }
-        }
-        public class Attunement
-        {
-            private static readonly string BuffName = "Attunement_Buff";
-            public static void Update()
-            {
-                if (playerActor.IsNullOrDestroyed()) { playerActor = PlayerFinder.getPlayerActor(); }
-                if (!playerActor.IsNullOrDestroyed())
-                {
-                    BuffState state = GetState(BuffName, Save_Manager.Data.UserData.Character.PermanentBuffs.Att_Buff_Value);
-                    if (Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Att_Buff)
-                    {
-                        if ((state.PlayerAlreadyHaveBuff) && (state.ValueChanged))
-                        {
-                            playerActor.statBuffs.removeBuffsWithName(BuffName);
-                            state.PlayerAlreadyHaveBuff = false;
-                        }
-                        if (!state.PlayerAlreadyHaveBuff)
-                        {
-                            playerActor.statBuffs.addBuff(255f, SP.Attunement, Save_Manager.Data.UserData.Character.PermanentBuffs.Att_Buff_Value, 0f, null, AT.None, 0, BuffName);
-                        }
-                    }
-                    else
-                    {
-                        if (state.PlayerAlreadyHaveBuff) { playerActor.statBuffs.removeBuffsWithName(BuffName); }
-                    }
-                }
-            }
-        }
-        public class Vitality
-        {
-            private static readonly string BuffName = "Vitality_Buff";
-            public static void Update()
-            {
-                if (playerActor.IsNullOrDestroyed()) { playerActor = PlayerFinder.getPlayerActor(); }
-                if (!playerActor.IsNullOrDestroyed())
-                {
-                    BuffState state = GetState(BuffName, Save_Manager.Data.UserData.Character.PermanentBuffs.Vit_Buff_Value);
-                    if (Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Vit_Buff)
-                    {
-                        if ((state.PlayerAlreadyHaveBuff) && (state.ValueChanged))
-                        {
-                            playerActor.statBuffs.removeBuffsWithName(BuffName);
-                            state.PlayerAlreadyHaveBuff = false;
-                        }
-                        if (!state.PlayerAlreadyHaveBuff)
-                        {
-                            playerActor.statBuffs.addBuff(255f, SP.Vitality, Save_Manager.Data.UserData.Character.PermanentBuffs.Vit_Buff_Value, 0f, null, AT.None, 0, BuffName);
-                        }
-                    }
-                    else
-                    {
-                        if (state.PlayerAlreadyHaveBuff) { playerActor.statBuffs.removeBuffsWithName(BuffName); }
-                    }
+                    PauseMenu = GUI_Manager.PauseMenu.Refs.PauseMenu.active;
                 }
             }
         }
 
-        public struct BuffState
+        private static bool Running = false;
+        private static System.DateTime StartTime;
+        private static float Buff_Duration = 255f;
+        private static bool loading = false;
+        private static bool PauseMenu = false;
+        private static bool Buffs_Initialized = false;
+        private static Actor playerActor;
+        private static void InitBuffs()
         {
-            public bool PlayerAlreadyHaveBuff;
-            public bool ValueChanged;
-        }
-
-        private static Actor playerActor = null;
-        private static BuffState GetState(string BuffName, float value)
-        {
-            BuffState state = new BuffState
+            Buffs = new System.Collections.Generic.List<PermanentBuff>
             {
-                PlayerAlreadyHaveBuff = false,
-                ValueChanged = false
+                new PermanentBuff
+                {
+                    Name = "MoveSpeed_Buff",
+                    Value = Save_Manager.Data.UserData.Character.PermanentBuffs.MoveSpeed_Buff_Value,
+                    Propertie = SP.Movespeed,
+                    Type = Buff_Type.Increase,
+                    Toggle = Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_MoveSpeed_Buff
+                },
+                new PermanentBuff
+                {
+                    Name = "CastSpeed_Buff",
+                    Value = Save_Manager.Data.UserData.Character.PermanentBuffs.CastSpeed_Buff_Value,
+                    Propertie = SP.CastSpeed,
+                    Type = Buff_Type.Increase,
+                    Toggle = Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CastSpeed_Buff
+                },
+                new PermanentBuff
+                {
+                    Name = "AttackSpeed_Buff",
+                    Value = Save_Manager.Data.UserData.Character.PermanentBuffs.AttackSpeed_Buff_Value,
+                    Propertie = SP.AttackSpeed,
+                    Type = Buff_Type.Increase,
+                    Toggle = Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_AttackSpeed_Buff
+                },
+                new PermanentBuff
+                {
+                    Name = "Damage_Buff",
+                    Value = Save_Manager.Data.UserData.Character.PermanentBuffs.Damage_Buff_Value,
+                    Propertie = SP.Damage,
+                    Type = Buff_Type.Increase,
+                    Toggle = Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Damage_Buff
+                },
+                new PermanentBuff
+                {
+                    Name = "ManaRegen_Buff",
+                    Value = Save_Manager.Data.UserData.Character.PermanentBuffs.ManaRegen_Buff_Value,
+                    Propertie = SP.ManaRegen,
+                    Type = Buff_Type.Increase,
+                    Toggle = Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_ManaRegen_Buff
+                },
+                new PermanentBuff
+                {
+                    Name = "HealthRegen_Buff",
+                    Value = Save_Manager.Data.UserData.Character.PermanentBuffs.HealthRegen_Buff_Value,
+                    Propertie = SP.HealthRegen,
+                    Type = Buff_Type.Increase,
+                    Toggle = Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_HealthRegen_Buff
+                },
+                new PermanentBuff
+                {
+                    Name = "CriticalChance_Buff",
+                    Value = Save_Manager.Data.UserData.Character.PermanentBuffs.CriticalChance_Buff_Value,
+                    Propertie = SP.CriticalChance,
+                    Type = Buff_Type.Add,
+                    Toggle = Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CriticalChance_Buff
+                },
+                new PermanentBuff
+                {
+                    Name = "CriticalMultiplier_Buff",
+                    Value = Save_Manager.Data.UserData.Character.PermanentBuffs.CriticalMultiplier_Buff_Value,
+                    Propertie = SP.CriticalMultiplier,
+                    Type = Buff_Type.Add,
+                    Toggle = Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_CriticalMultiplier_Buff
+                },
+                new PermanentBuff
+                {
+                    Name = "Strength_Buff",
+                    Value = Save_Manager.Data.UserData.Character.PermanentBuffs.Str_Buff_Value,
+                    Propertie = SP.Strength,
+                    Type = Buff_Type.Add,
+                    Toggle = Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Str_Buff
+                },
+                new PermanentBuff
+                {
+                    Name = "Intelligence_Buff",
+                    Value = Save_Manager.Data.UserData.Character.PermanentBuffs.Int_Buff_Value,
+                    Propertie = SP.Intelligence,
+                    Type = Buff_Type.Add,
+                    Toggle = Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Int_Buff
+                },
+                new PermanentBuff
+                {
+                    Name = "Dexterity_Buff",
+                    Value = Save_Manager.Data.UserData.Character.PermanentBuffs.Dex_Buff_Value,
+                    Propertie = SP.Dexterity,
+                    Type = Buff_Type.Add,
+                    Toggle = Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Dex_Buff
+                },
+                new PermanentBuff
+                {
+                    Name = "Attunement_Buff",
+                    Value = Save_Manager.Data.UserData.Character.PermanentBuffs.Att_Buff_Value,
+                    Propertie = SP.Attunement,
+                    Type = Buff_Type.Add,
+                    Toggle = Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Att_Buff
+                },
+                new PermanentBuff
+                {
+                    Name = "Vitality_Buff",
+                    Value = Save_Manager.Data.UserData.Character.PermanentBuffs.Vit_Buff_Value,
+                    Propertie = SP.Vitality,
+                    Type = Buff_Type.Add,
+                    Toggle = Save_Manager.Data.UserData.Character.PermanentBuffs.Enable_Vit_Buff
+                },
             };
-
-            foreach (Buff player_buff in playerActor.statBuffs.buffs)
+            Buffs_Initialized = true;
+        }
+        private static void StartBuffs()
+        {
+            if (!loading)
             {
-                if (player_buff.name == BuffName)
+                loading = true;               
+                if (playerActor.IsNullOrDestroyed()) { playerActor = PlayerFinder.getPlayerActor(); }
+                if (!playerActor.IsNullOrDestroyed())
                 {
-                    state.PlayerAlreadyHaveBuff = true;
-                    if (player_buff.stat.increasedValue != value) { state.ValueChanged = true; }
-                    break;
-                }
+                    System.Collections.Generic.List<string> player_buffs = new System.Collections.Generic.List<string>();
+                    foreach (Buff player_buff in playerActor.statBuffs.buffs)
+                    {
+                        player_buffs.Add(player_buff.name);
+                    }
+                    foreach (PermanentBuff permanent_buff in Buffs)
+                    {
+                        if (player_buffs.Contains(permanent_buff.Name)) { playerActor.statBuffs.removeBuffsWithName(permanent_buff.Name); }
+                        if (permanent_buff.Toggle)
+                        {
+                            float add = 0;
+                            float increase = 0;
+                            if (permanent_buff.Type == Buff_Type.Add) { add = permanent_buff.Value; }
+                            else { increase = permanent_buff.Value; }
+                            playerActor.statBuffs.addBuff(Buff_Duration, permanent_buff.Propertie, add, increase, null, AT.None, 0, permanent_buff.Name);
+                        }
+                    }
+                    StartTime = System.DateTime.Now;
+                    Running = true;
+                    Main.logger_instance.Msg("Buffs Started");
+                }                
+                loading = false;                
             }
-
-            return state;
         }
     }
 }
