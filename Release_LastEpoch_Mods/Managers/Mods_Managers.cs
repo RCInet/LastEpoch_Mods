@@ -37,23 +37,6 @@
                 Mods.Character.Cheats.Blessings.Select.Update();
                 Mods.Character.Cheats.GodMode.Update();
                 Mods.Character.Cheats.AutoPot.Update();
-
-                if (UnityEngine.Input.GetKeyDown(Save_Manager.Data.UserData.KeyBinds.HeadhunterBuffs))
-                {
-                    Save_Manager.Data.UserData.Items.Headhunter.showui = !Save_Manager.Data.UserData.Items.Headhunter.showui;
-                }
-                if (UnityEngine.Input.GetKeyDown(Save_Manager.Data.UserData.KeyBinds.BankStashs))
-                {
-                    Mods.Items.Bank.OpenClose();
-                }
-                /*if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.F5))
-                {
-                    Mods.Scenes.Monoliths.RevealIslands();
-                }*/
-                /*if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.F6))
-                {
-                    Mods.Scenes.Monoliths.ConnectIslands();
-                }*/
             }
         }
     }

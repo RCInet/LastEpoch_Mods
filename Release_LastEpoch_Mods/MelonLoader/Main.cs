@@ -1,5 +1,5 @@
 ﻿using LastEpochMods.Managers;
-using UnityEngine.Profiling;
+using System.Runtime;
 
 namespace LastEpochMods
 {
@@ -24,6 +24,8 @@ namespace LastEpochMods
         }
         public override void OnLateUpdate()
         {
+            KeyBinds();
+            Memory_Manager.Update();
             if (!Running) { DoUpdate(); }
             else
             {
@@ -35,6 +37,27 @@ namespace LastEpochMods
         public override void OnGUI()
         {
             GUI_Manager.UpdateGUI();
+            Memory_Manager.OnGUI();
+        }
+
+        private static void KeyBinds()
+        {
+            if (UnityEngine.Input.GetKeyDown(Save_Manager.Data.UserData.KeyBinds.HeadhunterBuffs))
+            {
+                Save_Manager.Data.UserData.Items.Headhunter.showui = !Save_Manager.Data.UserData.Items.Headhunter.showui;
+            }
+            if (UnityEngine.Input.GetKeyDown(Save_Manager.Data.UserData.KeyBinds.BankStashs))
+            {
+                Mods.Items.Bank.OpenClose();
+            }
+            /*if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.F5))
+                {
+                    Mods.Scenes.Monoliths.RevealIslands();
+                }*/
+            /*if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.F6))
+            {
+                Mods.Scenes.Monoliths.ConnectIslands();
+            }*/
         }
 
         private static bool Running = false;
@@ -47,24 +70,8 @@ namespace LastEpochMods
             Save_Manager.Load.Update();
             GUI_Manager.Update();
             Mods_Managers.Update();
-            //FixMemory();
         }
 
-        const long kCollectAfterAllocating = 8 * 1024 * 1024;
-        const long kHighWater = 128 * 1024 * 1024;
-        public static long lastFrameMemory = 0;
-        public static long nextCollectAt = 0;
-        private static void FixMemory()
-        {
-            long mem = Profiler.GetMonoUsedSizeLong();
-            if (mem < lastFrameMemory) { nextCollectAt = mem + kCollectAfterAllocating; }
-            if (mem > kHighWater) { System.GC.Collect(0); }
-            else if (mem >= nextCollectAt)
-            {
-                UnityEngine.Scripting.GarbageCollector.CollectIncremental(0);
-                lastFrameMemory = mem + kCollectAfterAllocating;
-            }
-            lastFrameMemory = mem;
-        }
+        
     }
 }

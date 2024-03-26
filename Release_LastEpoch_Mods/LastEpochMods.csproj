@@ -215,6 +215,7 @@
   <ItemGroup>
     <Compile Include="Functions.cs" />
     <Compile Include="Managers\GUI_Manager.cs" />
+    <Compile Include="Managers\Memory_Manager.cs" />
     <Compile Include="Managers\Mods_Managers.cs" />
     <Compile Include="Managers\Save_Manager.cs" />
     <Compile Include="Managers\Scenes_Manager.cs" />
