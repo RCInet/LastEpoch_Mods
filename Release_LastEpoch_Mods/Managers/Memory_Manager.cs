@@ -1,8 +1,6 @@
-﻿using Il2CppSystem;
-using System.Text;
+﻿using System.Text;
 using UnityEngine;
 using UnityEngine.Profiling;
-using static LastEpochMods.Managers.GUI_Manager.PauseMenu.UI;
 using static LastEpochMods.Managers.GUI_Manager;
 
 namespace LastEpochMods.Managers

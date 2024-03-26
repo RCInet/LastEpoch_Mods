@@ -143,7 +143,8 @@ namespace LastEpochMods.Mods.Items
                         {
                             int nb_affixs = 0;
                             if ((Save_Manager.Data.UserData.Items.ItemData.Force_Seal) ||
-                                (Save_Manager.Data.UserData.Items.ItemData.Max_affixs > 4))
+                                (Save_Manager.Data.UserData.Items.ItemData.Max_affixs > 4) ||
+                                (Save_Manager.Data.UserData.Items.ItemData.Min_affixs > 0))
                             {
                                 int nb_seals = 0;
                                 foreach (ItemAffix aff in __0.affixes)
