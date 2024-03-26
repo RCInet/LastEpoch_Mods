@@ -1,4 +1,5 @@
 ﻿using LastEpochMods.Managers;
+using UnityEngine.Profiling;
 
 namespace LastEpochMods
 {
@@ -23,13 +24,47 @@ namespace LastEpochMods
         }
         public override void OnLateUpdate()
         {
-            Save_Manager.Load.Update();
-            GUI_Manager.Update();
-            Mods_Managers.Update();
+            if (!Running) { DoUpdate(); }
+            else
+            {
+                System.TimeSpan elaspedTime = System.DateTime.Now - StartTime;
+                System.Double seconds = elaspedTime.TotalSeconds;
+                if (seconds > (Duration)) { Running = false; }
+            }
         }
         public override void OnGUI()
         {
             GUI_Manager.UpdateGUI();
+        }
+
+        private static bool Running = false;
+        private static System.DateTime StartTime;
+        private static readonly float Duration = 1f;
+        private static void DoUpdate()
+        {
+            StartTime = System.DateTime.Now;
+            Running = true;            
+            Save_Manager.Load.Update();
+            GUI_Manager.Update();
+            Mods_Managers.Update();
+            //FixMemory();
+        }
+
+        const long kCollectAfterAllocating = 8 * 1024 * 1024;
+        const long kHighWater = 128 * 1024 * 1024;
+        public static long lastFrameMemory = 0;
+        public static long nextCollectAt = 0;
+        private static void FixMemory()
+        {
+            long mem = Profiler.GetMonoUsedSizeLong();
+            if (mem < lastFrameMemory) { nextCollectAt = mem + kCollectAfterAllocating; }
+            if (mem > kHighWater) { System.GC.Collect(0); }
+            else if (mem >= nextCollectAt)
+            {
+                UnityEngine.Scripting.GarbageCollector.CollectIncremental(0);
+                lastFrameMemory = mem + kCollectAfterAllocating;
+            }
+            lastFrameMemory = mem;
         }
     }
 }

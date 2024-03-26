@@ -44,7 +44,6 @@ namespace LastEpochMods.Mods.Scenes
                 [HarmonyPrefix]
                 static void Prefix(ref MonolithZoneManager __instance)
                 {
-                    //Main.logger_instance.Msg("MonolithZoneManager:OnBonusStabilityChanged");
                     if (Save_Manager.Data.UserData.Scene.Monoliths.Enable_MaxStability_OnStabilityChanged)
                     {
                         __instance.bonusStablity = __instance.maxBonusStablity;
@@ -110,7 +109,6 @@ namespace LastEpochMods.Mods.Scenes
                 [HarmonyPostfix]
                 static void Postfix(ref MonolithRun __instance)
                 {
-                    //Main.logger_instance.Msg("MonolithRun:calculateIncreasedRarityAndExperienceFromMods");
                     Run = __instance;
                     if (Save_Manager.Data.UserData.Scene.Monoliths.Enable_EnemyDensity)
                     {
