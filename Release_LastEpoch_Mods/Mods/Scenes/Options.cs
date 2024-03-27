@@ -19,10 +19,6 @@ namespace LastEpochMods.Mods.Scenes
                         __instance.defaultSpawnerDensity = Save_Manager.Data.UserData.Scene.Scene_Options.Scenes_Density_Multiplier;
                         __instance.alwaysRollSpawnerDensity = false;
                     }
-                    if (Save_Manager.Data.UserData.Scene.Scene_Options.Enable_Scenes_Exp_Multiplier)
-                    {
-                        __instance.increasedExperience = Save_Manager.Data.UserData.Scene.Scene_Options.Scenes_Exp_Multiplier;
-                    }
                 }
                 catch { }
             }
@@ -54,13 +50,8 @@ namespace LastEpochMods.Mods.Scenes
                     __instance.overrideBaseItemDropChance = true;
                     __instance.itemDropChance = Save_Manager.Data.UserData.Scene.Scene_Options.Mobs_ItemsDropChance;
                 }
-
-                if (Save_Manager.Data.UserData.Scene.Scene_Options.Enable_Mods_ExpMultiplier)
-                {
-                    __instance.experience = Save_Manager.Data.UserData.Scene.Scene_Options.Mods_ExpMultiplier;
-                }
             }
-        }
+        }               
 
         //Waypoints
         [HarmonyPatch(typeof(UIWaypointStandard), "OnPointerEnter")]

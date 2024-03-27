@@ -225,6 +225,7 @@
     <Compile Include="Mods\Character\Campaign.cs" />
     <Compile Include="Mods\Character\Cheats.cs" />
     <Compile Include="Mods\Character\Data.cs" />
+    <Compile Include="Mods\Character\Experience.cs" />
     <Compile Include="Mods\Character\PermanentBuffs.cs" />
     <Compile Include="Mods\Items\AffixsInAllSlots.cs" />
     <Compile Include="Mods\Items\AutoPickup.cs" />

@@ -12,7 +12,7 @@ namespace LastEpochMods.Mods.Items
             static bool Prefix(AffixList.Affix __instance, ref bool __result, int __0, ItemList.ClassRequirement __1)
             {
                 if (Save_Manager.Data.UserData.Items.RemoveReq.Enable_AllAffixsInAllSlots)
-                {
+                {                    
                     __result = true;
                     return false;
                 }

@@ -40,6 +40,7 @@ namespace LastEpochMods.Managers
                 public BaseStats BaseStats;
                 public Cheats Cheats;
                 public PermanentBuffs PermanentBuffs;
+                public Experience Experience;
             }
             public struct BaseStats
             {
@@ -93,6 +94,15 @@ namespace LastEpochMods.Managers
                 public float Vit_Buff_Value;
                 public bool Enable_Att_Buff;
                 public float Att_Buff_Value;
+            }
+            public struct Experience
+            {
+                public bool Enable_ExperienceMultiplier;
+                public long ExperienceMultiplier;
+                public bool Enable_AbilityExpMultiplier;
+                public long AbilityExpMultiplier;
+                public bool Enable_FavorExpMultiplier;
+                public long FavorExpMultiplier;
             }
             //Skills
             public struct Skills
@@ -375,8 +385,6 @@ namespace LastEpochMods.Managers
             {
                 public bool Enable_Scenes_Density_Multiplier;
                 public float Scenes_Density_Multiplier;
-                public bool Enable_Scenes_Exp_Multiplier;
-                public float Scenes_Exp_Multiplier;
                 public bool Enable_Mobs_ItemsMultiplier;
                 public float Mobs_ItemsMultiplier;
                 public bool Enable_Mobs_ItemsDropChance;
@@ -385,8 +393,6 @@ namespace LastEpochMods.Managers
                 public float Mobs_GoldMultiplier;
                 public bool Enable_Mobs_GoldDropChance;
                 public float Mobs_GoldDropChance;
-                public bool Enable_Mods_ExpMultiplier;
-                public long Mods_ExpMultiplier;
                 public bool Enable_Waypoints_Unlock;
             }
             public struct Camera
@@ -548,6 +554,15 @@ namespace LastEpochMods.Managers
                             Dex_Buff_Value = 0f,
                             Enable_Att_Buff = false,
                             Att_Buff_Value = 0f
+                        },
+                        Experience =
+                        {
+                            Enable_ExperienceMultiplier = false,
+                            ExperienceMultiplier = 1,
+                            Enable_AbilityExpMultiplier = false,
+                            AbilityExpMultiplier = 1,
+                            Enable_FavorExpMultiplier = false,
+                            FavorExpMultiplier = 1
                         }
                     },
                     Items =
@@ -662,9 +677,6 @@ namespace LastEpochMods.Managers
                         {
                             Enable_Scenes_Density_Multiplier = false,
                             Scenes_Density_Multiplier = 0,
-                            Enable_Scenes_Exp_Multiplier = false,
-                            Scenes_Exp_Multiplier = 0,
-
                             Enable_Mobs_ItemsMultiplier = false,
                             Mobs_ItemsMultiplier = 0,
                             Enable_Mobs_ItemsDropChance = false,
@@ -672,10 +684,7 @@ namespace LastEpochMods.Managers
                             Enable_Mobs_GoldMultiplier = false,
                             Mobs_GoldMultiplier = 0,
                             Enable_Mobs_GoldDropChance = false,
-                            Mobs_GoldDropChance = 255,      
-                            Enable_Mods_ExpMultiplier = false,
-                            Mods_ExpMultiplier = 0,
-
+                            Mobs_GoldDropChance = 255,
                             Enable_Waypoints_Unlock = false
                         },
                         Camera =

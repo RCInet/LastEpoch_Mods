@@ -1128,10 +1128,12 @@ namespace LastEpochMods.Mods.ForceDrop
                     System.Collections.Generic.List<string> type_names = new System.Collections.Generic.List<string>();
                     foreach (ItemList.BaseEquipmentItem item in ItemList.get().EquippableItems)
                     {
+                        //Main.logger_instance.Msg(item.baseTypeID + " : " + item.displayName);
                         if (item.displayName != "") { type_names.Add(item.displayName); }
                     }
                     foreach (ItemList.BaseNonEquipmentItem item in ItemList.get().nonEquippableItems)
                     {
+                        //Main.logger_instance.Msg(item.baseTypeID + " : " + item.displayName);
                         if (item.displayName != "") { type_names.Add(item.displayName); }
                     }
                     type.dropdown_list = new string[type_names.Count];

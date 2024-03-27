@@ -966,7 +966,7 @@ namespace LastEpochMods.Managers
                             float scene_y = mods_content_y;
 
                             //Options
-                            float option_h = 590 + (15 * content_margin);
+                            float option_h = 660 + (16 * content_margin);
                             GUI.DrawTexture(new Rect(scene_x, scene_y, section_w, option_h), Textures.black);
                             float section1_x = scene_x + content_margin;
                             float section1_y = scene_y + content_margin;
@@ -988,20 +988,13 @@ namespace LastEpochMods.Managers
                             { Save_Manager.Data.UserData.Scene.Scene_Options.Enable_Scenes_Density_Multiplier = !Save_Manager.Data.UserData.Scene.Scene_Options.Enable_Scenes_Density_Multiplier; }
                             Save_Manager.Data.UserData.Scene.Scene_Options.Scenes_Density_Multiplier = Density_Multiplier_Temp;
                             section1_y += 70 + content_margin;
-                                                        
-                            GUI.TextField(new Rect(section1_x + content_margin, section1_y, ((section1_content_w * 40) / 100) - content_margin, 40), "Experience Multiplier", Styles.Content_Text());
-                            float Experience_Multiplier_Temp = Save_Manager.Data.UserData.Scene.Scene_Options.Scenes_Exp_Multiplier;
-                            Experience_Multiplier_Temp = GUI.HorizontalSlider(new Rect(section1_x + (2 * content_margin), section1_y + 50, section1_content_w - (2 * content_margin), 20), Experience_Multiplier_Temp, 0f, 255f);
-                            string Experience_Multiplier_Text = GUI.TextArea(new Rect(section1_x + ((section1_content_w * 40) / 100) - (2 * content_margin), section1_y, ((section1_content_w * 20) / 100), 40), Experience_Multiplier_Temp.ToString(), Styles.Content_TextArea());
-                            try { Experience_Multiplier_Temp = float.Parse(Experience_Multiplier_Text, CultureInfo.InvariantCulture.NumberFormat); }
-                            catch { }
-                            if (GUI.Button(new Rect(section1_x + ((section1_content_w * 60) / 100), section1_y + content_margin, ((section1_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Scene.Scene_Options.Enable_Scenes_Exp_Multiplier)))
-                            { Save_Manager.Data.UserData.Scene.Scene_Options.Enable_Scenes_Exp_Multiplier = !Save_Manager.Data.UserData.Scene.Scene_Options.Enable_Scenes_Exp_Multiplier; }
-                            Save_Manager.Data.UserData.Scene.Scene_Options.Scenes_Exp_Multiplier = Experience_Multiplier_Temp;
-                            section1_y += 70 + content_margin;
 
-                            GUI.TextField(new Rect(section1_x, section1_y, section1_content_w, 20), "* All options above need a scenes Change to take effect", Styles.Content_Infos());
+                            GUI.TextField(new Rect(section1_x, section1_y, section1_content_w, 20), "* Option above need a scenes Change to take effect", Styles.Content_Infos());
                             section1_y += 20 + content_margin;
+                            
+                            section1_y += CustomControls.Toggle_LongValue(section1_x, section1_y, section1_content_w, "Experience Multiplier", ref Save_Manager.Data.UserData.Character.Experience.ExperienceMultiplier, ref Save_Manager.Data.UserData.Character.Experience.Enable_ExperienceMultiplier);
+                            section1_y += CustomControls.Toggle_LongValue(section1_x, section1_y, section1_content_w, "Ability Multiplier", ref Save_Manager.Data.UserData.Character.Experience.AbilityExpMultiplier, ref Save_Manager.Data.UserData.Character.Experience.Enable_AbilityExpMultiplier);
+                            section1_y += CustomControls.Toggle_LongValue(section1_x, section1_y, section1_content_w, "Favor Multiplier", ref Save_Manager.Data.UserData.Character.Experience.FavorExpMultiplier, ref Save_Manager.Data.UserData.Character.Experience.Enable_FavorExpMultiplier);
 
                             GUI.TextField(new Rect(section1_x + content_margin, section1_y, ((section1_content_w * 40) / 100) - content_margin, 40), "Mobs Items Drop Multiplier", Styles.Content_Text());
                             float Items_Multiplier_Temp = Save_Manager.Data.UserData.Scene.Scene_Options.Mobs_ItemsMultiplier;
@@ -1043,15 +1036,6 @@ namespace LastEpochMods.Managers
                             if (GUI.Button(new Rect(section1_x + ((section1_content_w * 60) / 100), section1_y + content_margin, ((section1_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Scene.Scene_Options.Enable_Mobs_GoldDropChance)))
                             { Save_Manager.Data.UserData.Scene.Scene_Options.Enable_Mobs_GoldDropChance = !Save_Manager.Data.UserData.Scene.Scene_Options.Enable_Mobs_GoldDropChance; }
                             Save_Manager.Data.UserData.Scene.Scene_Options.Mobs_GoldDropChance = GoldDropChance_Temp;
-                            section1_y += 70 + content_margin;
-
-                            GUI.TextField(new Rect(section1_x + content_margin, section1_y, ((section1_content_w * 40) / 100) - content_margin, 40), "Mobs Exp Multiplier", Styles.Content_Text());
-                            float Mobs_Exp_Multiplier_Temp = Save_Manager.Data.UserData.Scene.Scene_Options.Mods_ExpMultiplier;
-                            Mobs_Exp_Multiplier_Temp = GUI.HorizontalSlider(new Rect(section1_x + (2 * content_margin), section1_y + 50, section1_content_w - (2 * content_margin), 20), Mobs_Exp_Multiplier_Temp, 0f, 255f);
-                            GUI.TextArea(new Rect(section1_x + ((section1_content_w * 40) / 100) - (2 * content_margin), section1_y, ((section1_content_w * 20) / 100), 40), Mobs_Exp_Multiplier_Temp.ToString(), Styles.Content_TextArea());                            
-                            if (GUI.Button(new Rect(section1_x + ((section1_content_w * 60) / 100), section1_y + content_margin, ((section1_content_w * 40) / 100), 40), "Enable/Disable", Managers.GUI_Manager.Styles.Content_Enable_Button(Save_Manager.Data.UserData.Scene.Scene_Options.Enable_Mods_ExpMultiplier)))
-                            { Save_Manager.Data.UserData.Scene.Scene_Options.Enable_Mods_ExpMultiplier = !Save_Manager.Data.UserData.Scene.Scene_Options.Enable_Mods_ExpMultiplier; }
-                            Save_Manager.Data.UserData.Scene.Scene_Options.Mods_ExpMultiplier = (long)Mobs_Exp_Multiplier_Temp;
                             section1_y += 70 + content_margin;
 
                             GUI.TextField(new Rect(section1_x + content_margin, section1_y, ((section1_content_w * 60) / 100) - content_margin, 40), "Waypoints Unlock", Styles.Content_Text());                            
@@ -2118,6 +2102,19 @@ namespace LastEpochMods.Managers
 
                         return 70 + content_margin;
                     }
+
+                    public static float Toggle_LongValue(float pos_x, float pos_y, float size_w, string text, ref long value, ref bool toggle)
+                    {
+                        GUI.TextField(new Rect(pos_x, pos_y, ((size_w * 40) / 100) - content_margin, 40), text, Styles.Content_Text());
+                        GUI.TextField(new Rect(pos_x + ((size_w * 40) / 100) - (2 * content_margin), pos_y, ((size_w * 20) / 100), 40), value.ToString(), Styles.ContentR_Text());
+                        if (GUI.Button(new Rect(pos_x + ((size_w * 60) / 100), pos_y, ((size_w * 40) / 100), 40), "Enable/Disable", Styles.Content_Enable_Button(toggle))) { toggle = !toggle; }
+                        float tem_value = value;
+                        tem_value = GUI.HorizontalSlider(new Rect(pos_x + content_margin, pos_y + 50, size_w - (2 * content_margin), 20), tem_value, 0f, 255f);
+                        value = (long)tem_value;
+
+                        return 70 + content_margin;
+                    }
+
                     public static float Toggle_FloatPercent(float pos_x, float pos_y, float size_w, string text, float min, float max, bool multiply, ref float value, ref bool toggle)
                     {
                         GUI.TextField(new Rect(pos_x, pos_y, ((size_w * 40) / 100) - content_margin, 40), text, Styles.Content_Text());                        
