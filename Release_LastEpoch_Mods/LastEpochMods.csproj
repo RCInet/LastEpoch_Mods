@@ -146,7 +146,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -272,38 +271,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
-    <None Include="Resources\HeadHunter_Buffs.json" />
-    <None Include="Resources\Menu.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\PauseMenu_Bottom.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\PauseMenu_Menu.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\STAR-UNIQUE.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Headhunter.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Armor.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Boots.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Gloves.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Helmet.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Shield.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Weapon.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

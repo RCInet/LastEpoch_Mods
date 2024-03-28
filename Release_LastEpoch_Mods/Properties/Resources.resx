@@ -117,38 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Armor" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Armor.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Boots" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Boots.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Gloves" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Gloves.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Headhunter" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Headhunter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="HeadHunter_Buffs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\HeadHunter_Buffs.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Helmet" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Helmet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="PauseMenu_Bottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\PauseMenu_Bottom.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="PauseMenu_Menu" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\PauseMenu_Menu.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Shield" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Shield.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="STAR_UNIQUE" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\STAR-UNIQUE.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Weapon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Weapon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
 </root>

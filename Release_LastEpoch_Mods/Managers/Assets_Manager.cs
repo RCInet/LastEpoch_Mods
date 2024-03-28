@@ -8,72 +8,178 @@ namespace LastEpochMods.Managers
         private static string AssetsPath = Application.dataPath + "/../Mods/LastEpochMods/Assets";
         public static AssetBundle asset_bundle;
         
-        public static Sprite Headhunter_icon;
-
-        /*public static Sprite Menu;
-        public static Sprite PauseMenu_Bottom;
-        public static Sprite PauseMenu_Menu;
-
-        public static Sprite Armor;
-        public static Sprite Boots;
-        public static Sprite Gloves;
-        public static Sprite Helmet;
-        public static Sprite Shield;
-        public static Sprite Weapons;*/
-
         public static void OnInitializeMelon()
         {
-            LoadBundles();
-        }
-
-        public static void OnSceneWasInitialized()
-        {
-            if (Scenes_Manager.CurrentName == Scenes_Manager.MenuNames[3])
+            Main.logger_instance.Msg("Initialize Assets Manager");
+            string bundle_name = "lastepochmods.asset";
+            if ((Directory.Exists(AssetsPath)) && (File.Exists(Path.Combine(AssetsPath, bundle_name))))
             {
-                LoadAssets();
+                asset_bundle = LoadAssetBundle(bundle_name);
+                if (asset_bundle == null) { Main.logger_instance.Error("Asset Bundle Not Loaded"); }
             }
+            else { Main.logger_instance.Error(bundle_name + " Not Found in Assets directory"); }
         }
 
-        private static void LoadBundles()
+        public class Headhunter
         {
-            asset_bundle = LoadAssetBundle("lastepochmods.asset");
+            public static bool loaded = false;
+            public static Sprite icon;
+            public static TextAsset json;
         }
-        private static void LoadAssets()
+        public class PauseMenu
         {
-            if (asset_bundle != null )
+            public static Texture2D PauseMenu_Bottom;
+            public static Texture2D PauseMenu_Menu;
+        }
+        public class Skins
+        {
+            public static Sprite Armor;
+            public static Sprite Boots;
+            public static Sprite Gloves;
+            public static Sprite Helmet;
+            public static Sprite Shield;
+            public static Sprite Weapons;
+        }
+        public static class Extensions
+        {
+            public static readonly string jpg = ".jpg";
+            public static readonly string png = ".png";
+            public static readonly string json = ".json";
+        }
+                
+        public static void Load_Headhunter()
+        {
+            if (asset_bundle != null)
             {
-                // i = 0;
                 foreach (string name in asset_bundle.GetAllAssetNames())
                 {
-                    //Main.logger_instance.Msg( i + " : " + name);
-                    var asset = asset_bundle.LoadAsset(name);
-                    if (name.Contains("headhunter_icon"))
+                    if (name.Contains("/headhunter/"))
                     {
-                        Texture2D texture = asset.TryCast<Texture2D>();
-                        Headhunter_icon = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+                        if ((Check_Texture(name)) && (name.Contains("icon")))
+                        {
+                            Texture2D texture = asset_bundle.LoadAsset(name).TryCast<Texture2D>();
+                            Headhunter.icon = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+                        }
+                        else if ((Check_Json(name)) && (name.Contains("hh_buffs")))
+                        {
+                            Headhunter.json = asset_bundle.LoadAsset(name).TryCast<TextAsset>();
+                        }
                     }
-                    //i++;
+                }
+                Headhunter.loaded = true;
+            }
+            else { Main.logger_instance.Error("Asset Bundle not Loaded : path = " + Path.Combine(AssetsPath, "lastepochmods.asset")); }
+        }
+        public static void Load_Skins()
+        {
+            if (asset_bundle != null)
+            {
+                //Main.logger_instance.Msg("Initialize Assets for Skins");
+                foreach (string name in asset_bundle.GetAllAssetNames())
+                {
+                    if ((Check_Texture(name)) && (name.Contains("/skins/")))
+                    {
+                        Texture2D texture = asset_bundle.LoadAsset(name).TryCast<Texture2D>();
+                        Sprite picture = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+                        if (name.Contains("armor")) { Skins.Armor = picture; }
+                        else if (name.Contains("boots")) { Skins.Boots = picture; }
+                        else if (name.Contains("gloves")) { Skins.Gloves = picture; }
+                        else if (name.Contains("helmet")) { Skins.Helmet = picture; }
+                        else if (name.Contains("shield")) { Skins.Shield = picture; }
+                        else if (name.Contains("weapon")) { Skins.Weapons = picture; }
+                    }
                 }
             }
             else { Main.logger_instance.Error("Asset Bundle not Loaded : path = " + Path.Combine(AssetsPath, "lastepochmods.asset")); }
-
-            //Headhunter
-            //Headhunter_icon = LoadTexture(@"Headhunter\Headhunter.png");
-            //PauseMenu
-            /*Menu = LoadTexture(@"PauseMenu\Menu.jpg");
-            PauseMenu_Bottom = LoadTexture(@"PauseMenu\PauseMenu_Bottom.png");
-            PauseMenu_Menu = LoadTexture(@"PauseMenu\PauseMenu_Menu.png");
-            //Skins
-            Armor = LoadTexture(@"Skins\Armor.png");
-            Boots = LoadTexture(@"Skins\Boots.png");
-            Gloves = LoadTexture(@"Skins\Gloves.png");
-            Helmet = LoadTexture(@"Skins\Helmet.png");
-            Shield = LoadTexture(@"Skins\Shield.png");
-            Weapons = LoadTexture(@"Skins\Weapon.png");*/
-
-            //Main.logger_instance.Msg("Textures Loaded");
         }
-        
+        public static void Load_PauseMenu()
+        {
+            if (asset_bundle != null)
+            {
+                //Main.logger_instance.Msg("Initialize Assets for Pause Menu");
+                foreach (string name in asset_bundle.GetAllAssetNames())
+                {
+                    if ((Check_Texture(name)) && (name.Contains("/skins/")))
+                    {
+                        if (name.Contains("/pausemenu/"))
+                        {
+                            if (name.Contains("_bottom")) { PauseMenu.PauseMenu_Bottom = asset_bundle.LoadAsset(name).TryCast<Texture2D>(); }
+                            else if (name.Contains("_menu")) { PauseMenu.PauseMenu_Menu = asset_bundle.LoadAsset(name).TryCast<Texture2D>(); }
+                        }
+                    }
+                }
+            }
+            else { Main.logger_instance.Error("Asset Bundle not Loaded : path = " + Path.Combine(AssetsPath, "lastepochmods.asset")); }
+        }
+
+        private static bool Check_Texture(string name)
+        {
+            if ((name.Substring(name.Length - Extensions.jpg.Length, Extensions.jpg.Length).ToLower() == Extensions.jpg) ||
+                        (name.Substring(name.Length - Extensions.png.Length, Extensions.png.Length).ToLower() == Extensions.png))
+            {
+                return true;
+            }
+            else { return false; }
+        }
+        private static bool Check_Json(string name)
+        {
+            if (name.Substring(name.Length - Extensions.json.Length, Extensions.json.Length).ToLower() == Extensions.json)                        
+            {
+                return true;
+            }
+            else { return false; }
+        }
+        /*private static void LoadAssets()
+        {
+            if (asset_bundle != null )
+            {
+                int i = 0;
+                foreach (string name in asset_bundle.GetAllAssetNames())
+                {
+                    Main.logger_instance.Msg( i + " : " + name);
+                    //var asset = asset_bundle.LoadAsset(name);
+                    string jpg = ".jpg";
+                    string png = ".png";
+                    string prefab = ".prefab";
+
+                    if ((name.Substring(name.Length - jpg.Length, jpg.Length).ToLower() == jpg) ||
+                        (name.Substring(name.Length - png.Length, png.Length).ToLower() == png))
+                    {
+                        Texture2D texture = asset_bundle.LoadAsset(name).TryCast<Texture2D>();
+                        Sprite picture = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+                        
+                        if ((name.Contains("/headhunter/")) && (name.Contains("icon"))) { Sprites.Headhunter.icon = picture; }
+                        else if (name.Contains("/pausemenu/"))
+                        {
+                            if (name.Contains("_bottom")) { Sprites.PauseMenu.PauseMenu_Bottom = picture; }
+                            else if (name.Contains("_menu")) { Sprites.PauseMenu.PauseMenu_Menu = picture; }
+                            //else if (name.Contains("menu")) { Sprites.PauseMenu.Menu = picture; }
+                        }
+                        else if (name.Contains("/skins/"))
+                        {
+                            Main.logger_instance.Msg("Skins");
+                            if (name.Contains("armor"))
+                            {
+                                Main.logger_instance.Msg("Armor");
+                                Sprites.Skins.Armor = picture;
+                            }
+                            else if (name.Contains("boots")) { Sprites.Skins.Boots = picture; }
+                            else if (name.Contains("gloves")) { Sprites.Skins.Gloves = picture; }
+                            else if (name.Contains("helmet")) { Sprites.Skins.Helmet = picture; }
+                            else if (name.Contains("shield")) { Sprites.Skins.Shield = picture; }
+                            else if (name.Contains("weapon")) { Sprites.Skins.Weapons = picture; }
+                        }
+                    }
+                    else if (name.Substring(name.Length - prefab.Length, prefab.Length).ToLower() == prefab)
+                    {
+
+                    }
+                    i++;
+                }
+            }
+            else { Main.logger_instance.Error("Asset Bundle not Loaded : path = " + Path.Combine(AssetsPath, "lastepochmods.asset")); }
+        }*/
+
         /*private static Sprite LoadTexture(string picture)
         {
             Sprite sprite = null;

@@ -14,7 +14,7 @@ namespace LastEpochMods.Managers
         private static readonly float Size_h = 80;
         private static readonly float Button_w = 100;
 
-        public static void Update()
+        public static void QuickUpdate()
         {
             if (ShowUI)
             {

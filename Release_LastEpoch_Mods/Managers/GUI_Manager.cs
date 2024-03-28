@@ -8,13 +8,10 @@ namespace LastEpochMods.Managers
     {
         public static void OnSceneWasInitialized(string sceneName)
         {
-            if ((sceneName == "CharacterSelectScene") || (Scenes_Manager.GameScene()))
-            {
-                GUI_Manager.Textures.OnSceneWasInitialized(); //Initialized textures for menus
-                //Mods.Items.Skins.CosmeticPanel.Slots.InitSlots(); //Textures
-            }
+            if ((sceneName == "CharacterSelectScene") || (Scenes_Manager.GameScene())) { Textures.OnSceneWasInitialized(); }
+            if (Scenes_Manager.GameScene()) { Mods.Items.Skins.CosmeticPanel.Slots.InitSlots(); }
         }
-        public static void Update()
+        public static void SlowUpdate()
         {
             Base.Functions.Update();
             if (Base.Initialized)
@@ -46,7 +43,6 @@ namespace LastEpochMods.Managers
 
             public class Refs
             {
-                public static GameObject GameObject_GUI = null;
                 public static UIBase Game_UIBase = null;
             }
             public class Functions
@@ -54,300 +50,32 @@ namespace LastEpochMods.Managers
                 public static void Init()
                 {
                     Initialized = false;
-                    foreach (Object obj in Object.FindObjectsOfType<GameObject>())
+                    if (!UIBase.instance.IsNullOrDestroyed())
                     {
-                        if (obj.name == "GUI")
-                        {
-                            Refs.GameObject_GUI = obj.TryCast<GameObject>();
-                            Refs.Game_UIBase = Refs.GameObject_GUI.GetComponent<UIBase>();
-                            Main.logger_instance.Msg("Game GUI Found, Initializing Mod GUI");
-                            Initialized = true;
-
-                            break;
-                        }
+                        Refs.Game_UIBase = UIBase.instance;
+                        Initialized = true;
                     }
                 }
                 public static void Update()
                 {
-                    if ((Refs.GameObject_GUI.IsNullOrDestroyed()) || (Refs.GameObject_GUI.IsNullOrDestroyed()))
-                    {
-                        Initialized = false;
-                    }
+                    if (Refs.Game_UIBase.IsNullOrDestroyed()) { Initialized = false; }
                     if (!Initialized) { Init(); }
                 }
             }
         }
         public class CharacterSelectionMenu
         {
-            //public static bool isVisible = false;
-            
-            public class Btns
+            public static void ShowFps()
             {
-                public static void Btn_RemoveReq_Click()
+                if (!Base.Refs.Game_UIBase.IsNullOrDestroyed())
                 {
-                    UI.ShowRemoveReqSection = !UI.ShowRemoveReqSection;
-                }
-                public static void Btn_Items_Remove_Level_Req_Click()
-                {
-                    Save_Manager.Data.UserData.Items.RemoveReq.Remove_LevelReq = !Save_Manager.Data.UserData.Items.RemoveReq.Remove_LevelReq;
-                }
-                public static void Btn_Items_Remove_Class_Req_Click()
-                {
-                    Save_Manager.Data.UserData.Items.RemoveReq.Remove_ClassReq = !Save_Manager.Data.UserData.Items.RemoveReq.Remove_ClassReq;
-                }
-                public static void Btn_Items_Remove_SubClass_Req_Click()
-                {
-                    Save_Manager.Data.UserData.Items.RemoveReq.Remove_SubClassReq = !Save_Manager.Data.UserData.Items.RemoveReq.Remove_SubClassReq;
-                }
-                public static void Btn_Items_Remove_Set_Req_Click()
-                {
-                    Save_Manager.Data.UserData.Items.RemoveReq.Remove_set_req = !Save_Manager.Data.UserData.Items.RemoveReq.Remove_set_req;
-                }
-            }
-            public class UI
-            {
-                public static bool login = false;
-                public static bool base_stats = false;
-                public static readonly float base_stats_h = 275f;
-                public static bool items = false;
-                public static readonly float items_h = 100f;
-                public static bool ShowRemoveReqSection = false;
-                public static readonly float ui_size_w = 200f;
-                public static readonly float ui_size_h = 140f;
-                public static readonly float ui_pos_x = 10f;
-                public static readonly float margin_w = 5f;
-                public static readonly float line_h = 30f;
-                public static readonly float line_margin_h = 5f;
-                public static readonly float text_size_h = line_h - (2 * line_margin_h);
-                public static readonly float button_size_w = 80;
-                public static readonly float button_size_h = line_h - (2 * line_margin_h);
-
-                public static void UpdateGUI()
-                {
-                    if (Scenes_Manager.CurrentName == Scenes_Manager.MenuNames[3])
+                    if (!Base.Refs.Game_UIBase.fpsDisplay.showFps)
                     {
-                        GeneralFunctions.SaveConfig();
-                        float section_size_w = 200;
-                        int nb_sections = 2;
-                        float menu_margin_w = 5f;
-                        float menu_margin_h = 5f;
-                        float menu_w = (section_size_w * nb_sections) + ((nb_sections + 1) * menu_margin_w);
-                        float menu_h = 40;
-                        float start_x = (Screen.width / 2) - (menu_w / 2);
-                        float start_y = 0;
-                        GUI.DrawTexture(new Rect(start_x, start_y, menu_w, menu_h), GUI_Manager.Textures.black);
-                        float menu_top_pos_y = start_y;
-                        float menu_bottom_pos_y = menu_top_pos_y + menu_h;
-                        float first_section_x = start_x;
-                        float second_section_x = start_x + margin_w + section_size_w;
-                        //float third_section_x = second_section_x + margin_w + section_size_w;
-
-                        if (GUI.Button(new Rect(first_section_x + margin_w, menu_top_pos_y + menu_margin_h, section_size_w, menu_h - (2 * menu_margin_h)), "Base Stats", GUI_Manager.Styles.Button_Style(base_stats))) { Functions.ShowHide_BaseStats(); }
-                        if (base_stats)
-                        {
-                            int maxvalue = 999;
-                            float min = 0;
-                            float max = 255;
-                            float multiplier = maxvalue / max;
-                            float pos_x = first_section_x;
-                            float pos_y = menu_bottom_pos_y;
-                            float max_w = section_size_w;// - (2 * menu_margin_w);
-                            GUI.DrawTexture(new Rect(pos_x, pos_y, section_size_w + (2 * menu_margin_w), base_stats_h), GUI_Manager.Textures.black);
-                            pos_x += menu_margin_w;
-                            //pos_y += Ui.line_margin_h;
-
-                            //Base Str
-                            GUI.DrawTexture(new Rect(pos_x, pos_y, max_w, 50), GUI_Manager.Textures.grey);
-                            GUI.Label(new Rect(pos_x + 5, pos_y + ((line_h - text_size_h) / 2), max_w - (button_size_w + (2 * margin_w)), text_size_h), "Strenght", GUI_Manager.Styles.Text_Style());
-                            if (GUI.Button(new Rect(pos_x + (max_w - button_size_w), pos_y + ((line_h - button_size_h) / 2), button_size_w, button_size_h), Functions.EnableDisableBtn(Save_Manager.Data.UserData.Character.BaseStats.Enable_baseStrength), GUI_Manager.Styles.Button_Style(Save_Manager.Data.UserData.Character.BaseStats.Enable_baseStrength)))
-                            {
-                                Save_Manager.Data.UserData.Character.BaseStats.Enable_baseStrength = !Save_Manager.Data.UserData.Character.BaseStats.Enable_baseStrength;
-                            }
-                            pos_y += 30;
-
-                            float str_temp_value = Save_Manager.Data.UserData.Character.BaseStats.baseStrength / multiplier;
-                            str_temp_value = GUI.HorizontalSlider(new Rect(pos_x + 5, pos_y + 5, (max_w - 45), 20), str_temp_value, min, max); //* multiplier);
-                            string str_value_string = GUI.TextArea(new Rect((pos_x + max_w - 40), pos_y, 40, 20), (str_temp_value * multiplier).ToString(), GUI_Manager.Styles.TextArea_Style());
-                            try
-                            {
-                                int text = int.Parse(str_value_string, CultureInfo.InvariantCulture.NumberFormat);
-                                str_temp_value = text / multiplier;
-                            }
-                            catch { }
-                            Save_Manager.Data.UserData.Character.BaseStats.baseStrength = (int)(str_temp_value * multiplier);
-                            pos_y += 20 + line_margin_h;
-
-                            //Base Intel
-                            GUI.DrawTexture(new Rect(pos_x, pos_y, max_w, 50), GUI_Manager.Textures.grey);
-                            GUI.Label(new Rect(pos_x + 5, pos_y + ((line_h - text_size_h) / 2), max_w - (button_size_w + (2 * margin_w)), text_size_h), "Intelligence", GUI_Manager.Styles.Text_Style());
-                            if (GUI.Button(new Rect(pos_x + (max_w - button_size_w), pos_y + ((line_h - button_size_h) / 2), button_size_w, button_size_h), Functions.EnableDisableBtn(Save_Manager.Data.UserData.Character.BaseStats.Enable_baseIntelligence), GUI_Manager.Styles.Button_Style(Save_Manager.Data.UserData.Character.BaseStats.Enable_baseIntelligence)))
-                            {
-                                Save_Manager.Data.UserData.Character.BaseStats.Enable_baseIntelligence = !Save_Manager.Data.UserData.Character.BaseStats.Enable_baseIntelligence;
-                            }
-                            pos_y += 30;
-                            float int_temp_value = Save_Manager.Data.UserData.Character.BaseStats.baseIntelligence / multiplier;
-                            int_temp_value = GUI.HorizontalSlider(new Rect(pos_x + 5, pos_y + 5, (max_w - 45), 20), int_temp_value, min, max); //* multiplier);
-                            string int_value_string = GUI.TextArea(new Rect((pos_x + max_w - 40), pos_y, 40, 20), (int_temp_value * multiplier).ToString(), GUI_Manager.Styles.TextArea_Style());
-                            try
-                            {
-                                int text = int.Parse(int_value_string, CultureInfo.InvariantCulture.NumberFormat);
-                                int_temp_value = text / multiplier;
-                            }
-                            catch { }
-                            Save_Manager.Data.UserData.Character.BaseStats.baseIntelligence = (int)(int_temp_value * multiplier);
-                            pos_y += 20 + line_margin_h;
-
-                            //Base Vitality
-                            GUI.DrawTexture(new Rect(pos_x, pos_y, max_w, 50), GUI_Manager.Textures.grey);
-                            GUI.Label(new Rect(pos_x + 5, pos_y + ((line_h - text_size_h) / 2), max_w - (button_size_w + (2 * margin_w)), text_size_h), "Vitality", GUI_Manager.Styles.Text_Style());
-                            if (GUI.Button(new Rect(pos_x + (max_w - button_size_w), pos_y + ((line_h - button_size_h) / 2), button_size_w, button_size_h), Functions.EnableDisableBtn(Save_Manager.Data.UserData.Character.BaseStats.Enable_baseVitality), GUI_Manager.Styles.Button_Style(Save_Manager.Data.UserData.Character.BaseStats.Enable_baseVitality)))
-                            {
-                                Save_Manager.Data.UserData.Character.BaseStats.Enable_baseVitality = !Save_Manager.Data.UserData.Character.BaseStats.Enable_baseVitality;
-                            }
-                            pos_y += 30;
-                            float vita_temp_value = Save_Manager.Data.UserData.Character.BaseStats.baseVitality / multiplier;
-                            vita_temp_value = GUI.HorizontalSlider(new Rect(pos_x + 5, pos_y + 5, (max_w - 45), 20), vita_temp_value, min, max);
-                            string vita_value_string = GUI.TextArea(new Rect((pos_x + max_w - 40), pos_y, 40, 20), (vita_temp_value * multiplier).ToString(), GUI_Manager.Styles.TextArea_Style());
-                            try
-                            {
-                                int text = int.Parse(vita_value_string, CultureInfo.InvariantCulture.NumberFormat);
-                                vita_temp_value = text / multiplier;
-                            }
-                            catch { }
-                            Save_Manager.Data.UserData.Character.BaseStats.baseVitality = (int)(vita_temp_value * multiplier);
-                            pos_y += 20 + line_margin_h;
-
-                            //Base Dexterity
-                            GUI.DrawTexture(new Rect(pos_x, pos_y, max_w, 50), GUI_Manager.Textures.grey);
-                            GUI.Label(new Rect(pos_x + 5, pos_y + ((line_h - text_size_h) / 2), max_w - (button_size_w + (2 * margin_w)), text_size_h), "Dexterity", GUI_Manager.Styles.Text_Style());
-                            if (GUI.Button(new Rect(pos_x + (max_w - button_size_w), pos_y + ((line_h - button_size_h) / 2), button_size_w, button_size_h), Functions.EnableDisableBtn(Save_Manager.Data.UserData.Character.BaseStats.Enable_baseDexterity), GUI_Manager.Styles.Button_Style(Save_Manager.Data.UserData.Character.BaseStats.Enable_baseDexterity)))
-                            {
-                                Save_Manager.Data.UserData.Character.BaseStats.Enable_baseDexterity = !Save_Manager.Data.UserData.Character.BaseStats.Enable_baseDexterity;
-                            }
-                            pos_y += 30;
-                            float dex_temp_value = Save_Manager.Data.UserData.Character.BaseStats.baseDexterity / multiplier;
-                            dex_temp_value = GUI.HorizontalSlider(new Rect(pos_x + 5, pos_y + 5, (max_w - 45), 20), dex_temp_value, min, max);
-                            string dex_value_string = GUI.TextArea(new Rect((pos_x + max_w - 40), pos_y, 40, 20), (dex_temp_value * multiplier).ToString(), GUI_Manager.Styles.TextArea_Style());
-                            try
-                            {
-                                int text = int.Parse(dex_value_string, CultureInfo.InvariantCulture.NumberFormat);
-                                dex_temp_value = text / multiplier;
-                            }
-                            catch { }
-                            Save_Manager.Data.UserData.Character.BaseStats.baseDexterity = (int)(dex_temp_value * multiplier);
-                            pos_y += 20 + line_margin_h;
-
-                            //Base Attunement
-                            GUI.DrawTexture(new Rect(pos_x, pos_y, max_w, 50), GUI_Manager.Textures.grey);
-                            GUI.Label(new Rect(pos_x + 5, pos_y + ((line_h - text_size_h) / 2), max_w - (button_size_w + (2 * margin_w)), text_size_h), "Attunement", GUI_Manager.Styles.Text_Style());
-                            if (GUI.Button(new Rect(pos_x + (max_w - button_size_w), pos_y + ((line_h - button_size_h) / 2), button_size_w, button_size_h), Functions.EnableDisableBtn(Save_Manager.Data.UserData.Character.BaseStats.Enable_baseAttunement), GUI_Manager.Styles.Button_Style(Save_Manager.Data.UserData.Character.BaseStats.Enable_baseAttunement)))
-                            {
-                                Save_Manager.Data.UserData.Character.BaseStats.Enable_baseAttunement = !Save_Manager.Data.UserData.Character.BaseStats.Enable_baseAttunement;
-                            }
-                            pos_y += 30;
-                            float att_temp_value = Save_Manager.Data.UserData.Character.BaseStats.baseAttunement / multiplier;
-                            att_temp_value = GUI.HorizontalSlider(new Rect(pos_x + 5, pos_y + 5, (max_w - 45), 20), att_temp_value, min, max);
-                            string att_value_string = GUI.TextArea(new Rect((pos_x + max_w - 40), pos_y, 40, 20), (att_temp_value * multiplier).ToString(), GUI_Manager.Styles.TextArea_Style());
-                            try
-                            {
-                                int text = int.Parse(att_value_string, CultureInfo.InvariantCulture.NumberFormat);
-                                att_temp_value = text / multiplier;
-                            }
-                            catch { }
-                            Save_Manager.Data.UserData.Character.BaseStats.baseAttunement = (int)(att_temp_value * multiplier);
-                        }
-
-                        if (GUI.Button(new Rect(second_section_x + margin_w, menu_top_pos_y + menu_margin_h, section_size_w, menu_h - (2 * menu_margin_h)), "Items", GUI_Manager.Styles.Button_Style(items))) { Functions.ShowHide_Items(); }
-                        if (items)
-                        {
-                            float pos_x = second_section_x;
-                            float pos_y = menu_bottom_pos_y;
-                            GUI.DrawTexture(new Rect(pos_x, pos_y, section_size_w + (2 * menu_margin_w), items_h), GUI_Manager.Textures.black);
-                            pos_x += menu_margin_w;
-
-                            GUI.DrawTexture(new Rect(pos_x, pos_y, section_size_w, 50), GUI_Manager.Textures.grey);
-                            pos_x += menu_margin_w;
-                            pos_y += menu_margin_h;
-                            GUI.Label(new Rect(pos_x, pos_y, section_size_w - (button_size_w + (2 * margin_w)), 20), "Affixs can be", GUI_Manager.Styles.Text_Style());
-                            if (GUI.Button(new Rect(pos_x + (section_size_w - button_size_w - menu_margin_w), pos_y, button_size_w, 20), Functions.EnableDisableBtn(Save_Manager.Data.UserData.Items.RemoveReq.Enable_AllAffixsInAllSlots), GUI_Manager.Styles.Button_Style(Save_Manager.Data.UserData.Items.RemoveReq.Enable_AllAffixsInAllSlots)))
-                            {
-                                Save_Manager.Data.UserData.Items.RemoveReq.Enable_AllAffixsInAllSlots = !Save_Manager.Data.UserData.Items.RemoveReq.Enable_AllAffixsInAllSlots;
-                            }
-                            pos_y += 15;
-                            GUI.Label(new Rect(pos_x, pos_y + 5, section_size_w - (2 * margin_w), 20), "crafted on any Item", GUI_Manager.Styles.Text_Style());
-                            pos_x -= menu_margin_w;
-                            pos_y += 30 + line_margin_h;
-
-                            if (GUI.Button(new Rect(pos_x, pos_y, section_size_w, 40), "Remove Req", GUI_Manager.Styles.Button_Style(ShowRemoveReqSection))) { Btns.Btn_RemoveReq_Click(); }
-                            if (ShowRemoveReqSection)
-                            {
-                                pos_x += section_size_w;
-                                pos_y -= 5;
-                                GUI.DrawTexture(new Rect(pos_x, pos_y, (section_size_w + (2 * menu_margin_w)), 180 + 5), GUI_Manager.Textures.windowBackground);
-                                pos_x += 5;
-                                pos_y += 5;
-                                //CustomControls.EnableButton("Level", pos_x, pos_y, Save_Manager.Data.UserData.Items.RemoveReq.Remove_LevelReq, Btns.Btn_Items_Remove_Level_Req_Click);
-                                //pos_y += 45;
-                                //CustomControls.EnableButton("Class", pos_x, pos_y, Save_Manager.Data.UserData.Items.RemoveReq.Remove_ClassReq, Btns.Btn_Items_Remove_Class_Req_Click);
-                                //pos_y += 45;
-                                //CustomControls.EnableButton("SubClass", pos_x, pos_y, Save_Manager.Data.UserData.Items.RemoveReq.Remove_SubClassReq, Btns.Btn_Items_Remove_SubClass_Req_Click);
-                                //pos_y += 45;
-                                CustomControls.EnableButton("Set", pos_x, pos_y, Save_Manager.Data.UserData.Items.RemoveReq.Remove_set_req, Btns.Btn_Items_Remove_Set_Req_Click);
-                            }
-                        }
+                        Base.Refs.Game_UIBase.fpsDisplay.showFps = true;
+                        Base.Refs.Game_UIBase.fpsDisplay.display.gameObject.SetActive(true);
                     }
                 }
             }
-            public class Functions
-            {
-                public static void ShowFps()
-                {
-                    try
-                    {
-                        if (!Base.Refs.Game_UIBase.fpsDisplay.showFps)
-                        {
-                            Base.Refs.Game_UIBase.fpsDisplay.showFps = true;
-                            Base.Refs.Game_UIBase.fpsDisplay.display.gameObject.SetActive(true);
-                        }
-                    }
-                    catch { Main.logger_instance.Error("GUI is null or destroyed"); }
-                }
-                public static string EnableDisableBtn(bool check)
-                {
-                    if (check) { return "Disable"; }
-                    else { return "Enable"; }
-                }
-                public static void ShowHide_BaseStats()
-                {
-                    UI.base_stats = !UI.base_stats;
-                    if (UI.base_stats)
-                    {
-                        UI.login = false;
-                        UI.items = false;
-                    }
-                }
-                public static void ShowHide_Items()
-                {
-                    UI.items = !UI.items;
-                    if (UI.items)
-                    {
-                        UI.login = false;
-                        UI.base_stats = false;
-                    }
-                }
-            }
-            /*public class Hooks
-            {
-                [HarmonyPatch(typeof(CharacterSelect), "OnDisable")]
-                public class CharacterSelect_OnDisable
-                {
-                    [HarmonyPostfix]
-                    static void Postfix(CharacterSelect __instance)
-                    {
-                        isVisible = false;
-                    }
-                }
-            }*/
         }
         public class PauseMenu
         {
@@ -2134,7 +1862,7 @@ namespace LastEpochMods.Managers
                     {
                         if (Refs.PauseMenu.IsNullOrDestroyed())
                         {
-                            GameObject Draw_over_login_canvas = GeneralFunctions.GetChild(Base.Refs.GameObject_GUI, "Draw Over Login Canvas");
+                            GameObject Draw_over_login_canvas = GeneralFunctions.GetChild(Base.Refs.Game_UIBase.gameObject, "Draw Over Login Canvas");
                             if (!Draw_over_login_canvas.IsNullOrDestroyed())
                             {
                                 Refs.PauseMenu = GeneralFunctions.GetChild(Draw_over_login_canvas, "Menu");
@@ -2165,8 +1893,7 @@ namespace LastEpochMods.Managers
                                 Refs.Leave_Btn = GeneralFunctions.GetChild(Btns, "ExitToCharacterSelectButton").GetComponent<Button>();
                                 Refs.Exit_Btn = GeneralFunctions.GetChild(Btns, "ExitGameButton").GetComponent<Button>();
 
-                                Functions.ShowHide_DefaultPauseMenu(false);
-                                Main.logger_instance.Msg("PauseMenu Initialized");
+                                ShowHide_DefaultPauseMenu(false);
                                 Initialized = true;
                             }
                         }
@@ -2292,14 +2019,10 @@ namespace LastEpochMods.Managers
                 public static bool IsBlessingOpen()
                 {
                     bool result = false;
-                    try
+                    if (!Refs.BlessingsPanel_GameObject.IsNullOrDestroyed())
                     {
-                        if (!Refs.BlessingsPanel_GameObject.IsNullOrDestroyed())
-                        {
-                            result = Refs.BlessingsPanel_GameObject.active;
-                        }
+                        result = Refs.BlessingsPanel_GameObject.active;
                     }
-                    catch { }
 
                     return result;
                 }
@@ -2393,16 +2116,13 @@ namespace LastEpochMods.Managers
             public static Texture2D green = null;
             public static Texture2D red = null;
 
-
-            public class PauseMenu
-            {
-                public static Texture2D Menu = null;
-                public static Texture2D Bottom = null;
-            }
-
             public static bool IsInitialized = false;
             public static void OnSceneWasInitialized()
             {
+                Assets_Manager.Load_PauseMenu();
+                Assets_Manager.Load_Headhunter();
+                Assets_Manager.Load_Skins();
+
                 PauseMenu_Btns_Enable = GeneralFunctions.MakeTextureFromRGBAColor(150, 112, 42, 1);
                 PauseMenu_Btns_Disable = GeneralFunctions.MakeTextureFromRGBAColor(83, 91, 92, 1);
                 Btns_Enable = GeneralFunctions.MakeTextureFromRGBAColor(5, 68, 15, 1);
@@ -2421,18 +2141,7 @@ namespace LastEpochMods.Managers
                 gray = GeneralFunctions.MakeTextureFromColor(Color.gray);
                 green = GeneralFunctions.MakeTextureFromColor(Color.green);
                 red = GeneralFunctions.MakeTextureFromColor(Color.red);
-
-                //PauseMenu
-                System.IO.MemoryStream stream = new System.IO.MemoryStream();
-                Properties.Resources.PauseMenu_Menu.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                PauseMenu.Menu = new Texture2D(1, 1);
-                ImageConversion.LoadImage(PauseMenu.Menu, stream.ToArray(), true);
-
-                stream = new System.IO.MemoryStream();
-                Properties.Resources.PauseMenu_Bottom.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                PauseMenu.Bottom = new Texture2D(1, 1);
-                ImageConversion.LoadImage(PauseMenu.Bottom, stream.ToArray(), true);
-
+                
                 IsInitialized = true;
             }
         }

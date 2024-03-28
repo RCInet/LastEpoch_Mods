@@ -13,8 +13,11 @@ namespace LastEpochMods.Mods.Items
         {
             if ((HHTracker.Tracker_Initialized) && (Basic.AddedToBasicList) && (Events.SceneLoaded_Initialized))
             {
-                Config.LoadConfig();
-                Initialized = true;
+                if (Assets_Manager.Headhunter.loaded)
+                {
+                    Config.LoadConfig();
+                    Initialized = true;
+                }                
             }
             else
             {
@@ -22,6 +25,10 @@ namespace LastEpochMods.Mods.Items
                 Basic.AddToBasicList();
                 Events.Init();
             }
+        }
+        public static void Init_Assets()
+        {
+            Assets_Manager.Load_Headhunter();
         }
 
         public class Basic
@@ -145,23 +152,7 @@ namespace LastEpochMods.Mods.Items
                     }
                 }
                 catch { }
-            }
-            public static Sprite Icon()
-            {
-                Sprite sprite = null;
-                try
-                {
-                    /*System.IO.MemoryStream stream = new System.IO.MemoryStream();
-                    Properties.Resources.Headhunter.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                    Texture2D icon = new Texture2D(1, 1);
-                    ImageConversion.LoadImage(icon, stream.ToArray(), true);
-                    sprite = Sprite.Create(icon, new Rect(0, 0, icon.width, icon.height), Vector2.zero);*/
-                    sprite = Assets_Manager.Headhunter_icon;
-                }
-                catch { }
-
-                return sprite;
-            }
+            }            
 
             private static Il2CppSystem.Collections.Generic.List<byte> SubType()
             {
@@ -259,10 +250,7 @@ namespace LastEpochMods.Mods.Items
                 [HarmonyPostfix]
                 static void Postfix(ref UniqueList __result)
                 {
-                    if (__result != null)
-                    {
-                        AddToUniqueList(ref __result);
-                    }
+                    if (__result != null) { AddToUniqueList(ref __result); }
                 }
             }
             
@@ -272,31 +260,23 @@ namespace LastEpochMods.Mods.Items
                 [HarmonyPostfix]
                 static void Postfix(ref UnityEngine.Sprite __result, ItemData __0, ItemUIContext __1)
                 {
-                    try
+                    if (__0.getAsUnpacked().FullName == unique_name)
                     {
-                        if (__0.getAsUnpacked().FullName == unique_name)
-                        {
-                            __result = Icon();
-                        }
+                        __result = Assets_Manager.Headhunter.icon;
                     }
-                    catch { }
                 }
             }
-            
+
             [HarmonyPatch(typeof(UITooltipItem), "SetItemSprite")]
             public class UITooltipItem_SetItemSprite
             {
                 [HarmonyPostfix]
                 static void Postfix(ref UnityEngine.Sprite __result, ItemDataUnpacked __0)
                 {
-                    try
+                    if (__0.FullName == unique_name)
                     {
-                        if (__0.FullName == unique_name)
-                        {
-                            __result = Icon();
-                        }
+                        __result = Assets_Manager.Headhunter.icon;
                     }
-                    catch { }
                 }
             }
         }
@@ -333,15 +313,7 @@ namespace LastEpochMods.Mods.Items
             private static string filename = "hh_buffs.json";
             private static void DefaultConfig()
             {
-                HH_Buff_Config = new System.Collections.Generic.List<RandomBuffs.HH_Buff>();
-                HH_Buff_Config_Backup = new System.Collections.Generic.List<RandomBuffs.HH_Buff>();
-                try
-                {
-                    byte[] list = Properties.Resources.HeadHunter_Buffs;
-                    string str = System.Text.Encoding.UTF8.GetString(list, 0, list.Length);
-                    HH_Buff_Config = JsonConvert.DeserializeObject<System.Collections.Generic.List<RandomBuffs.HH_Buff>>(str);
-                }
-                catch { nullConfig(); }
+                HH_Buff_Config = JsonConvert.DeserializeObject<System.Collections.Generic.List<RandomBuffs.HH_Buff>>(Assets_Manager.Headhunter.json.text);
                 HH_Buff_Config_Backup = HH_Buff_Config;
                 SaveConfig();
             }

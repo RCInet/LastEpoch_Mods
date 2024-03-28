@@ -8,6 +8,12 @@ namespace LastEpochMods.Managers
         public static string path = Directory.GetCurrentDirectory() + @"\Mods\LastEpochMods\";
         public static string filename = "Config.json";
 
+        public static async void OnInitializeMelon()
+        {
+            Main.logger_instance.Msg("Initialize Save Manager");
+            await System.Threading.Tasks.Task.Run(() => Load.LoadConfig());
+        }
+
         public class Data
         {
             public static Mods_Structure UserData = new Mods_Structure();
@@ -435,22 +441,7 @@ namespace LastEpochMods.Managers
         }
         public class Load
         {
-            public static void Update()
-            {
-                if (!Initialized) { OnInitializeMelon(); }
-            }
-
-            public static bool Initialized = false;
-            public static async void OnInitializeMelon()
-            {
-                if (!Initialized)
-                {
-                    Main.logger_instance.Msg("Initialize Save_Manager");
-                    Initialized = true;
-                    await System.Threading.Tasks.Task.Run(() => LoadMods());
-                }
-            }
-            private static void LoadMods()
+            public static void LoadConfig()
             {
                 bool error = false;
                 if (File.Exists(path + filename))
