@@ -28,6 +28,9 @@ namespace LastEpochMods.Managers
         }
         public class PauseMenu
         {
+            public static GameObject Prefab = null;
+            public static GameObject Hud = null;
+
             public static Texture2D PauseMenu_Bottom;
             public static Texture2D PauseMenu_Menu;
         }
@@ -45,8 +48,9 @@ namespace LastEpochMods.Managers
             public static readonly string jpg = ".jpg";
             public static readonly string png = ".png";
             public static readonly string json = ".json";
+            public static readonly string prefab = ".prefab";            
         }
-                
+
         public static void Load_Headhunter()
         {
             if (asset_bundle != null)
@@ -96,15 +100,31 @@ namespace LastEpochMods.Managers
         {
             if (asset_bundle != null)
             {
-                //Main.logger_instance.Msg("Initialize Assets for Pause Menu");
                 foreach (string name in asset_bundle.GetAllAssetNames())
                 {
-                    if ((Check_Texture(name)) && (name.Contains("/skins/")))
+                    if (name.Contains("/pausemenu/"))
                     {
-                        if (name.Contains("/pausemenu/"))
+                        if (Check_Texture(name))
                         {
                             if (name.Contains("_bottom")) { PauseMenu.PauseMenu_Bottom = asset_bundle.LoadAsset(name).TryCast<Texture2D>(); }
                             else if (name.Contains("_menu")) { PauseMenu.PauseMenu_Menu = asset_bundle.LoadAsset(name).TryCast<Texture2D>(); }
+                        }
+                        else if (Check_Prefab(name))
+                        {
+                            if ((name.Contains("pausemenu.prefab")) && (PauseMenu.Prefab.IsNullOrDestroyed()))
+                            {
+                                if (PauseMenu.Prefab.IsNullOrDestroyed())
+                                {
+                                    PauseMenu.Prefab = asset_bundle.LoadAsset(name).TryCast<GameObject>();
+                                    PauseMenu.Prefab.AddComponent<UIMouseListener>(); //Block Mouse
+                                    PauseMenu.Prefab.active = false; //Hide
+                                    Main.logger_instance.Msg("Prefab Created");
+                                }
+                                if ((!PauseMenu.Prefab.IsNullOrDestroyed()) && (PauseMenu.Hud.IsNullOrDestroyed()))
+                                {
+                                    PauseMenu.Hud = Object.Instantiate(PauseMenu.Prefab, Vector3.zero, Quaternion.identity);
+                                }
+                            }
                         }
                     }
                 }
@@ -129,6 +149,16 @@ namespace LastEpochMods.Managers
             }
             else { return false; }
         }
+        private static bool Check_Prefab(string name)
+        {
+            if (name.Substring(name.Length - Extensions.prefab.Length, Extensions.prefab.Length).ToLower() == Extensions.prefab)
+            {
+                return true;
+            }
+            else { return false; }
+        }        
+
+
         /*private static void LoadAssets()
         {
             if (asset_bundle != null )

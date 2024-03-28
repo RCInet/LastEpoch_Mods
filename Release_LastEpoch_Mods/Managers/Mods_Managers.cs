@@ -27,6 +27,14 @@
         }
         public static void QuickUpdate()
         {
+            //Debug Prefab //Instantiate append after loading a character
+            if ((UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.F5)) && (!Assets_Manager.PauseMenu.Hud.IsNullOrDestroyed()))
+            {
+                Assets_Manager.PauseMenu.Hud.active = !Assets_Manager.PauseMenu.Hud.active;
+            }
+            //
+
+
             if (!Mods.Items.HeadHunter.Initialized) { Mods.Items.HeadHunter.Init(); }
             if (Scenes_Manager.GameScene())
             {
@@ -43,6 +51,7 @@
                 {
                     Mods.Character.Cheats.Blessings.Select.Update();
                 }
+                
                 /*if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.F5))
                     {
                         Mods.Scenes.Monoliths.RevealIslands();
