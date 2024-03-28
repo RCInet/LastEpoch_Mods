@@ -176,7 +176,7 @@ namespace LastEpochMods.Mods.SkillsTree
                 }
             }
         }
-
+                 
         //AbilityStats
         [HarmonyPatch(typeof(AbilityStatsMutatorManager), "OnStatsUpdate")]
         public class AbilityStatsMutatorManager_OnStatsUpdate

@@ -18,7 +18,7 @@
                 Mods.Character.PermanentBuffs.OnSceneWasLoaded();
             }
         }
-        public static void OnSceneWasInitialized(string sceneName)
+        public static void OnSceneWasInitialized()
         {
             if (Scenes_Manager.GameScene())
             {
@@ -33,8 +33,7 @@
             {
                 Mods.Items.Skins.Update();
                 Mods.Items.AutoPickup.AutoStoreMaterialsTimer.Update();
-                Mods.Character.PermanentBuffs.Update();
-                Mods.Character.Cheats.Blessings.Select.Update();
+                Mods.Character.PermanentBuffs.Update();                
                 Mods.Character.Cheats.GodMode.Update();
                 Mods.Character.Cheats.AutoPot.Update();
             }

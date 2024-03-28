@@ -2092,7 +2092,6 @@ namespace LastEpochMods.Managers
 
                         return 70 + content_margin;
                     }
-
                     public static float Toggle_FloatValue(float pos_x, float pos_y, float size_w, string text, ref float value, ref bool toggle)
                     {
                         GUI.TextField(new Rect(pos_x, pos_y, ((size_w * 40) / 100) - content_margin, 40), text, Styles.Content_Text());
@@ -2102,19 +2101,6 @@ namespace LastEpochMods.Managers
 
                         return 70 + content_margin;
                     }
-
-                    public static float Toggle_LongValue(float pos_x, float pos_y, float size_w, string text, ref long value, ref bool toggle)
-                    {
-                        GUI.TextField(new Rect(pos_x, pos_y, ((size_w * 40) / 100) - content_margin, 40), text, Styles.Content_Text());
-                        GUI.TextField(new Rect(pos_x + ((size_w * 40) / 100) - (2 * content_margin), pos_y, ((size_w * 20) / 100), 40), value.ToString(), Styles.ContentR_Text());
-                        if (GUI.Button(new Rect(pos_x + ((size_w * 60) / 100), pos_y, ((size_w * 40) / 100), 40), "Enable/Disable", Styles.Content_Enable_Button(toggle))) { toggle = !toggle; }
-                        float tem_value = value;
-                        tem_value = GUI.HorizontalSlider(new Rect(pos_x + content_margin, pos_y + 50, size_w - (2 * content_margin), 20), tem_value, 0f, 255f);
-                        value = (long)tem_value;
-
-                        return 70 + content_margin;
-                    }
-
                     public static float Toggle_FloatPercent(float pos_x, float pos_y, float size_w, string text, float min, float max, bool multiply, ref float value, ref bool toggle)
                     {
                         GUI.TextField(new Rect(pos_x, pos_y, ((size_w * 40) / 100) - content_margin, 40), text, Styles.Content_Text());                        
@@ -2125,6 +2111,17 @@ namespace LastEpochMods.Managers
                         if (GUI.Button(new Rect(pos_x + ((size_w * 60) / 100), pos_y, ((size_w * 40) / 100), 40), "Enable/Disable", Styles.Content_Enable_Button(toggle))) { toggle = !toggle; }
                         value = GUI.HorizontalSlider(new Rect(pos_x + content_margin, pos_y + 50, size_w - (2 * content_margin), 20), value, min, max);
                         
+                        return 70 + content_margin;
+                    }
+                    public static float Toggle_LongValue(float pos_x, float pos_y, float size_w, string text, ref long value, ref bool toggle)
+                    {
+                        GUI.TextField(new Rect(pos_x, pos_y, ((size_w * 40) / 100) - content_margin, 40), text, Styles.Content_Text());
+                        GUI.TextField(new Rect(pos_x + ((size_w * 40) / 100) - (2 * content_margin), pos_y, ((size_w * 20) / 100), 40), value.ToString(), Styles.ContentR_Text());
+                        if (GUI.Button(new Rect(pos_x + ((size_w * 60) / 100), pos_y, ((size_w * 40) / 100), 40), "Enable/Disable", Styles.Content_Enable_Button(toggle))) { toggle = !toggle; }
+                        float tem_value = value;
+                        tem_value = GUI.HorizontalSlider(new Rect(pos_x + content_margin, pos_y + 50, size_w - (2 * content_margin), 20), tem_value, 0f, 255f);
+                        value = (long)tem_value;
+
                         return 70 + content_margin;
                     }
                 }

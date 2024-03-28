@@ -1,5 +1,4 @@
 ﻿using LastEpochMods.Managers;
-using System.Runtime;
 
 namespace LastEpochMods
 {
@@ -10,7 +9,8 @@ namespace LastEpochMods
         public override void OnInitializeMelon()
         {
             logger_instance = LoggerInstance;
-            Save_Manager.Load.Init();
+            Save_Manager.Load.OnInitializeMelon();
+            Assets_Manager.OnInitializeMelon();
         }
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
@@ -19,8 +19,9 @@ namespace LastEpochMods
         }
         public override void OnSceneWasInitialized(int buildIndex, string sceneName)
         {
+            Assets_Manager.OnSceneWasInitialized();
             GUI_Manager.OnSceneWasInitialized(sceneName);
-            Mods_Managers.OnSceneWasInitialized(sceneName);
+            Mods_Managers.OnSceneWasInitialized();
         }
         public override void OnLateUpdate()
         {
@@ -42,14 +43,22 @@ namespace LastEpochMods
 
         private static void KeyBinds()
         {
-            if (UnityEngine.Input.GetKeyDown(Save_Manager.Data.UserData.KeyBinds.HeadhunterBuffs))
+            if (Scenes_Manager.GameScene())
             {
-                Save_Manager.Data.UserData.Items.Headhunter.showui = !Save_Manager.Data.UserData.Items.Headhunter.showui;
-            }
-            if (UnityEngine.Input.GetKeyDown(Save_Manager.Data.UserData.KeyBinds.BankStashs))
-            {
-                Mods.Items.Bank.OpenClose();
-            }
+                if (UnityEngine.Input.GetKeyDown(Save_Manager.Data.UserData.KeyBinds.HeadhunterBuffs))
+                {
+                    Save_Manager.Data.UserData.Items.Headhunter.showui = !Save_Manager.Data.UserData.Items.Headhunter.showui;
+                }
+                if (UnityEngine.Input.GetKeyDown(Save_Manager.Data.UserData.KeyBinds.BankStashs))
+                {
+                    Mods.Items.Bank.OpenClose();
+                }
+                if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.Mouse0))
+                {
+                    Mods.Character.Cheats.Blessings.Select.Update();
+                }
+            }           
+
             /*if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.F5))
                 {
                     Mods.Scenes.Monoliths.RevealIslands();

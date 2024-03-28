@@ -437,11 +437,11 @@ namespace LastEpochMods.Managers
         {
             public static void Update()
             {
-                if (!Initialized) { Init(); }
+                if (!Initialized) { OnInitializeMelon(); }
             }
 
             public static bool Initialized = false;
-            public static async void Init()
+            public static async void OnInitializeMelon()
             {
                 if (!Initialized)
                 {
@@ -455,11 +455,7 @@ namespace LastEpochMods.Managers
                 bool error = false;
                 if (File.Exists(path + filename))
                 {
-                    try
-                    {
-                        Data.UserData = JsonConvert.DeserializeObject<Data.Mods_Structure>(File.ReadAllText(path + filename));
-                        CheckErrors();
-                    }
+                    try { Data.UserData = JsonConvert.DeserializeObject<Data.Mods_Structure>(File.ReadAllText(path + filename)); }
                     catch { error = true; }
                 }
                 else { error = true; }
@@ -467,13 +463,12 @@ namespace LastEpochMods.Managers
                 {
                     Data.UserData = DefaultConfig();
                     Save.Mods();
-                }                
+                }
+                CheckErrors();
                 Data.UserData_duplicate = Data.UserData; //Use to check for data changed
             }
             private static Data.Mods_Structure DefaultConfig()
             {
-                Main.logger_instance.Msg("Default Config Loaded");
-
                 var craft_default_implicit = new Data.Craft_Implicits
                 {
                     Enable_Implicit = false,

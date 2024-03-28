@@ -151,11 +151,12 @@ namespace LastEpochMods.Mods.Items
                 Sprite sprite = null;
                 try
                 {
-                    System.IO.MemoryStream stream = new System.IO.MemoryStream();
+                    /*System.IO.MemoryStream stream = new System.IO.MemoryStream();
                     Properties.Resources.Headhunter.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
                     Texture2D icon = new Texture2D(1, 1);
                     ImageConversion.LoadImage(icon, stream.ToArray(), true);
-                    sprite = Sprite.Create(icon, new Rect(0, 0, icon.width, icon.height), Vector2.zero);
+                    sprite = Sprite.Create(icon, new Rect(0, 0, icon.width, icon.height), Vector2.zero);*/
+                    sprite = Assets_Manager.Headhunter_icon;
                 }
                 catch { }
 

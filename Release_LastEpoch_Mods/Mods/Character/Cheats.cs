@@ -211,7 +211,7 @@ namespace LastEpochMods.Mods.Character
             public class Select
             {
                 private static int timeline_id = -1;
-                private static InventoryBlessingSlotUI selected_slot = null;
+                public static InventoryBlessingSlotUI selected_slot = null;
                 private static int base_id = 34;
 
                 public static void Update()
@@ -221,13 +221,13 @@ namespace LastEpochMods.Mods.Character
                         if ((Save_Manager.Data.UserData.Character.Cheats.Enable_ChooseBlessingFromBlessingPanel) &&
                         (GUI_Manager.BlessingsPanel.Functions.IsBlessingOpen()) && (selected_slot != null))
                         {
-                            if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.Mouse0)) { AddBlessingToCharacter(selected_slot.referenceBlessingID); }
+                            AddBlessingToCharacter(selected_slot.referenceBlessingID);
                         }
                         else if (selected_slot != null) { selected_slot = null; }
                     }
                 }
 
-                private static void AddBlessingToCharacter(int blessing_id)
+                public static void AddBlessingToCharacter(int blessing_id)
                 {
                     try
                     {
