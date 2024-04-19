@@ -1,0 +1,7 @@
+#include "il2cpp-config.h"
+#include "C:\Code\Github\LastEpoch_Mods\AssetBundleExport\Build\Il2CppOutputProject\IL2CPP\libil2cpp\gc\BoehmGC.cpp"
+#include "C:\Code\Github\LastEpoch_Mods\AssetBundleExport\Build\Il2CppOutputProject\IL2CPP\libil2cpp\gc\GCHandle.cpp"
+#include "C:\Code\Github\LastEpoch_Mods\AssetBundleExport\Build\Il2CppOutputProject\IL2CPP\libil2cpp\gc\GarbageCollector.cpp"
+#include "C:\Code\Github\LastEpoch_Mods\AssetBundleExport\Build\Il2CppOutputProject\IL2CPP\libil2cpp\gc\NullGC.cpp"
+#include "C:\Code\Github\LastEpoch_Mods\AssetBundleExport\Build\Il2CppOutputProject\IL2CPP\libil2cpp\gc\WriteBarrier.cpp"
+#include "C:\Code\Github\LastEpoch_Mods\AssetBundleExport\Build\Il2CppOutputProject\IL2CPP\libil2cpp\gc\WriteBarrierValidation.cpp"
