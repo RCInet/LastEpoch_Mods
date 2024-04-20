@@ -172,8 +172,6 @@ namespace LastEpoch_Hud.Scripts
             else { return false; }
         }
         
-        
-
         public class Hooks
         {
             //All Hooks have to be replace by Unity Actions
@@ -2313,7 +2311,6 @@ namespace LastEpoch_Hud.Scripts
                     }
                     public static void UpdateRarity()
                     {
-                        //Main.logger_instance.Msg("Update Rarity");
                         if ((enable) && (LastEpoch_Hud.Scenes.IsGameScene()) &&
                             (!Refs_Manager.item_list.IsNullOrDestroyed()) &&
                             (Type_Initialized) &&
@@ -2321,34 +2318,28 @@ namespace LastEpoch_Hud.Scripts
                             (!forcedrop_rarity_dropdown.IsNullOrDestroyed()) &&
                             (!forcedrop_items_dropdown.IsNullOrDestroyed()))
                         {
-                            //Main.logger_instance.Msg("Update Rarity : Type = " + forcedrop_type_dropdown.value);
                             forcedrop_rarity_dropdown.ClearOptions();
                             Il2CppSystem.Collections.Generic.List<Dropdown.OptionData> options = new Il2CppSystem.Collections.Generic.List<Dropdown.OptionData>();
                             options.Add(new Dropdown.OptionData { text = "Select" });
-                            if (forcedrop_type_dropdown.value > 0)
+                            if ((forcedrop_type_dropdown.value > 0) && (item_type > -1))
                             {
-                                //Main.logger_instance.Msg("Get Rarity here");
-                                if (item_type > -1)
+                                bool has_unique = false;
+                                bool has_set = false;
+                                if (UniqueList.instance.IsNullOrDestroyed()) { UniqueList.getUnique(0); }
+                                if (!UniqueList.instance.IsNullOrDestroyed())
                                 {
-                                    bool has_unique = false;
-                                    bool has_set = false;
-                                    if (UniqueList.instance.IsNullOrDestroyed()) { UniqueList.getUnique(0); }
-                                    if (!UniqueList.instance.IsNullOrDestroyed())
+                                    foreach (UniqueList.Entry unique in UniqueList.instance.uniques)
                                     {
-                                        foreach (UniqueList.Entry unique in UniqueList.instance.uniques)
+                                        if (unique.baseType == item_type)
                                         {
-                                            if (unique.subTypes[0] == item_type)
-                                            {
-                                                if (unique.isSetItem) { has_set = true; }
-                                                else { has_unique = true; }
-                                            }
+                                            if (unique.isSetItem) { has_set = true; }
+                                            else { has_unique = true; }
                                         }
                                     }
-                                    options.Add(new Dropdown.OptionData { text = "Base Item" });
-                                    if (has_unique) { options.Add(new Dropdown.OptionData { text = "Unique" }); }
-                                    if (has_set) { options.Add(new Dropdown.OptionData { text = "Set" }); }
                                 }
-
+                                options.Add(new Dropdown.OptionData { text = "Base Item" });
+                                if (has_unique) { options.Add(new Dropdown.OptionData { text = "Unique" }); }
+                                if (has_set) { options.Add(new Dropdown.OptionData { text = "Set" }); }
                                 forcedrop_rarity_dropdown.enabled = true;
                             }
                             else { forcedrop_rarity_dropdown.enabled = false; }
@@ -2507,7 +2498,7 @@ namespace LastEpoch_Hud.Scripts
                                         {
                                             if ((item_str == unique.displayName) || (item_str == unique.name))
                                             {
-                                                item_subtype = unique.subTypes[0];
+                                                item_subtype = unique.subTypes[0]; //need to be fix here
                                                 item_unique_id = unique.uniqueID;
                                                 break;
                                             }
