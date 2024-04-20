@@ -3,6 +3,10 @@ using ItemFiltering;
 
 namespace LastEpoch_Hud.Scripts.Mods.Items
 {
+    //Have to edit AutoSell (making 2 types)
+    //One with AutoSell all items matching any "Hide" rules
+    //One with AutoSell all items matching any "Hide" rules and don't matching any "Show" rules
+
     public class Items_AutoPickup_Items
     {
         public static bool CanRun()

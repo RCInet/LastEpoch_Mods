@@ -103,6 +103,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
 
                                 //Main.logger_instance.Msg("OnStartedUsingAbility Prefix : Mutator Type = " + il2cpp_type.ToString());
 
+                                //Use Switch(il2cpp_type.ToString()) instead of if for better result (== is bad)
+
                                 //Warpath : Fix Channel Cost
                                 if (il2cpp_type.ToString() == "WarpathMutator")
                                 {
@@ -433,6 +435,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                         System.Type type = __1.GetType();
                         Il2CppSystem.Type il2cpp_type = __1.GetIl2CppType();
                         //Main.logger_instance.Msg("OnAbilityUse Prefix : Mutator Type = " + il2cpp_type.ToString());
+
+                        //Use Switch(il2cpp_type.ToString()) instead of if for better result (== is bad)
 
                         //Sigil of Hope : Fix ManaCost
                         if (il2cpp_type.ToString() == "HolyAuraMutator")
