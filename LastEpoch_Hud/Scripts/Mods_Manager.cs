@@ -57,7 +57,7 @@ namespace LastEpoch_Hud.Scripts
                     Mods_Objects.Add(character_autopotion_obj);
                     
                     character_blessings_obj = Object.Instantiate(new GameObject { name = "Mod_Character_Blessings" }, Vector3.zero, Quaternion.identity);
-                    character_blessings_obj.active = false;
+                    //character_blessings_obj.active = false;
                     character_blessings_obj.AddComponent<Mods.Character.Character_Blessings>();
                     Mods_Objects.Add(character_blessings_obj);
                     
@@ -105,7 +105,7 @@ namespace LastEpoch_Hud.Scripts
                 if (Main.debug) { Main.logger_instance.Msg("Mods Manager : Active mods"); }
                 character_godmode_obj.active = Save_Manager.instance.data.Character.Cheats.Enable_GodMode;
                 character_lowlife_obj.active = Save_Manager.instance.data.Character.Cheats.Enable_LowLife;
-                character_blessings_obj.active = Save_Manager.instance.data.Character.Cheats.Enable_CanChooseBlessing;
+                //character_blessings_obj.active = Save_Manager.instance.data.Character.Cheats.Enable_CanChooseBlessing;
                 character_autopotion_obj.active = Save_Manager.instance.data.Character.Cheats.Enable_AutoPot;
                 items_autosell_timer_obj.active = Save_Manager.instance.data.Items.Pickup.Enable_AutoStore_All10Sec;
                 character_masteries_obj.active = true;
@@ -122,7 +122,7 @@ namespace LastEpoch_Hud.Scripts
                 if (Main.debug) { Main.logger_instance.Msg("Mods Manager : Disable mods"); }
                 character_godmode_obj.active = false;
                 character_lowlife_obj.active = false;
-                character_blessings_obj.active = false;
+                //character_blessings_obj.active = false;
                 character_autopotion_obj.active = false;
                 items_autosell_timer_obj.active = false;
                 character_masteries_obj.active = false;
