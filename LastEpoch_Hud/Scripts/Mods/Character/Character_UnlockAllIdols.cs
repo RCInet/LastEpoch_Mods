@@ -21,7 +21,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
         public class IdolsItemContainer_CheckSlotUnlocked
         {
             [HarmonyPostfix]
-            static void Postfix(IdolsItemContainer __instance, ref bool __result, int __0, int __1)
+            static void Postfix(ref bool __result)
             {
                 if (CanRun()) { __result = true; }
             }

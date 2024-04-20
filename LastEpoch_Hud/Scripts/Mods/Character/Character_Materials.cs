@@ -40,15 +40,6 @@
                 {
                     ForceDrop(item_type, item.subTypeID, 10);
                 }
-
-                /*foreach (AffixList.SingleAffix single_affix in Refs_Manager.item_list.affixList.singleAffixes)
-                {
-                    ForceDrop(item_type, single_affix.affixId, 1);
-                }
-                foreach (AffixList.MultiAffix multi_affix in Refs_Manager.item_list.affixList.multiAffixes)
-                {
-                    ForceDrop(item_type, multi_affix.affixId, 1);
-                }*/
             }
         }
         private static void ForceDrop(int type, int subtype, int quantity)

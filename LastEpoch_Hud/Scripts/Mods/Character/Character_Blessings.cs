@@ -237,7 +237,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
         public class InventoryPanelUI_SelectTimelineForBlessingDisplay
         {
             [HarmonyPrefix]
-            static void Postfix(InventoryPanelUI __instance, int __0)
+            static void Postfix(int __0)
             {
                 if (CanRun()) { timeline_id = __0; }
             }
@@ -247,7 +247,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
         public class InventoryBlessingSlotUI_UnityEngine_EventSystems_IPointerEnterHandler_OnPointerEnter
         {
             [HarmonyPrefix]
-            static void Postfix(ref InventoryBlessingSlotUI __instance, UnityEngine.EventSystems.PointerEventData __0)
+            static void Postfix(ref InventoryBlessingSlotUI __instance)
             {
                 selected_slot = null;
                 if (CanRun())
@@ -261,7 +261,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
         public class InventoryBlessingSlotUI_UnityEngine_EventSystems_IPointerExitHandler_OnPointerExit
         {
             [HarmonyPrefix]
-            static void Postfix(InventoryBlessingSlotUI __instance, UnityEngine.EventSystems.PointerEventData __0)
+            static void Postfix()
             {
                 if (CanRun()) { selected_slot = null; }
             }

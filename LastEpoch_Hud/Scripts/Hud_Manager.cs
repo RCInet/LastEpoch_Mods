@@ -11,18 +11,18 @@ namespace LastEpoch_Hud.Scripts
     {
         public Hud_Manager(System.IntPtr ptr) : base(ptr) { }
         public static Hud_Manager instance;
-        public string asset_path = Application.dataPath + "/../Mods/" + Main.mod_name + "/Assets";
         public static AssetBundle asset_bundle;
-        public static Canvas game_canvas = null;
-        public static GameObject game_pause_menu = null;
         public static GameObject hud_object = null;
-        public static Canvas hud_canvas = null;
-
-        public readonly string asset_bundle_name = "lastepochmods";
-        public bool asset_bundle_initializing = false;        
-        public bool hud_initializing = false;
         public bool data_initialized = false;
-        public bool data_initializing = false;
+        
+        private string asset_path = Application.dataPath + "/../Mods/" + Main.mod_name + "/Assets";
+        private static Canvas game_canvas = null;
+        private static GameObject game_pause_menu = null;
+        private static Canvas hud_canvas = null;
+        private readonly string asset_bundle_name = "lastepochmods"; //Name of asset file
+        private bool hud_initializing = false;
+        private bool asset_bundle_initializing = false;
+        private bool data_initializing = false;
 
         void Awake()
         {
@@ -49,10 +49,6 @@ namespace LastEpoch_Hud.Scripts
                 }
             }            
         }
-
-        //Events
-        
-        //
 
         public void Init_AssetsBundle()
         {
@@ -85,7 +81,6 @@ namespace LastEpoch_Hud.Scripts
                 if (!prefab_object.IsNullOrDestroyed())
                 {
                     prefab_object.active = false; //Hide
-                    //prefab_object.AddComponent<Events_Manager>();
                     prefab_object.AddComponent<UIMouseListener>(); //Block Mouse
                     prefab_object.AddComponent<WindowFocusManager>();
                     
@@ -102,10 +97,10 @@ namespace LastEpoch_Hud.Scripts
         public void Init_Hud_Refs()
         {
             if (Main.debug) { Main.logger_instance.Msg("Hud Manager : Initialize hud refs"); }
+            Hud_Base.Set_Events();
+            Hud_Menu.Set_Events();
+
             Content.content_obj = Functions.GetChild(hud_object, "Content");
-
-            //Menu_refs + events
-
             Content.Character.Get_Refs();
             Content.Character.Set_Active(false);
 
@@ -132,22 +127,13 @@ namespace LastEpoch_Hud.Scripts
                 bool scenes = Content.Scenes.Init_UserData();
                 bool skills = Content.Skills.Init_UserData();
                 bool headhunter = Content.Headhunter.Init_Data();
-                                
-                //    (skills) && (headhunter))
-                if ((character) && (items) && (scenes)) { data_initialized = true; }
+                if ((character) && (items) && (scenes) && (skills)) { data_initialized = true; } // && (headhunter))
             }
             data_initializing = false;
         }
         public void Update_Refs()
         {
-            if (Scenes.IsGameScene())
-            {
-                //if (player_health.IsNullOrDestroyed()) { player_health = PlayerFinder.getLocalPlayerHealth(); }
-                //if (player_stats.IsNullOrDestroyed()) { player_stats = PlayerFinder.getLocalPlayerStats(); }
-            }                
-            
-            if ((hud_canvas.IsNullOrDestroyed()) && (!hud_object.IsNullOrDestroyed())) { hud_canvas = hud_object.GetComponent<Canvas>(); }
-            //if ((game_uibase.IsNullOrDestroyed()) && (!UIBase.instance.IsNullOrDestroyed())) { game_uibase = UIBase.instance; }
+            if ((hud_canvas.IsNullOrDestroyed()) && (!hud_object.IsNullOrDestroyed())) { hud_canvas = hud_object.GetComponent<Canvas>(); }            
             if ((asset_bundle.IsNullOrDestroyed()) && (!asset_bundle_initializing)) { Init_AssetsBundle(); }
             if (!Refs_Manager.game_uibase.IsNullOrDestroyed())
             {
@@ -168,23 +154,9 @@ namespace LastEpoch_Hud.Scripts
                 }
             }
         } 
-        public void Update_Hud_Refs()
-        {
-            //if (exp_tracker.IsNullOrDestroyed()) { exp_tracker = PlayerFinder.getExperienceTracker(); }
-            //if ((ground_item_manager.IsNullOrDestroyed()) && (!GroundItemManager.instance.IsNullOrDestroyed())) { ground_item_manager = GroundItemManager.instance; }
-            //if ((item_list.IsNullOrDestroyed()) && (!ItemList.instance.IsNullOrDestroyed())) { item_list = ItemList.instance; }
-            //if ((quest_list.IsNullOrDestroyed()) && (!QuestList.instance.IsNullOrDestroyed())) { quest_list = QuestList.instance; }
-            //if (player_actor.IsNullOrDestroyed()) { player_actor = PlayerFinder.getPlayerActor(); }
-            //if (player_data.IsNullOrDestroyed()) { player_data = PlayerFinder.getPlayerData(); }
-            //if (player_data_tracker.IsNullOrDestroyed()) { player_data_tracker = PlayerFinder.getPlayerDataTracker(); }
-            //if (player_treedata.IsNullOrDestroyed()) { player_treedata = PlayerFinder.getLocalTreeData(); }
-            //if (character_class_list.IsNullOrDestroyed()) { character_class_list = CharacterClassList.instance; }
-
-        }
         public void Update_Hud_Content()
         {
-            if ((Content.Character.enable) && (Content.Character.need_update)) { Content.Character.Update_PlayerData(); }
-            
+            if ((Content.Character.enable) && (Content.Character.need_update)) { Content.Character.Update_PlayerData(); }            
             if ((Content.Character.enable) && (Content.Character.controls_initialized)) { Content.Character.UpdateVisuals(); }
             if ((Content.Items.enable) && (Content.Items.controls_initialized))
             {
@@ -193,16 +165,18 @@ namespace LastEpoch_Hud.Scripts
             }            
             if ((Content.Scenes.enable) && (Content.Scenes.controls_initialized)) { Content.Scenes.UpdateVisuals(); }
             if ((Content.Skills.enable) && (Content.Skills.controls_initialized)) { Content.Skills.UpdateVisuals(); }
-
         }
         public bool IsPauseOpen()
         {
             if (!game_pause_menu.IsNullOrDestroyed()) { return game_pause_menu.active; }
             else { return false; }
         }
-          
+        
+        
+
         public class Hooks
         {
+            //All Hooks have to be replace by Unity Actions
             [HarmonyPatch(typeof(Button), "OnPointerClick")]
             public class Button_OnPointerClick
             {
@@ -213,30 +187,7 @@ namespace LastEpoch_Hud.Scripts
                     {
                         if ((hud_object.active) && (!__instance.IsNullOrDestroyed()))
                         {
-                            //if (Main.debug) { Main.logger_instance.Msg("Hud Manager : Button " + __instance.name + " Click"); }
-                            if (__instance.gameObject.name.Contains("Btn_Menu_"))
-                            {
-                                switch (__instance.name)
-                                {
-                                    case "Btn_Menu_Character": { Hud_Menu.Character_Click(); break; }
-                                    case "Btn_Menu_Items": { Hud_Menu.Items_Click(); break; }
-                                    case "Btn_Menu_Scenes": { Hud_Menu.Scenes_Click(); break; }                                    
-                                    case "Btn_Menu_TreeSkills": { Hud_Menu.Skills_Click(); break; }
-                                    case "Btn_Menu_Headhunter": { Hud_Menu.Headhunter_Click(); break; }
-                                }
-                            }
-                            else if (__instance.gameObject.name.Contains("Btn_Base_"))
-                            {
-                                switch (__instance.gameObject.name)
-                                {
-                                    case "Btn_Base_Resume": { Hud_Base.Resume_Click(); break; }
-                                    case "Btn_Base_Settings": { Hud_Base.Settings_Click(); break; }
-                                    case "Btn_Base_GameGuide": { Hud_Base.GameGuide_Click(); break; }
-                                    case "Btn_Base_LeaveGame": { Hud_Base.LeaveGame_Click(); break; }
-                                    case "Btn_Base_ExitDesktop": { Hud_Base.ExitDesktop_Click(); break; }
-                                }
-                            }
-                            else if (__instance.gameObject.name.Contains("Btn_Character_"))
+                            if (__instance.gameObject.name.Contains("Btn_Character_"))
                             {
                                 switch (__instance.name)
                                 {
@@ -249,7 +200,7 @@ namespace LastEpoch_Hud.Scripts
                                     case "Btn_Character_Cheats_AddAffixs": { Mods.Character.Character_Materials.GetAllShardsX10(); break; }
                                     case "Btn_Character_Cheats_DicoverAllBlessings": { Mods.Character.Character_Blessings_Hooks.DiscoverAllBlessings(); break; }
 
-                                    case "Btn_Character_Data_Save": { Content.Character.Data.Save(); break; }
+                                    case "Btn_Character_Data_Save": { Content.Character.Data.Save_Click(); break; }
                                 }
                             }
                             else if (__instance.gameObject.name.Contains("Btn_Items_"))
@@ -1012,6 +963,36 @@ namespace LastEpoch_Hud.Scripts
                 }
             }
         }
+        public class Events
+        {
+            public static void Set_Base_Button_Event(GameObject base_obj, string child, string btn_name, UnityEngine.Events.UnityAction action)
+            {
+                GameObject go = Functions.GetChild(base_obj, child);
+                if (!go.IsNullOrDestroyed())
+                {
+                    GameObject btn_obj = Functions.GetChild(go, btn_name);
+                    if (!btn_obj.IsNullOrDestroyed())
+                    {
+                        Button btn = btn_obj.GetComponent<Button>();
+                        if (!btn.IsNullOrDestroyed())
+                        {
+                            btn.onClick = new Button.ButtonClickedEvent();
+                            btn.onClick.AddListener(action);
+                        }
+                    }
+                }
+            }
+            public static void Set_Button_Event(Button btn, UnityEngine.Events.UnityAction action)
+            {
+                btn.onClick = new Button.ButtonClickedEvent();
+                btn.onClick.AddListener(action);
+            }
+            public static void Set_Toggle_Event(Toggle toggle, UnityEngine.Events.UnityAction<bool> action)
+            {
+                toggle.onValueChanged = new Toggle.ToggleEvent();
+                toggle.onValueChanged.AddListener(action);
+            }
+        }
         public class Hud_Base
         {
             public static bool Initialized = false;
@@ -1083,9 +1064,19 @@ namespace LastEpoch_Hud.Scripts
                     if (Main.debug) { Main.logger_instance.Msg("Hud_Manager : Set default pause menu active to : " + show); }
                     Default_PauseMenu_Btns.active = show;
                 }
+            }                        
+            
+            //Events
+            public static void Set_Events()
+            {
+                Events.Set_Base_Button_Event(hud_object, "Base", "Btn_Base_Resume", Resume_OnClick_Action);
+                Events.Set_Base_Button_Event(hud_object, "Base", "Btn_Base_Settings", Settings_OnClick_Action);
+                Events.Set_Base_Button_Event(hud_object, "Base", "Btn_Base_GameGuide", GameGuide_OnClick_Action);
+                Events.Set_Base_Button_Event(hud_object, "Base", "Btn_Base_LeaveGame", LeaveGame_OnClick_Action);
+                Events.Set_Base_Button_Event(hud_object, "Base", "Btn_Base_ExitDesktop", ExitDesktop_OnClick_Action);
             }
 
-            //Events
+            private static readonly System.Action Resume_OnClick_Action = new System.Action(Resume_Click);
             public static void Resume_Click()
             {
                 if ((!hud_object.gameObject.IsNullOrDestroyed()) && (!Btn_Resume.IsNullOrDestroyed()))
@@ -1093,6 +1084,8 @@ namespace LastEpoch_Hud.Scripts
                     Btn_Resume.onClick.Invoke();
                 }
             }
+
+            private static readonly System.Action Settings_OnClick_Action = new System.Action(Settings_Click);
             public static void Settings_Click()
             {
                 if ((!hud_object.IsNullOrDestroyed()) && (!Btn_Settings.IsNullOrDestroyed()))
@@ -1100,6 +1093,8 @@ namespace LastEpoch_Hud.Scripts
                     Btn_Settings.onClick.Invoke();
                 }
             }
+
+            private static readonly System.Action GameGuide_OnClick_Action = new System.Action(GameGuide_Click);
             public static void GameGuide_Click()
             {
                 if ((!hud_object.IsNullOrDestroyed()) && (!Btn_GameGuide.IsNullOrDestroyed()))
@@ -1107,6 +1102,8 @@ namespace LastEpoch_Hud.Scripts
                     Btn_GameGuide.onClick.Invoke();
                 }
             }
+
+            private static readonly System.Action LeaveGame_OnClick_Action = new System.Action(LeaveGame_Click);
             public static void LeaveGame_Click()
             {
                 if ((!hud_object.IsNullOrDestroyed()) && (!Btn_LeaveGame.IsNullOrDestroyed()))
@@ -1115,6 +1112,8 @@ namespace LastEpoch_Hud.Scripts
                     Btn_LeaveGame.onClick.Invoke();
                 }
             }
+
+            private static readonly System.Action ExitDesktop_OnClick_Action = new System.Action(ExitDesktop_Click);
             public static void ExitDesktop_Click()
             {
                 if ((!hud_object.IsNullOrDestroyed()) && (!Btn_ExitDesktop.IsNullOrDestroyed()))
@@ -1126,13 +1125,16 @@ namespace LastEpoch_Hud.Scripts
         }
         public class Hud_Menu
         {
-            public static Button Btn_Character;
-            public static Button Btn_Items;
-            public static Button Btn_Scenes;
-            public static Button Btn_TreeSkills;
-            public static Button Btn_Headhunter;
-
-            //Events
+            public static void Set_Events()
+            {
+                Events.Set_Base_Button_Event(hud_object, "Menu", "Btn_Menu_Character", Character_OnClick_Action);
+                Events.Set_Base_Button_Event(hud_object, "Menu", "Btn_Menu_Items", Items_OnClick_Action);
+                Events.Set_Base_Button_Event(hud_object, "Menu", "Btn_Menu_Scenes", Scenes_OnClick_Action);
+                Events.Set_Base_Button_Event(hud_object, "Menu", "Btn_Menu_TreeSkills", Skills_OnClick_Action);
+                Events.Set_Base_Button_Event(hud_object, "Menu", "Btn_Menu_Headhunter", Headhunter_OnClick_Action);
+            }
+            
+            private static readonly System.Action Character_OnClick_Action = new System.Action(Character_Click);
             public static void Character_Click()
             {
                 Content.Items.Set_Active(false);
@@ -1141,6 +1143,8 @@ namespace LastEpoch_Hud.Scripts
                 Content.Headhunter.Set_Active(false);
                 Content.Character.Toggle_Active();          
             }
+
+            private static readonly System.Action Items_OnClick_Action = new System.Action(Items_Click);
             public static void Items_Click()
             {
                 Content.Character.Set_Active(false);
@@ -1149,6 +1153,8 @@ namespace LastEpoch_Hud.Scripts
                 Content.Headhunter.Set_Active(false);
                 Content.Items.Toggle_Active();
             }
+
+            private static readonly System.Action Scenes_OnClick_Action = new System.Action(Scenes_Click);
             public static void Scenes_Click()
             {
                 Content.Character.Set_Active(false);
@@ -1156,7 +1162,9 @@ namespace LastEpoch_Hud.Scripts
                 Content.Skills.Set_Active(false);
                 Content.Headhunter.Set_Active(false);
                 Content.Scenes.Toggle_Active();
-            }            
+            }
+
+            private static readonly System.Action Skills_OnClick_Action = new System.Action(Skills_Click);
             public static void Skills_Click()
             {
                 Content.Character.Set_Active(false);
@@ -1165,6 +1173,8 @@ namespace LastEpoch_Hud.Scripts
                 Content.Headhunter.Set_Active(false);
                 Content.Skills.Toggle_Active();
             }
+
+            private static readonly System.Action Headhunter_OnClick_Action = new System.Action(Headhunter_Click);
             public static void Headhunter_Click()
             {
                 Content.Character.Set_Active(false);
@@ -1209,6 +1219,8 @@ namespace LastEpoch_Hud.Scripts
                         if (!character_cheats_content.IsNullOrDestroyed())
                         {
                             Cheats.godmode_toggle = Functions.Get_ToggleInPanel(character_cheats_content, "GodMode", "Toggle_Character_Cheats_GodMode");
+                            //Set_Toggle_Event(Cheats.godmode_toggle, action);
+
                             Cheats.lowlife_toggle = Functions.Get_ToggleInPanel(character_cheats_content, "ForceLowLife", "Toggle_Character_Cheats_LowLife");
                             Cheats.allow_choosing_blessing = Functions.Get_ToggleInPanel(character_cheats_content, "AllowChoosingBlessings", "Toggle_Character_Cheats_AllowChooseBlessings");
                             Cheats.unlock_all_idols = Functions.Get_ToggleInPanel(character_cheats_content, "UnlockAllIdolsSlots", "Toggle_Character_Cheats_UnlockAllIdols");
@@ -1574,6 +1586,55 @@ namespace LastEpoch_Hud.Scripts
                     public static Slider golddropchance_slider = null;
 
                     public static Text masterie_text = null;
+
+                    //Btns
+                    private static readonly System.Action LevelUpOnce_OnClick_Action = new System.Action(LevelUpOnce_Click);
+                    public static void LevelUpOnce_Click()
+                    {
+                        Mods.Character.Character_Level.LevelUpOnce();
+                    }
+
+                    private static readonly System.Action LevelUpMax_OnClick_Action = new System.Action(LevelUpMax_Click);
+                    public static void LevelUpMax_Click()
+                    {
+                        Mods.Character.Character_Level.LevelUptoMax();
+                    }
+
+                    private static readonly System.Action CompleteQuest_OnClick_Action = new System.Action(CompleteQuest_Click);
+                    public static void CompleteQuest_Click()
+                    {
+                        Mods.Character.Character_MainQuest.Complete();
+                    }
+
+                    private static readonly System.Action Masteries_OnClick_Action = new System.Action(Masteries_Click);
+                    public static void Masteries_Click()
+                    {
+                        Mods.Character.Character_Masteries.ResetChooseMasterie();
+                    }
+
+                    private static readonly System.Action AddRunes_OnClick_Action = new System.Action(AddRunes_Click);
+                    public static void AddRunes_Click()
+                    {
+                        Mods.Character.Character_Materials.GetAllRunesX99();
+                    }
+
+                    private static readonly System.Action AddGlyphs_OnClick_Action = new System.Action(AddGlyphs_Click);
+                    public static void AddGlyphs_Click()
+                    {
+                        Mods.Character.Character_Materials.GetAllGlyphsX99();
+                    }
+
+                    private static readonly System.Action AddAffixs_OnClick_Action = new System.Action(AddAffixs_Click);
+                    public static void AddAffixs_Click()
+                    {
+                        Mods.Character.Character_Materials.GetAllShardsX10();
+                    }
+
+                    private static readonly System.Action DiscoverAllBlessings_OnClick_Action = new System.Action(DiscoverAllBlessings_Click);
+                    public static void DiscoverAllBlessings_Click()
+                    {
+                        Mods.Character.Character_Blessings_Hooks.DiscoverAllBlessings();
+                    }
                 }
                 public class Data
                 {
@@ -1590,7 +1651,8 @@ namespace LastEpoch_Hud.Scripts
                     public static Text soul_text = null;
                     public static Slider soul_slider = null;
 
-                    public static void Save()
+                    private static readonly System.Action Save_OnClick_Action = new System.Action(Save_Click);
+                    public static void Save_Click()
                     {
                         if (!Refs_Manager.player_data.IsNullOrDestroyed()) { Refs_Manager.player_data.SaveData(); }
                     }

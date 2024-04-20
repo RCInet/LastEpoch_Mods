@@ -1,6 +1,5 @@
 ﻿using MelonLoader;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace LastEpoch_Hud.Scripts
 {
@@ -14,16 +13,12 @@ namespace LastEpoch_Hud.Scripts
         void Awake()
         {
             instance = this;
-            //SceneManager.add_sceneLoaded(new System.Action<Scene, LoadSceneMode>(OnSceneLoaded));
         }
         void Update()
         {
             if ((!initialized) && (!initializing)) { Initialize_Mods(); }
         }
-        /*void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-        {
-            
-        }*/
+
         public void SetOnline(bool online)
         {
             if (!online) { Active_Mods(); }
@@ -99,7 +94,6 @@ namespace LastEpoch_Hud.Scripts
                     foreach (GameObject mod in Mods_Objects) { Object.DontDestroyOnLoad(mod); }
                     Mods_Objects.Clear();
                     initialized = true;
-                    //Active_Mods();
                 }
                 initializing = false;
             }

@@ -21,7 +21,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
         public class ExperienceTracker_GainExp
         {
             [HarmonyPrefix]
-            static void Prefix(ExperienceTracker __instance, ref long __0, long __1, long __2)
+            static void Prefix(ref long __0)
             {
                 if (CanRun())
                 {

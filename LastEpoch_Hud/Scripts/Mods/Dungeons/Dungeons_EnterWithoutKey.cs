@@ -22,7 +22,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Dungeons
         public class ItemContainersManager_IsOccupiedWithValidDungeonKey
         {
             [HarmonyPostfix]
-            static void Postfix(ref ItemContainersManager __instance, ref bool __result, ref DungeonID __0)
+            static void Postfix(ref bool __result)
             {
                 if (CanRun()) { __result = true; }
             }

@@ -20,7 +20,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
         public class UIWaypointStandard_OnPointerEnter
         {
             [HarmonyPrefix]
-            static void Prefix(UIWaypointStandard __instance, UnityEngine.EventSystems.PointerEventData __0)
+            static void Prefix(ref UIWaypointStandard __instance)
             {
                 if (CanRun()) { __instance.isActive = true; }
             }
