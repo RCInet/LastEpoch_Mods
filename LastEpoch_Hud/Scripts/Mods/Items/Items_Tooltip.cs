@@ -134,7 +134,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                             else { Main.logger_instance.Error("Icons are null"); }
                         }                        
                     }
-                    else if (__instance.activeParameters.Item.IsNullOrDestroyed()) { Main.logger_instance.Error("Item is null"); }
                 }
                 else if (__instance.activeContent.IsNullOrDestroyed()) { Main.logger_instance.Error("activeContent is null"); }
                 else if (legendary_icon.IsNullOrDestroyed()) { Main.logger_instance.Error("legendary_icon is null"); }
