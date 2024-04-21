@@ -297,21 +297,51 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 }
             }
         }
+        public class Crafting_Main_Ui
+        {
+            public static CraftingMainUI main_ui = null;
+
+            [HarmonyPatch(typeof(CraftingMainUI), "Initialize")]
+            public class CraftingMainUI_Initialize
+            {
+                [HarmonyPostfix]
+                static void Postifx(ref CraftingMainUI __instance, ref bool __result)
+                {
+                    main_ui = __instance;
+                }
+            }
+        }
         public class Crafting_Main_Item_Container
         {
             public static OneItemContainer container = null;
+            public static RectTransform rect_transform = null;
+            public static Vector2 default_sizedelta = Vector2.zero;
+            public static bool backup_initialized = false;
 
-            //Idols can be added to slot
+            //Idols can be added to slot (Fix item size)
             [HarmonyPatch(typeof(CraftingMainItemContainer), "CanReceiveItem")]
             public class CraftingMainItemContainer_CanReceiveItem
             {
                 [HarmonyPostfix]
-                static void Postifx(CraftingMainItemContainer __instance, ref bool __result, ItemData __0, int __1)
+                static void Postifx(ref CraftingMainItemContainer __instance, ref bool __result, ItemData __0, int __1)
                 {
-                    //if (Main.debug) { Main.logger_instance.Msg("CraftingMainItemContainer : CanReceiveItem : Postfix"); }                    
                     if (Scenes.IsGameScene())
                     {
-                        if (Get.IsIdol(__0)) { __result = true; }
+                        if ((!backup_initialized) && (!Crafting_Main_Ui.main_ui.IsNullOrDestroyed()))
+                        {
+                            rect_transform = Crafting_Main_Ui.main_ui.gameObject.GetComponent<RectTransform>();
+                            default_sizedelta = rect_transform.sizeDelta;
+                            backup_initialized = true;
+                        }
+                        if ((backup_initialized) && (!rect_transform.IsNullOrDestroyed()))
+                        {
+                            float slots_w = 2;
+                            if (__0.itemType == 29) { slots_w = 3; } //Grand Idols
+                            else if (__0.itemType == 31) { slots_w = 4; } //Ornate Idols
+                            __instance.size = new Vector2Int((int)slots_w, 4); //Set slot size
+                            rect_transform.sizeDelta = new Vector2(((slots_w / 2) * default_sizedelta.x), default_sizedelta.y); //Set size delta
+                        }
+                        if (Get.IsIdol(__0)) { __result = true; } //Allow Idols
                     }
                 }
             }
@@ -587,14 +617,12 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
         }
         public class Crafting_Modifier_Item_Container
         {
-            //Allow choose shard when unique, set, legendary or idol
             [HarmonyPatch(typeof(CraftingModifierItemContainer), "CanReceiveItem")]
             public class CraftingModifierItemContainer_CanReceiveItem
             {
                 [HarmonyPrefix]
                 static bool Prefix(CraftingModifierItemContainer __instance, ref bool __result, ItemData __0, int __1)
                 {
-                    //if (Main.debug) { Main.logger_instance.Msg("CraftingModifierItemContainer : CanReceiveItem : Prefix"); }
                     bool __return = true;
                     if (Scenes.IsGameScene())
                     {
@@ -602,7 +630,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                         if (!Current.item.IsNullOrDestroyed())
                         {
                             if ((Get.IsIdol(Current.item)) || (Current.item.rarity > 6))
-                            {
+                            {                                
                                 __result = true;
                                 __return = false;
                             }
@@ -621,7 +649,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 [HarmonyPrefix]
                 static void Prefix(CraftingSlotManager __instance)
                 {
-                    //if (Main.debug) { Main.logger_instance.Msg("CraftingSlotManager : Forge : Prefix"); }
                     if (Scenes.IsGameScene())
                     {
                         Get.CurrentFomSlotManager();
@@ -640,7 +667,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                     }
                                 }
                             }
-                            else { Main.logger_instance.Error("Move an item in crafting slot"); }
                         }
                     }
                 }
