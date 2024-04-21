@@ -459,13 +459,11 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 [HarmonyPostfix]
                 static void Postfix(CraftingMaterialsPanelUI __instance)
                 {
-                    //if (Main.debug) { Main.logger_instance.Msg("CraftingMaterialsPanelUI : PopulateShardList : Postfix"); }
                     System.Collections.Generic.List<int> already = new System.Collections.Generic.List<int>();
                     foreach (ShardAffixListElement affix_element in __instance.shardAffixList)
                     {
                         already.Add(affix_element.affix.affixId);
                     }
-                    int lost = 0;
                     if (!Refs_Manager.item_list.IsNullOrDestroyed())
                     {
                         if (!Refs_Manager.item_list.affixList.IsNullOrDestroyed())
@@ -475,7 +473,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                 if ((!already.Contains(affix.affixId)) && (!__instance.shardAffixPrefab.IsNullOrDestroyed()))
                                 {
                                     Add.Affix(ref __instance, affix, affix.modifierType);
-                                    lost++;
                                 }
                             }
                             foreach (AffixList.MultiAffix affix in Refs_Manager.item_list.affixList.multiAffixes)
@@ -483,7 +480,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                 if (!already.Contains(affix.affixId))
                                 {
                                     Add.Affix(ref __instance, affix, affix.affixProperties[0].modifierType);
-                                    lost++;
                                 }
                             }
                         }                        
@@ -498,7 +494,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 [HarmonyPostfix]
                 static void Postfix(ref CraftingMaterialsPanelUI __instance)
                 {
-                    //if (Main.debug) { Main.logger_instance.Msg("CraftingMaterialsPanelUI : RefreshAffixList : Postfix"); }                    
                     if (Scenes.IsGameScene())
                     {                        
                         Get.CurrentFomSlotManager();
@@ -512,17 +507,18 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
 
                             bool type_found = false;
                             EquipmentType equip_type = EquipmentType.HELMET;
+                            ItemList.ClassRequirement classreq = ItemList.ClassRequirement.None;
                             foreach (ItemList.BaseEquipmentItem item in Scripts.Refs_Manager.item_list.EquippableItems)
                             {
                                 if (item.baseTypeID == Current.item.itemType)
                                 {
                                     equip_type = item.type;
+                                    classreq = item.classAffinity;
                                     type_found = true;
                                     break;
                                 }
                             }
 
-                            int added = 0;
                             System.Collections.Generic.List<GameObject> unused_list = new System.Collections.Generic.List<GameObject>();
                             System.Collections.Generic.List<GameObject> uncompatible_list = new System.Collections.Generic.List<GameObject>();
                             System.Collections.Generic.List<GameObject> hidden_list = new System.Collections.Generic.List<GameObject>();
@@ -551,7 +547,16 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                 {
                                     GameObject affix_obj = incompatible_holder.transform.GetChild(i).gameObject;
                                     ShardAffixListElement element = affix_obj.GetComponent<ShardAffixListElement>();
-                                    if (element.affix.canRollOn.Contains(equip_type)) { unused_list.Add(affix_obj); }
+                                    if (element.affix.canRollOn.Contains(equip_type))
+                                    {
+                                        if ((element.affix.classSpecificity == AffixList.ClassSpecificity.None) ||
+                                            (element.affix.classSpecificity == AffixList.ClassSpecificity.NonSpecific) ||
+                                            (classreq.ToString() ==  element.affix.classSpecificity.ToString()))
+                                        {
+                                            unused_list.Add(affix_obj);
+                                        }
+                                        //else { uncompatible_list.Add(affix_obj); }
+                                    }
                                     else { hidden_list.Add(affix_obj); }
                                 }
                                 for (int i = 0; i < hidden_holder.transform.childCount; i++)
@@ -562,34 +567,27 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                         ((element.affixType == "Suffix") && (__instance.affixFilterType == CraftingMaterialsPanelUI.AffixFilterType.SUFFIX)) ||
                                         (__instance.affixFilterType == CraftingMaterialsPanelUI.AffixFilterType.ANY))
                                     {
-                                        if (element.affix.canRollOn.Contains(equip_type)) { unused_list.Add(affix_obj); }
+                                        if (element.affix.canRollOn.Contains(equip_type))
+                                        {
+                                            if ((element.affix.classSpecificity == AffixList.ClassSpecificity.None) ||
+                                            (element.affix.classSpecificity == AffixList.ClassSpecificity.NonSpecific) ||
+                                            (classreq.ToString() == element.affix.classSpecificity.ToString()))
+                                            {
+                                                unused_list.Add(affix_obj);
+                                            }
+                                            else { uncompatible_list.Add(affix_obj); }
+                                        }
                                     }
                                 }                                
                             }
 
+                            //Unused
                             foreach (GameObject item in unused_list)
                             {
                                 Functions.GetChild(item, "Button").active = true;
                                 item.transform.SetParent(unused_holder.transform);
-                                //item.transform.parent = unused_holder.transform;
-                                added++;
                             }
                             unused_list.Clear();
-                            
-                            foreach (GameObject item in uncompatible_list)
-                            {
-                                Functions.GetChild(item, "Button").active = true;
-                                item.transform.SetParent(incompatible_holder.transform);
-                                //item.transform.parent = incompatible_holder.transform;
-                            }
-                            uncompatible_list.Clear();
-                            
-                            foreach (GameObject item in hidden_list)
-                            {
-                                item.transform.SetParent(hidden_holder.transform);
-                                //item.transform.parent = hidden_holder.transform;
-                            }
-                            hidden_list.Clear();
 
                             if (unused_holder.transform.childCount > 0)
                             {
@@ -603,13 +601,28 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                 unused_holder.transform.GetChild(i).gameObject.active = true;
                             }
 
+                            //Incompatible
+                            foreach (GameObject item in uncompatible_list)
+                            {
+                                Functions.GetChild(item, "Button").active = true;
+                                item.transform.SetParent(incompatible_holder.transform);
+                            }
+                            uncompatible_list.Clear();
+
                             if (incompatible_holder.transform.childCount > 0) { incompatible_header.active = true; }
                             else { incompatible_header.active = false; }
 
                             for (int i = 0; i < incompatible_holder.transform.childCount; i++)
                             {
-                                incompatible_holder.transform.GetChild(i).gameObject.active = true;
+                                incompatible_holder.transform.GetChild(i).gameObject.active = true; //Allow select any Incompatible affix
                             }
+
+                            //Hidden
+                            foreach (GameObject item in hidden_list)
+                            {
+                                item.transform.SetParent(hidden_holder.transform);
+                            }
+                            hidden_list.Clear();
                         }
                     }
                 }
