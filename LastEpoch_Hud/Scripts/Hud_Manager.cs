@@ -14,7 +14,7 @@ namespace LastEpoch_Hud.Scripts
         public static AssetBundle asset_bundle;
         public static GameObject hud_object = null;
         public bool data_initialized = false;
-        
+
         private string asset_path = Application.dataPath + "/../Mods/" + Main.mod_name + "/Assets";
         private static Canvas game_canvas = null;
         private static GameObject game_pause_menu = null;
@@ -147,11 +147,7 @@ namespace LastEpoch_Hud.Scripts
         {
             if ((!Refs_Manager.game_uibase.IsNullOrDestroyed()) && (!game_canvas.IsNullOrDestroyed()) && (!hud_canvas.IsNullOrDestroyed()))
             {
-                if (hud_canvas.scaleFactor != game_canvas.scaleFactor)
-                {
-                    if (Main.debug) { Main.logger_instance.Msg("Hud_Manager : Set hud scale to : " + game_canvas.scaleFactor); }
-                    hud_canvas.scaleFactor = game_canvas.scaleFactor;
-                }
+                if (hud_canvas.scaleFactor != game_canvas.scaleFactor) { hud_canvas.scaleFactor = game_canvas.scaleFactor; }
             }
         } 
         public void Update_Hud_Content()

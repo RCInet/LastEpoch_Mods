@@ -68,7 +68,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
         {
             public static void Affix(ref CraftingMaterialsPanelUI craft_mat_panel, AffixList.Affix affix, BaseStats.ModType affix_modifier)
             {
-                GameObject obj = Object.Instantiate(craft_mat_panel.shardAffixPrefab, Vector3.zero, Quaternion.identity);
+                GameObject obj = Object.Instantiate(craft_mat_panel.shardAffixPrefab, Vector3.zero, Quaternion.identity);       
                 ShardAffixListElement element = obj.GetComponent<ShardAffixListElement>();
                 if (!element.IsNullOrDestroyed())
                 {
@@ -80,12 +80,19 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                         element.prefixArrow.active = false;
                         element.suffixArrow.active = true;
                     }
-                    else
+                    else if (affix.type == AffixList.AffixType.PREFIX)
                     {
                         element.affixType = "Prefix";
                         element.prefixArrow.active = true;
                         element.suffixArrow.active = false;
-                    }                    
+                    }
+                    else if (affix.type == AffixList.AffixType.SPECIAL)
+                    {
+                        Main.logger_instance.Msg(affix.affixName + " is Special");
+                        element.affixType = "Special";
+                        element.prefixArrow.active = false;
+                        element.suffixArrow.active = false;
+                    }
                     element.shardItemName = affix.affixName;
                     element.shardName = affix.affixDisplayName;
                     element.shardType = affix.affixId;
@@ -499,6 +506,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                         Get.CurrentFomSlotManager();
                         if (!Current.item.IsNullOrDestroyed())
                         {
+                            GameObject applied_holder = __instance.appliedAffixesHolder.gameObject;
                             GameObject unused_header = __instance.unusedAffixesHeader.gameObject;
                             GameObject unused_holder = __instance.unusedAffixesHolder.gameObject;
                             GameObject incompatible_header = __instance.incompatibleAffixesHeader.gameObject;
@@ -507,13 +515,11 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
 
                             bool type_found = false;
                             EquipmentType equip_type = EquipmentType.HELMET;
-                            ItemList.ClassRequirement classreq = ItemList.ClassRequirement.None;
                             foreach (ItemList.BaseEquipmentItem item in Scripts.Refs_Manager.item_list.EquippableItems)
                             {
                                 if (item.baseTypeID == Current.item.itemType)
                                 {
                                     equip_type = item.type;
-                                    classreq = item.classAffinity;
                                     type_found = true;
                                     break;
                                 }
@@ -523,44 +529,75 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                             System.Collections.Generic.List<GameObject> uncompatible_list = new System.Collections.Generic.List<GameObject>();
                             System.Collections.Generic.List<GameObject> hidden_list = new System.Collections.Generic.List<GameObject>();
 
-                            if ((Get.IsIdol(Current.item)) && (type_found))
+                            int nb_prefix = 0;
+                            int nb_suffix = 0;
+                            foreach (ItemAffix aff in Current.item.affixes)
                             {
-                                for (int i = 0; i < hidden_holder.transform.childCount; i++)
+                                if (aff.affixType == AffixList.AffixType.PREFIX) { nb_prefix++; }
+                                else if (aff.affixType != AffixList.AffixType.SUFFIX) {  nb_suffix++; }
+                            }
+
+                            //Set affix to list
+                            bool idol = Get.IsIdol(Current.item);
+                            ItemList.ClassRequirement item_class_req = Current.item.getAsUnpacked().classReq;
+                            if (((Current.item.rarity > 6) || (idol)) && (type_found))
+                            {
+                                for (int i = 0; i < unused_holder.transform.childCount; i++)
                                 {
-                                    GameObject affix_obj = hidden_holder.transform.GetChild(i).gameObject;
+                                    GameObject affix_obj = unused_holder.transform.GetChild(i).gameObject;
                                     ShardAffixListElement element = affix_obj.GetComponent<ShardAffixListElement>();
                                     if (((element.affixType == "Prefix") && (__instance.affixFilterType == CraftingMaterialsPanelUI.AffixFilterType.PREFIX)) ||
                                         ((element.affixType == "Suffix") && (__instance.affixFilterType == CraftingMaterialsPanelUI.AffixFilterType.SUFFIX)) ||
-                                        (__instance.affixFilterType == CraftingMaterialsPanelUI.AffixFilterType.ANY))
+                                        (__instance.affixFilterType == CraftingMaterialsPanelUI.AffixFilterType.ANY) ||
+                                        (element.affixType == "Special"))
                                     {
                                         if (element.affix.canRollOn.Contains(equip_type))
                                         {
-                                            if ((element.affix.classSpecificity == AffixList.ClassSpecificity.None) ||
-                                                (element.affix.classSpecificity == AffixList.ClassSpecificity.NonSpecific) ||
-                                                (classreq.ToString() == element.affix.classSpecificity.ToString()))
+                                            if ((item_class_req == ItemList.ClassRequirement.None) ||
+                                                (element.affix.classSpecificity == AffixList.ClassSpecificity.None) ||
+                                                (element.affix.classSpecificity.ToString().Contains(item_class_req.ToString())) ||
+                                                (element.affix.classSpecificity.ToString().Contains("NonSpecific")))
                                             {
-                                                unused_list.Add(affix_obj);
+                                                if (((element.affix.type == AffixList.AffixType.PREFIX) && (nb_prefix < 2)) ||
+                                                    ((element.affix.type == AffixList.AffixType.SUFFIX) && (nb_suffix < 2)))
+                                                {
+                                                    unused_list.Add(affix_obj);
+                                                }
+                                                else { uncompatible_list.Add(affix_obj); }
                                             }
                                             else { uncompatible_list.Add(affix_obj); }
                                         }
+                                        else { hidden_list.Add(affix_obj); }
                                     }
+                                    else { hidden_list.Add(affix_obj); }
                                 }
-                            }
-                            else if ((Current.item.rarity > 6) && (type_found)) //Unique set legendary
-                            {
+
                                 for (int i = 0; i < incompatible_holder.transform.childCount; i++)
                                 {
                                     GameObject affix_obj = incompatible_holder.transform.GetChild(i).gameObject;
                                     ShardAffixListElement element = affix_obj.GetComponent<ShardAffixListElement>();
-                                    if (element.affix.canRollOn.Contains(equip_type))
+                                    if (((element.affixType == "Prefix") && (__instance.affixFilterType == CraftingMaterialsPanelUI.AffixFilterType.PREFIX)) ||
+                                        ((element.affixType == "Suffix") && (__instance.affixFilterType == CraftingMaterialsPanelUI.AffixFilterType.SUFFIX)) ||
+                                        (__instance.affixFilterType == CraftingMaterialsPanelUI.AffixFilterType.ANY) ||
+                                        (element.affixType == "Special"))
                                     {
-                                        if ((element.affix.classSpecificity == AffixList.ClassSpecificity.None) ||
-                                            (element.affix.classSpecificity == AffixList.ClassSpecificity.NonSpecific) ||
-                                            (classreq.ToString() ==  element.affix.classSpecificity.ToString()))
+                                        if (element.affix.canRollOn.Contains(equip_type))
                                         {
-                                            unused_list.Add(affix_obj);
+                                            if ((item_class_req == ItemList.ClassRequirement.None) ||
+                                                (element.affix.classSpecificity == AffixList.ClassSpecificity.None) ||
+                                                (element.affix.classSpecificity.ToString().Contains(item_class_req.ToString())) ||
+                                                (element.affix.classSpecificity.ToString().Contains("NonSpecific")))
+                                            {
+                                                if (((element.affix.type == AffixList.AffixType.PREFIX) && (nb_prefix < 2)) ||
+                                                    ((element.affix.type == AffixList.AffixType.SUFFIX) && (nb_suffix < 2)))
+                                                {
+                                                    unused_list.Add(affix_obj);
+                                                }
+                                                else { uncompatible_list.Add(affix_obj); }
+                                            }
+                                            else { uncompatible_list.Add(affix_obj); }
                                         }
-                                        else { uncompatible_list.Add(affix_obj); }
+                                        else { hidden_list.Add(affix_obj); }
                                     }
                                     else { hidden_list.Add(affix_obj); }
                                 }
@@ -570,28 +607,54 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                     ShardAffixListElement element = affix_obj.GetComponent<ShardAffixListElement>();
                                     if (((element.affixType == "Prefix") && (__instance.affixFilterType == CraftingMaterialsPanelUI.AffixFilterType.PREFIX)) ||
                                         ((element.affixType == "Suffix") && (__instance.affixFilterType == CraftingMaterialsPanelUI.AffixFilterType.SUFFIX)) ||
-                                        (__instance.affixFilterType == CraftingMaterialsPanelUI.AffixFilterType.ANY))
+                                        (__instance.affixFilterType == CraftingMaterialsPanelUI.AffixFilterType.ANY) ||
+                                        (element.affixType == "Special"))
                                     {
                                         if (element.affix.canRollOn.Contains(equip_type))
                                         {
-                                            if ((element.affix.classSpecificity == AffixList.ClassSpecificity.None) ||
-                                            (element.affix.classSpecificity == AffixList.ClassSpecificity.NonSpecific) ||
-                                            (classreq.ToString() == element.affix.classSpecificity.ToString()))
+                                            if ((item_class_req == ItemList.ClassRequirement.None) ||
+                                                (element.affix.classSpecificity == AffixList.ClassSpecificity.None) ||
+                                                (element.affix.classSpecificity.ToString().Contains(item_class_req.ToString())) ||
+                                                (element.affix.classSpecificity.ToString().Contains("NonSpecific")))
                                             {
-                                                unused_list.Add(affix_obj);
+                                                if (((element.affix.type == AffixList.AffixType.PREFIX) && (nb_prefix < 2)) ||
+                                                    ((element.affix.type == AffixList.AffixType.SUFFIX) && (nb_suffix < 2)))
+                                                {
+                                                    unused_list.Add(affix_obj);
+                                                }
+                                                else { uncompatible_list.Add(affix_obj); }
                                             }
                                             else { uncompatible_list.Add(affix_obj); }
                                         }
+                                        else { hidden_list.Add(affix_obj); }
                                     }
+                                    else { hidden_list.Add(affix_obj); }
                                 }                                
                             }
 
-                            //Unused
-                            foreach (GameObject item in unused_list)
+                            //Applied                            
+                            for (int i = 0; i < applied_holder.transform.childCount; i++)
                             {
-                                Functions.GetChild(item, "Button").active = true;
-                                item.transform.SetParent(unused_holder.transform);
+                                if (idol) { Functions.GetChild(applied_holder.transform.GetChild(i).gameObject, "Button").active = false; }
+                                else if (Current.item.rarity > 6)
+                                {
+                                    int affix_id = applied_holder.transform.GetChild(i).gameObject.GetComponent<ShardAffixListElement>().affix.affixId;
+                                    bool can_select = false;
+                                    foreach (ItemAffix affix in Current.item.affixes)
+                                    {
+                                        if (affix.affixId == affix_id)
+                                        {
+                                            if (affix.affixTier < 6) { can_select = true; }
+                                            break;
+                                        }
+                                    }
+                                    Functions.GetChild(applied_holder.transform.GetChild(i).gameObject, "Button").active = can_select;
+                                }
+                                applied_holder.transform.GetChild(i).gameObject.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
                             }
+
+                            //Unused
+                            foreach (GameObject item in unused_list) { item.transform.SetParent(unused_holder.transform); }
                             unused_list.Clear();
 
                             if (unused_holder.transform.childCount > 0)
@@ -603,15 +666,13 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
 
                             for (int i = 0; i < unused_holder.transform.childCount; i++)
                             {
-                                unused_holder.transform.GetChild(i).gameObject.active = true;
+                                unused_holder.transform.GetChild(i).gameObject.active = true;                                
+                                Functions.GetChild(unused_holder.transform.GetChild(i).gameObject, "Button").active = true;
+                                unused_holder.transform.GetChild(i).gameObject.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
                             }
 
                             //Incompatible
-                            foreach (GameObject item in uncompatible_list)
-                            {
-                                //Functions.GetChild(item, "Button").active = true;
-                                item.transform.SetParent(incompatible_holder.transform);
-                            }
+                            foreach (GameObject item in uncompatible_list) { item.transform.SetParent(incompatible_holder.transform); }
                             uncompatible_list.Clear();
 
                             if (incompatible_holder.transform.childCount > 0) { incompatible_header.active = true; }
@@ -619,14 +680,15 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
 
                             for (int i = 0; i < incompatible_holder.transform.childCount; i++)
                             {
-                                incompatible_holder.transform.GetChild(i).gameObject.active = true; //Allow select any Incompatible affix
+                                incompatible_holder.transform.GetChild(i).gameObject.active = true;
+                                bool can_craft = false;
+                                if (idol) { can_craft = true; }
+                                Functions.GetChild(incompatible_holder.transform.GetChild(i).gameObject, "Button").active = can_craft;
+                                incompatible_holder.transform.GetChild(i).gameObject.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
                             }
 
                             //Hidden
-                            foreach (GameObject item in hidden_list)
-                            {
-                                item.transform.SetParent(hidden_holder.transform);
-                            }
+                            foreach (GameObject item in hidden_list) { item.transform.SetParent(hidden_holder.transform); }
                             hidden_list.Clear();
                         }
                     }
