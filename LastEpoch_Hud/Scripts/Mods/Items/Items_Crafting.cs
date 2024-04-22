@@ -333,7 +333,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                             default_sizedelta = rect_transform.sizeDelta;
                             backup_initialized = true;
                         }
-                        if ((backup_initialized) && (!rect_transform.IsNullOrDestroyed()))
+                        if ((backup_initialized) && (!rect_transform.IsNullOrDestroyed()) && (__instance.content.IsNullOrDestroyed()))
                         {
                             float slots_w = 2;
                             if (__0.itemType == 29) { slots_w = 3; } //Grand Idols
@@ -533,10 +533,15 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                         ((element.affixType == "Suffix") && (__instance.affixFilterType == CraftingMaterialsPanelUI.AffixFilterType.SUFFIX)) ||
                                         (__instance.affixFilterType == CraftingMaterialsPanelUI.AffixFilterType.ANY))
                                     {
-                                        if (element.affix.affixName.ToLower().Contains("idol"))
+                                        if (element.affix.canRollOn.Contains(equip_type))
                                         {
-                                            if (element.affix.canRollOn.Contains(equip_type)) { unused_list.Add(affix_obj); }
-                                            else { uncompatible_list.Add(affix_obj); }                                            
+                                            if ((element.affix.classSpecificity == AffixList.ClassSpecificity.None) ||
+                                                (element.affix.classSpecificity == AffixList.ClassSpecificity.NonSpecific) ||
+                                                (classreq.ToString() == element.affix.classSpecificity.ToString()))
+                                            {
+                                                unused_list.Add(affix_obj);
+                                            }
+                                            else { uncompatible_list.Add(affix_obj); }
                                         }
                                     }
                                 }
@@ -555,7 +560,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                         {
                                             unused_list.Add(affix_obj);
                                         }
-                                        //else { uncompatible_list.Add(affix_obj); }
+                                        else { uncompatible_list.Add(affix_obj); }
                                     }
                                     else { hidden_list.Add(affix_obj); }
                                 }
@@ -604,7 +609,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                             //Incompatible
                             foreach (GameObject item in uncompatible_list)
                             {
-                                Functions.GetChild(item, "Button").active = true;
+                                //Functions.GetChild(item, "Button").active = true;
                                 item.transform.SetParent(incompatible_holder.transform);
                             }
                             uncompatible_list.Clear();
@@ -628,29 +633,16 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 }
             }
         }
-        public class Crafting_Modifier_Item_Container
+        public class Shard_Affix_List_Element
         {
-            [HarmonyPatch(typeof(CraftingModifierItemContainer), "CanReceiveItem")]
-            public class CraftingModifierItemContainer_CanReceiveItem
+            //Craft without shards
+            [HarmonyPatch(typeof(ShardAffixListElement), "setQuantityAndUpdateText")]
+            public class ShardAffixListElement_setQuantityAndUpdateText
             {
                 [HarmonyPrefix]
-                static bool Prefix(CraftingModifierItemContainer __instance, ref bool __result, ItemData __0, int __1)
+                static void Prefix(/*ShardAffixListElement __instance,*/ ref int __0)
                 {
-                    bool __return = true;
-                    if (Scenes.IsGameScene())
-                    {
-                        Get.CurrentFomSlotManager();
-                        if (!Current.item.IsNullOrDestroyed())
-                        {
-                            if ((Get.IsIdol(Current.item)) || (Current.item.rarity > 6))
-                            {                                
-                                __result = true;
-                                __return = false;
-                            }
-                        }
-                    }
-
-                    return __return;
+                    if (__0 == 0) { __0 = 1; }
                 }
             }
         }
@@ -687,7 +679,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 [HarmonyPostfix]
                 static void Postfix(CraftingSlotManager __instance)
                 {
-                    //if (Main.debug) { Main.logger_instance.Msg("CraftingSlotManager : Forge : Postfix"); }
                     if (Scenes.IsGameScene())
                     {
                         Get.CurrentFomSlotManager();
@@ -733,50 +724,48 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                             {
                                 int nb_prefix = 0;
                                 int nb_suffix = 0;
+                                bool already_contain_affix = false;
                                 foreach (ItemAffix item_affix in Current.item.affixes)
                                 {
+                                    if (item_affix.affixId == Current.affix_id) { already_contain_affix = true; break; }
                                     if (item_affix.affixType == AffixList.AffixType.PREFIX) { nb_prefix++; }
                                     else if (item_affix.affixType == AffixList.AffixType.SUFFIX) { nb_suffix++; }
                                 }
-                                AffixList.AffixType new_affix_type = AffixList.instance.GetAffixType(Current.affix_id);
-                                if (((new_affix_type == AffixList.AffixType.PREFIX) && (nb_prefix < 2)) ||
-                                    ((new_affix_type == AffixList.AffixType.SUFFIX) && (nb_suffix < 2)))
+                                if (!already_contain_affix)
                                 {
-                                    Current.affix_tier = 0;
-                                    if (!Current.slot.IsNullOrDestroyed()) { Current.slot.affixID = (ushort)Current.affix_id; }
-                                    ItemAffix affix = new ItemAffix
+                                    AffixList.AffixType new_affix_type = AffixList.instance.GetAffixType(Current.affix_id);
+                                    if (((new_affix_type == AffixList.AffixType.PREFIX) && (nb_prefix < 2)) ||
+                                        ((new_affix_type == AffixList.AffixType.SUFFIX) && (nb_suffix < 2)))
                                     {
-                                        affixId = (ushort)Current.affix_id,
-                                        affixTier = (byte)Current.affix_tier,
-                                        affixRoll = (byte)Random.Range(0f, 255f),
-                                        affixType = new_affix_type
-                                    };
-                                    Current.item.affixes.Add(affix);
-                                    Current.item.RefreshIDAndValues();
-
-                                    if (!idol)
-                                    {
-                                        //Fix Slots Changed
-                                        int index = nb_prefix;
-                                        if (index == 2) { index += nb_suffix; }
-                                        if (index < __instance.affixSlots.Count)
+                                        Current.affix_tier = 0;
+                                        if (!Current.slot.IsNullOrDestroyed()) { Current.slot.affixID = (ushort)Current.affix_id; }
+                                        ItemAffix affix = new ItemAffix
                                         {
-                                            GameObject upgrade = Functions.GetChild(__instance.affixSlots[index].gameObject, "upgradeAvailable");
-                                            if (!upgrade.IsNullOrDestroyed())
+                                            affixId = (ushort)Current.affix_id,
+                                            affixTier = (byte)Current.affix_tier,
+                                            affixRoll = (byte)Random.Range(0f, 255f),
+                                            affixType = new_affix_type
+                                        };
+                                        Current.item.affixes.Add(affix);
+                                        Current.item.RefreshIDAndValues();
+                                        if (!idol)
+                                        {
+                                            int index = nb_prefix;
+                                            if (index == 2) { index += nb_suffix; }
+                                            if (index < __instance.affixSlots.Count)
                                             {
-                                                upgrade.GetComponent<CraftingUpgradeButton>().UpgradeButtonClicked();
+                                                GameObject upgrade = Functions.GetChild(__instance.affixSlots[index].gameObject, "upgradeAvailable");
+                                                if (!upgrade.IsNullOrDestroyed())
+                                                {
+                                                    upgrade.GetComponent<CraftingUpgradeButton>().UpgradeButtonClicked();
 
-                                                Crafting_Upgrade_Button.btn = upgrade.GetComponent<CraftingUpgradeButton>();
-                                                Crafting_Upgrade_Button.btn.gameObject.active = true;
-                                                Crafting_Upgrade_Button.btn.UpgradeButtonClicked();
+                                                    Crafting_Upgrade_Button.btn = upgrade.GetComponent<CraftingUpgradeButton>();
+                                                    Crafting_Upgrade_Button.btn.gameObject.active = true;
+                                                    Crafting_Upgrade_Button.btn.UpgradeButtonClicked();
+                                                }
                                             }
                                         }
-                                        //Select slot
-                                        /*if (!Crafting_Upgrade_Button.btn.IsNullOrDestroyed())
-                                        {
-                                            Crafting_Upgrade_Button.btn.gameObject.active = true;
-                                            Crafting_Upgrade_Button.btn.UpgradeButtonClicked();
-                                        }*/
+                                        else { Current.affix_id = -1; }
                                     }
                                 }
                             }
