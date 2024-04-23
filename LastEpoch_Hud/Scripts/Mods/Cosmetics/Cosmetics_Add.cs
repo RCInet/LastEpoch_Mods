@@ -30,20 +30,10 @@ namespace LastEpoch_Hud.Scripts.Mods.Cosmetics
             [HarmonyPostfix]
             static void Postfix(ref CosmeticsManager __instance, UnityEngine.Vector3 __0)
             {
-                Main.logger_instance.Msg("CosmeticsManager : OnPlayerSpawnedAtLocationEvent");
                 if (!__instance.IsNullOrDestroyed())
                 {
-                    if (__instance.player.IsNullOrDestroyed())
-                    {
-                        Main.logger_instance.Msg("Player is null");
-                        __instance.player = PlayerFinder.getPlayer();
-                    }
-                    if (!__instance.player.IsNullOrDestroyed())
-                    {
-                        Main.logger_instance.Msg("Player is set");
-                    }
+                    if (__instance.player.IsNullOrDestroyed()) { __instance.player = PlayerFinder.getPlayer(); }
                 }
-                else { Main.logger_instance.Msg("CosmeticsManager is null"); }
             }
         }        
     }

@@ -16,7 +16,6 @@ namespace LastEpoch_Hud
         public override void OnInitializeMelon()
         {
             logger_instance = LoggerInstance;
-            if (Main.debug) { Main.logger_instance.Msg("Main : MelonLoader Initialized"); }
         }
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
@@ -28,8 +27,7 @@ namespace LastEpoch_Hud
         }
         public override void OnApplicationQuit()
         {
-            bool success = Caching.ClearCache();
-            if (Main.debug) { Main.logger_instance.Msg("Main : Clear cache " + success); }
+            Caching.ClearCache();
         }
     }
     public class Base
@@ -41,13 +39,12 @@ namespace LastEpoch_Hud
         public static void Init()
         {
             Initializing = true;
-            if (Main.debug) { Main.logger_instance.Msg("Main : Instantiate " + base_object_name + " object"); }
             GameObject base_object = Object.Instantiate(new GameObject(name: base_object_name), Vector3.zero, Quaternion.identity);
             Object.DontDestroyOnLoad(base_object);
-            base_object.AddComponent<Scripts.Refs_Manager>(); //Initialize Refs_Manager
-            base_object.AddComponent<Scripts.Save_Manager>(); //Initialize Save_Manager            
-            base_object.AddComponent<Scripts.Hud_Manager>(); //Initialize Hud_Manager            
-            base_object.AddComponent<Scripts.Mods_Manager>(); //Initialize Mods_Manager
+            base_object.AddComponent<Scripts.Refs_Manager>();
+            base_object.AddComponent<Scripts.Save_Manager>();           
+            base_object.AddComponent<Scripts.Hud_Manager>();          
+            base_object.AddComponent<Scripts.Mods_Manager>();
             Initialized = true;
             Initializing = false;
         }

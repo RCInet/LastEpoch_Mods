@@ -32,35 +32,30 @@ namespace LastEpoch_Hud.Scripts
         void Load()
         {
             bool error = false;
-            if (Main.debug) { Main.logger_instance.Msg("Save Manager : Initialize"); }
             if (File.Exists(path + filename))
             {
-                if (Main.debug) { Main.logger_instance.Msg("Save Manager : Loading file : " + path + filename); }
+                Main.logger_instance.Msg("Save Manager : Loading file : " + path + filename);
                 try { data = JsonConvert.DeserializeObject<Data.Mods_Structure>(File.ReadAllText(path + filename)); }
                 catch
                 {
-                    if (Main.debug) { Main.logger_instance.Msg("Save Manager : Error when deserializing the file"); }
+                    Main.logger_instance.Warning("Save Manager : Error when deserializing the file");
                     error = true;
                 }
             }
-            else
-            {
-                if (Main.debug) { Main.logger_instance.Msg("Save Manager : Config file not found"); }
-                error = true;
-            }
+            else { error = true; }
             if (error)
             {
+                Main.logger_instance.Msg("Save Manager : Generate default config");
                 data = Get_DefaultConfig();
                 Save();
             }
             Fix_Errors();
             data_duplicate = data; //Use to check for data changed
-            if (Main.debug) { Main.logger_instance.Msg("Save Manager : Data initialized"); }
+            Main.logger_instance.Msg("Save Manager : Data initialized");
             initialized = true;
         }
         Data.Mods_Structure Get_DefaultConfig()
-        {
-            if (Main.debug) { Main.logger_instance.Msg("Save Manager : Generate default data"); }
+        {            
             Data.Mods_Structure result = new Data.Mods_Structure
             {
                 ModVersion = Main.mod_version,
@@ -463,12 +458,11 @@ namespace LastEpoch_Hud.Scripts
             {
                 data_duplicate = data;
                 Save();
-                if (!Mods_Manager.instance.IsNullOrDestroyed()) { Mods_Manager.instance.UpdateMods(); }                
+                if (!Mods_Manager.instance.IsNullOrDestroyed()) { Mods_Manager.instance.ForceUpdate(); }                
             }
         }
         public void Save()
         {
-            //if (Main.debug) { Main.logger_instance.Msg("Save Manager : Save config file"); }
             string jsonString = JsonConvert.SerializeObject(data, Formatting.Indented);
             if (!Directory.Exists(path)) { Directory.CreateDirectory(path); }
             if (File.Exists(path + filename)) { File.Delete(path + filename); }

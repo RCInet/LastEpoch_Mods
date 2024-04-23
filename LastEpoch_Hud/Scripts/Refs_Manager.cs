@@ -89,9 +89,12 @@ namespace LastEpoch_Hud.Scripts
         private static readonly System.Action<bool> Action_SetOnline = new System.Action<bool>(SetOnline);
         private static void SetOnline(bool result)
         {
-            if (Main.debug) { Main.logger_instance.Msg("Refs Manager : SetOnline = " + result); }
-            online = result;
-            if (!Mods_Manager.instance.IsNullOrDestroyed()) { Mods_Manager.instance.SetOnline(result); }
+            if (online != result)
+            {
+                Main.logger_instance.Msg("Refs Manager : Online = " + result);
+                online = result;
+                if (!Mods_Manager.instance.IsNullOrDestroyed()) { Mods_Manager.instance.SetActive(result); }
+            }
         }
     }
 }
