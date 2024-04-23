@@ -8,7 +8,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
     public class Character_PermanentBuffs : MonoBehaviour
     {
         public static Character_PermanentBuffs instance { get; private set; }
-        public Character_PermanentBuffs(System.IntPtr ptr) : base(ptr) { }
+        public Character_PermanentBuffs(System.IntPtr ptr) : base(ptr) { }        
         public struct PermanentBuff
         {
             public string Name;
@@ -31,7 +31,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
         }
         void Update()
         {
-            if (!Save_Manager.instance.IsNullOrDestroyed())
+            if ((!Save_Manager.instance.IsNullOrDestroyed()) && (!force_disable))
             {
                 if ((Buff_Enable) && (!Running)) { StartBuffs(); }
                 else if (Running)
@@ -57,9 +57,11 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                 }
             }
             else
-            {                
-                if (Running) { Running = false; }
-                if (!Buff_Enable) { RemoveBuffs(); }                
+            {
+                Running = false;
+                Buff_Enable = false;
+                RemoveBuffs();
+                if (force_disable) { this.gameObject.active = false; }
             }
         }        
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -73,7 +75,27 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
             if (!Hud_Manager.hud_object.IsNullOrDestroyed()) { return Hud_Manager.hud_object.active; }
             else { return false; }
         }        
-                
+          
+        public void Enable()
+        {
+            if (!Save_Manager.instance.IsNullOrDestroyed())
+            {
+                if (Save_Manager.instance.data.Character.PermanentBuffs.Enable_Mod)
+                {
+                    if (Main.debug) { Main.logger_instance.Msg("Character_PermanentBuffs : Enable"); }
+                    force_disable = false;
+                    this.gameObject.active = true;
+                }
+                else { Disable(); }
+            }
+        }
+        public void Disable()
+        {
+            if (Main.debug) { Main.logger_instance.Msg("Character_PermanentBuffs : Disable"); }
+            force_disable = true;
+        }
+
+        private bool force_disable = false;
         private bool Buff_Enable = false;
         private bool Running = false;
         private bool Starting = false;
