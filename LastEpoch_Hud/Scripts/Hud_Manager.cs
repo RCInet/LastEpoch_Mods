@@ -50,7 +50,7 @@ namespace LastEpoch_Hud.Scripts
             }            
         }
 
-        public void Init_AssetsBundle()
+        void Init_AssetsBundle()
         {
             asset_bundle_initializing = true;
             if (Main.debug) { Main.logger_instance.Msg("Hud Manager : Initialize assets bundle"); }
@@ -62,7 +62,7 @@ namespace LastEpoch_Hud.Scripts
             else { Main.logger_instance.Error("Hud Manager : " + asset_bundle_name + " Not Found in Assets directory"); }
             asset_bundle_initializing = false;
         }
-        public void Init_Hud()
+        void Init_Hud()
         {
             hud_initializing = true;
             if (Main.debug) { Main.logger_instance.Msg("Hud Manager : Load hud object in assets"); }
@@ -94,20 +94,22 @@ namespace LastEpoch_Hud.Scripts
             }
             hud_initializing = false;
         }
-        public void Init_Hud_Refs()
+        void Init_Hud_Refs()
         {
-            if (Main.debug) { Main.logger_instance.Msg("Hud Manager : Initialize hud refs"); }
-            Hud_Base.Set_Events();
+            if (Main.debug) { Main.logger_instance.Msg("Hud Manager : Initialize hud refs"); }            
             Hud_Menu.Set_Events();
 
             Content.content_obj = Functions.GetChild(hud_object, "Content");
             Content.Character.Get_Refs();
+            Content.Character.Set_Events();
             Content.Character.Set_Active(false);
 
             Content.Items.Get_Refs();
+            Content.Items.Set_Events();
             Content.Items.Set_Active(false);
 
             Content.Scenes.Get_Refs();
+            Content.Scenes.Set_Events();
             Content.Scenes.Set_Active(false);
 
             Content.Skills.Get_Refs();
@@ -116,7 +118,7 @@ namespace LastEpoch_Hud.Scripts
             //Content.Headhunter.Get_Refs();
             Content.Headhunter.Set_Active(false);
         }
-        public void Init_UserData()
+        void Init_UserData()
         {
             data_initializing = true;
             if ((Save_Manager.instance.initialized) && (!Save_Manager.instance.data.IsNullOrDestroyed()))
@@ -127,11 +129,15 @@ namespace LastEpoch_Hud.Scripts
                 bool scenes = Content.Scenes.Init_UserData();
                 bool skills = Content.Skills.Init_UserData();
                 bool headhunter = Content.Headhunter.Init_Data();
-                if ((character) && (items) && (scenes) && (skills)) { data_initialized = true; } // && (headhunter))
+                if ((character) && (items) && (scenes) && (skills)) // && (headhunter))
+                {
+                    if (Main.debug) { Main.logger_instance.Msg("Hud Manager : Initialized"); }
+                    data_initialized = true;
+                }
             }
             data_initializing = false;
         }
-        public void Update_Refs()
+        void Update_Refs()
         {
             if ((hud_canvas.IsNullOrDestroyed()) && (!hud_object.IsNullOrDestroyed())) { hud_canvas = hud_object.GetComponent<Canvas>(); }            
             if ((asset_bundle.IsNullOrDestroyed()) && (!asset_bundle_initializing)) { Init_AssetsBundle(); }
@@ -139,18 +145,18 @@ namespace LastEpoch_Hud.Scripts
             {
                 if ((game_canvas.IsNullOrDestroyed()) && (Refs_Manager.game_uibase.canvases.Count > 0)) { game_canvas = Refs_Manager.game_uibase.canvases[0]; }
                 if ((game_pause_menu.IsNullOrDestroyed()) || (Hud_Base.Default_PauseMenu_Btns.IsNullOrDestroyed())) { Hud_Base.Get_DefaultPauseMenu(); }
-                if (Hud_Base.Get_DefaultPauseMenu_Open()) { Hud_Base.Toogle_DefaultPauseMenu(false); Hud_Base.Get_DefaultPauseMenu_Btns(); }
+                if (Hud_Base.Get_DefaultPauseMenu_Open()) { Hud_Base.Toogle_DefaultPauseMenu(false); }
             }
             if ((!asset_bundle.IsNullOrDestroyed()) && (hud_object.IsNullOrDestroyed()) && (!hud_initializing)) { Init_Hud(); }
         }
-        public void Update_Hud_Scale()
+        void Update_Hud_Scale()
         {
             if ((!Refs_Manager.game_uibase.IsNullOrDestroyed()) && (!game_canvas.IsNullOrDestroyed()) && (!hud_canvas.IsNullOrDestroyed()))
             {
                 if (hud_canvas.scaleFactor != game_canvas.scaleFactor) { hud_canvas.scaleFactor = game_canvas.scaleFactor; }
             }
         } 
-        public void Update_Hud_Content()
+        void Update_Hud_Content()
         {
             if ((Content.Character.enable) && (Content.Character.need_update)) { Content.Character.Update_PlayerData(); }            
             if ((Content.Character.enable) && (Content.Character.controls_initialized)) { Content.Character.UpdateVisuals(); }
@@ -162,7 +168,7 @@ namespace LastEpoch_Hud.Scripts
             if ((Content.Scenes.enable) && (Content.Scenes.controls_initialized)) { Content.Scenes.UpdateVisuals(); }
             if ((Content.Skills.enable) && (Content.Skills.controls_initialized)) { Content.Skills.UpdateVisuals(); }
         }
-        public bool IsPauseOpen()
+        bool IsPauseOpen()
         {
             if (!game_pause_menu.IsNullOrDestroyed()) { return game_pause_menu.active; }
             else { return false; }
@@ -171,52 +177,6 @@ namespace LastEpoch_Hud.Scripts
         public class Hooks
         {
             //All Hooks have to be replace by Unity Actions
-            [HarmonyPatch(typeof(Button), "OnPointerClick")]
-            public class Button_OnPointerClick
-            {
-                [HarmonyPostfix]
-                static void Postfix(ref Button __instance, UnityEngine.EventSystems.PointerEventData __0)
-                {
-                    if (!hud_object.IsNullOrDestroyed())
-                    {
-                        if ((hud_object.active) && (!__instance.IsNullOrDestroyed()))
-                        {
-                            if (__instance.gameObject.name.Contains("Btn_Character_"))
-                            {
-                                switch (__instance.name)
-                                {
-                                    case "Btn_Character_Cheats_LevelOnce": { Mods.Character.Character_Level.LevelUpOnce(); break; }
-                                    case "Btn_Character_Cheats_LevelToMax": { Mods.Character.Character_Level.LevelUptoMax(); break; }
-                                    case "Btn_Character_Cheats_CompleteQuest": { Mods.Character.Character_MainQuest.Complete(); break; }
-                                    case "Btn_Character_Cheats_Masterie": { Mods.Character.Character_Masteries.ResetChooseMasterie(); break; }
-                                    case "Btn_Character_Cheats_AddRunes": { Mods.Character.Character_Materials.GetAllRunesX99(); break; }
-                                    case "Btn_Character_Cheats_AddGlyphs": { Mods.Character.Character_Materials.GetAllGlyphsX99(); break; }
-                                    case "Btn_Character_Cheats_AddAffixs": { Mods.Character.Character_Materials.GetAllShardsX10(); break; }
-                                    case "Btn_Character_Cheats_DicoverAllBlessings": { Mods.Character.Character_Blessings_Hooks.DiscoverAllBlessings(); break; }
-
-                                    case "Btn_Character_Data_Save": { Content.Character.Data.Save_Click(); break; }
-                                }
-                            }
-                            else if (__instance.gameObject.name.Contains("Btn_Items_"))
-                            {
-                                switch (__instance.name)
-                                {
-                                    case "Btn_Items_ForceDrop_Drop": { Content.Items.ForceDrop.Drop(); break; }
-                                }
-                            }
-                            else if (__instance.gameObject.name.Contains("Btn_Scenes_"))
-                            {
-                                switch (__instance.name)
-                                {
-                                    case "Btn_Scenes_Camera_Reset": { Mods.Camera.Camera_Override.ResetToDefault(); break; }
-                                    case "Btn_Scenes_Camera_Set": { Mods.Camera.Camera_Override.Set(); break; }
-                                }
-                            }
-                        }
-                    }                    
-                }
-            }
-               
             [HarmonyPatch(typeof(Toggle), "OnPointerClick")]
             public class Toggle_OnPointerClick
             {
@@ -231,21 +191,6 @@ namespace LastEpoch_Hud.Scripts
                             {
                                 switch (__instance.name)
                                 {
-                                    case "Toggle_Character_Cheats_GodMode": { Save_Manager.instance.data.Character.Cheats.Enable_GodMode = __instance.isOn; break; }
-                                    case "Toggle_Character_Cheats_LowLife": { Save_Manager.instance.data.Character.Cheats.Enable_LowLife = __instance.isOn; break; }
-                                    case "Toggle_Character_Cheats_AllowChooseBlessings": { Save_Manager.instance.data.Character.Cheats.Enable_CanChooseBlessing = __instance.isOn; break; }
-                                    case "Toggle_Character_Cheats_UnlockAllIdols": { Save_Manager.instance.data.Character.Cheats.Enable_UnlockAllIdolsSlots = __instance.isOn; break; }
-                                    case "Toggle_Character_Cheats_AutoPotions": { Save_Manager.instance.data.Character.Cheats.Enable_AutoPot = __instance.isOn; break; }
-                                    case "Toggle_Character_Cheats_DensityMultiplier": { Save_Manager.instance.data.Character.Cheats.Enable_DensityMultiplier = __instance.isOn; break; }
-                                    case "Toggle_Character_Cheats_ExperienceMultiplier": { Save_Manager.instance.data.Character.Cheats.Enable_ExperienceMultiplier = __instance.isOn; break; }
-                                    case "Toggle_Character_Cheats_AbilityMultiplier": { Save_Manager.instance.data.Character.Cheats.Enable_AbilityMultiplier = __instance.isOn; break; }
-                                    case "Toggle_Character_Cheats_FavorMultiplier": { Save_Manager.instance.data.Character.Cheats.Enable_FavorMultiplier = __instance.isOn; break; }
-                                    case "Toggle_Character_Cheats_ItemDropMultiplier": { Save_Manager.instance.data.Character.Cheats.Enable_ItemDropMultiplier = __instance.isOn; break; }
-                                    case "Toggle_Character_Cheats_ItemDropChance": { Save_Manager.instance.data.Character.Cheats.Enable_ItemDropChance = __instance.isOn; break; }
-                                    case "Toggle_Character_Cheats_GoldDropMultiplier": { Save_Manager.instance.data.Character.Cheats.Enable_GoldDropMultiplier = __instance.isOn; break; }
-                                    case "Toggle_Character_Cheats_GoldDropChance": { Save_Manager.instance.data.Character.Cheats.Enable_GoldDropChance = __instance.isOn; break; }
-                                    case "Toggle_Character_Cheats_UnlockAllWaypoints": { Save_Manager.instance.data.Character.Cheats.Enable_WaypointsUnlock = __instance.isOn; break; }
-
                                     case "Toggle_Character_Data_Died": { if (!Refs_Manager.player_data.IsNullOrDestroyed()) { Refs_Manager.player_data.Died = Content.Character.Data.died_toggle.isOn; } break; }
                                     case "Toggle_Character_Data_Hardcore": { if (!Refs_Manager.player_data.IsNullOrDestroyed()) { Refs_Manager.player_data.Hardcore = Content.Character.Data.hardcore_toggle.isOn; } break; }
                                     case "Toggle_Character_Data_Masochist": { if (!Refs_Manager.player_data.IsNullOrDestroyed()) { Refs_Manager.player_data.Masochist = Content.Character.Data.masochist_toggle.isOn; } break; }
@@ -1008,7 +953,12 @@ namespace LastEpoch_Hud.Scripts
                 {
                     GameObject Draw_over_login_canvas = Functions.GetChild(UIBase.instance.gameObject, "Draw Over Login Canvas");
                     if (!Draw_over_login_canvas.IsNullOrDestroyed()) { game_pause_menu = Functions.GetChild(Draw_over_login_canvas, "Menu"); }
-                    if (!game_pause_menu.IsNullOrDestroyed()) { Default_PauseMenu_Btns = Functions.GetChild(game_pause_menu, "Menu Image"); }   
+                    if (!game_pause_menu.IsNullOrDestroyed())
+                    {
+                        Default_PauseMenu_Btns = Functions.GetChild(game_pause_menu, "Menu Image");
+                        Get_Refs();
+                        Set_Events();
+                    }   
                     result = true;
                 }
 
@@ -1027,22 +977,7 @@ namespace LastEpoch_Hud.Scripts
                     if (Chapter_Fade_Background.IsNullOrDestroyed()) { Chapter_Fade_Background = Functions.GetChild(game_pause_menu, "Chapter_Fade_Background"); }
                     if (!Chapter_Fade_Background.IsNullOrDestroyed()) { Chapter_Fade_Background.active = show; }
                 }
-            }            
-            public static void Get_DefaultPauseMenu_Btns()
-            {
-                if (!Default_PauseMenu_Btns.IsNullOrDestroyed())
-                {
-                    GameObject Btns = Functions.GetChild(Default_PauseMenu_Btns, "Buttons");
-                    if (!Btns.IsNullOrDestroyed())
-                    {
-                        Hud_Base.Btn_Resume = Functions.GetChild(Btns, "ResumeButton (1)").GetComponent<Button>();
-                        Hud_Base.Btn_Settings = Functions.GetChild(Btns, "SettingsButton").GetComponent<Button>();
-                        Hud_Base.Btn_GameGuide = Functions.GetChild(Btns, "GameButton").GetComponent<Button>();
-                        Hud_Base.Btn_LeaveGame = Functions.GetChild(Btns, "ExitToCharacterSelectButton").GetComponent<Button>();
-                        Hud_Base.Btn_ExitDesktop = Functions.GetChild(Btns, "ExitGameButton").GetComponent<Button>();                                                
-                    }
-                }
-            }            
+            }                        
             public static bool Get_DefaultPauseMenu_Open()
             {
                 if (!Default_PauseMenu_Btns.IsNullOrDestroyed())
@@ -1058,9 +993,23 @@ namespace LastEpoch_Hud.Scripts
                     if (Main.debug) { Main.logger_instance.Msg("Hud_Manager : Set default pause menu active to : " + show); }
                     Default_PauseMenu_Btns.active = show;
                 }
-            }                        
+            }
             
-            //Events
+            public static void Get_Refs()
+            {
+                if (!Default_PauseMenu_Btns.IsNullOrDestroyed())
+                {
+                    GameObject Btns = Functions.GetChild(Default_PauseMenu_Btns, "Buttons");
+                    if (!Btns.IsNullOrDestroyed())
+                    {
+                        Hud_Base.Btn_Resume = Functions.GetChild(Btns, "ResumeButton (1)").GetComponent<Button>();
+                        Hud_Base.Btn_Settings = Functions.GetChild(Btns, "SettingsButton").GetComponent<Button>();
+                        Hud_Base.Btn_GameGuide = Functions.GetChild(Btns, "GameButton").GetComponent<Button>();
+                        Hud_Base.Btn_LeaveGame = Functions.GetChild(Btns, "ExitToCharacterSelectButton").GetComponent<Button>();
+                        Hud_Base.Btn_ExitDesktop = Functions.GetChild(Btns, "ExitGameButton").GetComponent<Button>();
+                    }
+                }
+            }            
             public static void Set_Events()
             {
                 Events.Set_Base_Button_Event(hud_object, "Base", "Btn_Base_Resume", Resume_OnClick_Action);
@@ -1213,12 +1162,9 @@ namespace LastEpoch_Hud.Scripts
                         if (!character_cheats_content.IsNullOrDestroyed())
                         {
                             Cheats.godmode_toggle = Functions.Get_ToggleInPanel(character_cheats_content, "GodMode", "Toggle_Character_Cheats_GodMode");
-                            //Set_Toggle_Event(Cheats.godmode_toggle, action);
-
                             Cheats.lowlife_toggle = Functions.Get_ToggleInPanel(character_cheats_content, "ForceLowLife", "Toggle_Character_Cheats_LowLife");
                             Cheats.allow_choosing_blessing = Functions.Get_ToggleInPanel(character_cheats_content, "AllowChoosingBlessings", "Toggle_Character_Cheats_AllowChooseBlessings");
-                            Cheats.unlock_all_idols = Functions.Get_ToggleInPanel(character_cheats_content, "UnlockAllIdolsSlots", "Toggle_Character_Cheats_UnlockAllIdols");
-                            Cheats.waypoints_toggle = Functions.Get_ToggleInPanel(character_cheats_content, "WaypointsUnlock", "Toggle_Character_Cheats_UnlockAllWaypoints");
+                            Cheats.unlock_all_idols = Functions.Get_ToggleInPanel(character_cheats_content, "UnlockAllIdolsSlots", "Toggle_Character_Cheats_UnlockAllIdols");                            
 
                             Cheats.autoPot_toggle = Functions.Get_ToggleInPanel(character_cheats_content, "AutoPotions", "Toggle_Character_Cheats_AutoPotions");
                             Cheats.autopot_text = Functions.Get_TextInToggle(character_cheats_content, "AutoPotions", "Toggle_Character_Cheats_AutoPotions", "Value");
@@ -1256,7 +1202,17 @@ namespace LastEpoch_Hud.Scripts
                             Cheats.golddropchance_text = Functions.Get_TextInToggle(character_cheats_content, "GoldDropChance", "Toggle_Character_Cheats_GoldDropChance", "Value");
                             Cheats.golddropchance_slider = Functions.Get_SliderInPanel(character_cheats_content, "GoldDropChance", "Slider_Character_Cheats_GoldDropChance");
 
+                            Cheats.waypoints_toggle = Functions.Get_ToggleInPanel(character_cheats_content, "WaypointsUnlock", "Toggle_Character_Cheats_UnlockAllWaypoints");
+
+                            Cheats.level_once_button = Functions.GetChild(character_cheats_content, "Btn_Character_Cheats_LevelOnce").GetComponent<Button>();
+                            Cheats.level_max_button = Functions.GetChild(character_cheats_content, "Btn_Character_Cheats_LevelToMax").GetComponent<Button>();
+                            Cheats.complete_quest_button = Functions.GetChild(character_cheats_content, "Btn_Character_Cheats_CompleteQuest").GetComponent<Button>();
+                            Cheats.masterie_buttons = Functions.GetChild(character_cheats_content, "Btn_Character_Cheats_Masterie").GetComponent<Button>();
                             Cheats.masterie_text = Functions.Get_TextInButton(character_cheats_content, "Btn_Character_Cheats_Masterie", "Label");
+                            Cheats.add_runes_button = Functions.GetChild(character_cheats_content, "Btn_Character_Cheats_AddRunes").GetComponent<Button>();
+                            Cheats.add_glyphs_button = Functions.GetChild(character_cheats_content, "Btn_Character_Cheats_AddGlyphs").GetComponent<Button>();
+                            Cheats.add_shards_button = Functions.GetChild(character_cheats_content, "Btn_Character_Cheats_AddAffixs").GetComponent<Button>();
+                            Cheats.discover_blessings_button = Functions.GetChild(character_cheats_content, "Btn_Character_Cheats_DicoverAllBlessings").GetComponent<Button>();
                         }
                         else { Main.logger_instance.Error("Hud Manager : character_cheats_content is null"); }
 
@@ -1282,6 +1238,16 @@ namespace LastEpoch_Hud.Scripts
                             Data.soul_slider = Functions.Get_SliderInPanel(character_data_content, "Soul Embers", "Slider_Character_Data_SoulEmbers");
                         }
                         else { Main.logger_instance.Error("Hud Manager : character_data_content is null"); }
+
+                        GameObject char_data = Functions.GetChild(content_obj, "Character_Data");
+                        if (!char_data.IsNullOrDestroyed())
+                        {
+                            GameObject panel_save = Functions.GetChild(char_data, "Panel");
+                            if (!panel_save.IsNullOrDestroyed())
+                            {
+                                Data.save_button = Functions.GetChild(panel_save, "Btn_Character_Data_Save").GetComponent<Button>();
+                            }
+                        }
 
                         //Buffs
                         Buffs.enable_mod = Functions.Get_ToggleInLabel(content_obj, "Character_Buffs", "Toggle_Character_Buffs_Enable");
@@ -1357,6 +1323,42 @@ namespace LastEpoch_Hud.Scripts
                     }
                     else { Main.logger_instance.Error("Hud Manager : Character_Content is null"); }
                 }
+                public static void Set_Events()
+                {
+                    Events.Set_Toggle_Event(Cheats.godmode_toggle, Cheats.Godmode_Toggle_Action);
+                    Events.Set_Toggle_Event(Cheats.lowlife_toggle, Cheats.Lowlife_Toggle_Action);
+                    Events.Set_Toggle_Event(Cheats.allow_choosing_blessing, Cheats.AllowChooseBlessings_Toggle_Action);
+                    Events.Set_Toggle_Event(Cheats.unlock_all_idols, Cheats.UnlockAllIdols_Toggle_Action);                    
+                    Events.Set_Toggle_Event(Cheats.autoPot_toggle, Cheats.AutoPot_Toggle_Action);
+
+                    Events.Set_Toggle_Event(Cheats.density_toggle, Cheats.Density_Toggle_Action);
+
+                    Events.Set_Toggle_Event(Cheats.experience_toggle, Cheats.Experience_Toggle_Action);
+
+                    Events.Set_Toggle_Event(Cheats.ability_toggle, Cheats.Ability_Toggle_Action);
+
+                    Events.Set_Toggle_Event(Cheats.favor_toggle, Cheats.Favor_Toggle_Action);
+
+                    Events.Set_Toggle_Event(Cheats.itemdropmultiplier_toggle, Cheats.ItemDropMulti_Toggle_Action);
+
+                    Events.Set_Toggle_Event(Cheats.itemdropchance_toggle, Cheats.ItemDropChance_Toggle_Action);
+
+                    Events.Set_Toggle_Event(Cheats.golddropmultiplier_toggle, Cheats.GoldMulti_Toggle_Action);
+                    
+                    Events.Set_Toggle_Event(Cheats.golddropchance_toggle, Cheats.GoldChance_Toggle_Action);
+                    
+                    Events.Set_Toggle_Event(Cheats.waypoints_toggle, Cheats.Waypoints_Toggle_Action);
+                    Events.Set_Button_Event(Cheats.level_once_button, Cheats.LevelUpOnce_OnClick_Action);
+                    Events.Set_Button_Event(Cheats.level_max_button, Cheats.LevelUpMax_OnClick_Action);                    
+                    Events.Set_Button_Event(Cheats.complete_quest_button, Cheats.CompleteQuest_OnClick_Action);
+                    Events.Set_Button_Event(Cheats.masterie_buttons, Cheats.Masteries_OnClick_Action);
+                    Events.Set_Button_Event(Cheats.add_runes_button, Cheats.AddRunes_OnClick_Action);
+                    Events.Set_Button_Event(Cheats.add_glyphs_button, Cheats.AddGlyphs_OnClick_Action);
+                    Events.Set_Button_Event(Cheats.add_shards_button, Cheats.AddAffixs_OnClick_Action);
+                    Events.Set_Button_Event(Cheats.discover_blessings_button, Cheats.DiscoverAllBlessings_OnClick_Action);
+
+                    Events.Set_Button_Event(Data.save_button, Data.Save_OnClick_Action);
+                }
                 public static void Set_Active(bool show)
                 {
                     if (!content_obj.IsNullOrDestroyed())
@@ -1381,8 +1383,6 @@ namespace LastEpoch_Hud.Scripts
                     {
                         if ((Save_Manager.instance.initialized) && (!Save_Manager.instance.data.IsNullOrDestroyed()))
                         {
-                            if (Main.debug) { Main.logger_instance.Msg("Hud Manager : Setup character options"); }
-
                             //Content.Character.Cheats
                             Cheats.godmode_toggle.isOn = Save_Manager.instance.data.Character.Cheats.Enable_GodMode;
                             Cheats.lowlife_toggle.isOn = Save_Manager.instance.data.Character.Cheats.Enable_LowLife;
@@ -1417,8 +1417,6 @@ namespace LastEpoch_Hud.Scripts
                             Cheats.golddropchance_slider.value = Save_Manager.instance.data.Character.Cheats.GoldDropChance;
 
                             Cheats.waypoints_toggle.isOn = Save_Manager.instance.data.Character.Cheats.Enable_WaypointsUnlock;
-
-                            //Content.Character.Data
 
                             //Content.Character.Buffs
                             Buffs.enable_mod.isOn = Save_Manager.instance.data.Character.PermanentBuffs.Enable_Mod;
@@ -1538,93 +1536,173 @@ namespace LastEpoch_Hud.Scripts
                 public class Cheats
                 {
                     public static Toggle godmode_toggle = null;
+                    public static readonly System.Action<bool> Godmode_Toggle_Action = new System.Action<bool>(Set_Godmode_Enable);
+                    private static void Set_Godmode_Enable(bool enable)
+                    {
+                        Save_Manager.instance.data.Character.Cheats.Enable_GodMode = enable;
+                    }
+
                     public static Toggle lowlife_toggle = null;
+                    public static readonly System.Action<bool> Lowlife_Toggle_Action = new System.Action<bool>(Set_Lowlife_Enable);
+                    private static void Set_Lowlife_Enable(bool enable)
+                    {
+                        Save_Manager.instance.data.Character.Cheats.Enable_LowLife = enable;
+                    }
+
                     public static Toggle allow_choosing_blessing = null;
+                    public static readonly System.Action<bool> AllowChooseBlessings_Toggle_Action = new System.Action<bool>(Set_AllowChooseBlessings_Enable);
+                    private static void Set_AllowChooseBlessings_Enable(bool enable)
+                    {
+                        Save_Manager.instance.data.Character.Cheats.Enable_CanChooseBlessing = enable;
+                    }
+
                     public static Toggle unlock_all_idols = null;
-                    public static Toggle waypoints_toggle = null;
+                    public static readonly System.Action<bool> UnlockAllIdols_Toggle_Action = new System.Action<bool>(Set_UnlockAllIdols_Enable);
+                    private static void Set_UnlockAllIdols_Enable(bool enable)
+                    {
+                        Save_Manager.instance.data.Character.Cheats.Enable_UnlockAllIdolsSlots = enable;
+                    }
 
                     public static Toggle autoPot_toggle = null;
+                    public static readonly System.Action<bool> AutoPot_Toggle_Action = new System.Action<bool>(Set_AutoPot_Enable);
+                    private static void Set_AutoPot_Enable(bool enable)
+                    {
+                        Save_Manager.instance.data.Character.Cheats.Enable_AutoPot = enable;
+                    }
                     public static Text autopot_text = null;
                     public static Slider autopot_slider = null;
                                         
                     public static Toggle density_toggle = null;
+                    public static readonly System.Action<bool> Density_Toggle_Action = new System.Action<bool>(Set_Density_Enable);
+                    private static void Set_Density_Enable(bool enable)
+                    {
+                        Save_Manager.instance.data.Character.Cheats.Enable_DensityMultiplier = enable;
+                    }
                     public static Text density_text = null;
                     public static Slider density_slider = null;
                     
                     public static Toggle experience_toggle = null;
+                    public static readonly System.Action<bool> Experience_Toggle_Action = new System.Action<bool>(Set_Experience_Enable);
+                    private static void Set_Experience_Enable(bool enable)
+                    {
+                        Save_Manager.instance.data.Character.Cheats.Enable_ExperienceMultiplier = enable;
+                    }
                     public static Text experience_text = null;
                     public static Slider experience_slider = null;
                     
                     public static Toggle ability_toggle = null;
+                    public static readonly System.Action<bool> Ability_Toggle_Action = new System.Action<bool>(Set_Ability_Enable);
+                    private static void Set_Ability_Enable(bool enable)
+                    {
+                        Save_Manager.instance.data.Character.Cheats.Enable_AbilityMultiplier = enable;
+                    }
                     public static Text ability_text = null;
                     public static Slider ability_slider = null;
                     
                     public static Toggle favor_toggle = null;
+                    public static readonly System.Action<bool> Favor_Toggle_Action = new System.Action<bool>(Set_Favor_Enable);
+                    private static void Set_Favor_Enable(bool enable)
+                    {
+                        Save_Manager.instance.data.Character.Cheats.Enable_FavorMultiplier = enable;
+                    }
                     public static Text favor_text = null;
                     public static Slider favor_slider = null;
                     
                     public static Toggle itemdropmultiplier_toggle = null;
+                    public static readonly System.Action<bool> ItemDropMulti_Toggle_Action = new System.Action<bool>(Set_ItemDropMulti_Enable);
+                    private static void Set_ItemDropMulti_Enable(bool enable)
+                    {
+                        Save_Manager.instance.data.Character.Cheats.Enable_ItemDropMultiplier = enable;
+                    }
                     public static Text itemdropmultiplier_text = null;
                     public static Slider itemdropmultiplier_slider = null;
                     
                     public static Toggle itemdropchance_toggle = null;
+                    public static readonly System.Action<bool> ItemDropChance_Toggle_Action = new System.Action<bool>(Set_ItemDropChance_Enable);
+                    private static void Set_ItemDropChance_Enable(bool enable)
+                    {
+                        Save_Manager.instance.data.Character.Cheats.Enable_ItemDropChance = enable;
+                    }
                     public static Text itemdropchance_text = null;
                     public static Slider itemdropchance_slider = null;
                     
                     public static Toggle golddropmultiplier_toggle = null;
+                    public static readonly System.Action<bool> GoldMulti_Toggle_Action = new System.Action<bool>(Set_GoldMulti_Enable);
+                    private static void Set_GoldMulti_Enable(bool enable)
+                    {
+                        Save_Manager.instance.data.Character.Cheats.Enable_GoldDropMultiplier = enable;
+                    }
                     public static Text golddropmultiplier_text = null;
                     public static Slider golddropmultiplier_slider = null;
                     
                     public static Toggle golddropchance_toggle = null;
+                    public static readonly System.Action<bool> GoldChance_Toggle_Action = new System.Action<bool>(Set_GoldChance_Enable);
+                    private static void Set_GoldChance_Enable(bool enable)
+                    {
+                        Save_Manager.instance.data.Character.Cheats.Enable_GoldDropChance = enable;
+                    }
                     public static Text golddropchance_text = null;
                     public static Slider golddropchance_slider = null;
 
-                    public static Text masterie_text = null;
+                    public static Toggle waypoints_toggle = null;
+                    public static readonly System.Action<bool> Waypoints_Toggle_Action = new System.Action<bool>(Set_Waypoints_Enable);
+                    private static void Set_Waypoints_Enable(bool enable)
+                    {
+                        Save_Manager.instance.data.Character.Cheats.Enable_WaypointsUnlock = enable;
+                    }
 
-                    //Btns
-                    private static readonly System.Action LevelUpOnce_OnClick_Action = new System.Action(LevelUpOnce_Click);
+                    public static Button level_once_button = null;
+                    public static readonly System.Action LevelUpOnce_OnClick_Action = new System.Action(LevelUpOnce_Click);
                     public static void LevelUpOnce_Click()
                     {
                         Mods.Character.Character_Level.LevelUpOnce();
                     }
 
-                    private static readonly System.Action LevelUpMax_OnClick_Action = new System.Action(LevelUpMax_Click);
+                    public static Button level_max_button = null;
+                    public static readonly System.Action LevelUpMax_OnClick_Action = new System.Action(LevelUpMax_Click);
                     public static void LevelUpMax_Click()
                     {
                         Mods.Character.Character_Level.LevelUptoMax();
                     }
 
-                    private static readonly System.Action CompleteQuest_OnClick_Action = new System.Action(CompleteQuest_Click);
+                    public static Button complete_quest_button = null;
+                    public static readonly System.Action CompleteQuest_OnClick_Action = new System.Action(CompleteQuest_Click);
                     public static void CompleteQuest_Click()
                     {
                         Mods.Character.Character_MainQuest.Complete();
                     }
 
-                    private static readonly System.Action Masteries_OnClick_Action = new System.Action(Masteries_Click);
+                    public static Button masterie_buttons = null;
+                    public static readonly System.Action Masteries_OnClick_Action = new System.Action(Masteries_Click);
                     public static void Masteries_Click()
                     {
                         Mods.Character.Character_Masteries.ResetChooseMasterie();
                     }
+                    public static Text masterie_text = null;
 
-                    private static readonly System.Action AddRunes_OnClick_Action = new System.Action(AddRunes_Click);
+                    public static Button add_runes_button = null;
+                    public static readonly System.Action AddRunes_OnClick_Action = new System.Action(AddRunes_Click);
                     public static void AddRunes_Click()
                     {
                         Mods.Character.Character_Materials.GetAllRunesX99();
                     }
 
-                    private static readonly System.Action AddGlyphs_OnClick_Action = new System.Action(AddGlyphs_Click);
+                    public static Button add_glyphs_button = null;
+                    public static readonly System.Action AddGlyphs_OnClick_Action = new System.Action(AddGlyphs_Click);
                     public static void AddGlyphs_Click()
                     {
                         Mods.Character.Character_Materials.GetAllGlyphsX99();
                     }
 
-                    private static readonly System.Action AddAffixs_OnClick_Action = new System.Action(AddAffixs_Click);
+                    public static Button add_shards_button = null;
+                    public static readonly System.Action AddAffixs_OnClick_Action = new System.Action(AddAffixs_Click);
                     public static void AddAffixs_Click()
                     {
                         Mods.Character.Character_Materials.GetAllShardsX10();
                     }
 
-                    private static readonly System.Action DiscoverAllBlessings_OnClick_Action = new System.Action(DiscoverAllBlessings_Click);
+                    public static Button discover_blessings_button = null;
+                    public static readonly System.Action DiscoverAllBlessings_OnClick_Action = new System.Action(DiscoverAllBlessings_Click);
                     public static void DiscoverAllBlessings_Click()
                     {
                         Mods.Character.Character_Blessings_Hooks.DiscoverAllBlessings();
@@ -1644,8 +1722,9 @@ namespace LastEpoch_Hud.Scripts
                     public static Slider lantern_slider = null;
                     public static Text soul_text = null;
                     public static Slider soul_slider = null;
+                    public static Button save_button = null;
 
-                    private static readonly System.Action Save_OnClick_Action = new System.Action(Save_Click);
+                    public static readonly System.Action Save_OnClick_Action = new System.Action(Save_Click);
                     public static void Save_Click()
                     {
                         if (!Refs_Manager.player_data.IsNullOrDestroyed()) { Refs_Manager.player_data.SaveData(); }
@@ -1917,6 +1996,10 @@ namespace LastEpoch_Hud.Scripts
                         }
                     }
                 }
+                public static void Set_Events()
+                {
+                    Events.Set_Button_Event(ForceDrop.forcedrop_drop_button, ForceDrop.Drop_OnClick_Action);
+                }
                 public static void Set_Active(bool show)
                 {
                     if (!content_obj.IsNullOrDestroyed())
@@ -1941,8 +2024,6 @@ namespace LastEpoch_Hud.Scripts
                     {
                         if ((Save_Manager.instance.initialized) && (!Save_Manager.instance.data.IsNullOrDestroyed()))
                         {
-                            if (Main.debug) { Main.logger_instance.Msg("Hud Manager : Setup items options"); }
-
                             //Drop
                             Drop.force_unique_toggle.isOn = Save_Manager.instance.data.Items.Drop.Enable_ForceUnique;
                             Drop.force_set_toggle.isOn = Save_Manager.instance.data.Items.Drop.Enable_ForceSet;
@@ -2510,6 +2591,8 @@ namespace LastEpoch_Hud.Scripts
                         if ((item_type > -1) && (item_rarity > -1) && (item_subtype > -1)) { btn_enable = true; }
                         else { btn_enable = false; }
                     }
+
+                    public static readonly System.Action Drop_OnClick_Action = new System.Action(Drop);
                     public static void Drop()
                     {
                         if (btn_enable)
@@ -2702,6 +2785,9 @@ namespace LastEpoch_Hud.Scripts
                             Camera.angle_maximum_slider = Functions.Get_SliderInPanel(scene_camera_content, "AngleMaximum", "Slider_Scenes_Camera_AngleMaximum");
 
                             Camera.zoom_load_on_start_toggle = Functions.Get_ToggleInPanel(scene_camera_content, "LoadOnStart", "Toggle_Scenes_Camera_LoadOnStart");
+
+                            Camera.reset_button = Functions.GetChild(scene_camera_content, "Btn_Scenes_Camera_Reset").GetComponent<Button>();
+                            Camera.set_button = Functions.GetChild(scene_camera_content, "Btn_Scenes_Camera_Set").GetComponent<Button>();
                         }
                         GameObject scene_dungeons_content = Functions.GetViewportContent(content_obj, "Center", "Scenes_Dungeons_Content");
                         if (!scene_dungeons_content.IsNullOrDestroyed())
@@ -2741,6 +2827,11 @@ namespace LastEpoch_Hud.Scripts
                         }
                     }
                 }
+                public static void Set_Events()
+                {
+                    Events.Set_Button_Event(Camera.reset_button, Camera.Reset_OnClick_Action);
+                    Events.Set_Button_Event(Camera.set_button, Camera.Set_OnClick_Action);
+                }
                 public static void Set_Active(bool show)
                 {
                     if (!content_obj.IsNullOrDestroyed())
@@ -2765,7 +2856,6 @@ namespace LastEpoch_Hud.Scripts
                     {
                         if ((Save_Manager.instance.initialized) && (!Save_Manager.instance.data.IsNullOrDestroyed()))
                         {
-                            if (Main.debug) { Main.logger_instance.Msg("Hud Manager : Setup scenes options"); }
                             Camera.enable_mod.isOn = Save_Manager.instance.data.Scenes.Camera.Enable_Mod;
 
                             Camera.zoom_minimum_toggle.isOn = Save_Manager.instance.data.Scenes.Camera.Enable_ZoomMinimum;
@@ -2883,6 +2973,20 @@ namespace LastEpoch_Hud.Scripts
                     public static Slider angle_maximum_slider = null;
 
                     public static Toggle zoom_load_on_start_toggle = null;
+
+                    public static Button reset_button = null;
+                    public static Button set_button = null;
+
+                    public static readonly System.Action Reset_OnClick_Action = new System.Action(Reset);
+                    public static void Reset()
+                    {
+                        Mods.Camera.Camera_Override.ResetToDefault();
+                    }
+                    public static readonly System.Action Set_OnClick_Action = new System.Action(Set);
+                    public static void Set()
+                    {
+                        Mods.Camera.Camera_Override.Set();
+                    }
                 }
                 public class Minimap
                 {
@@ -3135,144 +3239,141 @@ namespace LastEpoch_Hud.Scripts
                     {
                         if ((Save_Manager.instance.initialized) && (!Save_Manager.instance.data.IsNullOrDestroyed()))
                         {
-                            if (Main.debug) { Main.logger_instance.Msg("Hud Manager : Setup skills options"); }
-                            {
-                                SkillTree.enable_remove_mana_cost_toggle.isOn = Save_Manager.instance.data.Skills.Enable_RemoveManaCost;
-                                SkillTree.enable_remove_channel_cost_toggle.isOn = Save_Manager.instance.data.Skills.Enable_RemoveChannelCost;
-                                SkillTree.enable_mana_regen_when_channeling_toggle.isOn = Save_Manager.instance.data.Skills.Enable_NoManaRegenWhileChanneling;
-                                SkillTree.enable_dont_stop_oom_toggle.isOn = Save_Manager.instance.data.Skills.Enable_StopWhenOutOfMana;
-                                SkillTree.enable_no_cooldown_toggle.isOn = Save_Manager.instance.data.Skills.Enable_RemoveCooldown;
-                                SkillTree.enable_unlock_all_skills_toggle.isOn = Save_Manager.instance.data.Skills.Enable_AllSkills;
-                                SkillTree.enable_remove_node_req_toggle.isOn = Save_Manager.instance.data.Skills.Disable_NodeRequirement;
+                            SkillTree.enable_remove_mana_cost_toggle.isOn = Save_Manager.instance.data.Skills.Enable_RemoveManaCost;
+                            SkillTree.enable_remove_channel_cost_toggle.isOn = Save_Manager.instance.data.Skills.Enable_RemoveChannelCost;
+                            SkillTree.enable_mana_regen_when_channeling_toggle.isOn = Save_Manager.instance.data.Skills.Enable_NoManaRegenWhileChanneling;
+                            SkillTree.enable_dont_stop_oom_toggle.isOn = Save_Manager.instance.data.Skills.Enable_StopWhenOutOfMana;
+                            SkillTree.enable_no_cooldown_toggle.isOn = Save_Manager.instance.data.Skills.Enable_RemoveCooldown;
+                            SkillTree.enable_unlock_all_skills_toggle.isOn = Save_Manager.instance.data.Skills.Enable_AllSkills;
+                            SkillTree.enable_remove_node_req_toggle.isOn = Save_Manager.instance.data.Skills.Disable_NodeRequirement;
 
-                                SkillTree.enable_specialization_slots_toggle.isOn = Save_Manager.instance.data.Skills.Enable_SpecializationSlots;
-                                SkillTree.specialization_slots_slider.value = Save_Manager.instance.data.Skills.SpecializationSlots;
+                            SkillTree.enable_specialization_slots_toggle.isOn = Save_Manager.instance.data.Skills.Enable_SpecializationSlots;
+                            SkillTree.specialization_slots_slider.value = Save_Manager.instance.data.Skills.SpecializationSlots;
 
-                                SkillTree.enable_skill_level_toggle.isOn = Save_Manager.instance.data.Skills.Enable_SkillLevel;
-                                SkillTree.skill_level_slider.value = Save_Manager.instance.data.Skills.SkillLevel;
+                            SkillTree.enable_skill_level_toggle.isOn = Save_Manager.instance.data.Skills.Enable_SkillLevel;
+                            SkillTree.skill_level_slider.value = Save_Manager.instance.data.Skills.SkillLevel;
 
-                                SkillTree.enable_passive_points_toggle.isOn = Save_Manager.instance.data.Skills.Enable_PassivePoints;
-                                SkillTree.passive_points_slider.value = Save_Manager.instance.data.Skills.PassivePoints;
+                            SkillTree.enable_passive_points_toggle.isOn = Save_Manager.instance.data.Skills.Enable_PassivePoints;
+                            SkillTree.passive_points_slider.value = Save_Manager.instance.data.Skills.PassivePoints;
 
-                                SkillTree.enable_movement_no_target_toggle.isOn = Save_Manager.instance.data.Skills.MovementSkills.Enable_NoTarget;
-                                SkillTree.enable_movement_immune_toggle.isOn = Save_Manager.instance.data.Skills.MovementSkills.Enable_ImmuneDuringMovement;
-                                SkillTree.enable_movement_simple_path_toggle.isOn = Save_Manager.instance.data.Skills.MovementSkills.Disable_SimplePath;
+                            SkillTree.enable_movement_no_target_toggle.isOn = Save_Manager.instance.data.Skills.MovementSkills.Enable_NoTarget;
+                            SkillTree.enable_movement_immune_toggle.isOn = Save_Manager.instance.data.Skills.MovementSkills.Enable_ImmuneDuringMovement;
+                            SkillTree.enable_movement_simple_path_toggle.isOn = Save_Manager.instance.data.Skills.MovementSkills.Disable_SimplePath;
 
-                                //Companions
-                                Companions.enable_maximum_companions_toggle.isOn = Save_Manager.instance.data.Skills.Companion.Enable_Limit;
-                                Companions.maximum_companions_slider.value = Save_Manager.instance.data.Skills.Companion.Limit;
+                            //Companions
+                            Companions.enable_maximum_companions_toggle.isOn = Save_Manager.instance.data.Skills.Companion.Enable_Limit;
+                            Companions.maximum_companions_slider.value = Save_Manager.instance.data.Skills.Companion.Limit;
 
-                                Companions.enable_wolf_summon_maximum_toggle.isOn = Save_Manager.instance.data.Skills.Companion.Wolf.Enable_SummonMax;
+                            Companions.enable_wolf_summon_maximum_toggle.isOn = Save_Manager.instance.data.Skills.Companion.Wolf.Enable_SummonMax;
 
-                                Companions.enable_wolf_summon_limit_toggle.isOn = Save_Manager.instance.data.Skills.Companion.Wolf.Enable_SummonLimit;
-                                Companions.wolf_summon_limit_slider.value = Save_Manager.instance.data.Skills.Companion.Wolf.SummonLimit;
+                            Companions.enable_wolf_summon_limit_toggle.isOn = Save_Manager.instance.data.Skills.Companion.Wolf.Enable_SummonLimit;
+                            Companions.wolf_summon_limit_slider.value = Save_Manager.instance.data.Skills.Companion.Wolf.SummonLimit;
 
-                                Companions.enable_wolf_stun_immunity_toggle.isOn = Save_Manager.instance.data.Skills.Companion.Wolf.Enable_StunImmunity;
+                            Companions.enable_wolf_stun_immunity_toggle.isOn = Save_Manager.instance.data.Skills.Companion.Wolf.Enable_StunImmunity;
 
-                                Companions.enable_scorpion_summon_limit_toggle.isOn = Save_Manager.instance.data.Skills.Companion.Scorpion.Enable_BabyQuantity;
-                                Companions.scorpion_summon_limit_slider.value = Save_Manager.instance.data.Skills.Companion.Scorpion.BabyQuantity;
+                            Companions.enable_scorpion_summon_limit_toggle.isOn = Save_Manager.instance.data.Skills.Companion.Scorpion.Enable_BabyQuantity;
+                            Companions.scorpion_summon_limit_slider.value = Save_Manager.instance.data.Skills.Companion.Scorpion.BabyQuantity;
 
-                                //Skeletons
-                                Minions.enable_skeleton_passive_summon_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Skeletons.Enable_additionalSkeletonsFromPassives;
-                                Minions.skeleton_passive_summon_slider.value = Save_Manager.instance.data.Skills.Minions.Skeletons.additionalSkeletonsFromPassives;
+                            //Skeletons
+                            Minions.enable_skeleton_passive_summon_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Skeletons.Enable_additionalSkeletonsFromPassives;
+                            Minions.skeleton_passive_summon_slider.value = Save_Manager.instance.data.Skills.Minions.Skeletons.additionalSkeletonsFromPassives;
 
-                                Minions.enable_skeleton_skilltree_summon_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Skeletons.Enable_additionalSkeletonsFromSkillTree;
-                                Minions.skeleton_skilltree_summon_slider.value = Save_Manager.instance.data.Skills.Minions.Skeletons.additionalSkeletonsFromSkillTree;
+                            Minions.enable_skeleton_skilltree_summon_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Skeletons.Enable_additionalSkeletonsFromSkillTree;
+                            Minions.skeleton_skilltree_summon_slider.value = Save_Manager.instance.data.Skills.Minions.Skeletons.additionalSkeletonsFromSkillTree;
 
-                                Minions.enable_skeleton_quantity_per_cast_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Skeletons.Enable_additionalSkeletonsPerCast;
-                                Minions.skeleton_quantity_per_cast_slider.value = Save_Manager.instance.data.Skills.Minions.Skeletons.additionalSkeletonsPerCast;
+                            Minions.enable_skeleton_quantity_per_cast_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Skeletons.Enable_additionalSkeletonsPerCast;
+                            Minions.skeleton_quantity_per_cast_slider.value = Save_Manager.instance.data.Skills.Minions.Skeletons.additionalSkeletonsPerCast;
 
-                                Minions.enable_skeleton_resummon_on_death_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Skeletons.Enable_chanceToResummonOnDeath;
-                                Minions.skeleton_resummon_on_death_slider.value = Save_Manager.instance.data.Skills.Minions.Skeletons.chanceToResummonOnDeath;
+                            Minions.enable_skeleton_resummon_on_death_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Skeletons.Enable_chanceToResummonOnDeath;
+                            Minions.skeleton_resummon_on_death_slider.value = Save_Manager.instance.data.Skills.Minions.Skeletons.chanceToResummonOnDeath;
 
-                                Minions.enable_skeleton_force_archer_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Skeletons.Enable_forceArcher;
-                                Minions.enable_skeleton_force_brawler_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Skeletons.Enable_forceBrawler;
-                                Minions.enable_skeleton_force_warrior_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Skeletons.Enable_forceWarrior;
+                            Minions.enable_skeleton_force_archer_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Skeletons.Enable_forceArcher;
+                            Minions.enable_skeleton_force_brawler_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Skeletons.Enable_forceBrawler;
+                            Minions.enable_skeleton_force_warrior_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Skeletons.Enable_forceWarrior;
 
-                                //Wraiths
-                                Minions.enable_wraith_summon_limit_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Wraiths.Enable_additionalMaxWraiths;
-                                Minions.wraith_summon_limit_slider.value = Save_Manager.instance.data.Skills.Minions.Wraiths.additionalMaxWraiths;
+                            //Wraiths
+                            Minions.enable_wraith_summon_limit_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Wraiths.Enable_additionalMaxWraiths;
+                            Minions.wraith_summon_limit_slider.value = Save_Manager.instance.data.Skills.Minions.Wraiths.additionalMaxWraiths;
 
-                                Minions.enable_wraith_delay_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Wraiths.Enable_delayedWraiths;
-                                Minions.wraith_delay_slider.value = Save_Manager.instance.data.Skills.Minions.Wraiths.delayedWraiths;
+                            Minions.enable_wraith_delay_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Wraiths.Enable_delayedWraiths;
+                            Minions.wraith_delay_slider.value = Save_Manager.instance.data.Skills.Minions.Wraiths.delayedWraiths;
 
-                                Minions.enable_wraith_cast_speed_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Wraiths.Enable_increasedCastSpeed;
-                                Minions.wraith_cast_speed_slider.value = Save_Manager.instance.data.Skills.Minions.Wraiths.increasedCastSpeed;
+                            Minions.enable_wraith_cast_speed_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Wraiths.Enable_increasedCastSpeed;
+                            Minions.wraith_cast_speed_slider.value = Save_Manager.instance.data.Skills.Minions.Wraiths.increasedCastSpeed;
 
-                                Minions.enable_wraith_no_decay_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Wraiths.Enable_wraithsDoNotDecay;
-                                Minions.enable_wraith_no_limit_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Wraiths.Enable_limitedTo2Wraiths;
+                            Minions.enable_wraith_no_decay_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Wraiths.Enable_wraithsDoNotDecay;
+                            Minions.enable_wraith_no_limit_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Wraiths.Enable_limitedTo2Wraiths;
 
-                                //Mage
-                                Minions.enable_mage_passive_summon_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Mages.Enable_additionalSkeletonsFromPassives;
-                                Minions.mage_passive_summon_slider.value = Save_Manager.instance.data.Skills.Minions.Mages.additionalSkeletonsFromPassives;
+                            //Mage
+                            Minions.enable_mage_passive_summon_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Mages.Enable_additionalSkeletonsFromPassives;
+                            Minions.mage_passive_summon_slider.value = Save_Manager.instance.data.Skills.Minions.Mages.additionalSkeletonsFromPassives;
 
-                                Minions.enable_mage_skilltree_summon_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Mages.Enable_additionalSkeletonsFromSkillTree;
-                                Minions.mage_skilltree_summon_slider.value = Save_Manager.instance.data.Skills.Minions.Mages.additionalSkeletonsFromSkillTree;
+                            Minions.enable_mage_skilltree_summon_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Mages.Enable_additionalSkeletonsFromSkillTree;
+                            Minions.mage_skilltree_summon_slider.value = Save_Manager.instance.data.Skills.Minions.Mages.additionalSkeletonsFromSkillTree;
 
-                                Minions.enable_mage_items_summon_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Mages.Enable_additionalSkeletonsFromItems;
-                                Minions.mage_items_summon_slider.value = Save_Manager.instance.data.Skills.Minions.Mages.additionalSkeletonsFromItems;
+                            Minions.enable_mage_items_summon_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Mages.Enable_additionalSkeletonsFromItems;
+                            Minions.mage_items_summon_slider.value = Save_Manager.instance.data.Skills.Minions.Mages.additionalSkeletonsFromItems;
 
-                                Minions.enable_mage_per_cast_summon_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Mages.Enable_additionalSkeletonsPerCast;
-                                Minions.mage_per_cast_summon_slider.value = Save_Manager.instance.data.Skills.Minions.Mages.additionalSkeletonsPerCast;
+                            Minions.enable_mage_per_cast_summon_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Mages.Enable_additionalSkeletonsPerCast;
+                            Minions.mage_per_cast_summon_slider.value = Save_Manager.instance.data.Skills.Minions.Mages.additionalSkeletonsPerCast;
 
-                                Minions.enable_mage_projectile_chance_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Mages.Enable_chanceForTwoExtraProjectiles;
-                                Minions.mage_projectile_chance_slider.value = Save_Manager.instance.data.Skills.Minions.Mages.chanceForTwoExtraProjectiles;
+                            Minions.enable_mage_projectile_chance_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Mages.Enable_chanceForTwoExtraProjectiles;
+                            Minions.mage_projectile_chance_slider.value = Save_Manager.instance.data.Skills.Minions.Mages.chanceForTwoExtraProjectiles;
 
-                                Minions.enable_mage_force_cryomancer_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Mages.Enable_forceCryomancer;
-                                Minions.enable_mage_force_deathknight_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Mages.Enable_forceDeathKnight;
-                                Minions.enable_mage_force_pyromancer_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Mages.Enable_forcePyromancer;
+                            Minions.enable_mage_force_cryomancer_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Mages.Enable_forceCryomancer;
+                            Minions.enable_mage_force_deathknight_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Mages.Enable_forceDeathKnight;
+                            Minions.enable_mage_force_pyromancer_toggle.isOn = Save_Manager.instance.data.Skills.Minions.Mages.Enable_forcePyromancer;
 
-                                //Bone Golem
-                                Minions.enable_bonegolem_per_skeleton_toggle.isOn = Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_addedGolemsPer4Skeletons;
-                                Minions.bonegolem_per_skeleton_slider.value = Save_Manager.instance.data.Skills.Minions.BoneGolems.addedGolemsPer4Skeletons;
+                            //Bone Golem
+                            Minions.enable_bonegolem_per_skeleton_toggle.isOn = Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_addedGolemsPer4Skeletons;
+                            Minions.bonegolem_per_skeleton_slider.value = Save_Manager.instance.data.Skills.Minions.BoneGolems.addedGolemsPer4Skeletons;
 
-                                Minions.enable_bonegolem_resurect_chance_toggle.isOn = Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_selfResurrectChance;
-                                Minions.bonegolem_resurect_chance_slider.value = Save_Manager.instance.data.Skills.Minions.BoneGolems.selfResurrectChance;
+                            Minions.enable_bonegolem_resurect_chance_toggle.isOn = Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_selfResurrectChance;
+                            Minions.bonegolem_resurect_chance_slider.value = Save_Manager.instance.data.Skills.Minions.BoneGolems.selfResurrectChance;
 
-                                Minions.enable_bonegolem_fire_aura_toggle.isOn = Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_increasedFireAuraArea;
-                                Minions.bonegolem_fire_aura_slider.value = Save_Manager.instance.data.Skills.Minions.BoneGolems.increasedFireAuraArea;
+                            Minions.enable_bonegolem_fire_aura_toggle.isOn = Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_increasedFireAuraArea;
+                            Minions.bonegolem_fire_aura_slider.value = Save_Manager.instance.data.Skills.Minions.BoneGolems.increasedFireAuraArea;
 
-                                Minions.enable_bonegolem_armor_aura_toggle.isOn = Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_undeadArmorAura;
-                                Minions.bonegolem_armor_aura_slider.value = Save_Manager.instance.data.Skills.Minions.BoneGolems.undeadArmorAura;
+                            Minions.enable_bonegolem_armor_aura_toggle.isOn = Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_undeadArmorAura;
+                            Minions.bonegolem_armor_aura_slider.value = Save_Manager.instance.data.Skills.Minions.BoneGolems.undeadArmorAura;
 
-                                Minions.enable_bonegolem_movespeed_aura_toggle.isOn = Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_undeadMovespeedAura;
-                                Minions.bonegolem_movespeed_aura_slider.value = Save_Manager.instance.data.Skills.Minions.BoneGolems.undeadMovespeedAura;
+                            Minions.enable_bonegolem_movespeed_aura_toggle.isOn = Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_undeadMovespeedAura;
+                            Minions.bonegolem_movespeed_aura_slider.value = Save_Manager.instance.data.Skills.Minions.BoneGolems.undeadMovespeedAura;
 
-                                Minions.enable_bonegolem_move_speed_toggle.isOn = Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_increasedMoveSpeed;
-                                Minions.bonegolem_move_speed_slider.value = Save_Manager.instance.data.Skills.Minions.BoneGolems.increasedMoveSpeed;
+                            Minions.enable_bonegolem_move_speed_toggle.isOn = Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_increasedMoveSpeed;
+                            Minions.bonegolem_move_speed_slider.value = Save_Manager.instance.data.Skills.Minions.BoneGolems.increasedMoveSpeed;
 
-                                Minions.enable_bonegolem_twins_toggle.isOn = Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_twins;
-                                Minions.enable_bonegolem_slam_toggle.isOn = Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_hasSlamAttack;
+                            Minions.enable_bonegolem_twins_toggle.isOn = Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_twins;
+                            Minions.enable_bonegolem_slam_toggle.isOn = Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_hasSlamAttack;
 
-                                //Volatile Zombies
-                                Minions.enable_volatilezombie_cast_on_death_toggle.isOn = Save_Manager.instance.data.Skills.Minions.VolatileZombies.Enable_chanceToCastFromMinionDeath;
-                                Minions.volatilezombie_cast_on_death_slider.value = Save_Manager.instance.data.Skills.Minions.VolatileZombies.chanceToCastFromMinionDeath;
+                            //Volatile Zombies
+                            Minions.enable_volatilezombie_cast_on_death_toggle.isOn = Save_Manager.instance.data.Skills.Minions.VolatileZombies.Enable_chanceToCastFromMinionDeath;
+                            Minions.volatilezombie_cast_on_death_slider.value = Save_Manager.instance.data.Skills.Minions.VolatileZombies.chanceToCastFromMinionDeath;
 
-                                Minions.enable_volatilezombie_infernal_shade_toggle.isOn = Save_Manager.instance.data.Skills.Minions.VolatileZombies.Enable_chanceToCastInfernalShadeOnDeath;
-                                Minions.volatilezombie_infernal_shade_slider.value = Save_Manager.instance.data.Skills.Minions.VolatileZombies.chanceToCastInfernalShadeOnDeath;
+                            Minions.enable_volatilezombie_infernal_shade_toggle.isOn = Save_Manager.instance.data.Skills.Minions.VolatileZombies.Enable_chanceToCastInfernalShadeOnDeath;
+                            Minions.volatilezombie_infernal_shade_slider.value = Save_Manager.instance.data.Skills.Minions.VolatileZombies.chanceToCastInfernalShadeOnDeath;
 
-                                Minions.enable_volatilezombie_marrow_shards_toggle.isOn = Save_Manager.instance.data.Skills.Minions.VolatileZombies.Enable_chanceToCastMarrowShardsOnDeath;
-                                Minions.volatilezombie_marrow_shards_slider.value = Save_Manager.instance.data.Skills.Minions.VolatileZombies.chanceToCastMarrowShardsOnDeath;
+                            Minions.enable_volatilezombie_marrow_shards_toggle.isOn = Save_Manager.instance.data.Skills.Minions.VolatileZombies.Enable_chanceToCastMarrowShardsOnDeath;
+                            Minions.volatilezombie_marrow_shards_slider.value = Save_Manager.instance.data.Skills.Minions.VolatileZombies.chanceToCastMarrowShardsOnDeath;
 
-                                //Dreadshades
-                                Minions.enable_dreadShades_duration_toggle.isOn = Save_Manager.instance.data.Skills.Minions.DreadShades.Enable_Duration;
-                                Minions.dreadShades_duration_slider.value = Save_Manager.instance.data.Skills.Minions.DreadShades.Duration;
+                            //Dreadshades
+                            Minions.enable_dreadShades_duration_toggle.isOn = Save_Manager.instance.data.Skills.Minions.DreadShades.Enable_Duration;
+                            Minions.dreadShades_duration_slider.value = Save_Manager.instance.data.Skills.Minions.DreadShades.Duration;
 
-                                Minions.enable_dreadShades_max_toggle.isOn = Save_Manager.instance.data.Skills.Minions.DreadShades.Enable_Max;
-                                Minions.dreadShades_max_slider.value = Save_Manager.instance.data.Skills.Minions.DreadShades.max;
+                            Minions.enable_dreadShades_max_toggle.isOn = Save_Manager.instance.data.Skills.Minions.DreadShades.Enable_Max;
+                            Minions.dreadShades_max_slider.value = Save_Manager.instance.data.Skills.Minions.DreadShades.max;
 
-                                Minions.enable_dreadShades_decay_toggle.isOn = Save_Manager.instance.data.Skills.Minions.DreadShades.Enable_ReduceDecay;
-                                Minions.dreadShades_decay_slider.value = Save_Manager.instance.data.Skills.Minions.DreadShades.decay;
+                            Minions.enable_dreadShades_decay_toggle.isOn = Save_Manager.instance.data.Skills.Minions.DreadShades.Enable_ReduceDecay;
+                            Minions.dreadShades_decay_slider.value = Save_Manager.instance.data.Skills.Minions.DreadShades.decay;
 
-                                Minions.enable_dreadShades_radius_toggle.isOn = Save_Manager.instance.data.Skills.Minions.DreadShades.Enable_Radius;
-                                Minions.dreadShades_radius_slider.value = Save_Manager.instance.data.Skills.Minions.DreadShades.radius;
+                            Minions.enable_dreadShades_radius_toggle.isOn = Save_Manager.instance.data.Skills.Minions.DreadShades.Enable_Radius;
+                            Minions.dreadShades_radius_slider.value = Save_Manager.instance.data.Skills.Minions.DreadShades.radius;
 
-                                Minions.enable_dreadShades_summon_limit_toggle.isOn = Save_Manager.instance.data.Skills.Minions.DreadShades.Enable_DisableLimit;
-                                Minions.enable_dreadShades_health_drain_toggle.isOn = Save_Manager.instance.data.Skills.Minions.DreadShades.Enable_DisableHealthDrain;
-                                
-                                controls_initialized = true;
-                                result = true;
-                            }
+                            Minions.enable_dreadShades_summon_limit_toggle.isOn = Save_Manager.instance.data.Skills.Minions.DreadShades.Enable_DisableLimit;
+                            Minions.enable_dreadShades_health_drain_toggle.isOn = Save_Manager.instance.data.Skills.Minions.DreadShades.Enable_DisableHealthDrain;
+
+                            controls_initialized = true;
+                            result = true;
                         }
                     }
 
