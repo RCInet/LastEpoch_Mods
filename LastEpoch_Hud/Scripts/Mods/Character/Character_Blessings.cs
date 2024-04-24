@@ -14,7 +14,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
         void Awake()
         {
             instance = this;
-            if (Main.debug) { Main.logger_instance.Msg("Character_Blessings : Awake"); }
         }
         void Update()
         {

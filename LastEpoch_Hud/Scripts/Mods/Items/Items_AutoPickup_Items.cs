@@ -3,10 +3,6 @@ using ItemFiltering;
 
 namespace LastEpoch_Hud.Scripts.Mods.Items
 {
-    //Have to edit AutoSell (making 2 types)
-    //One with AutoSell all items matching any "Hide" rules
-    //One with AutoSell all items matching any "Hide" rules and don't matching any "Show" rules
-
     public class Items_AutoPickup_Items
     {
         public static bool CanRun()
@@ -40,7 +36,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                     if (((Save_Manager.instance.data.Items.Pickup.Enable_AutoPickup_Keys) && (Item.isKey(__1.itemType))) ||
                         ((Save_Manager.instance.data.Items.Pickup.Enable_AutoPickup_Materials) && (ItemList.isCraftingItem(__1.itemType))))
                     {
-                        bool pickup = ItemContainersManager.instance.attemptToPickupItem(__1, __0.position()); // __2);
+                        bool pickup = ItemContainersManager.instance.attemptToPickupItem(__1, __0.position());
                         if (pickup)
                         {
                             if ((Save_Manager.instance.data.Items.Pickup.Enable_AutoStore_OnDrop) && (ItemList.isCraftingItem(__1.itemType)))
@@ -51,43 +47,32 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                         }
                     }
                 }
-                else if ((__1.itemType < 24) && (!Refs_Manager.filter_manager.IsNullOrDestroyed()) &&
+                else if (
+                    (__1.itemType < 24) && (!Refs_Manager.filter_manager.IsNullOrDestroyed()) &&
                     ((Save_Manager.instance.data.Items.Pickup.Enable_AutoPickup_FromFilter) ||
-                    (Save_Manager.instance.data.Items.Pickup.Enable_AutoSell_Hide) ||
-                    (Save_Manager.instance.data.Items.Pickup.Enable_AutoSell_Both)))
+                    (Save_Manager.instance.data.Items.Pickup.Enable_AutoSell_Hide)))
                 {
                     if (!Refs_Manager.filter_manager.Filter.IsNullOrDestroyed())
                     {
                         bool FilterShow = false;
                         bool FilterHide = false;
-                        bool DontSell = false;
                         foreach (Rule rule in Refs_Manager.filter_manager.Filter.rules)
                         {
                             if ((rule.isEnabled) && (rule.Match(__1.TryCast<ItemDataUnpacked>())) &&
                                 (((rule.levelDependent) && (rule.LevelInBounds(__0.stats.level))) ||
                                 (!rule.levelDependent)))
                             {
-                                if (rule.type == Rule.RuleOutcome.SHOW) { FilterShow = true; DontSell = true; }
-                                else if (rule.type == Rule.RuleOutcome.HIDE)
-                                {
-                                    FilterShow = false;
-                                    FilterHide = true;
-                                    break;
-                                }
+                                if (rule.type == Rule.RuleOutcome.SHOW) { FilterShow = true; break; }
+                                else if (rule.type == Rule.RuleOutcome.HIDE) { FilterHide = true; }
                             }
                         }
                         if ((FilterShow) && (Save_Manager.instance.data.Items.Pickup.Enable_AutoPickup_FromFilter))
                         {
-                            bool pickup = ItemContainersManager.instance.attemptToPickupItem(__1, __0.position()); //__2); //Pickup
+                            bool pickup = ItemContainersManager.instance.attemptToPickupItem(__1, __0.position());
                             if (pickup) { result = false; }
 
                         }
-                        else if ((FilterHide) && (!DontSell) && (Save_Manager.instance.data.Items.Pickup.Enable_AutoSell_Hide))
-                        {
-                            __0.goldTracker.modifyGold(__1.TryCast<ItemDataUnpacked>().VendorSaleValue);
-                            result = false;
-                        }
-                        else if ((FilterHide) && (Save_Manager.instance.data.Items.Pickup.Enable_AutoSell_Both))
+                        else if ((!FilterShow) && (FilterHide) && (Save_Manager.instance.data.Items.Pickup.Enable_AutoSell_Hide))
                         {
                             __0.goldTracker.modifyGold(__1.TryCast<ItemDataUnpacked>().VendorSaleValue);
                             result = false;

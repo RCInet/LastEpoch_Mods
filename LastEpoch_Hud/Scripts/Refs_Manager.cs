@@ -26,8 +26,10 @@ namespace LastEpoch_Hud.Scripts
         public static CharacterClassList character_class_list = null;        
         public static ExperienceTracker exp_tracker = null;
         public static GroundItemManager ground_item_manager = null;
+        public static ItemContainersManager item_containers_manager = null;
         public static ItemList item_list = null;
         public static UniqueList unique_list = null;
+        public static SetBonusesList set_bonuses_list = null;
         public static QuestList quest_list = null;
         public static ItemFilterManager filter_manager = null;
         public static CameraManager camera_manager = null;
@@ -46,6 +48,11 @@ namespace LastEpoch_Hud.Scripts
             {
                 if (UniqueList.instance.IsNullOrDestroyed()) { UniqueList.getUnique(0); }
                 if (!UniqueList.instance.IsNullOrDestroyed()) { unique_list = UniqueList.instance; }
+            }
+            if (set_bonuses_list.IsNullOrDestroyed())
+            {
+                if (SetBonusesList.instance.IsNullOrDestroyed()) { SetBonusesList.getEntry(0); }
+                if (!SetBonusesList.instance.IsNullOrDestroyed()) { set_bonuses_list = SetBonusesList.instance; }
             }
             if ((quest_list.IsNullOrDestroyed()) && (!QuestList.instance.IsNullOrDestroyed())) { quest_list = QuestList.instance; }
             if ((scene_list.IsNullOrDestroyed()) && (!SceneList.instance.IsNullOrDestroyed())) { scene_list = SceneList.instance; }
@@ -67,6 +74,7 @@ namespace LastEpoch_Hud.Scripts
                 }
 
                 if ((ground_item_manager.IsNullOrDestroyed()) && (!GroundItemManager.instance.IsNullOrDestroyed())) { ground_item_manager = GroundItemManager.instance; }
+                if ((item_containers_manager.IsNullOrDestroyed()) && (!ItemContainersManager.instance.IsNullOrDestroyed())) { item_containers_manager = ItemContainersManager.instance; }
                 if (player_actor.IsNullOrDestroyed()) { player_actor = PlayerFinder.getPlayerActor(); }
                 if (player_data.IsNullOrDestroyed()) { player_data = PlayerFinder.getPlayerData(); }
                 if (player_data_tracker.IsNullOrDestroyed()) { player_data_tracker = PlayerFinder.getPlayerDataTracker(); }

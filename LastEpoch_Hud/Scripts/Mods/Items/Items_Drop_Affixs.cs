@@ -125,19 +125,19 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                     UniqueList.Entry unique = UniqueList.getUnique(__0.uniqueID);
                                     if (unique != null)
                                     {
-                                        //float character level = 
+                                        int character_level = 100;
                                         float corruption = UnityEngine.Random.Range(0f, 255f);
                                         if (unique.legendaryType == UniqueList.LegendaryType.LegendaryPotential)
                                         {
                                             int min = UnityEngine.Random.Range(0, 5);
                                             float multiplier = UnityEngine.Random.Range(0f, 255f);
                                             bool out_b = false;
-                                            __0.rollLegendaryPotential(unique, min, 100, corruption, multiplier, out out_b);
+                                            __0.rollLegendaryPotential(unique, min, character_level, corruption, multiplier, out out_b);
                                         }
                                         else
                                         {
                                             int min = UnityEngine.Random.RandomRangeInt(0, 29);
-                                            __0.RollWeaversWill(unique, min, 100, corruption);
+                                            __0.RollWeaversWill(unique, min, character_level, corruption);
                                         }
                                         //Fix subtype
                                         __0.subType = unique.subTypes[0];

@@ -1,4 +1,6 @@
 ﻿using HarmonyLib;
+using LastEpoch_Hud.Scripts.Mods.Character;
+using LastEpoch_Hud.Scripts.Mods.Items;
 using MelonLoader;
 using System.IO;
 using UnityEngine;
@@ -275,7 +277,7 @@ namespace LastEpoch_Hud.Scripts
                                     case "Toggle_Items_Pickup_AutoStore_OnInventoryOpen": { Save_Manager.instance.data.Items.Pickup.Enable_AutoStore_OnInventoryOpen = __instance.isOn; break; }
                                     case "Toggle_Items_Pickup_AutoStore_10sec": { Save_Manager.instance.data.Items.Pickup.Enable_AutoStore_All10Sec = __instance.isOn; break; }
                                     case "Toggle_Items_Pickup_AutoSell_All_Hide": { Save_Manager.instance.data.Items.Pickup.Enable_AutoSell_Hide = __instance.isOn; break; }
-                                    case "Toggle_Items_Pickup_AutoSell_All_Both": { Save_Manager.instance.data.Items.Pickup.Enable_AutoSell_Both = __instance.isOn; break; }
+                                    
                                     case "Toggle_Items_Pickup_Range_Pickup": { Save_Manager.instance.data.Items.Pickup.Enable_RangePickup = __instance.isOn; break; }
                                     case "Toggle_Items_Pickup_Hide_Notifications": { Save_Manager.instance.data.Items.Pickup.Enable_HideMaterialsNotifications = __instance.isOn; break; }
 
@@ -990,7 +992,6 @@ namespace LastEpoch_Hud.Scripts
             {
                 if (!Default_PauseMenu_Btns.IsNullOrDestroyed())
                 {
-                    if (Main.debug) { Main.logger_instance.Msg("Hud_Manager : Set default pause menu active to : " + show); }
                     Default_PauseMenu_Btns.active = show;
                 }
             }
@@ -1561,6 +1562,7 @@ namespace LastEpoch_Hud.Scripts
                     private static void Set_UnlockAllIdols_Enable(bool enable)
                     {
                         Save_Manager.instance.data.Character.Cheats.Enable_UnlockAllIdolsSlots = enable;
+                        Character_UnlockAllIdols.Update();
                     }
 
                     public static Toggle autoPot_toggle = null;
@@ -1872,12 +1874,20 @@ namespace LastEpoch_Hud.Scripts
                             Pickup.autostore_materials_oninventoryopen_toggle = Functions.Get_ToggleInPanel(items_pickup_content, "AutoStore_OnInventoryOpen", "Toggle_Items_Pickup_AutoStore_OnInventoryOpen");
                             Pickup.autostore_materials_all10sec_toggle = Functions.Get_ToggleInPanel(items_pickup_content, "AutoStore_10sec", "Toggle_Items_Pickup_AutoStore_10sec");
                             
-                            Pickup.autosell_hide_toggle = Functions.Get_ToggleInPanel(items_pickup_content, "AutoSell_All_Hide", "Toggle_Items_Pickup_AutoSell_All_Hide");
-                            Pickup.autosell_both_toggle = Functions.Get_ToggleInPanel(items_pickup_content, "AutoSell_All_Both", "Toggle_Items_Pickup_AutoSell_All_Both");
+                            Pickup.autosell_hide_toggle = Functions.Get_ToggleInPanel(items_pickup_content, "AutoSell_All_Hide", "Toggle_Items_Pickup_AutoSell_All_Hide");                            
                             
                             Pickup.range_pickup_toggle = Functions.Get_ToggleInPanel(items_pickup_content, "Range_Pickup", "Toggle_Items_Pickup_Range_Pickup");
                             Pickup.hide_materials_notifications_toggle = Functions.Get_ToggleInPanel(items_pickup_content, "Hide_Notifications", "Toggle_Items_Pickup_Hide_Notifications");
                         }
+
+                        GameObject items_req_content = Functions.GetViewportContent(content_obj, "Items_Pickup", "Items_Req_Content");
+                        if (!items_req_content.IsNullOrDestroyed())
+                        {
+                            Requirements.class_req_toggle = Functions.Get_ToggleInPanel(items_req_content, "RemoveReq_Class", "Toggle_RemoveReq_Class");
+                            Requirements.level_req_toggle = Functions.Get_ToggleInPanel(items_req_content, "RemoveReq_Level", "Toggle_RemoveReq_Level");
+                            Requirements.set_req_toggle = Functions.Get_ToggleInPanel(items_req_content, "RemoveReq_Set", "Toggle_RemoveReq_Set");
+                        }
+                        else { Main.logger_instance.Error("Requirements"); }
 
                         GameObject items_forcedrop_content = Functions.GetViewportContent(content_obj, "Items_Pickup", "Items_ForceDrop_Content");
                         if (!items_forcedrop_content.IsNullOrDestroyed())
@@ -1998,6 +2008,10 @@ namespace LastEpoch_Hud.Scripts
                 }
                 public static void Set_Events()
                 {
+                    Events.Set_Toggle_Event(Requirements.level_req_toggle, Requirements.Level_Toggle_Action);
+                    Events.Set_Toggle_Event(Requirements.class_req_toggle, Requirements.Class_Toggle_Action);
+                    Events.Set_Toggle_Event(Requirements.set_req_toggle, Requirements.Set_Toggle_Action);
+
                     Events.Set_Button_Event(ForceDrop.forcedrop_drop_button, ForceDrop.Drop_OnClick_Action);
                 }
                 public static void Set_Active(bool show)
@@ -2070,7 +2084,7 @@ namespace LastEpoch_Hud.Scripts
                             Drop.weaver_will_toggle.isOn = Save_Manager.instance.data.Items.Drop.Enable_WeaverWill;
                             Drop.weaver_will_slider_min.value = Save_Manager.instance.data.Items.Drop.WeaverWill_Min;
                             Drop.weaver_will_slider_max.value = Save_Manager.instance.data.Items.Drop.WeaverWill_Max;
-
+                            
                             //Pickup
                             Pickup.autopickup_gold_toggle.isOn = Save_Manager.instance.data.Items.Pickup.Enable_AutoPickup_Gold;
                             Pickup.autopickup_keys_toggle.isOn = Save_Manager.instance.data.Items.Pickup.Enable_AutoPickup_Keys;
@@ -2083,12 +2097,16 @@ namespace LastEpoch_Hud.Scripts
                             Pickup.autostore_materials_oninventoryopen_toggle.isOn = Save_Manager.instance.data.Items.Pickup.Enable_AutoStore_OnInventoryOpen;
                             Pickup.autostore_materials_all10sec_toggle.isOn = Save_Manager.instance.data.Items.Pickup.Enable_AutoStore_All10Sec;
 
-                            Pickup.autosell_hide_toggle.isOn = Save_Manager.instance.data.Items.Pickup.Enable_AutoSell_Hide;
-                            Pickup.autosell_both_toggle.isOn = Save_Manager.instance.data.Items.Pickup.Enable_AutoSell_Both;
+                            Pickup.autosell_hide_toggle.isOn = Save_Manager.instance.data.Items.Pickup.Enable_AutoSell_Hide;                            
 
                             Pickup.range_pickup_toggle.isOn = Save_Manager.instance.data.Items.Pickup.Enable_RangePickup;
                             Pickup.hide_materials_notifications_toggle.isOn = Save_Manager.instance.data.Items.Pickup.Enable_HideMaterialsNotifications;
-                            
+
+                            //Requirements
+                            Requirements.class_req_toggle.isOn = Save_Manager.instance.data.Items.Req.classe;
+                            Requirements.level_req_toggle.isOn = Save_Manager.instance.data.Items.Req.level;
+                            Requirements.set_req_toggle.isOn = Save_Manager.instance.data.Items.Req.set;
+
                             //Craft
                             //CraftingSlot.enable_mod.isOn = Save_Manager.instance.data.Items.CraftingSlot.Enable_Mod;
                             CraftingSlot.forgin_potencial_toggle.isOn = Save_Manager.instance.data.Items.CraftingSlot.Enable_ForginPotencial;
@@ -2290,9 +2308,33 @@ namespace LastEpoch_Hud.Scripts
                     public static Toggle autostore_materials_oninventoryopen_toggle = null;
                     public static Toggle autostore_materials_all10sec_toggle = null;
                     public static Toggle autosell_hide_toggle = null;
-                    public static Toggle autosell_both_toggle = null;
                     public static Toggle range_pickup_toggle = null;
                     public static Toggle hide_materials_notifications_toggle = null;
+                }
+                public class Requirements
+                {
+                    public static Toggle class_req_toggle = null;
+                    public static readonly System.Action<bool> Class_Toggle_Action = new System.Action<bool>(Class_Enable);
+                    private static void Class_Enable(bool enable)
+                    {
+                        Save_Manager.instance.data.Items.Req.classe = enable;
+                        //Items_Req_Class.Enable();
+                    }
+                    
+                    public static Toggle level_req_toggle = null;
+                    public static readonly System.Action<bool> Level_Toggle_Action = new System.Action<bool>(Level_Enable);
+                    private static void Level_Enable(bool enable)
+                    {
+                        Save_Manager.instance.data.Items.Req.level = enable;
+                    }
+
+                    public static Toggle set_req_toggle = null;
+                    public static readonly System.Action<bool> Set_Toggle_Action = new System.Action<bool>(Set_Enable);
+                    private static void Set_Enable(bool enable)
+                    {
+                        Save_Manager.instance.data.Items.Req.set = enable;
+                        //Items_Req_Set.Enable();
+                    }
                 }
                 public class ForceDrop
                 {

@@ -21,30 +21,23 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
         public class dropPotionForPlayer
         {
             [HarmonyPrefix]
-            static void Prefix(GroundItemManager __instance, Actor __0, ref UnityEngine.Vector3 __1, bool __2)
+            static bool Prefix()
             {
+                bool result = true;
                 if (CanRun())
                 {
-                    __1 = Refs_Manager.player_actor.position(); //Move to Player before drop
-                    //Find a way to pickup here and don't drop
-                }
-            }
-            [HarmonyPostfix]
-            static void Postfix(GroundItemManager __instance, Actor __0, ref UnityEngine.Vector3 __1, bool __2)
-            {
-                if (CanRun())
-                {
-                    System.UInt32 pot_id = __instance.nextPotionId - 1;
-                    foreach (PotionPickupInteraction pick_pot_interaction in __instance.activePotions)
+                    if (!Refs_Manager.health_potion.IsNullOrDestroyed())
                     {
-                        if (pick_pot_interaction.id == pot_id)
+                        if (Refs_Manager.health_potion.maxCharges > Refs_Manager.health_potion.currentCharges)
                         {
-                            __instance.pickupPotion(__0, pot_id, pick_pot_interaction);
-                            break;
+                            Refs_Manager.health_potion.currentCharges++;
+                            result = false;
                         }
                     }
                 }
-            }
+
+                return result;
+            }            
         }
     }
 }

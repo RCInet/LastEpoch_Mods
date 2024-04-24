@@ -26,7 +26,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
         void Awake()
         {
             instance = this;
-            if (Main.debug) { Main.logger_instance.Msg("Character_PermanentBuffs : Awake"); }
             SceneManager.add_sceneLoaded(new System.Action<Scene, LoadSceneMode>(OnSceneLoaded));
         }
         void Update()
@@ -82,7 +81,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
             {
                 if (Save_Manager.instance.data.Character.PermanentBuffs.Enable_Mod)
                 {
-                    if (Main.debug) { Main.logger_instance.Msg("Character_PermanentBuffs : Enable"); }
                     force_disable = false;
                     this.gameObject.active = true;
                 }
@@ -91,7 +89,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
         }
         public void Disable()
         {
-            if (Main.debug) { Main.logger_instance.Msg("Character_PermanentBuffs : Disable"); }
             force_disable = true;
         }
 

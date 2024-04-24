@@ -153,7 +153,11 @@
     <Compile Include="Scripts\Mods\Items\Items_Drop_UniqueMods.cs" />
     <Compile Include="Scripts\Mods\Items\Items_Drop_WeaverWill.cs" />
     <Compile Include="Scripts\Mods\Items\Items_RangePickup.cs" />
+    <Compile Include="Scripts\Mods\Items\Items_Req_Class.cs" />
+    <Compile Include="Scripts\Mods\Items\Items_Req_Level.cs" />
+    <Compile Include="Scripts\Mods\Items\Items_Req_Set.cs" />
     <Compile Include="Scripts\Mods\Items\Items_Tooltip.cs" />
+    <Compile Include="Scripts\Mods\Items\Items_Update.cs" />
     <Compile Include="Scripts\Mods\Login\Login_AutoLoginOffline.cs" />
     <Compile Include="Scripts\Mods\Minimap\Minimap_FogOfWar.cs" />
     <Compile Include="Scripts\Mods\Minimap\Minimap_ZoomOut.cs" />

@@ -55,7 +55,7 @@ namespace LastEpoch_Hud.Scripts
             initialized = true;
         }
         Data.Mods_Structure Get_DefaultConfig()
-        {            
+        {
             Data.Mods_Structure result = new Data.Mods_Structure
             {
                 ModVersion = Main.mod_version,
@@ -181,9 +181,14 @@ namespace LastEpoch_Hud.Scripts
                         Enable_AutoStore_OnInventoryOpen = false,
                         Enable_AutoStore_All10Sec = false,
                         Enable_AutoSell_Hide = false,
-                        Enable_AutoSell_Both = false,
                         Enable_RangePickup = false,
                         Enable_HideMaterialsNotifications = false
+                    },
+                    Req =
+                    {
+                        level = false,
+                        classe = false,
+                        set = false
                     },
                     CraftingSlot =
                     {
@@ -563,6 +568,7 @@ namespace LastEpoch_Hud.Scripts
             {
                 public Drop Drop;
                 public Pickup Pickup;
+                public Req Req;
                 public CraftingSlot CraftingSlot;
                 public Headhunter Headhunter;
             }
@@ -628,14 +634,18 @@ namespace LastEpoch_Hud.Scripts
                 public bool Enable_AutoStore_All10Sec;
 
                 public bool Enable_AutoSell_Hide;
-                public bool Enable_AutoSell_Both;
 
                 public bool Enable_RangePickup;
                 public bool Enable_HideMaterialsNotifications;
             }
+            public struct Req
+            {
+                public bool level;
+                public bool classe;
+                public bool set;
+            }
             public struct CraftingSlot
             {
-                //public bool Enable_Mod;
                 public bool Enable_ForginPotencial;
                 public float ForginPotencial;
 
@@ -931,8 +941,6 @@ namespace LastEpoch_Hud.Scripts
                 public bool Enable_Radius;
                 public float radius;
             }
-
-            
         }
     }
 }
