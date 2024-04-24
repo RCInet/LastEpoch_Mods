@@ -1,4 +1,5 @@
-﻿using MelonLoader;
+﻿using LastEpoch_Hud.Scripts.Mods.Character;
+using MelonLoader;
 using PixelCrushers.DialogueSystem;
 using UnityEngine;
 
@@ -17,6 +18,7 @@ namespace LastEpoch_Hud.Scripts
         GameObject character_permanentbuffs_obj = null;
         GameObject items_autosell_timer_obj = null;
         GameObject items_headhunter_obj = null;
+        
         bool initialized = false;
 
         void Awake()
@@ -54,7 +56,7 @@ namespace LastEpoch_Hud.Scripts
             character_permanentbuffs_obj.active = false;
             character_permanentbuffs_obj.AddComponent<Mods.Character.Character_PermanentBuffs>();
             Mods_Objects.Add(character_permanentbuffs_obj);
-
+                        
             items_autosell_timer_obj = Object.Instantiate(new GameObject { name = "Mod_Items_AutoStore_All10Sec" }, Vector3.zero, Quaternion.identity);
             items_autosell_timer_obj.active = false;
             items_autosell_timer_obj.AddComponent<Mods.Items.Items_AutoStore_WithTimer>();
@@ -71,6 +73,13 @@ namespace LastEpoch_Hud.Scripts
             initialized = true;
             Main.logger_instance.Msg("Mods Manager : Mods initialized");
         }
+        /*void Update()
+        {
+            if (Scenes.IsGameScene())
+            {
+                Character_Dps.Init();
+            }            
+        }*/
         void Enable()
         {
             if (initialized)
@@ -81,6 +90,7 @@ namespace LastEpoch_Hud.Scripts
                 character_blessings_obj.active = true;
                 //character_idols_obj.GetComponent<Mods.Character.Character_UnlockAllIdols>().SetActive();
                 character_autopotion_obj.active = Save_Manager.instance.data.Character.Cheats.Enable_AutoPot;
+                
                 items_autosell_timer_obj.active = Save_Manager.instance.data.Items.Pickup.Enable_AutoStore_All10Sec;
                 character_masteries_obj.active = true;
                 character_permanentbuffs_obj.GetComponent<Mods.Character.Character_PermanentBuffs>().Enable();
@@ -99,6 +109,7 @@ namespace LastEpoch_Hud.Scripts
                 character_lowlife_obj.active = false;
                 character_blessings_obj.active = false;
                 character_autopotion_obj.active = false;
+                
                 items_autosell_timer_obj.active = false;
                 character_masteries_obj.active = false;
                 character_permanentbuffs_obj.GetComponent<Mods.Character.Character_PermanentBuffs>().Disable();

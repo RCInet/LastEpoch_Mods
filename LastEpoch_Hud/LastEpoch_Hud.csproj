@@ -122,6 +122,7 @@
     <Compile Include="Scripts\Mods\Character\Character_Ability_Experience_Multiplier.cs" />
     <Compile Include="Scripts\Mods\Character\Character_AutoPotions.cs" />
     <Compile Include="Scripts\Mods\Character\Character_Blessings.cs" />
+    <Compile Include="Scripts\Mods\Character\Character_Dps.cs" />
     <Compile Include="Scripts\Mods\Character\Character_Experience_Multiplier.cs" />
     <Compile Include="Scripts\Mods\Character\Character_Favor_Experience_Multiplier.cs" />
     <Compile Include="Scripts\Mods\Character\Character_MainQuest.cs" />
