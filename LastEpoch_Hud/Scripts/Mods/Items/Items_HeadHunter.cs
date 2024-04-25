@@ -23,8 +23,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
         {
             if ((Unique.Icon.IsNullOrDestroyed()) || (Config.json.IsNullOrDestroyed())) { Assets.Loaded = false; }            
             if (!Assets.Loaded) { Assets.Load(); }
-            if (!Basic.AddedToBasicList) { Basic.AddToBasicList(); }
-            if (!Unique.AddedToUniqueList) { Unique.AddToUniqueList(); }
+            if ((Locales.current != Locales.Selected.Unknow) && (!Basic.AddedToBasicList)) { Basic.AddToBasicList(); }
+            if ((Locales.current != Locales.Selected.Unknow) && (!Unique.AddedToUniqueList)) { Unique.AddToUniqueList(); }
             if (!Events.OnKillEvent_Initialized) { Events.Init_OnKillEvent(); }
             if (!Events.OnMinionKillEvent_Initialized) { Events.Init_OnMinionKillEvent(); }
 
@@ -81,8 +81,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
         public class Basic
         {
             public static bool AddedToBasicList = false;
-            public static readonly byte base_type = 2; //Belt            
-            public static readonly string base_name = "HH Leather Belt";
+            public static readonly byte base_type = 2; //Belt
             public static readonly int base_id = 13;
             public static ItemList.EquipmentItem Item()
             {
@@ -94,7 +93,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                     cannotDrop = Save_Manager.instance.data.Items.Headhunter.BaseDrop,
                     itemTags = ItemLocationTag.None,
                     levelRequirement = 40,
-                    name = base_name,
+                    name = Get_Subtype_Name(),
                     subTypeID = base_id
                 };
 
@@ -108,6 +107,10 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                     Refs_Manager.item_list.EquippableItems[base_type].subItems.Add(Item());
                     AddedToBasicList = true;
                 }
+            }
+            public static string Get_Subtype_Name()
+            {
+                return HHLocales.SubType.name;
             }
 
             private static Il2CppSystem.Collections.Generic.List<ItemList.EquipmentImplicit> implicits()
@@ -130,15 +133,13 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
         {
             public static bool AddedToUniqueList = false;
             public static Sprite Icon = null;
-            public static readonly string unique_name = "Headhunter";
             public static readonly ushort unique_id = 500;
-            public static readonly string lore = "\"A man's soul rules from a cavern of bone, learns and judges through flesh-born windows. The heart is meat. The head is where the Man is.\"\r\n- Lavianga, Advisor to Kaom";
             public static UniqueList.Entry Item()
             {
                 UniqueList.Entry item = new UniqueList.Entry
                 {
-                    name = unique_name,
-                    displayName = unique_name,
+                    name = Get_Unique_Name(),
+                    displayName = Get_Unique_Name(),
                     uniqueID = unique_id,
                     isSetItem = false,
                     setID = 0,
@@ -155,7 +156,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                     subTypes = SubType(),
                     mods = Mods(),
                     tooltipDescriptions = TooltipDescription(),
-                    loreText = lore,
+                    loreText = Get_Unique_Lore(), //lore,
                     tooltipEntries = TooltipEntries(),
                     oldSubTypeID = 0,
                     oldUniqueID = 0
@@ -171,8 +172,48 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                     Refs_Manager.unique_list.uniques.Add(Item());
                     AddedToUniqueList = true;
                 }
+            }                        
+            public static string Get_Unique_Name()
+            {
+                return HHLocales.UniqueName.Name;
             }
-            
+            public static string Get_Unique_Description()
+            {
+                string result = "";
+                switch (Locales.current)
+                {
+                    case Locales.Selected.English: { result = HHLocales.UniqueDescription.en; break; }
+                    case Locales.Selected.French: { result = HHLocales.UniqueDescription.fr; break; }
+                    case Locales.Selected.Korean: { result = HHLocales.UniqueDescription.en; break; }
+                    case Locales.Selected.German: { result = HHLocales.UniqueDescription.en; break; }
+                    case Locales.Selected.Russian: { result = HHLocales.UniqueDescription.en; break; }
+                    case Locales.Selected.Polish: { result = HHLocales.UniqueDescription.en; break; }
+                    case Locales.Selected.Portuguese: { result = HHLocales.UniqueDescription.en; break; }
+                    case Locales.Selected.Chinese: { result = HHLocales.UniqueDescription.en; break; }
+                    case Locales.Selected.Spanish: { result = HHLocales.UniqueDescription.en; break; }
+                }
+
+                return result;
+            }
+            public static string Get_Unique_Lore()
+            {
+                string result = "";
+                switch (Locales.current)
+                {
+                    case Locales.Selected.English: { result = HHLocales.Lore.en; break; }
+                    case Locales.Selected.French: { result = HHLocales.Lore.fr; break; }
+                    case Locales.Selected.Korean: { result = HHLocales.Lore.en; break; }
+                    case Locales.Selected.German: { result = HHLocales.Lore.en; break; }
+                    case Locales.Selected.Russian: { result = HHLocales.Lore.en; break; }
+                    case Locales.Selected.Polish: { result = HHLocales.Lore.en; break; }
+                    case Locales.Selected.Portuguese: { result = HHLocales.Lore.en; break; }
+                    case Locales.Selected.Chinese: { result = HHLocales.Lore.en; break; }
+                    case Locales.Selected.Spanish: { result = HHLocales.Lore.en; break; }
+                }
+
+                return result;
+            }
+
             private static Il2CppSystem.Collections.Generic.List<byte> SubType()
             {
                 Il2CppSystem.Collections.Generic.List<byte> result = new Il2CppSystem.Collections.Generic.List<byte>();
@@ -237,10 +278,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
             private static Il2CppSystem.Collections.Generic.List<ItemTooltipDescription> TooltipDescription()
             {
                 Il2CppSystem.Collections.Generic.List<ItemTooltipDescription> result = new Il2CppSystem.Collections.Generic.List<ItemTooltipDescription>();                
-                result.Add(new ItemTooltipDescription { description = "When you or your minions Kill a monster, you gain " + Save_Manager.instance.data.Items.Headhunter.MinGenerated +
-                        " to " + Save_Manager.instance.data.Items.Headhunter.MaxGenerated + " random Modifiers for " +
-                        Save_Manager.instance.data.Items.Headhunter.BuffDuration + " seconds" });
-
+                result.Add(new ItemTooltipDescription { description = Get_Unique_Description() });
+                
                 return result;
             }
             private static UniqueList.LegendaryType LegendaryType()
@@ -257,7 +296,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 [HarmonyPostfix]
                 static void Postfix(ref UnityEngine.Sprite __result, ItemData __0, ItemUIContext __1)
                 {
-                    if ((__0.getAsUnpacked().FullName == unique_name) && (!Icon.IsNullOrDestroyed()))
+                    if ((__0.getAsUnpacked().FullName == Get_Unique_Name()) && (!Icon.IsNullOrDestroyed()))
                     {
                         __result = Icon;
                     }
@@ -270,7 +309,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 [HarmonyPostfix]
                 static void Postfix(ref UnityEngine.Sprite __result, ItemDataUnpacked __0)
                 {
-                    if ((__0.FullName == unique_name) && (!Icon.IsNullOrDestroyed()))
+                    if ((__0.FullName == Get_Unique_Name()) && (!Icon.IsNullOrDestroyed()))
                     {
                         __result = Icon;
                     }
@@ -501,7 +540,99 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
             }
             private static System.Collections.Generic.List<HH_Buff> HH_Buff_Add = new System.Collections.Generic.List<HH_Buff>();
             private static System.Collections.Generic.List<HH_Buff> HH_Buff_Increased = new System.Collections.Generic.List<HH_Buff>();
-        }        
+        }
+        public class HHLocales
+        {
+            private static string basic_subtype_name_key = "Item_SubType_Name_" + Basic.base_type + "_" + Basic.base_id;
+            private static string unique_name_key = "Unique_Name_" + Unique.unique_id;
+            private static string unique_description_key = "Unique_Tooltip_0_" + Unique.unique_id;
+            private static string unique_lore_key = "Unique_Lore_" + Unique.unique_id;
+
+            public class SubType
+            {
+                public static string name = "HH Leather belt";
+                //Add all languages here
+            }
+            public class UniqueName
+            {
+                public static string Name = "Headhunter";
+                //Add all languages here
+            }
+            public class UniqueDescription
+            {
+                public static string en = "When you or your minions Kill a monster, you gain " + Save_Manager.instance.data.Items.Headhunter.MinGenerated +
+                " to " + Save_Manager.instance.data.Items.Headhunter.MaxGenerated + " random Modifiers for " +
+                Save_Manager.instance.data.Items.Headhunter.BuffDuration + " seconds";
+                public static string fr = "Lorsque vous ou vos serviteurs tuez un monstre, vous gagnez " + Save_Manager.instance.data.Items.Headhunter.MinGenerated +
+                    " à " + Save_Manager.instance.data.Items.Headhunter.MaxGenerated + " modificateurs aléatoires pendant " +
+                    Save_Manager.instance.data.Items.Headhunter.BuffDuration + " secondes.";
+                //Add all languages here
+            }
+            public class Lore
+            {
+                public static readonly string en = "A man's soul rules from a cavern of bone, learns and\r\njudges through flesh-born windows. The heart is meat.\r\nThe head is where the Man is.\"\r\n- Lavianga, Advisor to Kaom";
+                public static readonly string fr = "L'âme d'un homme règne depuis une caverne d'os,\r\napprend et juge à travers des fenêtres plantées dans la chair.\r\nLe cœur est un morceau de viande. La tête est le siège de l'homme.\r\n- Lavianga, conseiller de Kaom";
+                //Add all languages here
+            }
+
+            [HarmonyPatch(typeof(Localization), "TryGetText")]
+            public class Localization_TryGetText
+            {
+                [HarmonyPrefix]
+                static bool Prefix(ref bool __result, string __0) //, Il2CppSystem.String __1)
+                {
+                    bool result = true;
+                    if ((__0 == basic_subtype_name_key) || (__0 == unique_name_key) ||
+                        (__0 == unique_description_key) || (__0 == unique_lore_key))
+                    {
+                        __result = true;
+                        result = false;
+                    }
+
+                    return result;
+                }
+            }
+
+            [HarmonyPatch(typeof(Localization), "GetText")]
+            public class Localization_GetText
+            {
+                [HarmonyPrefix]
+                static bool Prefix(ref string __result, string __0)
+                {
+                    bool result = true;
+                    if (__0 == basic_subtype_name_key)
+                    {
+                        __result = Basic.Get_Subtype_Name();
+                        result = false;
+                    }
+                    else if (__0 == unique_name_key)
+                    {
+                        __result = Unique.Get_Unique_Name();
+                        result = false;
+                    }
+                    else if (__0 == unique_description_key)
+                    {
+                        string description = Unique.Get_Unique_Description();
+                        if (description != "")
+                        {
+                            __result = description;
+                            result = false;
+                        }
+                    }
+                    else if (__0 == unique_lore_key)
+                    {
+                        string lore = Unique.Get_Unique_Lore();
+                        if (lore != "")
+                        {
+                            __result = lore;
+                            result = false;
+                        }
+                    }
+
+                    return result;
+                }
+            }
+        }
         public class Events
         {
             public static bool OnKillEvent_Initialized = false;

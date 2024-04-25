@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using HarmonyLib;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using static LastEpoch_Hud.Scripts.Mods.Items.Items_HeadHunter.HHLocales;
 
 namespace LastEpoch_Hud
 {
@@ -28,6 +30,54 @@ namespace LastEpoch_Hud
         public override void OnApplicationQuit()
         {
             Caching.ClearCache();
+        }
+    }
+    public class Locales
+    {
+        public enum Selected
+        {
+            Unknow,
+            English,
+            French,
+            Korean,
+            German,
+            Russian,
+            Polish,
+            Portuguese,
+            Chinese,
+            Spanish
+        }
+
+        public static Selected current = Selected.Unknow;
+
+        [HarmonyPatch(typeof(Localization), "get_Locale")]
+        public class Localization_get_Locale
+        {
+            [HarmonyPostfix]
+            static void Postfix(string __result)
+            {
+                Selected backup = current;
+                current = Selected.Unknow;
+                switch (__result)
+                {
+                    case "English (en)": { current = Selected.English; break; }
+                    case "French (fr)": { current = Selected.French; break; }
+                    case "Korean (ko)": { current = Selected.Korean; break; }
+                    case "German (Germany) (de-DE)": { current = Selected.German; break; }
+                    case "Russian (ru)": { current = Selected.Russian; break; }
+                    case "Polish (pl)": { current = Selected.Polish; break; }
+                    case "Portuguese (pt)": { current = Selected.Portuguese; break; }
+                    case "Chinese (Simplified) (zh)": { current = Selected.Chinese; break; }
+                    case "Spanish (Spain) (es-ES)": { current = Selected.Spanish; break; }
+                }
+                if (current != backup)
+                {
+                    if (backup == Selected.Unknow) { Main.logger_instance.Msg("Locale initialized to " + current.ToString()); }
+                    else { Main.logger_instance.Msg("Locale change to " + current.ToString()); }
+                    
+                    //Here to Update mods text
+                }
+            }
         }
     }
     public class Base
