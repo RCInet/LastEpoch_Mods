@@ -47,8 +47,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                         }
                     }
                 }
-                else if (
-                    (__1.itemType < 24) && (!Refs_Manager.filter_manager.IsNullOrDestroyed()) &&
+                else if ((__1.itemType < 24) && (!Refs_Manager.filter_manager.IsNullOrDestroyed()) &&
                     ((Save_Manager.instance.data.Items.Pickup.Enable_AutoPickup_FromFilter) ||
                     (Save_Manager.instance.data.Items.Pickup.Enable_AutoSell_Hide)))
                 {

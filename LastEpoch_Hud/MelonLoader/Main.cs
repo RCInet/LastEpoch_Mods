@@ -2,7 +2,6 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using static LastEpoch_Hud.Scripts.Mods.Items.Items_HeadHunter.HHLocales;
 
 namespace LastEpoch_Hud
 {

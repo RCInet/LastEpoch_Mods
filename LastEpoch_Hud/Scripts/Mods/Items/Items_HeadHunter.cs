@@ -110,7 +110,22 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
             }
             public static string Get_Subtype_Name()
             {
-                return HHLocales.SubType.name;
+                string result = "";
+                switch (Locales.current)
+                {
+                    case Locales.Selected.English: { result = HHLocales.SubType.en; break; }
+                    case Locales.Selected.French: { result = HHLocales.SubType.fr; break; }
+                    case Locales.Selected.German: { result = HHLocales.SubType.de; break; }
+                    case Locales.Selected.Russian: { result = HHLocales.SubType.ru; break; }
+                    case Locales.Selected.Portuguese: { result = HHLocales.SubType.pt; break; }
+
+                    case Locales.Selected.Korean: { result = HHLocales.SubType.en; break; }                    
+                    case Locales.Selected.Polish: { result = HHLocales.SubType.en; break; }                    
+                    case Locales.Selected.Chinese: { result = HHLocales.SubType.en; break; }
+                    case Locales.Selected.Spanish: { result = HHLocales.SubType.en; break; }
+                }
+
+                return result;
             }
 
             private static Il2CppSystem.Collections.Generic.List<ItemList.EquipmentImplicit> implicits()
@@ -175,7 +190,22 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
             }                        
             public static string Get_Unique_Name()
             {
-                return HHLocales.UniqueName.Name;
+                string result = "";
+                switch (Locales.current)
+                {
+                    case Locales.Selected.English: { result = HHLocales.UniqueName.en; break; }
+                    case Locales.Selected.French: { result = HHLocales.UniqueName.fr; break; }
+                    case Locales.Selected.German: { result = HHLocales.UniqueName.de; break; }
+                    case Locales.Selected.Russian: { result = HHLocales.UniqueName.ru; break; }
+                    case Locales.Selected.Portuguese: { result = HHLocales.UniqueName.pt; break; }
+
+                    case Locales.Selected.Korean: { result = HHLocales.UniqueName.en; break; }                    
+                    case Locales.Selected.Polish: { result = HHLocales.UniqueName.en; break; }                    
+                    case Locales.Selected.Chinese: { result = HHLocales.UniqueName.en; break; }
+                    case Locales.Selected.Spanish: { result = HHLocales.UniqueName.en; break; }
+                }
+                
+                return result;
             }
             public static string Get_Unique_Description()
             {
@@ -184,6 +214,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 {
                     case Locales.Selected.English: { result = HHLocales.UniqueDescription.en; break; }
                     case Locales.Selected.French: { result = HHLocales.UniqueDescription.fr; break; }
+                    
                     case Locales.Selected.Korean: { result = HHLocales.UniqueDescription.en; break; }
                     case Locales.Selected.German: { result = HHLocales.UniqueDescription.en; break; }
                     case Locales.Selected.Russian: { result = HHLocales.UniqueDescription.en; break; }
@@ -202,8 +233,9 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 {
                     case Locales.Selected.English: { result = HHLocales.Lore.en; break; }
                     case Locales.Selected.French: { result = HHLocales.Lore.fr; break; }
-                    case Locales.Selected.Korean: { result = HHLocales.Lore.en; break; }
-                    case Locales.Selected.German: { result = HHLocales.Lore.en; break; }
+                    case Locales.Selected.German: { result = HHLocales.Lore.de; break; }
+
+                    case Locales.Selected.Korean: { result = HHLocales.Lore.en; break; }                    
                     case Locales.Selected.Russian: { result = HHLocales.Lore.en; break; }
                     case Locales.Selected.Polish: { result = HHLocales.Lore.en; break; }
                     case Locales.Selected.Portuguese: { result = HHLocales.Lore.en; break; }
@@ -550,28 +582,37 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
 
             public class SubType
             {
-                public static string name = "HH Leather belt";
+                public static string en = "HH Leather belt";
+                public static string fr = "HH Ceinture en cuir";
+                public static string de = "HH Ledergürtel";
+                public static string ru = "HH Ремень";
+                public static string pt = "Cinto de Couro";
                 //Add all languages here
             }
             public class UniqueName
             {
-                public static string Name = "Headhunter";
+                public static string en = "Headhunter";
+                public static string fr = "Chasseur de têtes";
+                public static string de = "Kopfjäger";
+                public static string ru = "Охотник за головами";
+                public static string pt = "Caçador de Cabeças";
                 //Add all languages here
             }
             public class UniqueDescription
             {
                 public static string en = "When you or your minions Kill a monster, you gain " + Save_Manager.instance.data.Items.Headhunter.MinGenerated +
-                " to " + Save_Manager.instance.data.Items.Headhunter.MaxGenerated + " random Modifiers for " +
-                Save_Manager.instance.data.Items.Headhunter.BuffDuration + " seconds";
+                    " to " + Save_Manager.instance.data.Items.Headhunter.MaxGenerated + " random Modifiers for " +
+                    Save_Manager.instance.data.Items.Headhunter.BuffDuration + " seconds";
                 public static string fr = "Lorsque vous ou vos serviteurs tuez un monstre, vous gagnez " + Save_Manager.instance.data.Items.Headhunter.MinGenerated +
                     " à " + Save_Manager.instance.data.Items.Headhunter.MaxGenerated + " modificateurs aléatoires pendant " +
-                    Save_Manager.instance.data.Items.Headhunter.BuffDuration + " secondes.";
+                    Save_Manager.instance.data.Items.Headhunter.BuffDuration + " secondes.";                
                 //Add all languages here
             }
             public class Lore
             {
                 public static readonly string en = "A man's soul rules from a cavern of bone, learns and\r\njudges through flesh-born windows. The heart is meat.\r\nThe head is where the Man is.\"\r\n- Lavianga, Advisor to Kaom";
                 public static readonly string fr = "L'âme d'un homme règne depuis une caverne d'os,\r\napprend et juge à travers des fenêtres plantées dans la chair.\r\nLe cœur est un morceau de viande. La tête est le siège de l'homme.\r\n- Lavianga, conseiller de Kaom";
+                public static readonly string de = "Die Seele eines Mannes regiert\r\naus einer Höhle aus Knochen,\r\nlernt und urteilt aus Fenstern,\r\ngeboren aus Fleisch. Das Herz ist Fleisch.\r\nDer Kopf ist dort, wo der Mann ist.\r\n– Lavianga, Berater von Kaom";
                 //Add all languages here
             }
 

@@ -91,7 +91,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                             GameObject legendary_instance_obj = Functions.GetChild(label_obj, obj_name);
                             if (legendary_instance_obj.IsNullOrDestroyed())
                             {
-                                Main.logger_instance.Msg("Create legendary icon in tooltip");
                                 legendary_instance_obj = new GameObject { name = obj_name };
                                 legendary_instance_obj.AddComponent<UnityEngine.UI.Image>();
                                 legendary_instance_obj.transform.SetParent(label_obj.transform);                                

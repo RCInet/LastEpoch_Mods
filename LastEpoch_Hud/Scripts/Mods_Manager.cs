@@ -1,6 +1,4 @@
-﻿using LastEpoch_Hud.Scripts.Mods.Character;
-using MelonLoader;
-using PixelCrushers.DialogueSystem;
+﻿using MelonLoader;
 using UnityEngine;
 
 namespace LastEpoch_Hud.Scripts
@@ -15,6 +13,7 @@ namespace LastEpoch_Hud.Scripts
         GameObject character_godmode_obj = null;
         GameObject character_lowlife_obj = null;
         GameObject character_masteries_obj = null;
+        GameObject character_bank_from_anywhere = null;
         GameObject character_permanentbuffs_obj = null;
         GameObject items_autosell_timer_obj = null;
         GameObject items_headhunter_obj = null;
@@ -66,6 +65,11 @@ namespace LastEpoch_Hud.Scripts
             items_headhunter_obj.active = false;
             items_headhunter_obj.AddComponent<Mods.Items.Items_HeadHunter>();
             Mods_Objects.Add(items_headhunter_obj);
+                        
+            character_bank_from_anywhere = Object.Instantiate(new GameObject { name = "Mod_Items_Headhunter" }, Vector3.zero, Quaternion.identity);
+            character_bank_from_anywhere.active = false;
+            character_bank_from_anywhere.AddComponent<Mods.Character.Character_Bank_Anywhere>();
+            Mods_Objects.Add(character_bank_from_anywhere);
 
             foreach (GameObject mod in Mods_Objects) { Object.DontDestroyOnLoad(mod); }
             Mods_Objects.Clear();
@@ -88,15 +92,12 @@ namespace LastEpoch_Hud.Scripts
                 character_lowlife_obj.active = Save_Manager.instance.data.Character.Cheats.Enable_LowLife;
                 //character_blessings_obj.active = Save_Manager.instance.data.Character.Cheats.Enable_CanChooseBlessing;
                 character_blessings_obj.active = true;
-                //character_idols_obj.GetComponent<Mods.Character.Character_UnlockAllIdols>().SetActive();
                 character_autopotion_obj.active = Save_Manager.instance.data.Character.Cheats.Enable_AutoPot;
-                
+                character_bank_from_anywhere.active = true;
                 items_autosell_timer_obj.active = Save_Manager.instance.data.Items.Pickup.Enable_AutoStore_All10Sec;
                 character_masteries_obj.active = true;
                 character_permanentbuffs_obj.GetComponent<Mods.Character.Character_PermanentBuffs>().Enable();
-
-                Mods.Items.Items_Update.Reqs();
-
+                Mods.Items.Items_Update.Reqs(); //Used to update item req
                 items_headhunter_obj.active = true;
             }
         }
@@ -109,7 +110,7 @@ namespace LastEpoch_Hud.Scripts
                 character_lowlife_obj.active = false;
                 character_blessings_obj.active = false;
                 character_autopotion_obj.active = false;
-                
+                character_bank_from_anywhere.active = false;
                 items_autosell_timer_obj.active = false;
                 character_masteries_obj.active = false;
                 character_permanentbuffs_obj.GetComponent<Mods.Character.Character_PermanentBuffs>().Disable();

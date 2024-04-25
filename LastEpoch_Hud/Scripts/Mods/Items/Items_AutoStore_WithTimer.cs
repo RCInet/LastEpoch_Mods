@@ -12,7 +12,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
         void Awake()
         {
             instance = this;
-            if (Main.debug) { Main.logger_instance.Msg("Items_AutoStore_WithTimer : Awake"); }
         }
         void Update()
         {

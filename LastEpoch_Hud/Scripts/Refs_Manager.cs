@@ -1,5 +1,4 @@
-﻿using ItemFiltering;
-using MelonLoader;
+﻿using MelonLoader;
 using UnityEngine;
 
 namespace LastEpoch_Hud.Scripts
@@ -31,7 +30,7 @@ namespace LastEpoch_Hud.Scripts
         public static UniqueList unique_list = null;
         public static SetBonusesList set_bonuses_list = null;
         public static QuestList quest_list = null;
-        public static ItemFilterManager filter_manager = null;
+        public static ItemFiltering.ItemFilterManager filter_manager = null;
         public static CameraManager camera_manager = null;
         public static CraftingSlotManager craft_slot_manager = null;
         
@@ -84,7 +83,7 @@ namespace LastEpoch_Hud.Scripts
                 if (exp_tracker.IsNullOrDestroyed()) { exp_tracker = PlayerFinder.getExperienceTracker(); }
                 if (player_treedata.IsNullOrDestroyed()) { player_treedata = PlayerFinder.getLocalTreeData(); }
                 if (player_gold_tracker.IsNullOrDestroyed()) { player_gold_tracker = PlayerFinder.getLocalGoldTracker(); }
-                if ((filter_manager.IsNullOrDestroyed()) && (!ItemFilterManager.Instance.IsNullOrDestroyed())) { filter_manager = ItemFilterManager.Instance; }
+                if ((filter_manager.IsNullOrDestroyed()) && (!ItemFiltering.ItemFilterManager.Instance.IsNullOrDestroyed())) { filter_manager = ItemFiltering.ItemFilterManager.Instance; }
                 if ((camera_manager.IsNullOrDestroyed()) && (!CameraManager.instance.IsNullOrDestroyed())) { camera_manager = CameraManager.instance; }
                 if ((craft_slot_manager.IsNullOrDestroyed()) && (!CraftingSlotManager.instance.IsNullOrDestroyed())) { craft_slot_manager = CraftingSlotManager.instance; }
             }

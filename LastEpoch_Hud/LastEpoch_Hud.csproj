@@ -190,6 +190,7 @@
     <None Include="LastEpoch_Hud\Assets\lastepochmods">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Compile Include="Scripts\Mods\Character\Character_Bank_Anywhere.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
