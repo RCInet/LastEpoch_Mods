@@ -131,9 +131,5 @@ namespace LastEpoch_Hud.Scripts
             if (!online) { Enable(); }
             else { Disable(); }
         }
-        public void ForceUpdate() //Cast by SaveManager when data changed
-        {
-            SetActive(Refs_Manager.online);
-        }
     }
 }

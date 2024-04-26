@@ -466,7 +466,7 @@ namespace LastEpoch_Hud.Scripts
             {
                 data_duplicate = data;
                 Save();
-                if (!Mods_Manager.instance.IsNullOrDestroyed()) { Mods_Manager.instance.ForceUpdate(); }                
+                if (!Mods_Manager.instance.IsNullOrDestroyed()) { Mods_Manager.instance.SetActive(Refs_Manager.online); }                
             }
         }
         public void Save()
