@@ -12,8 +12,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
 		void Awake()
 		{
 			instance = this;
-        }
-        void Update()
+		}
+		void Update()
 		{
 			if ((Scenes.IsGameScene()) && (!Refs_Manager.game_uibase.IsNullOrDestroyed()) &&
 				(Input.GetKeyDown(Save_Manager.instance.data.KeyBinds.BankStashs)))

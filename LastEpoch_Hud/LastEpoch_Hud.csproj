@@ -161,6 +161,7 @@
     <Compile Include="Scripts\Mods\Items\Items_Update.cs" />
     <Compile Include="Scripts\Mods\Login\Login_AutoLoginOffline.cs" />
     <Compile Include="Scripts\Mods\Minimap\Minimap_FogOfWar.cs" />
+    <Compile Include="Scripts\Mods\Minimap\Minimap_Icons.cs" />
     <Compile Include="Scripts\Mods\Minimap\Minimap_ZoomOut.cs" />
     <Compile Include="Scripts\Mods\Mobs\Mobs_Density.cs" />
     <Compile Include="Scripts\Mods\Mobs\Mobs_Drop_Gold_Chance.cs" />

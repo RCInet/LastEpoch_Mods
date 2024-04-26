@@ -17,7 +17,8 @@ namespace LastEpoch_Hud.Scripts
         GameObject character_permanentbuffs_obj = null;
         GameObject items_autosell_timer_obj = null;
         GameObject items_headhunter_obj = null;
-        
+        GameObject minimap_icons_obj = null;
+
         bool initialized = false;
 
         void Awake()
@@ -71,6 +72,11 @@ namespace LastEpoch_Hud.Scripts
             character_bank_from_anywhere.AddComponent<Mods.Character.Character_Bank_Anywhere>();
             Mods_Objects.Add(character_bank_from_anywhere);
 
+            minimap_icons_obj = Object.Instantiate(new GameObject { name = "Mod_Minimap_Icons" }, Vector3.zero, Quaternion.identity);
+            minimap_icons_obj.active = false;
+            minimap_icons_obj.AddComponent<Mods.Minimap.Minimap_Icons>();
+            Mods_Objects.Add(minimap_icons_obj);
+
             foreach (GameObject mod in Mods_Objects) { Object.DontDestroyOnLoad(mod); }
             Mods_Objects.Clear();
 
@@ -99,6 +105,7 @@ namespace LastEpoch_Hud.Scripts
                 character_permanentbuffs_obj.GetComponent<Mods.Character.Character_PermanentBuffs>().Enable();
                 Mods.Items.Items_Update.Reqs(); //Used to update item req
                 items_headhunter_obj.active = true;
+                minimap_icons_obj.active = true;
             }
         }
         void Disable()
@@ -115,6 +122,7 @@ namespace LastEpoch_Hud.Scripts
                 character_masteries_obj.active = false;
                 character_permanentbuffs_obj.GetComponent<Mods.Character.Character_PermanentBuffs>().Disable();
                 items_headhunter_obj.active = false;
+                minimap_icons_obj.active = false;
             }
         }
 

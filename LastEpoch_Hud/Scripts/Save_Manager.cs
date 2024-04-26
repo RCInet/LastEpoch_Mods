@@ -280,7 +280,9 @@ namespace LastEpoch_Hud.Scripts
                     Minimap =
                     {
                         Enable_MaxZoomOut = false,
-                        Enable_RemoveFogOfWar = false
+                        Enable_RemoveFogOfWar = false,
+                        Enable_ShowAllItems = false,
+                        Enable_ShowItemsFromFilter = false,
                     },
                     Dungeons =
                     {
@@ -763,6 +765,8 @@ namespace LastEpoch_Hud.Scripts
             {
                 public bool Enable_MaxZoomOut;
                 public bool Enable_RemoveFogOfWar;
+                public bool Enable_ShowAllItems;
+                public bool Enable_ShowItemsFromFilter;
             }
             public struct Monoliths
             {
