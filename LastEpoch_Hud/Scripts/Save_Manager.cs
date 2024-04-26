@@ -283,6 +283,7 @@ namespace LastEpoch_Hud.Scripts
                         Enable_RemoveFogOfWar = false,
                         Enable_ShowAllItems = false,
                         Enable_ShowItemsFromFilter = false,
+                        Icons_Scale = 1f
                     },
                     Dungeons =
                     {
@@ -767,6 +768,7 @@ namespace LastEpoch_Hud.Scripts
                 public bool Enable_RemoveFogOfWar;
                 public bool Enable_ShowAllItems;
                 public bool Enable_ShowItemsFromFilter;
+                public float Icons_Scale;
             }
             public struct Monoliths
             {

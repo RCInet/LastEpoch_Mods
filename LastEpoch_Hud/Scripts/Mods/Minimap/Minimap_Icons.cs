@@ -175,6 +175,13 @@ namespace LastEpoch_Hud.Scripts.Mods.Minimap
             instance = this;
             map_icon = this.gameObject.GetComponent<DMM.DMMapIcon>();
             map_icon.scaleMultiplier = 1f;
+            if (!Save_Manager.instance.IsNullOrDestroyed())
+            {
+                if ((Save_Manager.instance.initialized) && (Save_Manager.instance.data.Scenes.Minimap.Icons_Scale > 0))
+                {
+                    map_icon.scaleMultiplier = Save_Manager.instance.data.Scenes.Minimap.Icons_Scale;
+                }
+            }
             map_icon.scaleWithZoom = true;
             map_icon.rotationOffset = -90f;
             map_icon.rotateWithMap = false;
