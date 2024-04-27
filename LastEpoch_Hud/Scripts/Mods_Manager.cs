@@ -15,6 +15,7 @@ namespace LastEpoch_Hud.Scripts
         GameObject character_masteries_obj = null;
         GameObject character_bank_from_anywhere = null;
         GameObject character_permanentbuffs_obj = null;
+        GameObject character_dps_obj = null;
         GameObject items_autosell_timer_obj = null;
         GameObject items_headhunter_obj = null;
         GameObject minimap_icons_obj = null;
@@ -56,7 +57,12 @@ namespace LastEpoch_Hud.Scripts
             character_permanentbuffs_obj.active = false;
             character_permanentbuffs_obj.AddComponent<Mods.Character.Character_PermanentBuffs>();
             Mods_Objects.Add(character_permanentbuffs_obj);
-                        
+
+            character_dps_obj = Object.Instantiate(new GameObject { name = "Mod_Character_Dps" }, Vector3.zero, Quaternion.identity);
+            character_dps_obj.active = false;
+            character_dps_obj.AddComponent<Mods.Character.Character_Dps>();
+            Mods_Objects.Add(character_dps_obj);
+
             items_autosell_timer_obj = Object.Instantiate(new GameObject { name = "Mod_Items_AutoStore_All10Sec" }, Vector3.zero, Quaternion.identity);
             items_autosell_timer_obj.active = false;
             items_autosell_timer_obj.AddComponent<Mods.Items.Items_AutoStore_WithTimer>();
@@ -75,7 +81,7 @@ namespace LastEpoch_Hud.Scripts
             minimap_icons_obj = Object.Instantiate(new GameObject { name = "Mod_Minimap_Icons" }, Vector3.zero, Quaternion.identity);
             minimap_icons_obj.active = false;
             minimap_icons_obj.AddComponent<Mods.Minimap.Minimap_Icons>();
-            Mods_Objects.Add(minimap_icons_obj);
+            Mods_Objects.Add(minimap_icons_obj);            
 
             foreach (GameObject mod in Mods_Objects) { Object.DontDestroyOnLoad(mod); }
             Mods_Objects.Clear();
@@ -83,13 +89,6 @@ namespace LastEpoch_Hud.Scripts
             initialized = true;
             Main.logger_instance.Msg("Mods Manager : Mods initialized");
         }
-        /*void Update()
-        {
-            if (Scenes.IsGameScene())
-            {
-                Character_Dps.Init();
-            }            
-        }*/
         void Enable()
         {
             if (initialized)
@@ -100,6 +99,7 @@ namespace LastEpoch_Hud.Scripts
                 character_blessings_obj.active = true;
                 character_autopotion_obj.active = Save_Manager.instance.data.Character.Cheats.Enable_AutoPot;
                 character_bank_from_anywhere.active = true;
+                character_dps_obj.active = true;
                 items_autosell_timer_obj.active = Save_Manager.instance.data.Items.Pickup.Enable_AutoStore_All10Sec;
                 character_masteries_obj.active = true;
                 character_permanentbuffs_obj.GetComponent<Mods.Character.Character_PermanentBuffs>().Enable();
@@ -118,6 +118,7 @@ namespace LastEpoch_Hud.Scripts
                 character_blessings_obj.active = false;
                 character_autopotion_obj.active = false;
                 character_bank_from_anywhere.active = false;
+                character_dps_obj.active = false;
                 items_autosell_timer_obj.active = false;
                 character_masteries_obj.active = false;
                 character_permanentbuffs_obj.GetComponent<Mods.Character.Character_PermanentBuffs>().Disable();

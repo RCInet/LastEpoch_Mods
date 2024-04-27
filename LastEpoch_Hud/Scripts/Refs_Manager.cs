@@ -33,6 +33,7 @@ namespace LastEpoch_Hud.Scripts
         public static ItemFiltering.ItemFilterManager filter_manager = null;
         public static CameraManager camera_manager = null;
         public static CraftingSlotManager craft_slot_manager = null;
+        public static ProtectionClass player_protection_class = null;
         
         void Awake()
         {
@@ -78,6 +79,7 @@ namespace LastEpoch_Hud.Scripts
                 if (player_data.IsNullOrDestroyed()) { player_data = PlayerFinder.getPlayerData(); }
                 if (player_data_tracker.IsNullOrDestroyed()) { player_data_tracker = PlayerFinder.getPlayerDataTracker(); }
                 if (player_health.IsNullOrDestroyed()) { player_health = PlayerFinder.getLocalPlayerHealth(); }
+                if ((player_protection_class.IsNullOrDestroyed()) && (!player_actor.IsNullOrDestroyed())) { player_protection_class = player_actor.gameObject.GetComponent<ProtectionClass>(); }
                 if ((health_potion.IsNullOrDestroyed()) && (!player_actor.IsNullOrDestroyed())) { health_potion = player_actor.gameObject.GetComponent<HealthPotion>(); }
                 if (player_stats.IsNullOrDestroyed()) { player_stats = PlayerFinder.getLocalPlayerStats(); }
                 if (exp_tracker.IsNullOrDestroyed()) { exp_tracker = PlayerFinder.getExperienceTracker(); }
