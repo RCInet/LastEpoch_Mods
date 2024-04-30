@@ -30,39 +30,11 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
             {
                 CombatLog.Add_Line("--------------------");
                 CombatLog.Add_Line("Scene changed to " + scene.name);
-                CombatLog.Add_Line("--------------------");
                 if (ShowDebug) { Main.logger_instance.Msg("CombatLog : Scene changed to " + scene.name); }
             }
             else { Main.logger_instance.Error("Scene changed : CombatLog : Not Initialized"); }
         }
-
-        public static void Player_OnDamageTaken(float health_diff, bool Hit, bool Critical, bool Kill, string AbilityName)
-        {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            if (Kill) { sb.Append("Player died : "); }
-            else { sb.Append("Player take "); }
-            sb.Append(health_diff + " damage ");
-            if (Critical) { sb.Append("(critical) "); }
-            if (!Hit) { sb.Append("(not a hit) "); }            
-            sb.Append("from " + AbilityName);
-
-            if (ShowDebug) { Main.logger_instance.Msg(sb.ToString()); }
-            CombatLog.Add_Line(sb.ToString());
-        }
-        public static void Enemy_OnDamageTaken(Actor enemy, float health_diff, bool Hit, bool Critical, bool Kill, string AbilityName)
-        {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            sb.Append(enemy.name);
-            if (Kill) { sb.Append(" died : "); }
-            else { sb.Append(" take "); }
-            sb.Append(health_diff + " damage ");
-            if (Critical) { sb.Append("(critical) "); }
-            if (!Hit) { sb.Append("(not a hit) "); }
-            sb.Append("from " + AbilityName);
-
-            if (ShowDebug) { Main.logger_instance.Msg(sb.ToString()); }
-            CombatLog.Add_Line(sb.ToString());
-        }
+                
         public static void Player_OnHealth(float health_diff, string AbilityName)
         {
             string s = "Player health for " + health_diff + " from " + AbilityName;
@@ -76,14 +48,74 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
             CombatLog.Add_Line(s);
         }
 
+        private static float Get_Health(ref Actor actor)
+        {
+            float result = -1;
+            if (actor == Refs_Manager.player_actor)
+            {
+                if (!actor.gameObject.GetComponent<PlayerHealth>().IsNullOrDestroyed())
+                {
+                    result = actor.gameObject.GetComponent<PlayerHealth>().currentHealth;
+                }
+                else { Main.logger_instance.Error("DamageStatsHolder:applyDamage Prefix : Can't get player health from target : " + actor.name); }
+            }
+            else
+            {
+                if (!actor.gameObject.GetComponent<UnitHealth>().IsNullOrDestroyed())
+                {
+                    result = actor.gameObject.GetComponent<UnitHealth>().currentHealth;
+                }
+                else { Main.logger_instance.Error("DamageStatsHolder:applyDamage Prefix : Can't get (enenmy or summoned) health from target : " + actor.name); }
+            }
+
+            return result;
+        }
+        private static bool Get_IsSummoned(Actor actor)
+        {
+            bool result = false;
+            if (!Refs_Manager.player_actor.IsNullOrDestroyed())
+            {
+                SummonTracker summon_tracker = Refs_Manager.player_actor.gameObject.GetComponent<SummonTracker>();
+                if (!summon_tracker.IsNullOrDestroyed())
+                {
+                    foreach (Summoned summon in summon_tracker.summons)
+                    {
+                        if (summon.actor == actor)
+                        {
+                            result = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+        private static string Get_ActorType(Actor actor)
+        {
+            string result = "";
+            if (!Refs_Manager.player_actor.IsNullOrDestroyed())
+            {
+                if (actor == Refs_Manager.player_actor) { result = "Player"; }
+                else
+                {
+                    if (Get_IsSummoned(actor)) { result = "Summon"; }
+                    else { result = "Enemy"; }
+                }
+            }
+
+            return result;
+        }
+
         public class Damage
         {
-            public static float current_health = -1;
-            public static Actor current_target = null;
-            public static string current_ability_name = "";
             public static bool Hit = false;
             public static bool Critical = false;
             public static bool Kill = false;
+            public static Actor current_source_actor = null;
+            public static Ability current_source_ability = null;
+            public static Actor current_target_actor = null;
+            public static float previous_health = -1;
             
             [HarmonyPatch(typeof(DamageStatsHolder), "applyDamage", new System.Type[] { typeof(Actor) })]
             public class DamageStatsHolder_applyDamage
@@ -91,89 +123,94 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                 [HarmonyPrefix]
                 static void Prefix(ref DamageStatsHolder __instance, ref Actor __0)
                 {
-                    current_health = -1;
-                    current_target = __0; //null;
-                    current_ability_name = __instance.getAbilityName(); //"";
                     Hit = false;
                     Critical = false;
                     Kill = false;
-
+                    previous_health = -1;
+                    current_source_actor = null;
+                    current_source_ability = null;
+                    current_target_actor = null;
                     if ((Scenes.IsGameScene()) && (!Refs_Manager.player_actor.IsNullOrDestroyed()))
                     {
-                        if (__0 == Refs_Manager.player_actor)
-                        {
-                            if (!__0.gameObject.GetComponent<PlayerHealth>().IsNullOrDestroyed())
-                            {
-                                current_health = __0.gameObject.GetComponent<PlayerHealth>().currentHealth;
-                            }
-                            else { Main.logger_instance.Error("DamageStatsHolder:applyDamage Prefix : Can't get player health from target : " + __0.name); }
-                        }
-                        else
-                        {
-                            if (!__0.gameObject.GetComponent<UnitHealth>().IsNullOrDestroyed())
-                            {
-                                current_health = __0.gameObject.GetComponent<UnitHealth>().currentHealth;
-                            }
-                            else { Main.logger_instance.Error("DamageStatsHolder:applyDamage Prefix : Can't get enenmy health from target : " + __0.name); }
-                        }
+                        current_source_ability = __instance.GetDamageSourceInfo().Item2;
+                        current_source_actor = __instance.GetDamageSourceInfo().Item3;
+                        current_target_actor = __0;
+                        previous_health = Get_Health(ref __0);                        
                     }
                 }
-
+                
                 [HarmonyPostfix]
                 static void Postfix(ref DamageStatsHolder __instance, ref Actor __0)
                 {
-                    if ((Scenes.IsGameScene()) && (!Refs_Manager.player_actor.IsNullOrDestroyed()) &&
-                        (current_target == __0) && (current_ability_name == __instance.getAbilityName()) &&
-                        (current_health > -1))
+                    if ((Scenes.IsGameScene()) && (!Refs_Manager.player_actor.IsNullOrDestroyed()))
                     {
-                        if (__0 == Refs_Manager.player_actor)
-                        {
-                            if (!__0.gameObject.GetComponent<PlayerHealth>().IsNullOrDestroyed())
-                            {
-                                float health = __0.gameObject.GetComponent<PlayerHealth>().currentHealth;
-                                float health_diff = (current_health - health);
-                                Player_OnDamageTaken(health_diff, Hit, Critical, Kill, current_ability_name);
-                            }
-                            else { Main.logger_instance.Error("DamageStatsHolder:applyDamage Postfix : Can't get player health from target : " + __0.name); }
-                        }
-                        else if (__0 != Refs_Manager.player_actor)
-                        {
-                            if (!__0.gameObject.GetComponent<UnitHealth>().IsNullOrDestroyed())
-                            {
-                                float health = __0.gameObject.GetComponent<UnitHealth>().currentHealth;
-                                float health_diff = (current_health - health);
-                                Enemy_OnDamageTaken(__0, health_diff, Hit, Critical, Kill, current_ability_name);
-                            }
-                            /*else if () //Minions
-                            {
+                        Il2CppSystem.ValueTuple<Ailment, Ability, Actor, IrregularDamageSourceID> source = __instance.GetDamageSourceInfo();
+                        Ailment source_ailment = source.Item1;
+                        Ability source_ability = source.Item2;
+                        Actor source_actor = source.Item3;
+                        //IrregularDamageSourceID source_irregularDamageSourceID = source.Item4;
 
-                            }*/
-                            else { Main.logger_instance.Error("DamageStatsHolder:applyDamage Postfix : Can't get enenmy health from target : " + __0.name); }
-                        }
-                        else
+                        if ((current_source_ability == source_ability) &&
+                            (current_source_actor == source_actor) &&
+                            (current_target_actor == __0))
                         {
-                            Main.logger_instance.Error("DamageStatsHolder:applyDamage Postfix : current_target = " + __0.name +
-                                ", hit = " + Hit +
-                                ", critical = " + Critical +
-                                ", kill = " + Kill +
-                                ", ability = " + current_ability_name +
-                                ", __instance.ability = " + __instance.getAbilityName() +
-                                ", Health = " + current_health);
+                            CombatLog.Add_Line("--------------------");
+                            CombatLog.Add_Line("Source : " + Get_ActorType(source_actor));
+                            CombatLog.Add_Line("Actor = " + source_actor.name);
+                            CombatLog.Add_Line("Ability = " + source_ability.abilityName);
+                            if (!source_ailment.IsNullOrDestroyed())
+                            {
+                                CombatLog.Add_Line("Ailment = " + source_ailment.name + ", " + source_ailment.displayName);
+                            }
+                            CombatLog.Add_Line("Damage modifier = " + __instance.getDamageModifier());
+                            if (!__instance.damageStats.IsNullOrDestroyed())
+                            {
+                                CombatLog.Add_Line("Critical chance = " + (__instance.damageStats.critChance * 100) + " %");
+                                CombatLog.Add_Line("Critical multiplier = " + (__instance.damageStats.critMultiplier * 100));
+                                CombatLog.Add_Line("Cull percent = " + __instance.damageStats.cullPercent);
+                                CombatLog.Add_Line("Freeze rate = " + __instance.damageStats.freezeRate);
+                                CombatLog.Add_Line("Increased stun chance = " + __instance.damageStats.increasedStunChance);
+                                CombatLog.Add_Line("Increased stun duration = " + __instance.damageStats.increasedStunDuration);
+                                int i = 0;
+                                foreach (float dmg in __instance.damageStats.damage)
+                                {
+                                    CombatLog.Add_Line("Damage[" + i + "] = " + dmg);
+                                    i++;
+                                }
+                                i = 0;
+                                if (!__instance.damageStats.penetration.IsNullOrDestroyed())
+                                {
+                                    foreach (float pen in __instance.damageStats.penetration.penetration)
+                                    {
+                                        CombatLog.Add_Line("Penetration[" + i + "] = " + pen);
+                                        i++;
+                                    }
+                                }
+                            }
+                            CombatLog.Add_Line("");
+                            CombatLog.Add_Line("Target : " + Get_ActorType(__0));
+                            CombatLog.Add_Line("Actor = " + __0.name);                            
+                            float health_diff = (previous_health - Get_Health(ref __0));
+                            string damage_done = "Damage = " + health_diff;
+                            if (Hit) { damage_done += " (Hit)"; }
+                            if (Critical) { damage_done += " (Critical)"; }
+                            if (Kill) { damage_done += " (Kill)"; }
+                            CombatLog.Add_Line(damage_done);
+                            float overkill_damage = (__instance.getTotalDamage() - health_diff);
+                            if (overkill_damage > 0) { CombatLog.Add_Line("Overkill damage = " + overkill_damage); }
+                            else if (overkill_damage < 0) { Main.logger_instance.Error("Overkill damage = " + overkill_damage); }                            
                         }
                     }
-                    current_target = null;
-                    current_ability_name = "";
                 }
             }
-
+            
             [HarmonyPatch(typeof(AbilityEventListener), "HitEvent")]
             public class AbilityEventListener_HitEvent
             {
                 [HarmonyPostfix]
                 static void Postfix(ref Ability __0, ref Actor __1) //, AT __2)
                 {
-                    //Main.logger_instance.Msg("Postfix AbilityEventListener:HitEvent Ability = " + __0.abilityName + ", Actor = " + __1.name);
-                    if ((__0.abilityName == current_ability_name) && (__1 == current_target))
+                    if ((__0 == current_source_ability) && (__1 == current_target_actor))
                     {
                         Hit = true;
                     }
@@ -186,9 +223,10 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                 [HarmonyPostfix]
                 static void Postfix(ref Ability __0, ref Actor __1)
                 {
-                    //Main.logger_instance.Msg("Postfix AbilityEventListener:CritEvent Ability = " + __0.abilityName + ", Actor = " + __1.name);
-                    if ((__0.abilityName == current_ability_name) && (__1 == current_target))
-                    { Critical = true; }
+                    if ((__0 == current_source_ability) && (__1 == current_target_actor))
+                    {
+                        Critical = true;
+                    }
                 }
             }
 
@@ -198,11 +236,12 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                 [HarmonyPostfix]
                 static void Postfix(ref Ability __0, ref Actor __1)
                 {
-                    //Main.logger_instance.Msg("Postfix AbilityEventListener:KillEvent Ability = " + __0.abilityName + ", Actor = " + __1.name);
-                    if ((__0.abilityName == current_ability_name) && (__1 == current_target))
-                    { Kill = true; }
+                    if ((__0 == current_source_ability) && (__1 == current_target_actor))
+                    {
+                        Kill = true;
+                    }
                 }
-            }
+            }            
         }
         public class Health
         {
@@ -287,7 +326,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
 
                         Add_Line("--------------------");
                         Add_Line("Session Start");
-                        Add_Line("--------------------");
                         
                         if (ShowDebug) { Main.logger_instance.Msg("CombatLog : Session Start"); }                                              
                     }

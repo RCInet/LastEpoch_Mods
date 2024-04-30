@@ -9,37 +9,11 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
         {
             public static ItemData item = null;
             public static AffixSlotForge slot = null;
-            public static int affix_id = -1;
-            public static int affix_tier = -1;
+            public static CraftingUpgradeButton btn = null;
         }
         public class Get
         {
-            public static void CurrentFromCraftingManager(ref Il2CppSystem.Object __0)
-            {
-                if (Crafting_Main_Item_Container.container.IsNullOrDestroyed()) { Crafting_Main_Item_Container.container = __0.TryCast<OneItemContainer>(); }
-                if ((!Crafting_Main_Item_Container.container.IsNullOrDestroyed()) && (Current.item.IsNullOrDestroyed()))
-                {
-                    if (!Crafting_Main_Item_Container.container.content.IsNullOrDestroyed())
-                    {
-                        Current.item = Crafting_Main_Item_Container.container.content.data;
-                    }
-                }
-            }
-            public static void CurrentFomSlotManager()
-            {
-                if ((Crafting_Main_Item_Container.container.IsNullOrDestroyed()) && (!Scripts.Refs_Manager.craft_slot_manager.IsNullOrDestroyed()))
-                {
-                    Crafting_Main_Item_Container.container = Scripts.Refs_Manager.craft_slot_manager.main;
-                }
-                if ((!Crafting_Main_Item_Container.container.IsNullOrDestroyed()) && (Current.item.IsNullOrDestroyed()))
-                {
-                    if (!Crafting_Main_Item_Container.container.content.IsNullOrDestroyed())
-                    {
-                        Current.item = Crafting_Main_Item_Container.container.content.data;
-                    }
-                }
-            }
-            public static int TierFromItemData(ItemData item_data, int affix_id)
+            public static int Tier(ItemData item_data, int affix_id)
             {
                 int result = -1;
                 if (!item_data.IsNullOrDestroyed())
@@ -53,7 +27,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                         }
                     }
                 }
-
+                
                 return result;
             }
             public static bool IsIdol(ItemData item)
@@ -62,6 +36,34 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 if ((item.itemType > 24) && (item.itemType < 34)) { result = true; }
                 
                 return result;
+            }
+            public static bool IsPrefixFull(ItemData item)
+            {
+                int nb_max = 0;
+                bool idol = IsIdol(item);
+                foreach (ItemAffix affix in item.affixes)
+                {
+                    if ((affix.affixType == AffixList.AffixType.PREFIX) && ((idol) || ((!idol) && (affix.affixTier > 5))))
+                    {
+                        nb_max++;
+                    }
+                }
+                if (nb_max > 1) { return true; }
+                else { return false; }
+            }
+            public static bool IsSuffixFull(ItemData item)
+            {
+                int nb_max = 0;
+                bool idol = IsIdol(item);
+                foreach (ItemAffix affix in item.affixes)
+                {
+                    if ((affix.affixType == AffixList.AffixType.SUFFIX) && ((idol) || ((!idol) && (affix.affixTier > 5))))
+                    {
+                        nb_max++;
+                    }
+                }
+                if (nb_max > 1) { return true; }
+                else { return false; }
             }
         }
         public class Add
@@ -102,11 +104,69 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 }
             }
         }
+        public class Locales
+        {
+            //Locales
+            public static string affix_is_maxed_key = "Crafting_ForgeButton_Title_AffixMaxed";
+            public static string affix_is_maxed = "maxed_craft";
+            public static string cant_craft_unique_key = "Crafting_ForgeButton_Title_Uniques";
+            public static string cant_craft_unique = "unique_craft";
+            public static string no_forgin_potencial_key = "Crafting_ForgeButton_Title_NoPotential";
+            public static string no_forgin_potencial = "no_forgin_potencial_craft";
+
+            [HarmonyPatch(typeof(Localization), "TryGetText")]
+            public class Localization_TryGetText
+            {
+                [HarmonyPrefix]
+                static bool Prefix(ref bool __result, string __0) //, Il2CppSystem.String __1)
+                {
+                    //Main.logger_instance.Msg("Localization:TryGetText key = " + __0);
+                    bool result = true;
+                    if ((__0 == affix_is_maxed_key) || (__0 == cant_craft_unique_key) ||
+                        (__0 == no_forgin_potencial_key))
+                    {
+                        __result = true;
+                        result = false;
+                    }
+
+                    return result;
+                }
+            }
+
+            [HarmonyPatch(typeof(Localization), "GetText")]
+            public class Localization_GetText
+            {
+                [HarmonyPrefix]
+                static bool Prefix(ref string __result, string __0)
+                {
+                    //Main.logger_instance.Msg("Localization:GetText key = " + __0);
+                    bool result = true;
+                    if (__0 == affix_is_maxed_key)
+                    {
+                        __result = affix_is_maxed;
+                        result = false;
+                    }
+                    else if (__0 == cant_craft_unique_key)
+                    {
+                        __result = cant_craft_unique;
+                        result = false;
+                    }
+                    else if (__0 == no_forgin_potencial_key)
+                    {
+                        __result = no_forgin_potencial;
+                        result = false;
+                    }
+
+                    return result;
+                }
+            }
+        }
         public class Crafting_Manager
         {
+            public static CraftingManager crafting_manager = null;
             public static bool EditingItem = false;
             public static bool first_time = true;
-
+            
             //Select Item
             [HarmonyPatch(typeof(CraftingManager), "OnMainItemChange")]
             public class CraftingManager_OnMainItemChange
@@ -114,10 +174,17 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 [HarmonyPostfix]
                 static void Postfix(ref CraftingManager __instance, ref Il2CppSystem.Object __0, ref ItemContainerEntryHandler __1)
                 {
-                    //if (Main.debug) { Main.logger_instance.Msg("CraftingManager : OnMainItemChange : Postfix"); }
-                    if ((Scenes.IsGameScene()) && (!EditingItem))
+                    if (crafting_manager.IsNullOrDestroyed()) { crafting_manager = __instance; };
+                    if (!__0.IsNullOrDestroyed())
                     {
-                        Get.CurrentFromCraftingManager(ref __0);
+                        OneItemContainer container = __0.TryCast<OneItemContainer>();
+                        if (!container.IsNullOrDestroyed())
+                        {
+                            if (!container.content.IsNullOrDestroyed()) { Current.item = container.content.data; }
+                        }
+                    }
+                    if ((Scenes.IsGameScene()) && (!EditingItem) && (!Crafting_Slot_Manager.forgin))
+                    {
                         if ((!Current.item.IsNullOrDestroyed()) && (first_time) &&
                             (!Save_Manager.instance.IsNullOrDestroyed()))
                         {
@@ -236,13 +303,10 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 [HarmonyPostfix]
                 static void Postfix(CraftingManager __instance, Il2CppSystem.Object __0, ItemContainerEntryHandler __1)
                 {
-                    //if (Main.debug) { Main.logger_instance.Msg("CraftingManager : OnMainItemRemoved : Postfix"); }
-                    Current.item = null;
-                    Crafting_Main_Item_Container.container = null;
-                    Current.affix_id = -1;
+                    if (crafting_manager.IsNullOrDestroyed()) { crafting_manager = __instance; };
+                    Current.item = null;                    
                     Current.slot = null;
-                    Current.affix_tier = -1;
-                    Crafting_Upgrade_Button.btn = null;
+                    Current.btn = null;
                     first_time = true;
                 }
             }
@@ -254,51 +318,45 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 [HarmonyPostfix]
                 static void Postfix(ref CraftingManager __instance, ref bool __result, ref System.String __0, ref System.Boolean __1)
                 {
-                    //if (Main.debug) { Main.logger_instance.Msg("CraftingManager : CheckForgeCapability : Postfix : str = " + __0); }
-                    if ((Scenes.IsGameScene()) && (!Refs_Manager.craft_slot_manager.IsNullOrDestroyed()))
+                    if (crafting_manager.IsNullOrDestroyed()) { crafting_manager = __instance; };
+                    int affix_id = __instance.appliedAffixID;
+                    int affix_tier = Get.Tier(Current.item, affix_id);
+                    if ((!Refs_Manager.craft_slot_manager.IsNullOrDestroyed()) && (!Current.item.IsNullOrDestroyed()))
                     {
-                        Get.CurrentFomSlotManager();
-                        if (!Current.item.IsNullOrDestroyed())
+                        if (__0 == Locales.cant_craft_unique)
                         {
-                            if (__0.ToLower().Contains("uniques"))// (__0 == "Can't Forge Uniques") //Can't Forge Uniques
+                            if ((affix_id > -1) && (affix_tier < 6))
                             {
-                                //Check tier maxed
-                                Refs_Manager.craft_slot_manager.prefixFullOfMax = false;
-                                Refs_Manager.craft_slot_manager.suffixFullOfMax = false;
+                                Refs_Manager.craft_slot_manager.prefixFullOfMax = Get.IsPrefixFull(Current.item);
+                                Refs_Manager.craft_slot_manager.suffixFullOfMax = Get.IsSuffixFull(Current.item);
+                                                                
                                 Refs_Manager.craft_slot_manager.canForge = true;
                                 __0 = "Legendary Craft";
                                 __1 = false;
                                 __result = true;
                             }
-                            /*else if (__0 == "No Forging Potential")
-                            {                    
-                                __0 = "No Cost";
+                            else if (affix_id == -1) { __0 = "Select an affix"; }
+                            else if (affix_tier > 5) { __0 = "Maxed"; }
+                        }
+                        /*else if (__0 == "No Forging Potential")
+                        {                    
+                            __0 = "No Cost";
+                            __1 = false;
+                            __result = true;
+                        }*/
+                        else if (__0 == Locales.affix_is_maxed) //(__0 == "Affix is Maxed")
+                        {
+                            if (affix_tier == 4) { __0 = "Forge T6"; }
+                            else if (affix_tier == 5) { __0 = "Forge T7"; }
+                            if ((affix_tier > 3) && (affix_tier < 6))
+                            {
+                                Refs_Manager.craft_slot_manager.prefixFullOfMax = Get.IsPrefixFull(Current.item);
+                                Refs_Manager.craft_slot_manager.suffixFullOfMax = Get.IsSuffixFull(Current.item);
                                 __1 = false;
                                 __result = true;
-                            }*/
-                            else if (__0 == "Affix is Maxed")
-                            {
-                                int tier = -1;
-                                foreach (var affix in Current.item.affixes)
-                                {
-                                    if (affix.affixId == Current.affix_id)
-                                    {
-                                        tier = affix.affixTier;
-                                        break;
-                                    }
-                                }
-                                if ((tier > -1) && (tier < 6))
-                                {
-                                    if (tier == 4) { __0 = "Forge T6"; }
-                                    else if (tier == 5) { __0 = "Forge T7"; }
-                                    Refs_Manager.craft_slot_manager.prefixFullOfMax = false;
-                                    Refs_Manager.craft_slot_manager.suffixFullOfMax = false;
-                                    __1 = false;
-                                    __result = true;
-                                }
                             }
-                            //No forgin Potencial Cost
-                            //__instance.debugNoForgingPotentialCost = true;
+                            else if (affix_tier > 5) { __0 = "Maxed"; }
+                            else { __0 = "Use Upgrade Button"; }
                         }
                     }
                 }
@@ -320,108 +378,119 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
         }
         public class Crafting_Main_Item_Container
         {
-            public static OneItemContainer container = null;
+            public static CraftingMainItemContainer main_item_container = null;
             public static RectTransform rect_transform = null;
+            public static Vector2Int default_size = Vector2Int.zero;
             public static Vector2 default_sizedelta = Vector2.zero;
+            public static Vector2 default_localscale = Vector2.zero;
             public static bool backup_initialized = false;
 
-            //Idols can be added to slot (Fix item size)
+            //Fix slot size
+            [HarmonyPatch(typeof(OneSlotItemContainer), "TryAddItem", new System.Type[] { typeof(ItemData), typeof(int), typeof(Context) })]
+            public class OneSlotItemContainer_TryAddItem
+            {
+                [HarmonyPrefix]
+                static void Prefix(ref OneSlotItemContainer __instance, bool __result, ItemData __0)
+                {
+                    if (!Crafting_Main_Ui.main_ui.IsNullOrDestroyed())
+                    {
+                        rect_transform = Crafting_Main_Ui.main_ui.gameObject.GetComponent<RectTransform>();
+                    }
+                    if (!rect_transform.IsNullOrDestroyed())
+                    {
+                        if (!backup_initialized)
+                        {
+                            default_size = __instance.size;
+                            default_sizedelta = rect_transform.sizeDelta;
+                            default_localscale = rect_transform.localScale;
+                            backup_initialized = true;
+                        }
+                        if ((backup_initialized) && (__instance.ToString() == "CraftingMainItemContainer"))
+                        {
+                            if ((__0.itemType == 29) || (__0.itemType == 31))
+                            {
+                                __instance.size = new Vector2Int((2 * default_size.x), default_size.y);
+                                rect_transform.sizeDelta = new Vector2((2 * default_sizedelta.x), default_sizedelta.y);
+                                rect_transform.localScale = new Vector3((default_localscale.x / 2), default_localscale.y);
+                            }
+                            else
+                            {
+                                __instance.size = default_size;
+                                rect_transform.sizeDelta = default_sizedelta;
+                                rect_transform.localScale = default_localscale;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            //Idols can be added to slot
             [HarmonyPatch(typeof(CraftingMainItemContainer), "CanReceiveItem")]
             public class CraftingMainItemContainer_CanReceiveItem
             {
                 [HarmonyPostfix]
                 static void Postifx(ref CraftingMainItemContainer __instance, ref bool __result, ItemData __0, int __1)
                 {
-                    if (Scenes.IsGameScene())
-                    {
-                        if ((!backup_initialized) && (!Crafting_Main_Ui.main_ui.IsNullOrDestroyed()))
-                        {
-                            rect_transform = Crafting_Main_Ui.main_ui.gameObject.GetComponent<RectTransform>();
-                            default_sizedelta = rect_transform.sizeDelta;
-                            backup_initialized = true;
-                        }
-                        if ((backup_initialized) && (!rect_transform.IsNullOrDestroyed()) && (__instance.content.IsNullOrDestroyed()))
-                        {
-                            float slots_w = 2;
-                            if (__0.itemType == 29) { slots_w = 3; } //Grand Idols
-                            else if (__0.itemType == 31) { slots_w = 4; } //Ornate Idols
-                            __instance.size = new Vector2Int((int)slots_w, 4); //Set slot size
-                            rect_transform.sizeDelta = new Vector2(((slots_w / 2) * default_sizedelta.x), default_sizedelta.y); //Set size delta
-                        }
-                        if (Get.IsIdol(__0)) { __result = true; } //Allow Idols
-                    }
+                    main_item_container = __instance;
+                    if (Get.IsIdol(__0)) { __result = true; } //Allow Idols
                 }
             }
         }
         public class Crafting_Upgrade_Button
         {
-            public static CraftingUpgradeButton btn = null;
-
             //Unlock Craft Button when tier < T7
             [HarmonyPatch(typeof(CraftingUpgradeButton), "UpdateButton")]
             public class CraftingUpgradeButton_UpdateButton
             {
                 [HarmonyPrefix]
-                static void Prefix(CraftingUpgradeButton __instance, int __0, ref bool __1)
+                static void Prefix(ref CraftingUpgradeButton __instance, int __0, ref bool __1)
                 {
-                    //if (Main.debug) { Main.logger_instance.Msg("CraftingUpgradeButton : UpdateButton : Prefix"); }
-                    if (Scenes.IsGameScene())
+                    if ((Scenes.IsGameScene()) && (!Current.item.IsNullOrDestroyed()))
                     {
-                        Get.CurrentFomSlotManager();
-                        if (!Current.item.IsNullOrDestroyed())
+                        AffixSlotForge temp = __instance.gameObject.GetComponentInParent<AffixSlotForge>();
+                        if (!temp.IsNullOrDestroyed())
                         {
-                            AffixSlotForge temp = __instance.gameObject.GetComponentInParent<AffixSlotForge>();
-                            if (!temp.IsNullOrDestroyed())
-                            {
-                                int affix_id = temp.affixID;
-                                int tier = Get.TierFromItemData(Current.item, affix_id);
+                            int affix_id = temp.affixID;
+                            int tier = Get.Tier(Current.item, affix_id);
 
-                                if (Get.IsIdol(Current.item)) { __1 = false; }
-                                else if ((tier > -1) && (tier < 6)) { __1 = true; }
-                            }
+                            if (Get.IsIdol(Current.item)) { __1 = false; }
+                            else if ((tier > -1) && (tier < 6)) { __1 = true; }
                         }
                     }
                 }
             }
 
-            //Get slot, tier and button ref
+            //Update slot and button ref
             [HarmonyPatch(typeof(CraftingUpgradeButton), "UpgradeButtonClicked")]
             public class CraftingUpgradeButton_UpgradeButtonClicked
             {
-                [HarmonyPostfix]
-                static void Postfix(ref CraftingUpgradeButton __instance)
+                [HarmonyPrefix]
+                static void Prefix(ref CraftingUpgradeButton __instance)
                 {
-                    //if (Main.debug) { Main.logger_instance.Msg("CraftingUpgradeButton : UpgradeButtonClicked : Postfix"); }
                     if (Scenes.IsGameScene())
                     {
-                        Get.CurrentFomSlotManager();
-                        if (!Current.item.IsNullOrDestroyed())
-                        {
-                            btn = __instance;
-                            Current.slot = __instance.gameObject.GetComponentInParent<AffixSlotForge>();
-                            Current.affix_tier = Get.TierFromItemData(Current.item, Current.affix_id);
-                        }
+                        Current.btn = __instance;
+                        Current.slot = __instance.gameObject.GetComponentInParent<AffixSlotForge>();
                     }
                 }
             }
         }
         public class Affix_Slot_Forge
         {
-            //Get slot and button ref
+            //Update slot and button ref
             [HarmonyPatch(typeof(AffixSlotForge), "SlotClicked")]
             public class AffixSlotForge_SlotClicked
             {
                 [HarmonyPostfix]
                 static void Postfix(ref AffixSlotForge __instance)
                 {
-                    //if (Main.debug) { Main.logger_instance.Msg("AffixSlotForge : SlotClicked : Postfix"); }
                     if (Scenes.IsGameScene())
                     {
                         Current.slot = __instance;
                         GameObject upgrade = Functions.GetChild(__instance.gameObject, "upgradeAvailable");
                         if (!upgrade.IsNullOrDestroyed())
                         {
-                            Crafting_Upgrade_Button.btn = upgrade.GetComponent<CraftingUpgradeButton>();
+                            Current.btn = upgrade.GetComponent<CraftingUpgradeButton>();
                         }
                     }
                 }
@@ -502,8 +571,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 static void Postfix(ref CraftingMaterialsPanelUI __instance)
                 {
                     if (Scenes.IsGameScene())
-                    {                        
-                        Get.CurrentFomSlotManager();
+                    {
+                        //if (Current.item.IsNullOrDestroyed()) { Get.Item_FomSlotManager(); }                            
                         if (!Current.item.IsNullOrDestroyed())
                         {
                             GameObject applied_holder = __instance.appliedAffixesHolder.gameObject;
@@ -710,58 +779,76 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
         }
         public class Crafting_Slot_Manager
         {
+            public static bool forgin = false;
+            public static int affix_id = -1;
+            public static int affix_tier = -1;
+
+            public static void Update_Slot(CraftingSlotManager __instance, float affix_id)
+            {
+                foreach (AffixSlotForge slot in __instance.affixSlots)
+                {
+                    if (slot.AffixID == affix_id)
+                    {
+                        Current.slot = slot;
+                        break;
+                    }
+                }
+            }
+            public static void Update_UpgradeBtn()
+            {
+                if (!Current.slot.IsNullOrDestroyed())
+                {
+                    GameObject upgrade = Functions.GetChild(Current.slot.gameObject, "upgradeAvailable");
+                    if (!upgrade.IsNullOrDestroyed())
+                    {
+                        Current.btn = upgrade.GetComponent<CraftingUpgradeButton>();
+                    }
+                }
+            }
+
             [HarmonyPatch(typeof(CraftingSlotManager), "Forge")]
             public class CraftingSlotManager_Forge
             {
                 [HarmonyPrefix]
-                static void Prefix(CraftingSlotManager __instance)
+                static void Prefix(ref CraftingSlotManager __instance)
                 {
-                    if (Scenes.IsGameScene())
+                    forgin = true;
+                    __instance.forgeButton.gameObject.active = false;
+                    affix_id = -1;
+                    affix_tier = -1;
+                    if ((Scenes.IsGameScene()) && (!Current.item.IsNullOrDestroyed()))
                     {
-                        Get.CurrentFomSlotManager();
-                        if (!Current.item.IsNullOrDestroyed())
-                        {
-                            Current.affix_tier = -1;
-                            Current.affix_id = __instance.appliedAffixID;
-                            if (Current.affix_id > -1)
-                            {
-                                foreach (ItemAffix affix in Current.item.affixes)
-                                {
-                                    if (affix.affixId == Current.affix_id)
-                                    {
-                                        Current.affix_tier = affix.affixTier;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
+                        affix_id = __instance.appliedAffixID;
+                        affix_tier = Get.Tier(Current.item, affix_id);
+                        if (Current.slot.IsNullOrDestroyed()) { Update_Slot(__instance, affix_id); }
+                        Update_UpgradeBtn();
                     }
                 }
 
                 [HarmonyPostfix]
-                static void Postfix(CraftingSlotManager __instance)
+                static void Postfix(ref CraftingSlotManager __instance)
                 {
                     if (Scenes.IsGameScene())
                     {
-                        Get.CurrentFomSlotManager();
-                        if ((!Current.item.IsNullOrDestroyed()) && (Current.affix_id > -1))
+                        if ((!Current.item.IsNullOrDestroyed()) && (affix_id > -1))
                         {
                             bool legendary = Current.item.isUniqueSetOrLegendary();
                             bool idol = Get.IsIdol(Current.item);
                             if (legendary) { Current.item.rarity = 9; }
-                            if (Current.affix_tier > -1)
+                            if (affix_tier > -1) //update affix
                             {
                                 if (!idol)
                                 {
                                     bool force_upgrade = false;
                                     foreach (ItemAffix affix in Current.item.affixes)
                                     {
-                                        if (affix.affixId == Current.affix_id)
+                                        if (affix.affixId == affix_id)
                                         {
-                                            if ((Current.affix_tier == affix.affixTier) && (Current.affix_tier < 6))
+                                            if ((affix_tier == affix.affixTier) && (affix_tier < 6))
                                             {
                                                 force_upgrade = true;
                                                 affix.affixTier++;
+                                                affix_tier = (int)affix.affixTier;
                                                 affix.affixRoll = (byte)Random.Range(0f, 255f);
                                             }
                                             break;
@@ -770,41 +857,36 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                     if (force_upgrade)
                                     {
                                         Current.item.RefreshIDAndValues();
-                                        if ((Current.affix_tier < 5) && (!Crafting_Upgrade_Button.btn.IsNullOrDestroyed()))
+                                        if (!Current.btn.IsNullOrDestroyed())
                                         {
-                                            Crafting_Upgrade_Button.btn.UpgradeButtonClicked();
+                                            if (affix_tier < 6) { Current.btn.UpgradeButtonClicked(); }
+                                            else { Current.btn.gameObject.active = false; }
                                         }
-                                        else
-                                        {
-                                            Current.affix_tier++;
-                                            Crafting_Upgrade_Button.btn.gameObject.active = false;
-                                        }
+                                        else { Main.logger_instance.Error("Crafting_Upgrade_Button is null"); }
                                     }
                                 }
                             }
-                            else if ((legendary) || (idol))
+                            else if (((legendary) || (idol)) && (!Current.slot.IsNullOrDestroyed()) && (!Current.btn.IsNullOrDestroyed())) //add affix
                             {
                                 int nb_prefix = 0;
                                 int nb_suffix = 0;
                                 bool already_contain_affix = false;
                                 foreach (ItemAffix item_affix in Current.item.affixes)
                                 {
-                                    if (item_affix.affixId == Current.affix_id) { already_contain_affix = true; break; }
+                                    if (item_affix.affixId == affix_id) { already_contain_affix = true; break; }
                                     if (item_affix.affixType == AffixList.AffixType.PREFIX) { nb_prefix++; }
                                     else if (item_affix.affixType == AffixList.AffixType.SUFFIX) { nb_suffix++; }
                                 }
                                 if (!already_contain_affix)
                                 {
-                                    AffixList.AffixType new_affix_type = AffixList.instance.GetAffixType(Current.affix_id);
+                                    AffixList.AffixType new_affix_type = AffixList.instance.GetAffixType(affix_id);
                                     if (((new_affix_type == AffixList.AffixType.PREFIX) && (nb_prefix < 2)) ||
                                         ((new_affix_type == AffixList.AffixType.SUFFIX) && (nb_suffix < 2)))
                                     {
-                                        Current.affix_tier = 0;
-                                        if (!Current.slot.IsNullOrDestroyed()) { Current.slot.affixID = (ushort)Current.affix_id; }
                                         ItemAffix affix = new ItemAffix
                                         {
-                                            affixId = (ushort)Current.affix_id,
-                                            affixTier = (byte)Current.affix_tier,
+                                            affixId = (ushort)affix_id,
+                                            affixTier = (byte)0,
                                             affixRoll = (byte)Random.Range(0f, 255f),
                                             affixType = new_affix_type
                                         };
@@ -816,23 +898,29 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                             if (index == 2) { index += nb_suffix; }
                                             if (index < __instance.affixSlots.Count)
                                             {
-                                                GameObject upgrade = Functions.GetChild(__instance.affixSlots[index].gameObject, "upgradeAvailable");
-                                                if (!upgrade.IsNullOrDestroyed())
+                                                Current.slot = __instance.affixSlots[index];
+                                                if (!Current.slot.IsNullOrDestroyed())
                                                 {
-                                                    upgrade.GetComponent<CraftingUpgradeButton>().UpgradeButtonClicked();
+                                                    Current.slot.affixID = (ushort)affix_id;
+                                                    GameObject upgrade = Functions.GetChild(Current.slot.gameObject, "upgradeAvailable");
+                                                    if (!upgrade.IsNullOrDestroyed())
+                                                    {
+                                                        upgrade.GetComponent<CraftingUpgradeButton>().UpgradeButtonClicked();
 
-                                                    Crafting_Upgrade_Button.btn = upgrade.GetComponent<CraftingUpgradeButton>();
-                                                    Crafting_Upgrade_Button.btn.gameObject.active = true;
-                                                    Crafting_Upgrade_Button.btn.UpgradeButtonClicked();
+                                                        Current.btn = upgrade.GetComponent<CraftingUpgradeButton>();
+                                                        Current.btn.gameObject.active = true;
+                                                        Current.btn.UpgradeButtonClicked();
+                                                    }
                                                 }
                                             }
                                         }
-                                        else { Current.affix_id = -1; }
                                     }
                                 }
                             }
                         }
                     }
+                    __instance.forgeButton.gameObject.active = true;
+                    forgin = false;
                 }
             }
         }
