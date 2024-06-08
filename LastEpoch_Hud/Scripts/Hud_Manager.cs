@@ -742,63 +742,21 @@ namespace LastEpoch_Hud.Scripts
                                         }
                                     //Craft
                                     case "Slider_Items_Craft_ForginPotencial": { Save_Manager.instance.data.Items.CraftingSlot.ForginPotencial = __0; break; }
-                                    case "Slider_Items_Craft_Implicit0":
-                                        {
-                                            Save_Manager.instance.data.Items.CraftingSlot.Implicit_0 = __0;
-                                            break;
-                                        }
-                                    case "Slider_Items_Craft_Implicit1":
-                                        {
-                                            Save_Manager.instance.data.Items.CraftingSlot.Implicit_1 = __0;
-                                            break;
-                                        }
-                                    case "Slider_Items_Craft_Implicit2":
-                                        {
-                                            Save_Manager.instance.data.Items.CraftingSlot.Implicit_2 = __0;
-                                            break;
-                                        }
+                                    case "Slider_Items_Craft_Implicit0": { Save_Manager.instance.data.Items.CraftingSlot.Implicit_0 = __0; break; }
+                                    case "Slider_Items_Craft_Implicit1": { Save_Manager.instance.data.Items.CraftingSlot.Implicit_1 = __0; break; }
+                                    case "Slider_Items_Craft_Implicit2": { Save_Manager.instance.data.Items.CraftingSlot.Implicit_2 = __0; break; }
 
-                                    case "Slider_Items_Craft_SealTier": { Save_Manager.instance.data.Items.CraftingSlot.Seal_Tier = __0; break; }
+                                    case "Slider_Items_Craft_SealTier": { Save_Manager.instance.data.Items.CraftingSlot.Seal_Tier = (int)__0; break; }
                                     case "Slider_Items_Craft_SealValue": { Save_Manager.instance.data.Items.CraftingSlot.Seal_Value = __0; break; }
                                     
-                                    case "Slider_Items_Craft_AffixTier0": { Save_Manager.instance.data.Items.CraftingSlot.Affix_0_Tier = __0; break; }
-                                    case "Slider_Items_Craft_AffixTier1": { Save_Manager.instance.data.Items.CraftingSlot.Affix_1_Tier = __0; break; }
-                                    case "Slider_Items_Craft_AffixTier2":
-                                        {
-                                            Save_Manager.instance.data.Items.CraftingSlot.Affix_2_Tier = __0;
-                                            //Content.Items.CraftingSlot.affix_2_tier_text.text = "" + (int)(Save_Manager.instance.data.Items.CraftingSlot.Affix_2_Tier);
-                                            break;
-                                        }
-                                    case "Slider_Items_Craft_AffixTier3":
-                                        {
-                                            Save_Manager.instance.data.Items.CraftingSlot.Affix_3_Tier = __0;
-                                            //Content.Items.CraftingSlot.affix_3_tier_text.text = "" + (int)(Save_Manager.instance.data.Items.CraftingSlot.Affix_3_Tier);
-                                            break;
-                                        }
-                                    case "Slider_Items_Craft_AffixValue0":
-                                        {
-                                            Save_Manager.instance.data.Items.CraftingSlot.Affix_0_Value = __0;
-                                            //Content.Items.CraftingSlot.affix_0_value_text.text = (int)((Save_Manager.instance.data.Items.CraftingSlot.Affix_0_Value / 255) * 100) + " %";
-                                            break;
-                                        }
-                                    case "Slider_Items_Craft_AffixValue1":
-                                        {
-                                            Save_Manager.instance.data.Items.CraftingSlot.Affix_1_Value = __0;
-                                            //Content.Items.CraftingSlot.affix_1_value_text.text = (int)((Save_Manager.instance.data.Items.CraftingSlot.Affix_1_Value / 255) * 100) + " %";
-                                            break;
-                                        }
-                                    case "Slider_Items_Craft_AffixValue2":
-                                        {
-                                            Save_Manager.instance.data.Items.CraftingSlot.Affix_2_Value = __0;
-                                            //Content.Items.CraftingSlot.affix_2_value_text.text = (int)((Save_Manager.instance.data.Items.CraftingSlot.Affix_2_Value / 255) * 100) + " %";
-                                            break;
-                                        }
-                                    case "Slider_Items_Craft_AffixValue3":
-                                        {
-                                            Save_Manager.instance.data.Items.CraftingSlot.Affix_3_Value = __0;
-                                            //Content.Items.CraftingSlot.affix_3_value_text.text = (int)((Save_Manager.instance.data.Items.CraftingSlot.Affix_3_Value / 255) * 100) + " %";
-                                            break;
-                                        }
+                                    case "Slider_Items_Craft_AffixTier0": { Save_Manager.instance.data.Items.CraftingSlot.Affix_0_Tier = (int)__0; break; }
+                                    case "Slider_Items_Craft_AffixTier1": { Save_Manager.instance.data.Items.CraftingSlot.Affix_1_Tier = (int)__0; break; }
+                                    case "Slider_Items_Craft_AffixTier2": { Save_Manager.instance.data.Items.CraftingSlot.Affix_2_Tier = (int)__0; break; }
+                                    case "Slider_Items_Craft_AffixTier3": { Save_Manager.instance.data.Items.CraftingSlot.Affix_3_Tier = (int)__0; break; }
+                                    case "Slider_Items_Craft_AffixValue0": { Save_Manager.instance.data.Items.CraftingSlot.Affix_0_Value = __0; break; }
+                                    case "Slider_Items_Craft_AffixValue1": { Save_Manager.instance.data.Items.CraftingSlot.Affix_1_Value = __0; break; }
+                                    case "Slider_Items_Craft_AffixValue2": { Save_Manager.instance.data.Items.CraftingSlot.Affix_2_Value = __0; break; }
+                                    case "Slider_Items_Craft_AffixValue3": { Save_Manager.instance.data.Items.CraftingSlot.Affix_3_Value = __0; break; }
 
                                     case "Slider_Items_Craft_UniqueMod0": { Save_Manager.instance.data.Items.CraftingSlot.UniqueMod_0 = __0; break; }
                                     case "Slider_Items_Craft_UniqueMod1": { Save_Manager.instance.data.Items.CraftingSlot.UniqueMod_1 = __0; break; }
@@ -809,8 +767,8 @@ namespace LastEpoch_Hud.Scripts
                                     case "Slider_Items_Craft_UniqueMod6": { Save_Manager.instance.data.Items.CraftingSlot.UniqueMod_6 = __0; break; }
                                     case "Slider_Items_Craft_UniqueMod7": { Save_Manager.instance.data.Items.CraftingSlot.UniqueMod_7 = __0; break; }
 
-                                    case "Slider_Items_Craft_LegendaryPotencial": { Save_Manager.instance.data.Items.CraftingSlot.LegendaryPotencial = __0; break; }
-                                    case "Slider_Items_Craft_WeaverWill": { Save_Manager.instance.data.Items.CraftingSlot.WeaverWill = __0; break; }
+                                    case "Slider_Items_Craft_LegendaryPotencial": { Save_Manager.instance.data.Items.CraftingSlot.LegendaryPotencial = (int)__0; break; }
+                                    case "Slider_Items_Craft_WeaverWill": { Save_Manager.instance.data.Items.CraftingSlot.WeaverWill = (int)__0; break; }
                                 }
                             }
                             else if (__instance.name.Contains("Slider_Scenes_"))

@@ -183,7 +183,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                             if (!container.content.IsNullOrDestroyed()) { Current.item = container.content.data; }
                         }
                     }
-                    if ((Scenes.IsGameScene()) && (!EditingItem) && (!Crafting_Slot_Manager.forgin))
+                    if ((Scenes.IsGameScene()) && (!EditingItem)) // && (!Crafting_Slot_Manager.forgin))
                     {
                         if ((!Current.item.IsNullOrDestroyed()) && (first_time) &&
                             (!Save_Manager.instance.IsNullOrDestroyed()))
@@ -234,20 +234,39 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                 affix_value_values.Add(Save_Manager.instance.data.Items.CraftingSlot.Affix_2_Value);
                                 affix_value_values.Add(Save_Manager.instance.data.Items.CraftingSlot.Affix_3_Value);
 
-                                int k = 0;
-                                for (int z = 0; z < Current.item.affixes.Count; z++)
+                                int nb_prefix = 0;
+                                int nb_suffix = 0;
+                                foreach (ItemAffix affix in Current.item.affixes)
                                 {
-                                    if (Current.item.affixes[z].isSealedAffix)
+                                    if (affix.isSealedAffix)
                                     {
-                                        if (Save_Manager.instance.data.Items.CraftingSlot.Enable_Seal_Tier) { Current.item.affixes[z].affixTier = (byte)Scripts.Save_Manager.instance.data.Items.CraftingSlot.Seal_Tier; }
-                                        if (Save_Manager.instance.data.Items.CraftingSlot.Enable_Seal_Value) { Current.item.affixes[z].affixRoll = (byte)Scripts.Save_Manager.instance.data.Items.CraftingSlot.Seal_Value; }
+                                        if (Save_Manager.instance.data.Items.CraftingSlot.Enable_Seal_Tier) { affix.affixTier = (byte)Scripts.Save_Manager.instance.data.Items.CraftingSlot.Seal_Tier; }
+                                        if (Save_Manager.instance.data.Items.CraftingSlot.Enable_Seal_Value) { affix.affixRoll = (byte)Scripts.Save_Manager.instance.data.Items.CraftingSlot.Seal_Value; }
                                     }
-                                    else if ((k < affix_tier_enables.Count) && (k < affix_tier_values.Count) &&
-                                        (k < affix_value_enables.Count) && (k < affix_value_values.Count))
+                                    else
                                     {
-                                        if (affix_tier_enables[k]) { Current.item.affixes[z].affixTier = (byte)affix_tier_values[k]; }
-                                        if (affix_value_enables[k]) { Current.item.affixes[z].affixRoll = (byte)affix_value_values[k]; }
-                                        k++;
+                                        int result = -1;
+                                        if ((affix.affixType == AffixList.AffixType.PREFIX) && (nb_prefix < 2))
+                                        {
+                                            result = 0 + nb_prefix;
+                                            nb_prefix++;
+                                        }
+                                        else if ((affix.affixType == AffixList.AffixType.SUFFIX) && (nb_suffix < 2))
+                                        {
+                                            result = 2 + nb_suffix;
+                                            nb_suffix++;
+                                        }
+
+                                        if ((result > -1) && (result < 4))
+                                        {
+                                            if ((result < affix_tier_enables.Count) && (result < affix_tier_values.Count) &&
+                                                (result < affix_value_enables.Count) && (result < affix_value_values.Count))
+                                            {
+                                                if (affix_tier_enables[result]) { affix.affixTier = (byte)affix_tier_values[result]; }
+                                                if (affix_value_enables[result]) { affix.affixRoll = (byte)affix_value_values[result]; }
+                                                
+                                            }
+                                        }
                                     }
                                 }
                                 affix_tier_enables.Clear();

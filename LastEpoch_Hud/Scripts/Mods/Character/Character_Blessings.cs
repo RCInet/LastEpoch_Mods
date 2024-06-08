@@ -17,10 +17,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
         }
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                Character_Blessings_Hooks.SelectBlessing();
-            }
+            if (Input.GetKeyDown(KeyCode.Mouse0)) { Character_Blessings_Hooks.SelectBlessing(); }
         }
     }
     public class Character_Blessings_Hooks

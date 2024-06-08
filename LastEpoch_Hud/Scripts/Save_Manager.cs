@@ -660,27 +660,27 @@ namespace LastEpoch_Hud.Scripts
                 public float Implicit_2;
 
                 public bool Enable_Seal_Tier;
-                public float Seal_Tier;
+                public int Seal_Tier;
                 public bool Enable_Seal_Value;
                 public float Seal_Value;
 
                 public bool Enable_Affix_0_Tier;
-                public float Affix_0_Tier;
+                public int Affix_0_Tier;
                 public bool Enable_Affix_0_Value;
                 public float Affix_0_Value;
 
                 public bool Enable_Affix_1_Tier;
-                public float Affix_1_Tier;
+                public int Affix_1_Tier;
                 public bool Enable_Affix_1_Value;
                 public float Affix_1_Value;
 
                 public bool Enable_Affix_2_Tier;
-                public float Affix_2_Tier;
+                public int Affix_2_Tier;
                 public bool Enable_Affix_2_Value;
                 public float Affix_2_Value;
 
                 public bool Enable_Affix_3_Tier;
-                public float Affix_3_Tier;
+                public int Affix_3_Tier;
                 public bool Enable_Affix_3_Value;
                 public float Affix_3_Value;
                                 
@@ -702,10 +702,10 @@ namespace LastEpoch_Hud.Scripts
                 public float UniqueMod_7;
 
                 public bool Enable_LegendaryPotencial;
-                public float LegendaryPotencial;
+                public int LegendaryPotencial;
 
                 public bool Enable_WeaverWill;
-                public float WeaverWill;
+                public int WeaverWill;
             }
             public struct Headhunter
             {
