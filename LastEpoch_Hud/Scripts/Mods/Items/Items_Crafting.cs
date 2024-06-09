@@ -5,6 +5,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
 {
     public class Items_Crafting
     {
+        public static bool enable_forgin_potencial_cost = false;
+
         public class Current
         {
             public static ItemData item = null;
@@ -801,7 +803,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
             public static bool forgin = false;
             public static int affix_id = -1;
             public static int affix_tier = -1;
-
+            
             public static void Update_Slot(CraftingSlotManager __instance, float affix_id)
             {
                 foreach (AffixSlotForge slot in __instance.affixSlots)
@@ -865,6 +867,31 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                         {
                                             if ((affix_tier == affix.affixTier) && (affix_tier < 6))
                                             {
+                                                if ((!legendary) && (enable_forgin_potencial_cost))
+                                                {
+                                                    int cost = 0;
+                                                    int min = 0;
+                                                    int max = 0;
+                                                    if (affix_tier == 4) //t5 to t6
+                                                    {
+                                                        min = 1;
+                                                        max = 23;
+                                                        
+                                                    }
+                                                    else if (affix_tier == 5) //t6 to t7
+                                                    {
+                                                        min = 1;
+                                                        max = 27;
+                                                    }
+                                                    cost = Random.RandomRangeInt(min, max);
+
+                                                    if (Current.item.forgingPotential >= (max - 1))
+                                                    {
+                                                        Current.item.forgingPotential -= (byte)cost;
+                                                    }
+                                                    else { Main.logger_instance.Error("You need " + (max - 1) + " forgin potencial on this item to craft"); }
+                                                }
+
                                                 force_upgrade = true;
                                                 affix.affixTier++;
                                                 affix_tier = (int)affix.affixTier;
