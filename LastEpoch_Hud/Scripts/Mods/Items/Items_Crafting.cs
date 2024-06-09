@@ -867,35 +867,31 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                         {
                                             if ((affix_tier == affix.affixTier) && (affix_tier < 6))
                                             {
+                                                bool error = false;
                                                 if ((!legendary) && (enable_forgin_potencial_cost))
                                                 {
-                                                    int cost = 0;
                                                     int min = 0;
                                                     int max = 0;
-                                                    if (affix_tier == 4) //t5 to t6
-                                                    {
-                                                        min = 1;
-                                                        max = 23;
-                                                        
-                                                    }
-                                                    else if (affix_tier == 5) //t6 to t7
-                                                    {
-                                                        min = 1;
-                                                        max = 27;
-                                                    }
-                                                    cost = Random.RandomRangeInt(min, max);
-
+                                                    if (affix_tier == 4) { min = 1; max = 23; }
+                                                    else if (affix_tier == 5) { min = 1; max = 27; }
                                                     if (Current.item.forgingPotential >= (max - 1))
                                                     {
+                                                        int cost = Random.RandomRangeInt(min, max);
                                                         Current.item.forgingPotential -= (byte)cost;
                                                     }
-                                                    else { Main.logger_instance.Error("You need " + (max - 1) + " forgin potencial on this item to craft"); }
+                                                    else
+                                                    {
+                                                        error = true; //Don't increment affix
+                                                        Main.logger_instance.Error("You need " + (max - 1) + " forgin potencial on this item to craft T" + (affix_tier + 2));
+                                                    }
                                                 }
-
-                                                force_upgrade = true;
-                                                affix.affixTier++;
-                                                affix_tier = (int)affix.affixTier;
-                                                affix.affixRoll = (byte)Random.Range(0f, 255f);
+                                                if (!error)
+                                                {
+                                                    force_upgrade = true;
+                                                    affix.affixTier++;
+                                                    affix_tier = (int)affix.affixTier;
+                                                    affix.affixRoll = (byte)Random.Range(0f, 255f);
+                                                }
                                             }
                                             break;
                                         }
