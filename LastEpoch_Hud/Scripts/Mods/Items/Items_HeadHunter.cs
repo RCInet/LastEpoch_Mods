@@ -396,6 +396,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
         }
         public class RandomBuffs
         {
+            public static int Max_Stack = 10; //Edit max Buff stack
+
             public struct HH_Buff
             {
                 public string property;
@@ -412,18 +414,15 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 {
                     Actor playerActor = PlayerFinder.getPlayerActor();
                     Buff random_buff = Generate_Random_HHBuff();
-                    int max_value = 255;
-                    int max_addvalue = max_value;
-                    int max_increasedvalue = max_value;
+                    int max_addvalue = Max_Stack;
+                    int max_increasedvalue = Max_Stack;
                     bool found = false;
                     foreach (var p in Config.HH_Buff_Config)
                     {
                         if (random_buff.name.Contains(p.property))
                         {
-                            if ((p.max_added == 0) | (p.max_added > max_value) | (p.max_added < 0)) { max_addvalue = max_value; }
-                            else { max_addvalue = p.max_added; }
-                            if ((p.max_increased == 0) | (p.max_increased > max_value) | (p.max_increased < 0)) { max_increasedvalue = max_value; }
-                            else { max_increasedvalue = p.max_increased; }
+                            if ((p.max_added > 0) && (p.max_added < max_addvalue)) { max_addvalue = p.max_added; }
+                            if ((p.max_increased > 0) && (p.max_increased < max_increasedvalue)) { max_increasedvalue -= p.max_increased; }
                             found = true;
                             break;
                         }
