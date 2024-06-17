@@ -22,6 +22,7 @@
                 if (CanLevelUp())
                 {
                     Hud_Manager.Hud_Base.Resume_Click(); //Close Hud
+                    if (level > max_level) { level = max_level; }
                     for (int i = Refs_Manager.exp_tracker.CurrentLevel; i < level; i++) { Refs_Manager.exp_tracker.LevelUp(true); }
                 }
                 else { Main.logger_instance.Msg("Hud Manager : Character already max level"); }
