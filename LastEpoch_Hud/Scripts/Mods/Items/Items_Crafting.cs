@@ -874,11 +874,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                                     int max = 0;
                                                     if (affix_tier == 4) { min = 1; max = 23; }
                                                     else if (affix_tier == 5) { min = 1; max = 27; }
-                                                    if (Current.item.forgingPotential >= (max - 1))
-                                                    {
-                                                        int cost = Random.RandomRangeInt(min, max);
-                                                        Current.item.forgingPotential -= (byte)cost;
-                                                    }
+                                                    if (Current.item.forgingPotential >= (max - 1)) { Current.item.forgingPotential -= (byte)Random.RandomRangeInt(min, max); }
                                                     else
                                                     {
                                                         error = true; //Don't increment affix

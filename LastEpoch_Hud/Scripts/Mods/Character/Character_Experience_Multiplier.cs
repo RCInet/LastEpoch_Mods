@@ -16,7 +16,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
             }
             else { return false; }
         }
-
+        
         [HarmonyPatch(typeof(ExperienceTracker), "GainExp")]
         public class ExperienceTracker_GainExp
         {
@@ -26,7 +26,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                 if (CanRun())
                 {
                     __0 *= (long)Save_Manager.instance.data.Character.Cheats.ExperienceMultiplier;
-                }                
+                }
             }
         }
     }

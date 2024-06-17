@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using MelonLoader;
+using System;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -32,7 +33,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                 CombatLog.Add_Line("Scene changed to " + scene.name);
                 if (ShowDebug) { Main.logger_instance.Msg("CombatLog : Scene changed to " + scene.name); }
             }
-            else { Main.logger_instance.Error("Scene changed : CombatLog : Not Initialized"); }
         }
                 
         public static void Player_OnHealth(float health_diff, string AbilityName)
@@ -198,7 +198,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                             CombatLog.Add_Line(damage_done);
                             float overkill_damage = (__instance.getTotalDamage() - health_diff);
                             if (overkill_damage > 0) { CombatLog.Add_Line("Overkill damage = " + overkill_damage); }
-                            else if (overkill_damage < 0) { Main.logger_instance.Error("Overkill damage = " + overkill_damage); }                            
+                            //else if (overkill_damage < 0) { Main.logger_instance.Error("Overkill damage = " + overkill_damage); }                            
                         }
                     }
                 }
@@ -319,15 +319,21 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                     initializing = true;
                     if (!Directory.Exists(path)) { Directory.CreateDirectory(path); }
                     if (!File.Exists(path + filename)) { File.Create(path + filename); }
-                    if (File.Exists(path + filename))
+                    
+                    try
                     {
                         File.WriteAllText(path + filename, string.Empty);
                         Initialized = true;
 
                         Add_Line("--------------------");
                         Add_Line("Session Start");
-                        
-                        if (ShowDebug) { Main.logger_instance.Msg("CombatLog : Session Start"); }                                              
+
+                        if (ShowDebug) { Main.logger_instance.Msg("CombatLog : Session Start"); }
+
+                    }
+                    catch (Exception e)
+                    {
+                        if (ShowDebug) { Main.logger_instance.Error(e.ToString()); }
                     }
                     initializing = false;
                 }
@@ -342,8 +348,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                     File.AppendAllText(path + filename, text);
                     lines++;
                 }
-                else if (!Initialized) { Main.logger_instance.Error("CombatLog : Not Initialized"); }
-                else if (!File.Exists(path + filename)) { Main.logger_instance.Error("CombatLog : File not found"); }
             }
         }
     }

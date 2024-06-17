@@ -96,16 +96,16 @@ namespace LastEpoch_Hud.Scripts
                 character_godmode_obj.active = Save_Manager.instance.data.Character.Cheats.Enable_GodMode;
                 character_lowlife_obj.active = Save_Manager.instance.data.Character.Cheats.Enable_LowLife;
                 //character_blessings_obj.active = Save_Manager.instance.data.Character.Cheats.Enable_CanChooseBlessing;
-                character_blessings_obj.active = true;
+                character_blessings_obj.active = true; //Don't disable here
                 character_autopotion_obj.active = Save_Manager.instance.data.Character.Cheats.Enable_AutoPot;
-                character_bank_from_anywhere.active = true;
-                character_dps_obj.active = true;
+                character_bank_from_anywhere.active = true; //Enable/Disable F3 Open/Close Bank
+                character_dps_obj.active = true; //CombatLogs
                 items_autosell_timer_obj.active = Save_Manager.instance.data.Items.Pickup.Enable_AutoStore_All10Sec;
-                character_masteries_obj.active = true;
+                character_masteries_obj.active = true; //Hud
                 character_permanentbuffs_obj.GetComponent<Mods.Character.Character_PermanentBuffs>().Enable();
                 Mods.Items.Items_Update.Reqs(); //Used to update item req
                 items_headhunter_obj.active = true;
-                minimap_icons_obj.active = true;
+                minimap_icons_obj.active = true; //Enable/Disable Minimap Icons
             }
         }
         void Disable()
