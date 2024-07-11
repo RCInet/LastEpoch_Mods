@@ -425,32 +425,35 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 [HarmonyPrefix]
                 static void Prefix(ref OneSlotItemContainer __instance, bool __result, ItemData __0)
                 {
-                    if ((__instance.ToString() == "CraftingMainItemContainer") && (!rect_transform.IsNullOrDestroyed()))
+                    if (Scenes.IsGameScene())
                     {
-                        if (!backup_initialized)
+                        if ((__instance.ToString() == "CraftingMainItemContainer") && (!rect_transform.IsNullOrDestroyed()))
                         {
-                            default_size = __instance.size;
-                            default_sizedelta = rect_transform.sizeDelta;
-                            default_localscale = rect_transform.localScale;
-                            backup_initialized = true;
-                        }
-                        if (backup_initialized)
-                        {
-                            if ((__0.itemType == 29) || (__0.itemType == 31))
+                            if (!backup_initialized)
                             {
-                                __instance.size = new Vector2Int((2 * default_size.x), default_size.y);
-                                rect_transform.sizeDelta = new Vector2((2 * default_sizedelta.x), default_sizedelta.y);
-                                rect_transform.localScale = new Vector3((default_localscale.x / 2), default_localscale.y);
+                                default_size = __instance.size;
+                                default_sizedelta = rect_transform.sizeDelta;
+                                default_localscale = rect_transform.localScale;
+                                backup_initialized = true;
                             }
-                            else
+                            if (backup_initialized)
                             {
-                                __instance.size = default_size;
-                                rect_transform.sizeDelta = default_sizedelta;
-                                rect_transform.localScale = default_localscale;
+                                if ((__0.itemType == 29) || (__0.itemType == 31))
+                                {
+                                    __instance.size = new Vector2Int((2 * default_size.x), default_size.y);
+                                    rect_transform.sizeDelta = new Vector2((2 * default_sizedelta.x), default_sizedelta.y);
+                                    rect_transform.localScale = new Vector3((default_localscale.x / 2), default_localscale.y);
+                                }
+                                else
+                                {
+                                    __instance.size = default_size;
+                                    rect_transform.sizeDelta = default_sizedelta;
+                                    rect_transform.localScale = default_localscale;
+                                }
                             }
                         }
+                        else { Main.logger_instance.Error("CraftingMainItemContainer rect_transform null"); }
                     }
-                    else { Main.logger_instance.Error("CraftingMainItemContainer rect_transform null"); }
                 }
             }
             
