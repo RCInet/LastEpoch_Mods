@@ -42,9 +42,9 @@
                         item_container_entry.data.RefreshIDAndValues();
                     }
                 }
-                if (!Refs_Manager.item_containers_manager.stash.containers.IsNullOrDestroyed())
+                /*if (!Refs_Manager.item_containers_manager.stash.stashItemContainers.IsNullOrDestroyed())
                 {
-                    foreach (ItemContainer item_container in Refs_Manager.item_containers_manager.stash.containers)
+                    foreach (ItemContainer item_container in Refs_Manager.item_containers_manager.stash.stashItemContainers)
                     {
                         if (!item_container.content.IsNullOrDestroyed())
                         {
@@ -54,7 +54,7 @@
                             }
                         }
                     }
-                }
+                }*/
             }
         }
     }

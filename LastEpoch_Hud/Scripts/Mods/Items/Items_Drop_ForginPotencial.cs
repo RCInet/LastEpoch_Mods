@@ -16,13 +16,13 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 else { return false; }
             }
             else { return false; }
-        }
-        
+        }              
+
         [HarmonyPatch(typeof(GenerateItems), "rollForgingPotential")]
         public class GenerateItems_rollForgingPotential
         {
             [HarmonyPrefix]
-            static bool Prefix(ref int __result, ref ItemDataUnpacked __0, int __1, bool __2, GenerateItems.VendorType __3)
+            static bool Prefix(ref int __result, ref ItemDataUnpacked __0, int __1, bool __2, GenerateItems.GenerationContext __3)
             {
                 if (CanRun())
                 {

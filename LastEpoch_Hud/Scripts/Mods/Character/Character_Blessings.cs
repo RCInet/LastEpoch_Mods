@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using MelonLoader;
+using System;
 using UnhollowerBaseLib;
 using UnityEngine;
 
@@ -164,7 +165,19 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
             InventoryBlessingSlotUI active_blessing_slot = null;
             foreach (InventoryBlessingSlotUI active_slot in InventoryPanelUI.instance.activeBlessingSlots)
             {
-                if (active_slot.timelineID == timeline_id) { active_blessing_slot = active_slot; break; }
+                /*int id = -1;
+                try
+                {
+                    string identifier = active_slot.blessingUIContainer.identifier.ToString();
+                    id = Convert.ToInt32(identifier.Split('_')[1]) + 1;
+                }
+                catch { active_blessing_slot = null; }
+
+                if ((id > -1) && (id == timeline_id))
+                {
+                    active_blessing_slot = active_slot;
+                    break;
+                }*/
             }
 
             return active_blessing_slot;
@@ -238,7 +251,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                 if (CanRun()) { timeline_id = __0; }
             }
         }
-
+        /*
         [HarmonyPatch(typeof(InventoryBlessingSlotUI), "UnityEngine_EventSystems_IPointerEnterHandler_OnPointerEnter")]
         public class InventoryBlessingSlotUI_UnityEngine_EventSystems_IPointerEnterHandler_OnPointerEnter
         {
@@ -262,5 +275,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                 if (CanRun()) { selected_slot = null; }
             }
         }
+        */
     }
 }
