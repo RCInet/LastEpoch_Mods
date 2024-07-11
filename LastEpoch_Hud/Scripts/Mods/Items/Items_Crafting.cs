@@ -39,6 +39,13 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 
                 return result;
             }
+            public static bool IsCraftable(ItemData item)
+            {
+                bool result = false;
+                if (item.itemType < 34) { result = true; }
+
+                return result;
+            }
             public static bool IsPrefixFull(ItemData item)
             {
                 int nb_max = 0;
@@ -394,6 +401,11 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 static void Postifx(ref CraftingMainUI __instance, ref bool __result)
                 {
                     main_ui = __instance;
+
+                    if (!main_ui.IsNullOrDestroyed()) //&& (Crafting_Main_Item_Container.rect_transform.IsNullOrDestroyed()))
+                    {
+                        Crafting_Main_Item_Container.rect_transform = main_ui.gameObject.GetComponent<RectTransform>();
+                    }                    
                 }
             }
         }
@@ -413,11 +425,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 [HarmonyPrefix]
                 static void Prefix(ref OneSlotItemContainer __instance, bool __result, ItemData __0)
                 {
-                    if (!Crafting_Main_Ui.main_ui.IsNullOrDestroyed())
-                    {
-                        rect_transform = Crafting_Main_Ui.main_ui.gameObject.GetComponent<RectTransform>();
-                    }
-                    if (!rect_transform.IsNullOrDestroyed())
+                    if ((__instance.ToString() == "CraftingMainItemContainer") && (!rect_transform.IsNullOrDestroyed()))
                     {
                         if (!backup_initialized)
                         {
@@ -426,7 +434,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                             default_localscale = rect_transform.localScale;
                             backup_initialized = true;
                         }
-                        if ((backup_initialized) && (__instance.ToString() == "CraftingMainItemContainer"))
+                        if (backup_initialized)
                         {
                             if ((__0.itemType == 29) || (__0.itemType == 31))
                             {
@@ -442,6 +450,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                             }
                         }
                     }
+                    else { Main.logger_instance.Error("CraftingMainItemContainer rect_transform null"); }
                 }
             }
             
@@ -453,7 +462,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 static void Postifx(ref CraftingMainItemContainer __instance, ref bool __result, ItemData __0, int __1)
                 {
                     main_item_container = __instance;
-                    if (Get.IsIdol(__0)) { __result = true; } //Allow Idols
+                    if (Get.IsCraftable(__0)) { __result = true; } //Allow all item type < 34
                 }
             }
         }

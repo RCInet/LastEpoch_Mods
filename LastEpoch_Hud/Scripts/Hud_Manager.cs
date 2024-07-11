@@ -1,6 +1,4 @@
 ﻿using HarmonyLib;
-using LastEpoch_Hud.Scripts.Mods.Character;
-using LastEpoch_Hud.Scripts.Mods.Items;
 using MelonLoader;
 using System.IO;
 using UnityEngine;
@@ -1520,7 +1518,7 @@ namespace LastEpoch_Hud.Scripts
                     private static void Set_UnlockAllIdols_Enable(bool enable)
                     {
                         Save_Manager.instance.data.Character.Cheats.Enable_UnlockAllIdolsSlots = enable;
-                        Character_UnlockAllIdols.Update();
+                        Mods.Character.Character_UnlockAllIdols.Update();
                     }
 
                     public static Toggle autoPot_toggle = null;
