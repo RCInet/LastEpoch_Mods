@@ -1663,7 +1663,7 @@ namespace LastEpoch_Hud.Scripts
                     public static readonly System.Action DiscoverAllBlessings_OnClick_Action = new System.Action(DiscoverAllBlessings_Click);
                     public static void DiscoverAllBlessings_Click()
                     {
-                        Mods.Character.Character_Blessings_Hooks.DiscoverAllBlessings();
+                        Mods.Character.Character_Blessings.DiscoverAllBlessings();
                     }
                 }
                 public class Data

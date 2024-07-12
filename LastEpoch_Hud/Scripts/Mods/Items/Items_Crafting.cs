@@ -452,7 +452,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                 }
                             }
                         }
-                        else { Main.logger_instance.Error("CraftingMainItemContainer rect_transform null"); }
                     }
                 }
             }
