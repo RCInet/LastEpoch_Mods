@@ -4,7 +4,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Monoliths
 {
     public class Monoliths_BlessingSlots
     {
-        public static MonolithRun Run = null;
+        //public static MonolithRun Run = null;
         public static bool CanRun()
         {
             if ((Scenes.IsGameScene()) && (!Save_Manager.instance.IsNullOrDestroyed()))
@@ -18,7 +18,41 @@ namespace LastEpoch_Hud.Scripts.Mods.Monoliths
             else { return false; }
         }
 
-        private static System.Collections.Generic.List<byte> GetAllTimelineBlessings(TimelineID timeline_id, int difficulty)
+        //Fix by Silver-D for LastEpoch v1.1.2 (see issue "Setting Blessings to 5 results in Null Reference Exception on reward panel")
+        [HarmonyPatch(typeof(LE.Gameplay.Monolith.MonolithUIManager), "OpenBlessingsRewardPanelAfterDelay")]
+        public class MonolithUIManager_OpenBlessingsRewardPanelAfterDelay
+        {
+            [HarmonyPrefix]
+            static void Prefix(Cysharp.Threading.Tasks.UniTaskVoid __result, TimelineID __0, int __1, float __2, ref int __3)
+            {
+                if (CanRun())
+                {
+                    int blessingSlots = (int)Save_Manager.instance.data.Scenes.Monoliths.BlessingSlots;
+                    if (__3 > blessingSlots) { blessingSlots = __3; } // in case we unlocked more slots due to difficulty/corruption, but we chose a lesser value for a minimum
+                    __3 = blessingSlots;
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(ItemContainersManager), "populateBlessingOptions")]
+        public class ItemContainersManager_populateBlessingOptions
+        {
+            [HarmonyPrefix]
+            static void Prefix(ref ItemContainersManager __instance, TimelineID __0, int __1, ref int __2, ref int __3)
+            {
+                if (CanRun())
+                {
+                    int numStandardBlessings = 3;
+                    int numExtraBlessings = (int)(Save_Manager.instance.data.Scenes.Monoliths.BlessingSlots - numStandardBlessings);
+                    if (__3 > numExtraBlessings) { numExtraBlessings = __3; } // in case we unlocked more slots due to difficulty/corruption, but we chose a lesser value for a minimum
+                    __2 = numStandardBlessings;
+                    __3 = numExtraBlessings;
+                }
+            }
+        }
+
+        //Old code
+        /*private static System.Collections.Generic.List<byte> GetAllTimelineBlessings(TimelineID timeline_id, int difficulty)
         {
             System.Collections.Generic.List<byte> result = new System.Collections.Generic.List<byte>();
             if (Run != null)
@@ -28,9 +62,9 @@ namespace LastEpoch_Hud.Scripts.Mods.Monoliths
             }
 
             return result;
-        }
+        }*/
 
-        [HarmonyPatch(typeof(MonolithRun), "calculateIncreasedRarityAndExperienceFromMods")]
+        /*[HarmonyPatch(typeof(MonolithRun), "calculateIncreasedRarityAndExperienceFromMods")]
         public class MonolithRun_calculateIncreasedRarityAndExperienceFromMods
         {
             [HarmonyPostfix]
@@ -38,22 +72,9 @@ namespace LastEpoch_Hud.Scripts.Mods.Monoliths
             {
                 Run = __instance;
             }
-        }
+        }*/
 
-        [HarmonyPatch(typeof(LE.Gameplay.Monolith.MonolithUIManager), "OpenBlessingsRewardPanelAfterDelay")]
-        public class MonolithUIManager_OpenBlessingsRewardPanelAfterDelay
-        {
-            [HarmonyPrefix]
-            static void Prefix(Cysharp.Threading.Tasks.UniTaskVoid __result, TimelineID __0, int __1, float __2, ref int __3)
-            {
-                if (CanRun())
-                {
-                    __3 = (int)Save_Manager.instance.data.Scenes.Monoliths.BlessingSlots;
-                }
-            }
-        }
-
-        [HarmonyPatch(typeof(BlessingRewardPanelManager), "OnOptionsPopulated")]
+        /*[HarmonyPatch(typeof(BlessingRewardPanelManager), "OnOptionsPopulated")]
         public class BlessingRewardPanelManager_OnOptionsPopulated
         {
             [HarmonyPostfix]
@@ -95,6 +116,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Monoliths
                     }
                 }
             }
-        }
+        }*/
     }
 }
