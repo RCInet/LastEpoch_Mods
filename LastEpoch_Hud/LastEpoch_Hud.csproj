@@ -158,6 +158,7 @@
     <Compile Include="Scripts\Mods\Items\Items_Req_Level.cs" />
     <Compile Include="Scripts\Mods\Items\Items_Req_Set.cs" />
     <Compile Include="Scripts\Mods\Items\Items_Tooltip_LegendaryPotencial.cs" />
+    <Compile Include="Scripts\Mods\Items\Items_UniqueList_SubType.cs" />
     <Compile Include="Scripts\Mods\Items\Items_Update.cs" />
     <Compile Include="Scripts\Mods\Login\Login_AutoLoginOffline.cs" />
     <Compile Include="Scripts\Mods\Minimap\Minimap_FogOfWar.cs" />
