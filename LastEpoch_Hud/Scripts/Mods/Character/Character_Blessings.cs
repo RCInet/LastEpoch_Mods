@@ -213,8 +213,9 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                         }
                         Refs_Manager.player_data_tracker.charData.SaveData();
                     }
+                    else { Main.logger_instance.Error("Blessings not found in itemlist"); }
                 }
-                else { Main.logger_instance.Error("Discover all blessings"); }
+                else { Main.logger_instance.Error("ItemList is null"); }
                 adding_blessings = false;
             }
         }

@@ -31,6 +31,26 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
             static bool Prefix(ref GroundItemManager __instance, ref Actor __0, ref ItemData __1, ref UnityEngine.Vector3 __2, bool __3)
             {
                 bool result = true;
+
+                //Repair Unique SubType if need here
+                if (Scenes.IsGameScene())
+                {
+                    if (__1.isUniqueSetOrLegendary())
+                    {
+                        UniqueList.Entry unique = UniqueList.getUnique(__1.uniqueID);
+                        if (!unique.subTypes.Contains((byte)__1.subType))
+                        {
+                            ushort backup = __1.subType;
+                            if (unique.subTypes.Count > 0)
+                            {
+                                __1.subType = (ushort)UnityEngine.Random.RandomRangeInt(0, unique.subTypes.Count);
+                                __1.RefreshIDAndValues();
+                                Main.logger_instance.Msg("Repair subtype from " + backup + " to " + __1.subType); //Uncomment for debug
+                            }
+                        }
+                    }
+                }
+
                 if (CanRun())
                 {
                     if ((Item.isKey(__1.itemType)) || (ItemList.isCraftingItem(__1.itemType)))

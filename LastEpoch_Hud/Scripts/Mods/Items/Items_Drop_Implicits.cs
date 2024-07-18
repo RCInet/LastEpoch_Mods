@@ -34,6 +34,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                         __instance.implicitRolls[z] = roll;
                     }
                     __instance.RefreshIDAndValues();
+                    
                     return false;
                 }
                 else { return true; }

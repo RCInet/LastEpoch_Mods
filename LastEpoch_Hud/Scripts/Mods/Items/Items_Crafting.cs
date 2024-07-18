@@ -115,7 +115,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
         }
         public class Locales
         {
-            //Locales
             public static string affix_is_maxed_key = "Crafting_ForgeButton_Title_AffixMaxed";
             public static string affix_is_maxed = "maxed_craft";
             public static string cant_craft_unique_key = "Crafting_ForgeButton_Title_Uniques";
@@ -540,20 +539,23 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                     //if (Main.debug) { Main.logger_instance.Msg("CraftingMaterialsPanelUI : AddShardsFromList : Postfix"); }
                     if (!Refs_Manager.item_list.IsNullOrDestroyed())
                     {
-                        int count = Refs_Manager.item_list.affixList.singleAffixes.Count + Refs_Manager.item_list.affixList.multiAffixes.Count;
-                        UnhollowerBaseLib.Il2CppReferenceArray<AffixList.Affix> new_list = new UnhollowerBaseLib.Il2CppReferenceArray<AffixList.Affix>(count);
-                        int i = 0;
+                        //int count = Refs_Manager.item_list.affixList.singleAffixes.Count + Refs_Manager.item_list.affixList.multiAffixes.Count;
+                        //UnhollowerBaseLib.Il2CppReferenceArray<AffixList.Affix> new_list = new UnhollowerBaseLib.Il2CppReferenceArray<AffixList.Affix>(count);
+                        UnhollowerBaseLib.Il2CppReferenceArray<AffixList.Affix> new_list = new UnhollowerBaseLib.Il2CppReferenceArray<AffixList.Affix>(1);
                         Refs_Manager.item_list.affixList.isIdolAffix = AffixList.Filter.Either;
+                        foreach (AffixList.Affix affix in __0)
+                        {
+                            new_list.AddItem(affix);
+                        }
                         foreach (AffixList.SingleAffix single_affix in Refs_Manager.item_list.affixList.singleAffixes)
                         {
-                            new_list.AddItem(single_affix.TryCast<AffixList.Affix>());
-                            i++;
+                            AffixList.Affix affix = single_affix.TryCast<AffixList.Affix>();
+                            if (!new_list.Contains(affix)) { new_list.AddItem(affix); }
                         }
-                        i = 0;
                         foreach (AffixList.MultiAffix multi_affix in Refs_Manager.item_list.affixList.multiAffixes)
                         {
-                            new_list.AddItem(multi_affix.TryCast<AffixList.Affix>());
-                            i++;
+                            AffixList.Affix affix = multi_affix.TryCast<AffixList.Affix>();
+                            if (!new_list.Contains(affix)) { new_list.AddItem(affix); }
                         }
                         __0 = new_list;
                     }
@@ -595,7 +597,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 }
             }            
 
-            //Fix shards for Unique Set Legendary and Idols
+            //Fix shards for Unique Set Legendary and Idols //Have to be edited to fix req (ex : warpath)
             [HarmonyPatch(typeof(CraftingMaterialsPanelUI), "RefreshAffixList")]
             public class CraftingMaterialsPanelUI_RefreshAffixList
             {
@@ -638,7 +640,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                 else if (aff.affixType != AffixList.AffixType.SUFFIX) {  nb_suffix++; }
                             }
 
-                            //Set affix to list
+                            //Add affix to list for Unique Set and Idols
                             bool idol = Get.IsIdol(Current.item);
                             ItemList.ClassRequirement item_class_req = Current.item.getAsUnpacked().classReq;
                             if (((Current.item.rarity > 6) || (idol)) && (type_found))
@@ -652,8 +654,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                         (__instance.affixFilterType == CraftingMaterialsPanelUI.AffixFilterType.ANY) ||
                                         (element.affixType == "Special"))
                                     {
-                                        if (element.affix.canRollOn.Contains(equip_type))
-                                        {
+                                        //if (element.affix.canRollOn.Contains(equip_type))
+                                        //{
                                             if ((item_class_req == ItemList.ClassRequirement.None) ||
                                                 (element.affix.classSpecificity == AffixList.ClassSpecificity.None) ||
                                                 (element.affix.classSpecificity.ToString().Contains(item_class_req.ToString())) ||
@@ -667,8 +669,9 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                                 else { uncompatible_list.Add(affix_obj); }
                                             }
                                             else { uncompatible_list.Add(affix_obj); }
-                                        }
-                                        else { hidden_list.Add(affix_obj); }
+                                        //}
+                                        //else { uncompatible_list.Add(affix_obj); }
+                                        //else { hidden_list.Add(affix_obj); }
                                     }
                                     else { hidden_list.Add(affix_obj); }
                                 }
@@ -682,8 +685,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                         (__instance.affixFilterType == CraftingMaterialsPanelUI.AffixFilterType.ANY) ||
                                         (element.affixType == "Special"))
                                     {
-                                        if (element.affix.canRollOn.Contains(equip_type))
-                                        {
+                                        //if (element.affix.canRollOn.Contains(equip_type))
+                                        //{
                                             if ((item_class_req == ItemList.ClassRequirement.None) ||
                                                 (element.affix.classSpecificity == AffixList.ClassSpecificity.None) ||
                                                 (element.affix.classSpecificity.ToString().Contains(item_class_req.ToString())) ||
@@ -697,8 +700,9 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                                 else { uncompatible_list.Add(affix_obj); }
                                             }
                                             else { uncompatible_list.Add(affix_obj); }
-                                        }
-                                        else { hidden_list.Add(affix_obj); }
+                                        //}
+                                        //else { uncompatible_list.Add(affix_obj); }
+                                        //else { hidden_list.Add(affix_obj); }
                                     }
                                     else { hidden_list.Add(affix_obj); }
                                 }
@@ -711,8 +715,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                         (__instance.affixFilterType == CraftingMaterialsPanelUI.AffixFilterType.ANY) ||
                                         (element.affixType == "Special"))
                                     {
-                                        if (element.affix.canRollOn.Contains(equip_type))
-                                        {
+                                        //if (element.affix.canRollOn.Contains(equip_type))
+                                        //{
                                             if ((item_class_req == ItemList.ClassRequirement.None) ||
                                                 (element.affix.classSpecificity == AffixList.ClassSpecificity.None) ||
                                                 (element.affix.classSpecificity.ToString().Contains(item_class_req.ToString())) ||
@@ -726,8 +730,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                                 else { uncompatible_list.Add(affix_obj); }
                                             }
                                             else { uncompatible_list.Add(affix_obj); }
-                                        }
-                                        else { hidden_list.Add(affix_obj); }
+                                        //}
+                                        //else { hidden_list.Add(affix_obj); }
                                     }
                                     else { hidden_list.Add(affix_obj); }
                                 }                                
@@ -798,14 +802,20 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
         }
         public class Shard_Affix_List_Element
         {
-            //Craft without shards
+            //Craft without shards for unique set legendary and idol
             [HarmonyPatch(typeof(ShardAffixListElement), "setQuantityAndUpdateText")]
             public class ShardAffixListElement_setQuantityAndUpdateText
             {
                 [HarmonyPrefix]
                 static void Prefix(/*ShardAffixListElement __instance,*/ ref int __0)
                 {
-                    if (__0 == 0) { __0 = 1; }
+                    if (Current.item !=null)
+                    {
+                        if ((Get.IsIdol(Current.item)) || (Current.item.isUniqueSetOrLegendary()))
+                        {
+                            if (__0 == 0) { __0 = 1; }
+                        }
+                    }                    
                 }
             }
         }
