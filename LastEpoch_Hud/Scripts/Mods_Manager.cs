@@ -16,9 +16,10 @@ namespace LastEpoch_Hud.Scripts
         GameObject character_bank_from_anywhere = null;
         GameObject character_permanentbuffs_obj = null;
         GameObject character_dps_obj = null;
+        GameObject character_safetp_obj = null;
         GameObject items_autosell_timer_obj = null;
         GameObject items_headhunter_obj = null;
-        GameObject minimap_icons_obj = null;
+        GameObject minimap_icons_obj = null;        
 
         bool initialized = false;
 
@@ -62,6 +63,11 @@ namespace LastEpoch_Hud.Scripts
             character_dps_obj.active = false;
             character_dps_obj.AddComponent<Mods.Character.Character_Dps>();
             Mods_Objects.Add(character_dps_obj);
+                        
+            character_safetp_obj = Object.Instantiate(new GameObject { name = "Mod_Character_SafeTp" }, Vector3.zero, Quaternion.identity);
+            character_safetp_obj.active = false;
+            character_safetp_obj.AddComponent<Mods.Character.Character_TpSafe>();
+            Mods_Objects.Add(character_safetp_obj);
 
             items_autosell_timer_obj = Object.Instantiate(new GameObject { name = "Mod_Items_AutoStore_All10Sec" }, Vector3.zero, Quaternion.identity);
             items_autosell_timer_obj.active = false;
@@ -100,6 +106,7 @@ namespace LastEpoch_Hud.Scripts
                 character_autopotion_obj.active = Save_Manager.instance.data.Character.Cheats.Enable_AutoPot;
                 character_bank_from_anywhere.active = true; //Enable/Disable F3 Open/Close Bank
                 character_dps_obj.active = true; //CombatLogs
+                character_safetp_obj.active = true;
                 items_autosell_timer_obj.active = Save_Manager.instance.data.Items.Pickup.Enable_AutoStore_All10Sec;
                 character_masteries_obj.active = true; //Hud
                 character_permanentbuffs_obj.GetComponent<Mods.Character.Character_PermanentBuffs>().Enable();
@@ -122,6 +129,7 @@ namespace LastEpoch_Hud.Scripts
                 items_autosell_timer_obj.active = false;
                 character_masteries_obj.active = false;
                 character_permanentbuffs_obj.GetComponent<Mods.Character.Character_PermanentBuffs>().Disable();
+                character_safetp_obj.active = false;
                 items_headhunter_obj.active = false;
                 minimap_icons_obj.active = false;
             }

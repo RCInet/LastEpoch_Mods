@@ -131,6 +131,7 @@
     <Compile Include="Scripts\Mods\Character\Character_Masteries.cs" />
     <Compile Include="Scripts\Mods\Character\Character_Materials.cs" />
     <Compile Include="Scripts\Mods\Character\Character_PermanentBuffs.cs" />
+    <Compile Include="Scripts\Mods\Character\Character_TpSafe.cs" />
     <Compile Include="Scripts\Mods\Character\Character_UnlockAllIdols.cs" />
     <Compile Include="Scripts\Mods\Character\Character_Waypoints.cs" />
     <Compile Include="Scripts\Mods\Cosmetics\Cosmetics_Add.cs" />
