@@ -44,8 +44,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                             if (unique.subTypes.Count > 0)
                             {
                                 int rand = UnityEngine.Random.RandomRangeInt(0, unique.subTypes.Count);
-                                __1.subType = (ushort)rand;
-                                __1.id[2] = (byte)rand; //subtype
+                                __1.subType = unique.subTypes[rand];
+                                __1.id[2] = unique.subTypes[rand]; //subtype
                                 __1.RefreshIDAndValues();
                                 Main.logger_instance.Msg("Repair subtype from " + backup + " to " + __1.subType); //Uncomment for debug
                             }
