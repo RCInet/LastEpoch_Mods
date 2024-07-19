@@ -9,6 +9,7 @@ namespace LastEpoch_Hud.Scripts
         public Mods_Manager(System.IntPtr ptr) : base(ptr) { }
         public static Mods_Manager instance { get; private set; }        
         GameObject character_autopotion_obj = null;
+        GameObject character_potionreplenishment_obj = null;
         GameObject character_blessings_obj = null;
         GameObject character_godmode_obj = null;
         GameObject character_lowlife_obj = null;
@@ -33,6 +34,12 @@ namespace LastEpoch_Hud.Scripts
             character_autopotion_obj.active = false;
             character_autopotion_obj.AddComponent<Mods.Character.Character_AutoPotions>();
             Mods_Objects.Add(character_autopotion_obj);
+
+            //character_potionreplenishment_obj
+            character_potionreplenishment_obj = Object.Instantiate(new GameObject { name = "Mod_Character_PotionReplenishment" }, Vector3.zero, Quaternion.identity);
+            character_potionreplenishment_obj.active = false;
+            character_potionreplenishment_obj.AddComponent<Mods.Character.Character_PotionReplenishment>();
+            Mods_Objects.Add(character_potionreplenishment_obj);
 
             character_blessings_obj = Object.Instantiate(new GameObject { name = "Mod_Character_Blessings" }, Vector3.zero, Quaternion.identity);
             character_blessings_obj.active = false;
@@ -104,6 +111,7 @@ namespace LastEpoch_Hud.Scripts
                 //character_blessings_obj.active = Save_Manager.instance.data.Character.Cheats.Enable_CanChooseBlessing;
                 character_blessings_obj.active = true; //Don't disable here
                 character_autopotion_obj.active = Save_Manager.instance.data.Character.Cheats.Enable_AutoPot;
+                character_potionreplenishment_obj.active = true;
                 character_bank_from_anywhere.active = true; //Enable/Disable F3 Open/Close Bank
                 character_dps_obj.active = true; //CombatLogs
                 character_safetp_obj.active = true;
@@ -124,6 +132,7 @@ namespace LastEpoch_Hud.Scripts
                 character_lowlife_obj.active = false;
                 character_blessings_obj.active = false;
                 character_autopotion_obj.active = false;
+                character_potionreplenishment_obj.active = false;
                 character_bank_from_anywhere.active = false;
                 character_dps_obj.active = false;
                 items_autosell_timer_obj.active = false;
