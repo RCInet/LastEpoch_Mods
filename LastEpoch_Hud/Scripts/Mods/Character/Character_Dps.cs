@@ -13,6 +13,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
         public static Character_Dps instance { get; private set; }
         public Character_Dps(System.IntPtr ptr) : base(ptr) { }
 
+        public static bool Mod_Enable = false; //Set true if you want this mod to work
         public static bool ShowDebug = false;
         public static bool Initialized = false;
 
@@ -23,7 +24,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
         }
         void Update()
         {
-            if (!Initialized) { CombatLog.Init(); }            
+            if ((Mod_Enable) && (!Initialized)) { CombatLog.Init(); }            
         }
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
