@@ -10,6 +10,9 @@ namespace LastEpochMods.Mods.Character
         private static PlayerHealth player_base_health;
         private static HealthPotion health_potion;
 
+        private static CharacterDataTracker character_data_tracker = null;
+        private static ItemList item_list = null;
+
         public class LowLife
         {
             [HarmonyPatch(typeof(CharacterStats), "OnUpdateTick")]
@@ -168,25 +171,24 @@ namespace LastEpochMods.Mods.Character
                     adding_blessings = true;
                     try
                     {
-                        if (ItemList.instance != null)
+                        if (!item_list.IsNullOrDestroyed())
                         {
                             int base_id = 34;
                             int index = 0;
                             bool found = false;
-                            foreach (ItemList.BaseEquipmentItem n_item in ItemList.instance.EquippableItems)
+                            foreach (ItemList.BaseEquipmentItem n_item in item_list.EquippableItems)
                             {
                                 if (n_item.baseTypeID == base_id) { found = true; break; }
                                 index++;
                             }
                             if (found)
                             {
-                                if (PlayerFinder.localPlayerDataTracker.charData != null)
+                                if (!character_data_tracker.IsNullOrDestroyed())
                                 {
-                                    LE.Data.CharacterData character_data = PlayerFinder.localPlayerDataTracker.charData;
-                                    foreach (ItemList.EquipmentItem item in ItemList.instance.EquippableItems[index].subItems)
+                                    foreach (ItemList.EquipmentItem item in item_list.EquippableItems[index].subItems)
                                     {
                                         bool already_in_player = false;
-                                        foreach (int blessing_id in character_data.BlessingsDiscovered)
+                                        foreach (int blessing_id in character_data_tracker.charData.BlessingsDiscovered)
                                         {
                                             if (blessing_id == item.subTypeID)
                                             {
@@ -194,9 +196,9 @@ namespace LastEpochMods.Mods.Character
                                                 break;
                                             }
                                         }
-                                        if (!already_in_player) { character_data.BlessingsDiscovered.Add(item.subTypeID); }
+                                        if (!already_in_player) { character_data_tracker.charData.BlessingsDiscovered.Add(item.subTypeID); }
                                     }
-                                    character_data.SaveData();
+                                    character_data_tracker.charData.SaveData();
                                 }
                                 else { Main.logger_instance.Error("Character Data is null"); }
                             }
@@ -210,62 +212,109 @@ namespace LastEpochMods.Mods.Character
 
             public class Select
             {
-                private static int timeline_id = -1;
-                public static InventoryBlessingSlotUI selected_slot = null;
-                private static int base_id = 34;
-
+                private static readonly int base_id = 34;
+                private static readonly int base_container = 33;
+                private static InventoryBlessingSlotUI selected_active_slot = null;
+                private static InventoryBlessingSlotUI selected_discovered_slot = null;
+                
                 public static void Update()
                 {
-                    if (Scenes_Manager.GameScene())
+                    if (character_data_tracker.IsNullOrDestroyed()) { character_data_tracker = PlayerFinder.localPlayerDataTracker; }
+                    if (item_list.IsNullOrDestroyed()) { item_list = ItemList.instance; }
+
+                    if (GUI_Manager.BlessingsPanel.Functions.IsBlessingOpen())
                     {
-                        if ((Save_Manager.Data.UserData.Character.Cheats.Enable_ChooseBlessingFromBlessingPanel) &&
-                        (GUI_Manager.BlessingsPanel.Functions.IsBlessingOpen()) && (selected_slot != null))
-                        {
-                            AddBlessingToCharacter(selected_slot.referenceBlessingID);
-                        }
-                        else if (selected_slot != null) { selected_slot = null; }
+                        //if (Input.GetKeyDown(KeyCode.Mouse0))
+                        //{
+                            if (temp_selected_active_slot != null) { selected_active_slot = temp_selected_active_slot; }
+                            else if ((temp_selected_discovered_slot != null) && (selected_active_slot != null))
+                            {
+                                selected_discovered_slot = temp_selected_discovered_slot;
+                                int blessing_id = selected_discovered_slot.referenceBlessingID;
+                                selected_discovered_slot = null;
+                                ItemDataUnpacked item = CreateBlessing(blessing_id);
+                                if ((timeline_id > -1) && (IsBlessingDiscovered(blessing_id)) && (!character_data_tracker.IsNullOrDestroyed()) && (item != null)) //&& (!active_blessing_slot.lockedSlot.gameObject.active)
+                                {
+                                    bool found = false;
+                                    ushort container_id = (ushort)(timeline_id + base_container);
+                                    foreach (LE.Data.ItemLocationPair item_pair in character_data_tracker.charData.SavedItems)
+                                    {
+                                        if (item_pair.ContainerID == container_id)
+                                        {
+                                            if (item_pair.Data.Count > 7)
+                                            {
+                                                if (item_pair.Data[1] == 34)
+                                                {
+                                                    item_pair.Data[2] = (byte)blessing_id;
+                                                    item_pair.Data[5] = item.implicitRolls[0];
+                                                    item_pair.Data[6] = item.implicitRolls[1];
+                                                    item_pair.Data[7] = item.implicitRolls[2];
+                                                    found = true;
+                                                    break;
+                                                }
+                                                else { Main.logger_instance.Msg("Not a Blessing"); }
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (!found) { character_data_tracker.charData.SavedItems.Add(CreateBlessingData(item, container_id)); }
+                                    character_data_tracker.charData.SaveData();
+                                }
+                                if (selected_active_slot.lockedSlot.gameObject.active) { selected_active_slot.lockedSlot.gameObject.active = false; }
+                                OneSlotItemContainer one_slot_container = selected_active_slot.blessingUIContainer.container.TryCast<OneSlotItemContainer>();
+                                one_slot_container.Clear();
+                                one_slot_container.TryAddItem(item, 1, Context.DEFAULT);
+                                selected_active_slot.blessingUIContainer.forceUpdate = true;
+                            }
+                        //}
+                    }
+                    else
+                    {
+                        timeline_id = -1;
+                        selected_active_slot = null;
+                        selected_discovered_slot = null;
                     }
                 }
-
-                public static void AddBlessingToCharacter(int blessing_id)
+                public static ItemDataUnpacked CreateBlessing(int blessing_id)
                 {
-                    try
+                    ItemDataUnpacked item = null;
+                    if (!item_list.IsNullOrDestroyed())
                     {
-                        ItemDataUnpacked item = CreateBlessing(blessing_id);
-                        CharacterDataTracker character_data_tracker = PlayerFinder.localPlayerDataTracker;
-                        LE.Data.CharacterData character_data = character_data_tracker.charData;
-                        if ((timeline_id > -1) && (IsBlessingDiscovered(blessing_id)) && (character_data != null) && (item != null)) //&& (!active_blessing_slot.lockedSlot.gameObject.active)
+                        bool ItemList_found = false;
+                        int index = 0;
+                        foreach (ItemList.BaseEquipmentItem n_item in item_list.EquippableItems)
                         {
-                            bool found = false;
-                            ushort container_id = (ushort)(timeline_id + 33);
-                            foreach (LE.Data.ItemLocationPair item_pair in character_data.SavedItems)
+                            if (n_item.baseTypeID == base_id) { ItemList_found = true; break; }
+                            index++;
+                        }
+                        if (ItemList_found)
+                        {
+                            foreach (ItemList.EquipmentItem eq_item in item_list.EquippableItems[index].subItems)
                             {
-                                if (item_pair.ContainerID == container_id)
+                                if (eq_item.subTypeID == blessing_id)
                                 {
-                                    if (item_pair.Data.Count > 7)
+                                    item = new ItemDataUnpacked
                                     {
-                                        if (item_pair.Data[1] == 34)
-                                        {
-                                            item_pair.Data[2] = (byte)blessing_id;
-                                            item_pair.Data[5] = item.implicitRolls[0];
-                                            item_pair.Data[6] = item.implicitRolls[1];
-                                            item_pair.Data[7] = item.implicitRolls[2];
-                                            found = true;
-                                            break;
-                                        }
-                                        else { Main.logger_instance.Msg("Not a Blessing"); }
-                                        break;
-                                    }
+                                        LvlReq = 0,
+                                        classReq = ItemList.ClassRequirement.Any,
+                                        itemType = (byte)base_id,
+                                        subType = (ushort)blessing_id,
+                                        rarity = (byte)0,
+                                        sockets = (byte)0,
+                                        uniqueID = (ushort)0
+                                    };
+                                    item.randomiseImplicitRolls();
+                                    item.RefreshIDAndValues();
+                                    break;
                                 }
                             }
-                            if (!found) { character_data.SavedItems.Add(CreateBlessingData(item, container_id)); }
-                            character_data.SaveData();
                         }
-                        UpdateActiveSlot(item);
                     }
-                    catch { }
+                    else { Main.logger_instance.Error("Create Blessings"); }
+
+                    return item;
                 }
-                private static LE.Data.ItemLocationPair CreateBlessingData(ItemDataUnpacked item, ushort container_id)
+                public static LE.Data.ItemLocationPair CreateBlessingData(ItemDataUnpacked item, ushort container_id)
                 {
                     Il2CppStructArray<byte> Data = new Il2CppStructArray<byte>(11);
                     Data[0] = 2;
@@ -292,111 +341,110 @@ namespace LastEpochMods.Mods.Character
 
                     return new_blessing;
                 }
-                private static ItemDataUnpacked CreateBlessing(int blessing_id)
+                public static LE.Data.BlessingData CreateBlessingDataForSave(ushort subtype)
                 {
-                    ItemDataUnpacked item = null;
-                    try
+                    LE.Data.BlessingData result = new LE.Data.BlessingData
                     {
-                        if (ItemList.instance != null)
-                        {
-                            bool ItemList_found = false;
-                            int index = 0;
-                            foreach (ItemList.BaseEquipmentItem n_item in ItemList.instance.EquippableItems)
-                            {
-                                if (n_item.baseTypeID == base_id) { ItemList_found = true; break; }
-                                index++;
-                            }
-                            if (ItemList_found)
-                            {
-                                foreach (ItemList.EquipmentItem eq_item in ItemList.instance.EquippableItems[index].subItems)
-                                {
-                                    if (eq_item.subTypeID == blessing_id)
-                                    {
-                                        item = new ItemDataUnpacked
-                                        {
-                                            LvlReq = 0,
-                                            classReq = ItemList.ClassRequirement.Any,
-                                            itemType = (byte)base_id,
-                                            subType = (ushort)blessing_id,
-                                            rarity = (byte)0,
-                                            sockets = (byte)0,
-                                            uniqueID = (ushort)0
-                                        };
-                                        item.randomiseImplicitRolls();
-                                        item.RefreshIDAndValues();
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        else { Main.logger_instance.Error("ItemList is null"); }
-                    }
-                    catch { }
-
-                    return item;
-                }
-                private static bool IsBlessingDiscovered(int id)
-                {
-                    bool result = false;
-                    try
-                    {
-                        if (PlayerFinder.localPlayerDataTracker != null)
-                        {
-                            foreach (int discovered_id in PlayerFinder.localPlayerDataTracker.charData.BlessingsDiscovered)
-                            {
-                                if (id == discovered_id) { result = true; break; }
-                            }
-                        }
-                    }
-                    catch { }
+                        SubtypeId = subtype,
+                        ImplicitValue = UnityEngine.Random.Range(0f, 255f),
+                        ImplicitRollByte0 = (byte)UnityEngine.Random.Range(0f, 255f),
+                        ImplicitRollByte1 = (byte)UnityEngine.Random.Range(0f, 255f),
+                        ImplicitRollByte2 = (byte)UnityEngine.Random.Range(0f, 255f)
+                    };
 
                     return result;
                 }
-                private static void UpdateActiveSlot(ItemDataUnpacked item)
-                {
-                    try
-                    {
-                        InventoryBlessingSlotUI active_blessing_slot = GetActiveSlot();
-                        if (active_blessing_slot != null) //Update Ui
-                        {
-                            if (active_blessing_slot.lockedSlot.gameObject.active) { active_blessing_slot.lockedSlot.gameObject.active = false; }
-                            OneSlotItemContainer one_slot_container = active_blessing_slot.blessingUIContainer.container.TryCast<OneSlotItemContainer>();
-                            one_slot_container.Clear();
-                            one_slot_container.TryAddItem(item, 1, Context.DEFAULT);
-                            active_blessing_slot.blessingUIContainer.forceUpdate = true;
-                        }
-                    }
-                    catch { }
-                }
-                private static InventoryBlessingSlotUI GetActiveSlot()
-                {
-                    InventoryBlessingSlotUI active_blessing_slot = null;
-                    try
-                    {
-                        foreach (InventoryBlessingSlotUI active_slot in GUI_Manager.InventoryPanel.Refs.InventoryPanelUI.activeBlessingSlots)
-                        {
-                            if (active_slot.timelineID == timeline_id) { active_blessing_slot = active_slot; break; }
-                        }
-                    }
-                    catch { }
 
-                    return active_blessing_slot;
+                public static bool IsBlessingDiscovered(int id)
+                {
+                    bool result = false;
+                    if (!character_data_tracker.IsNullOrDestroyed())
+                    {
+                        foreach (int discovered_id in character_data_tracker.charData.BlessingsDiscovered)
+                        {
+                            if (id == discovered_id) { result = true; break; }
+                        }
+                    }
+
+                    return result;
+                }
+
+                private static int timeline_id = -1;
+                private static bool adding_blessings = false;
+                private static InventoryBlessingSlotUI temp_selected_active_slot = null;
+                private static InventoryBlessingSlotUI temp_selected_discovered_slot = null;
+
+                private static bool CanRun()
+                {
+                    if ((Scenes_Manager.GameScene()) && (GUI_Manager.BlessingsPanel.Functions.IsBlessingOpen()))
+                    {
+                        return Save_Manager.Data.UserData.Character.Cheats.Enable_ChooseBlessingFromBlessingPanel;
+                    }
+                    else { return false; }
+                }
+                public static void DiscoverAllBlessings()
+                {
+                    if (!adding_blessings)
+                    {
+                        adding_blessings = true;
+                        if (!item_list.IsNullOrDestroyed())
+                        {
+                            int base_id = 34;
+                            int index = 0;
+                            bool found = false;
+                            foreach (ItemList.BaseEquipmentItem n_item in item_list.EquippableItems)
+                            {
+                                if (n_item.baseTypeID == base_id) { found = true; break; }
+                                index++;
+                            }
+                            if ((found) && (!character_data_tracker.IsNullOrDestroyed()))
+                            {
+                                foreach (ItemList.EquipmentItem item in item_list.EquippableItems[index].subItems)
+                                {
+                                    //Add BlessingsDiscovered
+                                    bool blessing_already_in_player = false;
+                                    foreach (int blessing_id in character_data_tracker.charData.BlessingsDiscovered)
+                                    {
+                                        if (blessing_id == item.subTypeID)
+                                        {
+                                            blessing_already_in_player = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!blessing_already_in_player) { character_data_tracker.charData.BlessingsDiscovered.Add(item.subTypeID); }
+
+                                    //Add OpenBlessings
+                                    bool blessing_data_already_in_player = false;
+                                    foreach (LE.Data.BlessingData blessing_data in character_data_tracker.charData.OpenBlessings)
+                                    {
+                                        if (blessing_data.SubtypeId == item.subTypeID)
+                                        {
+                                            blessing_data_already_in_player = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!blessing_data_already_in_player) { character_data_tracker.charData.OpenBlessings.Add(CreateBlessingDataForSave(System.Convert.ToUInt16(item.subTypeID))); }
+                                }
+                                character_data_tracker.charData.SaveData();
+                            }
+                            else { Main.logger_instance.Error("Blessings not found in itemlist"); }
+                        }
+                        else { Main.logger_instance.Error("ItemList is null"); }
+                        adding_blessings = false;
+                    }
                 }
 
                 [HarmonyPatch(typeof(InventoryPanelUI), "SelectTimelineForBlessingDisplay")]
                 public class InventoryPanelUI_SelectTimelineForBlessingDisplay
                 {
                     [HarmonyPrefix]
-                    static void Postfix(InventoryPanelUI __instance, int __0)
+                    static void Postfix(int __0)
                     {
-                        try
+                        timeline_id = -1;
+                        if (CanRun())
                         {
-                            if (Save_Manager.Data.UserData.Character.Cheats.Enable_ChooseBlessingFromBlessingPanel)
-                            {
-                                if (Scenes_Manager.GameScene()) { timeline_id = __0; }
-                            }
+                            timeline_id = __0;
                         }
-                        catch { }
                     }
                 }
 
@@ -404,21 +452,22 @@ namespace LastEpochMods.Mods.Character
                 public class InventoryBlessingSlotUI_UnityEngine_EventSystems_IPointerEnterHandler_OnPointerEnter
                 {
                     [HarmonyPrefix]
-                    static void Postfix(ref InventoryBlessingSlotUI __instance, UnityEngine.EventSystems.PointerEventData __0)
+                    static void Postfix(ref InventoryBlessingSlotUI __instance)
                     {
-                        selected_slot = null;
-                        try
+                        temp_selected_discovered_slot = null;
+                        temp_selected_active_slot = null;
+                        if (CanRun())
                         {
-                            if (Save_Manager.Data.UserData.Character.Cheats.Enable_ChooseBlessingFromBlessingPanel)
+                            string slot_name = __instance.gameObject.name;
+                            if (slot_name.Contains("BlessingInventoryDisplayButton"))
                             {
-                                if ((Scenes_Manager.GameScene()) && (__instance != null))
-                                {
-                                    if (__instance.blessingUIContainer.identifier.ToString() == "UNDEFINED") { selected_slot = __instance; }
-                                    //else { selected_slot = null; }
-                                }
+                                temp_selected_discovered_slot = __instance;
+                            }
+                            else if ((slot_name.Contains("Blessing")) && (!slot_name.Contains("Inventory")))
+                            {
+                                temp_selected_active_slot = __instance;
                             }
                         }
-                        catch { }
                     }
                 }
 
@@ -426,19 +475,10 @@ namespace LastEpochMods.Mods.Character
                 public class InventoryBlessingSlotUI_UnityEngine_EventSystems_IPointerExitHandler_OnPointerExit
                 {
                     [HarmonyPrefix]
-                    static void Postfix(InventoryBlessingSlotUI __instance, UnityEngine.EventSystems.PointerEventData __0)
+                    static void Postfix()
                     {
-                        try
-                        {
-                            if (Save_Manager.Data.UserData.Character.Cheats.Enable_ChooseBlessingFromBlessingPanel)
-                            {
-                                if ((Scenes_Manager.GameScene()) && (__instance != null))
-                                {
-                                    selected_slot = null;
-                                }
-                            }
-                        }
-                        catch { }
+                        temp_selected_discovered_slot = null;
+                        temp_selected_active_slot = null;
                     }
                 }
             }

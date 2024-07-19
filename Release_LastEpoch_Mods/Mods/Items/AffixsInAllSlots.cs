@@ -5,11 +5,11 @@ namespace LastEpochMods.Mods.Items
 {
     public class AffixsInAllSlots
     {
-        [HarmonyPatch(typeof(AffixList.Affix), "CanRollOnItemType")]
+        [HarmonyPatch(typeof(AffixList.Affix), "CanRollOnItemType", new System.Type[] { typeof(int), typeof(ItemList.ClassRequirement) })]
         public class AffixList_Affix_CanRollOnItemType
         {
             [HarmonyPrefix]
-            static bool Prefix(AffixList.Affix __instance, ref bool __result, int __0, ItemList.ClassRequirement __1)
+            static bool Prefix(/*AffixList.Affix __instance,*/ ref bool __result/*, int __0, ItemList.ClassRequirement __1*/)
             {
                 if (Save_Manager.Data.UserData.Items.RemoveReq.Enable_AllAffixsInAllSlots)
                 {                    
