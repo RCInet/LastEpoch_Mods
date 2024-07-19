@@ -64,6 +64,14 @@ namespace LastEpoch_Hud.Scripts
                     BankStashs = KeyCode.F3,
                     HeadhunterBuffs = KeyCode.F2
                 },
+                modsNotInHud =
+                {
+                    Enable_CombatLog = false,
+                    Enable_PotionResplenishment = false,
+                    Enable_Craft_UnusedAffixs = false,          //Show Unused Affix and Allow craft                    
+                    Enable_Craft_BypassReq = false,
+                    Enable_Craft_ShowSpecialAffixs = false
+                },
                 Login =
                 {
                     //Enable_Mods = true,
@@ -483,6 +491,7 @@ namespace LastEpoch_Hud.Scripts
             {
                 public string ModVersion;
                 public KeyBinds KeyBinds;
+                public ModsNotInHud modsNotInHud;
                 public Login Login;
                 public Character Character;
                 public Items Items;
@@ -495,6 +504,15 @@ namespace LastEpoch_Hud.Scripts
             {
                 public UnityEngine.KeyCode BankStashs;
                 public UnityEngine.KeyCode HeadhunterBuffs;
+            }
+            //Options not in hud (you have to set in defaultconfig before build)
+            public struct ModsNotInHud
+            {
+                public bool Enable_CombatLog;
+                public bool Enable_PotionResplenishment;
+                public bool Enable_Craft_UnusedAffixs;
+                public bool Enable_Craft_BypassReq;
+                public bool Enable_Craft_ShowSpecialAffixs;
             }
             //Login
             public struct Login

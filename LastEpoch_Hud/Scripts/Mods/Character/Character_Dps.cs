@@ -24,7 +24,10 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
         }
         void Update()
         {
-            if ((Mod_Enable) && (!Initialized)) { CombatLog.Init(); }            
+            if (!Save_Manager.instance.IsNullOrDestroyed())
+            {
+                if ((Save_Manager.instance.data.modsNotInHud.Enable_CombatLog) && (!Initialized)) { CombatLog.Init(); }
+            }                         
         }
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {

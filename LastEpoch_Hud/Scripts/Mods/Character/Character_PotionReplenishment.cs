@@ -17,11 +17,14 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
         }
         void Update()
         {
-            if ((Scenes.IsGameScene()) && (mod_enable) && (!Refs_Manager.health_potion.IsNullOrDestroyed()))
+            if ((Scenes.IsGameScene()) && (!Save_Manager.instance.IsNullOrDestroyed()) && (!Refs_Manager.health_potion.IsNullOrDestroyed()))
             {
-                if (Refs_Manager.health_potion.currentCharges < Refs_Manager.health_potion.maxCharges)
+                if (Save_Manager.instance.data.modsNotInHud.Enable_PotionResplenishment)
                 {
-                    Refs_Manager.health_potion.currentCharges = Refs_Manager.health_potion.maxCharges;
+                    if (Refs_Manager.health_potion.currentCharges < Refs_Manager.health_potion.maxCharges)
+                    {
+                        Refs_Manager.health_potion.currentCharges = Refs_Manager.health_potion.maxCharges;
+                    }
                 }
             }
         }
