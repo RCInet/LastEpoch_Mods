@@ -541,11 +541,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 { return true; }
                 else { return false; }
             }
-            public static bool AffixReq(ShardAffixListElement element, int item_type, ItemList.ClassRequirement item_class_req)
-            {
-                return element.affix.CanRollOnItemType(item_type, item_class_req);
-            }
-
+            
             //Add all affixs in list
             [HarmonyPatch(typeof(CraftingMaterialsPanelUI), "AddShardsFromList")]
             public class CraftingMaterialsPanelUI_AddShardsFromList
@@ -677,7 +673,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                     
                                     if (ShowAffixs(__instance.affixFilterType, element, nb_prefix, nb_suffix, idol))
                                     {
-                                        if ((AffixReq(element, Current.item.itemType, item_class_req)) ||
+                                        if ((element.affix.CanRollOnItemType(Current.item.itemType, item_class_req)) ||
                                             (Save_Manager.instance.data.modsNotInHud.Enable_Craft_BypassReq))
                                         {
                                             unused_list.Add(affix_obj);
@@ -693,7 +689,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                     ShardAffixListElement element = affix_obj.GetComponent<ShardAffixListElement>();
                                     if (ShowAffixs(__instance.affixFilterType, element, nb_prefix, nb_suffix, idol))
                                     {
-                                        if ((AffixReq(element, Current.item.itemType, item_class_req)) ||
+                                        if ((element.affix.CanRollOnItemType(Current.item.itemType, item_class_req)) ||
                                             (Save_Manager.instance.data.modsNotInHud.Enable_Craft_BypassReq))
                                         {
                                             unused_list.Add(affix_obj);
@@ -708,7 +704,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                     ShardAffixListElement element = affix_obj.GetComponent<ShardAffixListElement>();
                                     if (ShowAffixs(__instance.affixFilterType, element, nb_prefix, nb_suffix, idol))
                                     {
-                                        if ((AffixReq(element, Current.item.itemType, item_class_req)) ||
+                                        if ((element.affix.CanRollOnItemType(Current.item.itemType, item_class_req)) ||
                                             (Save_Manager.instance.data.modsNotInHud.Enable_Craft_BypassReq))
                                         {
                                             unused_list.Add(affix_obj);
@@ -762,7 +758,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                             foreach (GameObject item in uncompatible_list) { item.transform.SetParent(incompatible_holder.transform); }
                             uncompatible_list.Clear();
 
-                            if ((Save_Manager.instance.data.modsNotInHud.Enable_Craft_UnusedAffixs) || (idol))
+                            if ((Save_Manager.instance.data.modsNotInHud.Enable_Craft_IncompatibleAffixs) || (idol))
                             {
                                 if (incompatible_holder.transform.childCount > 0) { incompatible_header.active = true; }
                                 else { incompatible_header.active = false; }

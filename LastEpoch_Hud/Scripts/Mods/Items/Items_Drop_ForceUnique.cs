@@ -5,7 +5,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
 {
     public class Items_Drop_ForceUnique
     {
-        public static bool CanRun()
+        /*public static bool CanRun()
         {
             if ((Scenes.IsGameScene()) && (!Save_Manager.instance.IsNullOrDestroyed()))
             {
@@ -28,6 +28,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 if (CanRun()) { __result = 7; return false; }
                 else { return true; }
             }
-        }
+        }*/
     }
 }

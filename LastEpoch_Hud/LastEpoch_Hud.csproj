@@ -153,12 +153,14 @@
     <Compile Include="Scripts\Mods\Items\Items_Drop_Affixs.cs" />
     <Compile Include="Scripts\Mods\Items\Items_Drop_LegendaryPotencial.cs" />
     <Compile Include="Scripts\Mods\Items\Items_Drop_Notifications.cs" />
+    <Compile Include="Scripts\Mods\Items\Items_Drop_Rarity.cs" />
     <Compile Include="Scripts\Mods\Items\Items_Drop_UniqueMods.cs" />
     <Compile Include="Scripts\Mods\Items\Items_Drop_WeaverWill.cs" />
     <Compile Include="Scripts\Mods\Items\Items_RangePickup.cs" />
     <Compile Include="Scripts\Mods\Items\Items_Req_Class.cs" />
     <Compile Include="Scripts\Mods\Items\Items_Req_Level.cs" />
     <Compile Include="Scripts\Mods\Items\Items_Req_Set.cs" />
+    <Compile Include="Scripts\Mods\Items\Items_SocketsNb.cs" />
     <Compile Include="Scripts\Mods\Items\Items_Tooltip_LegendaryPotencial.cs" />
     <Compile Include="Scripts\Mods\Items\Items_Update.cs" />
     <Compile Include="Scripts\Mods\Login\Login_AutoLoginOffline.cs" />

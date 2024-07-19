@@ -18,6 +18,7 @@ namespace LastEpoch_Hud.Scripts
         GameObject character_permanentbuffs_obj = null;
         GameObject character_dps_obj = null;
         GameObject character_safetp_obj = null;
+        GameObject items_nbsocket_obj = null;
         GameObject items_autosell_timer_obj = null;
         GameObject items_headhunter_obj = null;
         GameObject minimap_icons_obj = null;        
@@ -76,6 +77,11 @@ namespace LastEpoch_Hud.Scripts
             character_safetp_obj.AddComponent<Mods.Character.Character_TpSafe>();
             Mods_Objects.Add(character_safetp_obj);
 
+            items_nbsocket_obj = Object.Instantiate(new GameObject { name = "Mod_Items_NbSocket" }, Vector3.zero, Quaternion.identity);
+            items_nbsocket_obj.active = false;
+            items_nbsocket_obj.AddComponent<Mods.Items.Items_SocketsNb>();
+            Mods_Objects.Add(items_nbsocket_obj);
+
             items_autosell_timer_obj = Object.Instantiate(new GameObject { name = "Mod_Items_AutoStore_All10Sec" }, Vector3.zero, Quaternion.identity);
             items_autosell_timer_obj.active = false;
             items_autosell_timer_obj.AddComponent<Mods.Items.Items_AutoStore_WithTimer>();
@@ -115,6 +121,7 @@ namespace LastEpoch_Hud.Scripts
                 character_bank_from_anywhere.active = true; //Enable/Disable F3 Open/Close Bank
                 character_dps_obj.active = true; //CombatLogs
                 character_safetp_obj.active = true;
+                items_nbsocket_obj.active = true;
                 items_autosell_timer_obj.active = Save_Manager.instance.data.Items.Pickup.Enable_AutoStore_All10Sec;
                 character_masteries_obj.active = true; //Hud
                 character_permanentbuffs_obj.GetComponent<Mods.Character.Character_PermanentBuffs>().Enable();
@@ -135,6 +142,7 @@ namespace LastEpoch_Hud.Scripts
                 character_potionreplenishment_obj.active = false;
                 character_bank_from_anywhere.active = false;
                 character_dps_obj.active = false;
+                items_nbsocket_obj.active = false;
                 items_autosell_timer_obj.active = false;
                 character_masteries_obj.active = false;
                 character_permanentbuffs_obj.GetComponent<Mods.Character.Character_PermanentBuffs>().Disable();
