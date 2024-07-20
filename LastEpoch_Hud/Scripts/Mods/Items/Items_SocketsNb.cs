@@ -20,16 +20,22 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 (!Save_Manager.instance.IsNullOrDestroyed()) &&
                 (!Done))
             {
-                SetSocketMax(Save_Manager.instance.data.modsNotInHud.Items_MaxSockets);
+                if (SetSocketMax((int)Save_Manager.instance.data.Items.Drop.AffixCount_Max))
+                {
+                    Done = true;
+                }                
             }
         }
-        void SetSocketMax(int nb_socket)
+        bool SetSocketMax(int nb_socket)
         {
             foreach (ItemList.BaseEquipmentItem base_item in Refs_Manager.item_list.EquippableItems)
             {
-                base_item.maximumAffixes = nb_socket;
-                //base_item.maxSockets = nb_socket;
+                if (base_item.baseTypeID < 25)  { base_item.maximumAffixes = 6; } //Unlock 6 Affixs
+                //else if (base_item.baseTypeID < 34) { base_item.maximumAffixes = nb_socket; } //unlock if you need same for idols
             }
+
+            if (Refs_Manager.item_list.EquippableItems.Count > 24) { return true; }
+            else { return false; }
         }
     }
 }

@@ -5,7 +5,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
 {
     public class Items_Drop_Affixs
     {
-        private static bool CanRun()
+        /*private static bool CanRun()
         {
             if ((Scenes.IsGameScene()) && (!Save_Manager.instance.IsNullOrDestroyed()))
             {
@@ -273,5 +273,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
 
             return eligibles;
         }
+        */
     }
 }

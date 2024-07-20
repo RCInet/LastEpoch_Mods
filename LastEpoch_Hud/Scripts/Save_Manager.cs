@@ -70,8 +70,7 @@ namespace LastEpoch_Hud.Scripts
                     Enable_PotionResplenishment = false,
                     Enable_Craft_IncompatibleAffixs = false,          //Show Unused Affix and Allow craft                    
                     Enable_Craft_BypassReq = false,
-                    Enable_Craft_ShowSpecialAffixs = false,
-                    Items_MaxSockets = 4
+                    Enable_Craft_ShowSpecialAffixs = false
                 },
                 Login =
                 {
@@ -514,7 +513,6 @@ namespace LastEpoch_Hud.Scripts
                 public bool Enable_Craft_IncompatibleAffixs;
                 public bool Enable_Craft_BypassReq;
                 public bool Enable_Craft_ShowSpecialAffixs;
-                public int Items_MaxSockets;
             }
             //Login
             public struct Login

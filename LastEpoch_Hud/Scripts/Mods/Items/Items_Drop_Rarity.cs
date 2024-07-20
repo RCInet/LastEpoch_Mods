@@ -27,9 +27,13 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                     else if (Save_Manager.instance.data.Items.Drop.Enable_ForceLegendary) { __result = 9; }
                     else
                     {
-                        if (Save_Manager.instance.data.modsNotInHud.Items_MaxSockets < 0) { Save_Manager.instance.data.modsNotInHud.Items_MaxSockets = 0; }
-                        if (Save_Manager.instance.data.modsNotInHud.Items_MaxSockets > 6) { Save_Manager.instance.data.modsNotInHud.Items_MaxSockets = 6; }
-                        __result = (byte)UnityEngine.Random.RandomRangeInt(0, (Save_Manager.instance.data.modsNotInHud.Items_MaxSockets + 1));
+                        if (Save_Manager.instance.data.Items.Drop.AffixCount_Min < 0) { Save_Manager.instance.data.Items.Drop.AffixCount_Min = 0; }
+                        if (Save_Manager.instance.data.Items.Drop.AffixCount_Max > 6) { Save_Manager.instance.data.Items.Drop.AffixCount_Max = 6; }
+                        if (Save_Manager.instance.data.Items.Drop.AffixCount_Min > Save_Manager.instance.data.Items.Drop.AffixCount_Max)
+                        { Save_Manager.instance.data.Items.Drop.AffixCount_Min = Save_Manager.instance.data.Items.Drop.AffixCount_Max; }
+                        int min = (int)Save_Manager.instance.data.Items.Drop.AffixCount_Min;
+                        int max = (int)Save_Manager.instance.data.Items.Drop.AffixCount_Max;
+                        __result = (byte)UnityEngine.Random.RandomRangeInt(min, (max + 1));
                     }
                     return false;
                 }

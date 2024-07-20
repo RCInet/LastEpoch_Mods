@@ -1788,7 +1788,9 @@ namespace LastEpoch_Hud.Scripts
                             Drop.affix_count_toggle = Functions.Get_ToggleInPanel(items_drop_content, "NbAffixes", "Toggle_Items_Drop_NbAffixes");
                             Drop.affix_count_text = Functions.Get_TextInToggle(items_drop_content, "NbAffixes", "Toggle_Items_Drop_NbAffixes", "Value");
                             Drop.affix_count_slider_min = Functions.Get_SliderInPanel(items_drop_content, "NbAffixes", "Slider_Items_Drop_NbAffixes_Min");
+                            Drop.affix_count_slider_min.maxValue = 6;                            
                             Drop.affix_count_slider_max = Functions.Get_SliderInPanel(items_drop_content, "NbAffixes", "Slider_Items_Drop_NbAffixes_Max");
+                            Drop.affix_count_slider_max.maxValue = 6;
 
                             Drop.affix_tiers_toggle = Functions.Get_ToggleInPanel(items_drop_content, "AffixesTiers", "Toggle_Items_Drop_AffixesTiers");
                             Drop.affix_tiers_text = Functions.Get_TextInToggle(items_drop_content, "AffixesTiers", "Toggle_Items_Drop_AffixesTiers", "Value");
