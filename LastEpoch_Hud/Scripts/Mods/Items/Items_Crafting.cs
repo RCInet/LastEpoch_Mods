@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using UnityEngine;
-using static MelonLoader.MelonLogger;
 
 namespace LastEpoch_Hud.Scripts.Mods.Items
 {

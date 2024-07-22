@@ -24,10 +24,10 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
         }
         void Update()
         {
-            if (!Save_Manager.instance.IsNullOrDestroyed())
+            if ((CanRun()) && (Initialized))
             {
-                if ((Save_Manager.instance.data.modsNotInHud.Enable_CombatLog) && (!Initialized)) { CombatLog.Init(); }
-            }                         
+                CombatLog.Init();
+            }                       
         }
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
@@ -38,7 +38,16 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                 if (ShowDebug) { Main.logger_instance.Msg("CombatLog : Scene changed to " + scene.name); }
             }
         }
-                
+        private static bool CanRun()
+        {
+            if (!Save_Manager.instance.IsNullOrDestroyed())
+            {
+                if (Save_Manager.instance.data.modsNotInHud.Enable_CombatLog) { return true; }
+                else { return false; }
+            }
+            else { return false; }
+        }          
+        
         public static void Player_OnHealth(float health_diff, string AbilityName)
         {
             string s = "Player health for " + health_diff + " from " + AbilityName;
@@ -127,26 +136,29 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                 [HarmonyPrefix]
                 static void Prefix(ref DamageStatsHolder __instance, ref Actor __0)
                 {
-                    Hit = false;
-                    Critical = false;
-                    Kill = false;
-                    previous_health = -1;
-                    current_source_actor = null;
-                    current_source_ability = null;
-                    current_target_actor = null;
-                    if ((Scenes.IsGameScene()) && (!Refs_Manager.player_actor.IsNullOrDestroyed()))
+                    if (CanRun())
                     {
-                        current_source_ability = __instance.GetDamageSourceInfo().Item2;
-                        current_source_actor = __instance.GetDamageSourceInfo().Item3;
-                        current_target_actor = __0;
-                        previous_health = Get_Health(ref __0);                        
+                        Hit = false;
+                        Critical = false;
+                        Kill = false;
+                        previous_health = -1;
+                        current_source_actor = null;
+                        current_source_ability = null;
+                        current_target_actor = null;
+                        if ((Scenes.IsGameScene()) && (!Refs_Manager.player_actor.IsNullOrDestroyed()))
+                        {
+                            current_source_ability = __instance.GetDamageSourceInfo().Item2;
+                            current_source_actor = __instance.GetDamageSourceInfo().Item3;
+                            current_target_actor = __0;
+                            previous_health = Get_Health(ref __0);
+                        }
                     }
                 }
                 
                 [HarmonyPostfix]
                 static void Postfix(ref DamageStatsHolder __instance, ref Actor __0)
                 {
-                    if ((Scenes.IsGameScene()) && (!Refs_Manager.player_actor.IsNullOrDestroyed()))
+                    if ((Scenes.IsGameScene()) && (!Refs_Manager.player_actor.IsNullOrDestroyed()) && (CanRun()))
                     {
                         Il2CppSystem.ValueTuple<Ailment, Ability, Actor, IrregularDamageSourceID> source = __instance.GetDamageSourceInfo();
                         Ailment source_ailment = source.Item1;
@@ -214,9 +226,12 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                 [HarmonyPostfix]
                 static void Postfix(ref Ability __0, ref Actor __1) //, AT __2)
                 {
-                    if ((__0 == current_source_ability) && (__1 == current_target_actor))
+                    if (CanRun())
                     {
-                        Hit = true;
+                        if ((__0 == current_source_ability) && (__1 == current_target_actor))
+                        {
+                            Hit = true;
+                        }
                     }
                 }
             }
@@ -227,9 +242,12 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                 [HarmonyPostfix]
                 static void Postfix(ref Ability __0, ref Actor __1)
                 {
-                    if ((__0 == current_source_ability) && (__1 == current_target_actor))
+                    if (CanRun())
                     {
-                        Critical = true;
+                        if ((__0 == current_source_ability) && (__1 == current_target_actor))
+                        {
+                            Critical = true;
+                        }
                     }
                 }
             }
@@ -240,9 +258,12 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                 [HarmonyPostfix]
                 static void Postfix(ref Ability __0, ref Actor __1)
                 {
-                    if ((__0 == current_source_ability) && (__1 == current_target_actor))
+                    if (CanRun())
                     {
-                        Kill = true;
+                        if ((__0 == current_source_ability) && (__1 == current_target_actor))
+                        {
+                            Kill = true;
+                        }
                     }
                 }
             }            
@@ -257,31 +278,34 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                 [HarmonyPrefix]
                 static void Prefix(ref Ability __0, ref Actor __1)
                 {
-                    current_health = -1;
-                    if ((Scenes.IsGameScene()) && (!Refs_Manager.player_actor.IsNullOrDestroyed()))
+                    if (CanRun())
                     {
-                        if (__1 == Refs_Manager.player_actor)
+                        current_health = -1;
+                        if ((Scenes.IsGameScene()) && (!Refs_Manager.player_actor.IsNullOrDestroyed()))
                         {
-                            if (!__1.gameObject.GetComponent<PlayerHealth>().IsNullOrDestroyed())
+                            if (__1 == Refs_Manager.player_actor)
                             {
-                                current_health = __1.gameObject.GetComponent<PlayerHealth>().currentHealth;
+                                if (!__1.gameObject.GetComponent<PlayerHealth>().IsNullOrDestroyed())
+                                {
+                                    current_health = __1.gameObject.GetComponent<PlayerHealth>().currentHealth;
+                                }
+                                else { Main.logger_instance.Error("AbilityEventListener:HealEvent Prefix : Can't get player health from target : " + __1.name); }
                             }
-                            else { Main.logger_instance.Error("AbilityEventListener:HealEvent Prefix : Can't get player health from target : " + __1.name); }
-                        }
-                        else
-                        {
-                            if (!__1.gameObject.GetComponent<UnitHealth>().IsNullOrDestroyed())
+                            else
                             {
-                                current_health = __1.gameObject.GetComponent<UnitHealth>().currentHealth;
+                                if (!__1.gameObject.GetComponent<UnitHealth>().IsNullOrDestroyed())
+                                {
+                                    current_health = __1.gameObject.GetComponent<UnitHealth>().currentHealth;
+                                }
+                                else { Main.logger_instance.Error("AbilityEventListener:HealEvent Prefix : Can't get enenmy health from target : " + __1.name); }
                             }
-                            else { Main.logger_instance.Error("AbilityEventListener:HealEvent Prefix : Can't get enenmy health from target : " + __1.name); }
                         }
                     }
                 }
                 [HarmonyPostfix]
                 static void Postfix(ref Ability __0, ref Actor __1)
                 {
-                    if ((Scenes.IsGameScene()) && (!Refs_Manager.player_actor.IsNullOrDestroyed()))
+                    if ((Scenes.IsGameScene()) && (!Refs_Manager.player_actor.IsNullOrDestroyed()) && (CanRun()))
                     {
                         float health_diff = 0;
                         if (__1 == Refs_Manager.player_actor)
