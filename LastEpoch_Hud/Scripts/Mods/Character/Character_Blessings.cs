@@ -141,6 +141,20 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
 
             return new_blessing;
         }
+        public static LE.Data.BlessingData CreateBlessingDataForSave(ushort subtype)
+        {
+            LE.Data.BlessingData result = new LE.Data.BlessingData
+            {
+                SubtypeId = subtype,
+                ImplicitValue = UnityEngine.Random.Range(0f, 1f),
+                ImplicitRollByte0 = (byte)UnityEngine.Random.Range(0f, 255f),
+                ImplicitRollByte1 = (byte)UnityEngine.Random.Range(0f, 255f),
+                ImplicitRollByte2 = (byte)UnityEngine.Random.Range(0f, 255f)
+            };
+
+            return result;
+        }
+
         bool IsBlessingDiscovered(int id)
         {
             bool result = false;
@@ -186,6 +200,43 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
             if (!adding_blessings)
             {
                 adding_blessings = true;
+
+                Hud_Manager.Hud_Base.Resume_Click(); //Close Hud
+
+                //Unlock all timelines
+                if (!ItemContainersManager.instance.IsNullOrDestroyed())
+                {
+                    System.Collections.Generic.List<TimelineID> timelines_id = new System.Collections.Generic.List<TimelineID>();
+                    timelines_id.Add(TimelineID.UndeadAbom);
+                    timelines_id.Add(TimelineID.OsprixWithLance);
+                    timelines_id.Add(TimelineID.VoidRahyeh);
+                    timelines_id.Add(TimelineID.FrostLich);
+                    timelines_id.Add(TimelineID.Lagon);
+                    timelines_id.Add(TimelineID.UndeadVsVoid);
+                    timelines_id.Add(TimelineID.Dragons);
+                    timelines_id.Add(TimelineID.Gaspar);
+                    timelines_id.Add(TimelineID.Heorot);
+                    timelines_id.Add(TimelineID.Volcano);
+                    
+                    if (BlessingRewardPanelManager.instance.IsNullOrDestroyed())
+                    {
+                        BlessingRewardPanelManager.onOptionsPopulated(TimelineID.UndeadAbom, 0, 3);
+                    }
+                    if (!BlessingRewardPanelManager.instance.IsNullOrDestroyed())
+                    {
+                        GameObject ui = BlessingRewardPanelManager.instance.gameObject;
+                        ui.active = true;
+                        foreach (TimelineID t_id in timelines_id)
+                        {
+                            ItemContainersManager.instance.populateBlessingOptions(t_id, 0, 3, 2);
+                            BlessingRewardPanelManager.instance._selectedOption = 1;
+                            BlessingRewardPanelManager.instance.ConfirmSelection();
+                        }
+                        ui.active = false;
+                    }
+                    else { Main.logger_instance.Error("BlessingRewardPanelManager.instance is null"); }
+                }
+                //Add all blessing
                 if (!Refs_Manager.item_list.IsNullOrDestroyed())
                 {
                     int base_id = 34;
@@ -200,22 +251,39 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                     {
                         foreach (ItemList.EquipmentItem item in Refs_Manager.item_list.EquippableItems[index].subItems)
                         {
-                            bool already_in_player = false;
+                            //Add BlessingsDiscovered
+                            /*bool blessing_already_in_player = false;
                             foreach (int blessing_id in Refs_Manager.player_data_tracker.charData.BlessingsDiscovered)
                             {
                                 if (blessing_id == item.subTypeID)
                                 {
-                                    already_in_player = true;
+                                    blessing_already_in_player = true;
                                     break;
                                 }
                             }
-                            if (!already_in_player) { Refs_Manager.player_data_tracker.charData.BlessingsDiscovered.Add(item.subTypeID); }
+                            if (!blessing_already_in_player) { Refs_Manager.player_data_tracker.charData.BlessingsDiscovered.Add(item.subTypeID); }
+                            */
+
+                            //Add OpenBlessings
+                            bool blessing_data_already_in_player = false;
+                            foreach (LE.Data.BlessingData blessing_data in Refs_Manager.player_data_tracker.charData.OpenBlessings)
+                            {
+                                if (blessing_data.SubtypeId == item.subTypeID)
+                                {
+                                    blessing_data_already_in_player = true;
+                                    break;
+                                }
+                            }
+                            if (!blessing_data_already_in_player) { Refs_Manager.player_data_tracker.charData.OpenBlessings.Add(CreateBlessingDataForSave(System.Convert.ToUInt16(item.subTypeID))); }
                         }
                         Refs_Manager.player_data_tracker.charData.SaveData();
                     }
                     else { Main.logger_instance.Error("Blessings not found in itemlist"); }
                 }
                 else { Main.logger_instance.Error("ItemList is null"); }
+
+                
+
                 adding_blessings = false;
             }
         }
