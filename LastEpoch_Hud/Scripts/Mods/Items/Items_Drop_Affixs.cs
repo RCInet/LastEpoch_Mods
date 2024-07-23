@@ -5,7 +5,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
 {
     public class Items_Drop_Affixs
     {
-        /*private static bool CanRun()
+        private static bool CanRun()
         {
             if ((Scenes.IsGameScene()) && (!Save_Manager.instance.IsNullOrDestroyed()))
             {
@@ -40,7 +40,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                     {
                         if ((!__0.isUnique()) && (!__0.isSet())) //Base item and Legendary
                         {
-                            int nb_affixs = 0;
+                            /*int nb_affixs = 0;
                             if ((Save_Manager.instance.data.Items.Drop.Enable_ForceSeal) ||
                                 (Save_Manager.instance.data.Items.Drop.AffixCount_Max > 4) ||
                                 (Save_Manager.instance.data.Items.Drop.AffixCount_Min > 0))
@@ -70,7 +70,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                     eligibles_single_affixes.Clear();
                                     eligibles_multi_affixes.Clear();
                                 }
-                            }
+                            }*/
                             if ((Save_Manager.instance.data.Items.Drop.Enable_AffixTiers) ||
                                 (Save_Manager.instance.data.Items.Drop.Enable_AffixValues) ||
                                 (Save_Manager.instance.data.Items.Drop.Enable_SealTier) ||
@@ -114,7 +114,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                     }
                                 }
                             }
-                            if (__0.isUniqueSetOrLegendary()) //Legendary
+                            /*if (__0.isUniqueSetOrLegendary()) //Legendary
                             {
                                 eligibles_unique = new System.Collections.Generic.List<ushort>();
                                 eligibles_unique = GetEligibles_Unique(__0);
@@ -150,7 +150,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                     if (nb_affixs > 4) { item_rarity = 4; }
                                     __0.rarity = item_rarity;
                                 }
-                            }
+                            }*/
                             __0.RefreshIDAndValues();
                             //if (legendary) { UniqueList.} //repair unique
                         }
@@ -187,7 +187,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
             }
         }
 
-        private static System.Collections.Generic.List<int> eligibles_single_affixes = new System.Collections.Generic.List<int>();
+        /*private static System.Collections.Generic.List<int> eligibles_single_affixes = new System.Collections.Generic.List<int>();
         private static System.Collections.Generic.List<int> eligibles_multi_affixes = new System.Collections.Generic.List<int>();
         private static System.Collections.Generic.List<ushort> eligibles_unique = new System.Collections.Generic.List<ushort>();
         private static int min_tier = 1;
@@ -272,7 +272,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
             }
 
             return eligibles;
-        }
-        */
+        }*/
+        
     }
 }

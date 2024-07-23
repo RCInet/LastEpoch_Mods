@@ -33,6 +33,7 @@ namespace LastEpoch_Hud.Scripts
         public static ItemFiltering.ItemFilterManager filter_manager = null;
         public static CameraManager camera_manager = null;
         public static CraftingSlotManager craft_slot_manager = null;
+        public static CraftingPanelUI crafting_panel_ui = null;
         public static ProtectionClass player_protection_class = null;
         
         void Awake()
@@ -70,6 +71,17 @@ namespace LastEpoch_Hud.Scripts
                         {
                             InventoryPanelUI = game_uibase.inventoryPanel.instance.GetComponent<InventoryPanelUI>();
                         }
+                    }
+                    if ((crafting_panel_ui.IsNullOrDestroyed()) && (!game_uibase.craftingPanel.IsNullOrDestroyed()))
+                    {
+                        if (!game_uibase.craftingPanel.instance.IsNullOrDestroyed())
+                        {
+                            crafting_panel_ui = game_uibase.craftingPanel.instance.GetComponent<CraftingPanelUI>();
+                            if (!crafting_panel_ui.IsNullOrDestroyed())
+                            {
+                                Mods.Items.Items_Crafting.Crafting_Main_Ui.InitializeSlots(crafting_panel_ui);
+                            }
+                        }                            
                     }
                     if ((BlessingsPanel.IsNullOrDestroyed()) && (!InventoryPanelUI.IsNullOrDestroyed())) { BlessingsPanel = InventoryPanelUI.blessingPanel; }
                 }

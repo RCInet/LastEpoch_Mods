@@ -145,9 +145,6 @@
     <Compile Include="Scripts\Mods\Items\Items_AutoStore_OnInventoryOpen.cs" />
     <Compile Include="Scripts\Mods\Items\Items_AutoStore_WithTimer.cs" />
     <Compile Include="Scripts\Mods\Items\Items_Crafting.cs" />
-    <Compile Include="Scripts\Mods\Items\Items_Drop_ForceLegendary.cs" />
-    <Compile Include="Scripts\Mods\Items\Items_Drop_ForceSet.cs" />
-    <Compile Include="Scripts\Mods\Items\Items_Drop_ForceUnique.cs" />
     <Compile Include="Scripts\Mods\Items\Items_Drop_ForginPotencial.cs" />
     <Compile Include="Scripts\Mods\Items\Items_Drop_Implicits.cs" />
     <Compile Include="Scripts\Mods\Items\Items_Drop_Affixs.cs" />

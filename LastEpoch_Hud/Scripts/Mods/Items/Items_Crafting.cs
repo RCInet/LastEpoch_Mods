@@ -47,23 +47,27 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 return result;
             }
             public static bool IsPrefixFull(ItemData item)
-            {
-                int nb_max = 0;
+            {                
+                int count = 0;
                 bool idol = IsIdol(item);
+                int max_prefix = Save_Manager.instance.data.modsNotInHud.Craft_Items_Nb_Prefixs;
+                if (idol) { max_prefix = Save_Manager.instance.data.modsNotInHud.Craft_Idols_Nb_Prefixs; }
                 foreach (ItemAffix affix in item.affixes)
                 {
                     if ((affix.affixType == AffixList.AffixType.PREFIX) && ((idol) || ((!idol) && (affix.affixTier > 5))))
                     {
-                        nb_max++;
+                        count++;
                     }
                 }
-                if (nb_max > 1) { return true; }
+                if (count > (max_prefix - 1)) { return true; }
                 else { return false; }
             }
             public static bool IsSuffixFull(ItemData item)
             {
                 int nb_max = 0;
                 bool idol = IsIdol(item);
+                int max_prefix = Save_Manager.instance.data.modsNotInHud.Craft_Items_Nb_Suffixs;
+                if (idol) { max_prefix = Save_Manager.instance.data.modsNotInHud.Craft_Idols_Nb_Suffixs; }
                 foreach (ItemAffix affix in item.affixes)
                 {
                     if ((affix.affixType == AffixList.AffixType.SUFFIX) && ((idol) || ((!idol) && (affix.affixTier > 5))))
@@ -71,7 +75,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                         nb_max++;
                     }
                 }
-                if (nb_max > 1) { return true; }
+                if (nb_max > (max_prefix - 1)) { return true; }
                 else { return false; }
             }
         }
@@ -115,7 +119,11 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
         }
         public class Locales
         {
-            public static string affix_is_maxed_key = "Crafting_ForgeButton_Title_AffixMaxed";
+            public static string no_space_suffix_key = "Crafting_ForgeButton_Title_NoSpaceSuffix";
+            public static string no_space_suffix = "force_suffix";
+            //public static string no_space_prefix_key = "";
+            //public static string no_space_prefix = "force_prefix";
+            public static string affix_is_maxed_key = "Crafting_ForgeButton_Title_AffixMaxed";            
             public static string affix_is_maxed = "maxed_craft";
             public static string cant_craft_unique_key = "Crafting_ForgeButton_Title_Uniques";
             public static string cant_craft_unique = "unique_craft";
@@ -131,7 +139,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                     //Main.logger_instance.Msg("Localization:TryGetText key = " + __0);
                     bool result = true;
                     if ((__0 == affix_is_maxed_key) || (__0 == cant_craft_unique_key) ||
-                        (__0 == no_forgin_potencial_key))
+                        (__0 == no_forgin_potencial_key) || (__0 == no_space_suffix_key))
                     {
                         __result = true;
                         result = false;
@@ -152,6 +160,11 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                     if (__0 == affix_is_maxed_key)
                     {
                         __result = affix_is_maxed;
+                        result = false;
+                    }
+                    else if (__0 == no_space_suffix_key)
+                    {
+                        __result = no_space_suffix;
                         result = false;
                     }
                     else if (__0 == cant_craft_unique_key)
@@ -365,6 +378,17 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                             else if (affix_id == -1) { __0 = "Select an affix"; }
                             else if (affix_tier > 5) { __0 = "Maxed"; }
                         }
+                        else if (__0 == Locales.no_space_suffix)
+                        {
+                            bool full = Get.IsSuffixFull(Current.item);
+                            Refs_Manager.craft_slot_manager.suffixFullOfMax = full;
+                            if (full)
+                            {
+                                __0 = "Forge";
+                                __1 = false;
+                                __result = true;
+                            }
+                        }
                         /*else if (__0 == "No Forging Potential")
                         {                    
                             __0 = "No Cost";
@@ -392,6 +416,212 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
         public class Crafting_Main_Ui
         {
             public static CraftingMainUI main_ui = null;
+            private static Vector3 shards_diff;
+            private static Vector3 shards_btn_diff;
+            private static Vector3 lossy_scale;
+            private static Vector2 offset_min;
+            private static Vector2 offset_max;
+            private static Sprite add_shard_btn_image;
+            private static Sprite glass_lense_image;
+
+            public static void RefFromSlot(GameObject slot)
+            {
+                GameObject shards = Functions.GetChild(slot, "Shard");
+                if (!shards.IsNullOrDestroyed())
+                {
+                    lossy_scale = shards.transform.lossyScale;
+                    GameObject add_shard_btn = Functions.GetChild(shards, "addShardButton");
+                    if (!add_shard_btn.IsNullOrDestroyed())
+                    {
+                        add_shard_btn_image = add_shard_btn.GetComponent<UnityEngine.UI.Image>().sprite;
+                    }
+                    GameObject glass_lense = Functions.GetChild(shards, "GlassLense");
+                    if (!glass_lense.IsNullOrDestroyed())
+                    {
+                        glass_lense_image = glass_lense.GetComponent<UnityEngine.UI.Image>().sprite;
+                    }
+                }
+            }
+            public static void AddSlot(GameObject parent, int slot, float position_x, float position_y)
+            {
+                Vector3 position = new Vector3(position_x, position_y, 0);
+
+                GameObject slot_obj = new GameObject { name = "ModSlot (" + slot + ")" };
+                slot_obj.AddComponent<AffixSlotForge>();
+                slot_obj.transform.SetParent(parent.transform);
+                slot_obj.transform.position = position;
+                Main.logger_instance.Msg("slot_obj.transform.position = " + slot_obj.transform.position.ToString());
+
+                GameObject shards_obj = new GameObject { name = "Shard" };
+                shards_obj.transform.SetParent(slot_obj.transform);
+                shards_obj.transform.position = position - shards_diff;
+                shards_obj.transform.localScale = Vector3.one;
+                Main.logger_instance.Msg("shards_obj.transform.position = " + shards_obj.transform.position.ToString());
+                GameObject add_shards_btn_obj = new GameObject { name = "addShardButton" };
+                add_shards_btn_obj.AddComponent<UnityEngine.UI.Image>();
+                add_shards_btn_obj.AddComponent<UnityEngine.UI.Button>();
+                add_shards_btn_obj.AddComponent<LE.Audio.ButtonSounds>();
+                add_shards_btn_obj.transform.SetParent(shards_obj.transform);
+                add_shards_btn_obj.transform.position = position - shards_btn_diff;
+                add_shards_btn_obj.GetComponent<UnityEngine.UI.Image>().sprite = add_shard_btn_image;
+                RectTransform recttransform = add_shards_btn_obj.GetComponent<RectTransform>();
+                recttransform.offsetMax = offset_max;
+                recttransform.offsetMin = offset_min;
+                //recttransform.lossyScale = lossy_scale;
+
+                GameObject shards_ico_obj = new GameObject { name = "ShardIcon" };
+                shards_ico_obj.active = false;
+                shards_ico_obj.AddComponent<UnityEngine.CanvasRenderer>();
+                shards_ico_obj.AddComponent<UnityEngine.UI.Image>();
+                shards_ico_obj.transform.SetParent(shards_obj.transform);
+                GameObject glass_lense_obj = new GameObject { name = "GlassLense" };
+                glass_lense_obj.active = false;
+                glass_lense_obj.AddComponent<UnityEngine.CanvasRenderer>();
+                glass_lense_obj.AddComponent<UnityEngine.UI.Image>();
+                glass_lense_obj.transform.SetParent(shards_obj.transform);
+                glass_lense_obj.GetComponent<UnityEngine.UI.Image>().sprite = glass_lense_image;
+                GameObject slam_obj = new GameObject { name = "SLAM" };
+                slam_obj.active = false;
+                slam_obj.AddComponent<UnityEngine.CanvasRenderer>();
+                slam_obj.AddComponent<UnityEngine.UI.LayoutElement>();
+                slam_obj.AddComponent<DeactivateOnEnable>();
+                slam_obj.transform.SetParent(shards_obj.transform);
+
+                GameObject availables_obj = new GameObject { name = "AvailableShardsofSlottedType" };
+                availables_obj.active = false;
+                availables_obj.AddComponent<UnityEngine.CanvasRenderer>();
+                availables_obj.AddComponent<UnityEngine.UI.Image>();
+                availables_obj.transform.SetParent(slot_obj.transform);
+                GameObject availables_count_obj = new GameObject { name = "Available Shard Count TMP" };
+                availables_count_obj.AddComponent<UnityEngine.CanvasRenderer>();
+                availables_count_obj.AddComponent<TMPro.TextMeshProUGUI>();
+                availables_count_obj.transform.SetParent(availables_obj.transform);
+
+                GameObject active_pathing_obj = new GameObject { name = "activePathing" };
+                active_pathing_obj.active = false;
+                active_pathing_obj.AddComponent<UnityEngine.CanvasRenderer>();
+                active_pathing_obj.AddComponent<UnityEngine.UI.Image>();
+                active_pathing_obj.AddComponent<UnityEngine.CanvasGroup>();
+                active_pathing_obj.transform.SetParent(slot_obj.transform);
+
+                GameObject upgrade_obj = new GameObject { name = "upgradeAvailable" };
+                upgrade_obj.active = false;
+                upgrade_obj.AddComponent<UnityEngine.CanvasRenderer>();
+                upgrade_obj.AddComponent<UnityEngine.UI.Image>();
+                upgrade_obj.AddComponent<UnityEngine.UI.Button>();
+                upgrade_obj.AddComponent<CraftingUpgradeButton>();
+                upgrade_obj.transform.SetParent(slot_obj.transform);
+                GameObject upgrade_indicator_obj = new GameObject { name = "Upgrade Available Indicator" };
+                upgrade_indicator_obj.active = false;
+                upgrade_indicator_obj.AddComponent<UnityEngine.CanvasRenderer>();
+                upgrade_indicator_obj.AddComponent<UnityEngine.UI.Image>();
+                upgrade_indicator_obj.AddComponent<UnityEngine.UI.LayoutElement>();
+                upgrade_indicator_obj.transform.SetParent(upgrade_obj.transform);
+
+                GameObject affix_desc_obj = new GameObject { name = "affixDescHolder" };
+                affix_desc_obj.active = false;
+                affix_desc_obj.AddComponent<UnityEngine.CanvasRenderer>();
+                affix_desc_obj.AddComponent<UnityEngine.UI.LayoutGroup>();
+                affix_desc_obj.AddComponent<UnityEngine.UI.ContentSizeFitter>();
+                affix_desc_obj.transform.SetParent(slot_obj.transform);
+                GameObject shadow_obj = new GameObject { name = "dropshadow" };
+                shadow_obj.AddComponent<UnityEngine.CanvasRenderer>();
+                shadow_obj.AddComponent<UnityEngine.UI.Image>();
+                shadow_obj.AddComponent<UnityEngine.UI.LayoutElement>();
+                shadow_obj.transform.SetParent(affix_desc_obj.transform);
+                GameObject tier_obj = new GameObject { name = "tierLevel" };
+                tier_obj.AddComponent<UnityEngine.CanvasRenderer>();
+                tier_obj.AddComponent<TMPro.TextMeshProUGUI>();
+                tier_obj.transform.SetParent(affix_desc_obj.transform);
+                GameObject separator_obj = new GameObject { name = "separator" };
+                separator_obj.AddComponent<UnityEngine.CanvasRenderer>();
+                separator_obj.AddComponent<UnityEngine.UI.Image>();
+                separator_obj.AddComponent<UnityEngine.UI.LayoutElement>();
+                separator_obj.transform.SetParent(affix_desc_obj.transform);
+                GameObject affix_name_obj = new GameObject { name = "AffixName" };
+                affix_name_obj.AddComponent<UnityEngine.CanvasRenderer>();
+                affix_name_obj.AddComponent<TMPro.TextMeshProUGUI>();
+                affix_name_obj.AddComponent<UnityEngine.UI.LayoutElement>();
+                affix_name_obj.transform.SetParent(affix_desc_obj.transform);
+            }
+            public static void InitializeSlots(CraftingPanelUI crafting_panel_ui)
+            {
+                //MainContent
+                GameObject __instance = Functions.GetChild(crafting_panel_ui.gameObject, "MainContent");
+                if (!__instance.IsNullOrDestroyed())
+                {
+                    GameObject prefix_0 = Functions.GetChild(__instance, "ModSlot");
+                    Vector3 prefix_0_position = new Vector3();
+                    float position_x = 0f;
+                    float position_y = 0f;
+                    if (!prefix_0.IsNullOrDestroyed())
+                    {
+                        prefix_0_position = prefix_0.transform.position;
+                        GameObject shards = Functions.GetChild(prefix_0, "Shard");
+                        if (!shards.IsNullOrDestroyed())
+                        {
+                            shards_diff = shards.transform.position - prefix_0_position;
+                            GameObject add_shard_btn = Functions.GetChild(shards, "addShardButton");
+                            if (!add_shard_btn.IsNullOrDestroyed())
+                            {
+                                shards_btn_diff = add_shard_btn.transform.position - prefix_0_position;
+                                add_shard_btn_image = add_shard_btn.GetComponent<UnityEngine.UI.Image>().sprite;
+                                offset_min = add_shard_btn.GetComponent<RectTransform>().offsetMin;
+                                offset_max = add_shard_btn.GetComponent<RectTransform>().offsetMax;
+                                lossy_scale = add_shard_btn.GetComponent<RectTransform>().lossyScale;
+                            }
+                            GameObject glass_lense = Functions.GetChild(shards, "GlassLense");
+                            if (!glass_lense.IsNullOrDestroyed())
+                            {
+                                glass_lense_image = glass_lense.GetComponent<UnityEngine.UI.Image>().sprite;
+                            }
+                        }
+                    }
+                    else { Main.logger_instance.Error("prefix_0 is null"); }
+
+                    GameObject prefix_1 = Functions.GetChild(__instance, "ModSlot (1)");
+                    Vector3 prefix_1_position = new Vector3();
+                    if (!prefix_1.IsNullOrDestroyed()) { prefix_1_position = prefix_1.transform.position; }
+                    else { Main.logger_instance.Error("prefix_1 is null"); }
+
+                    if ((!prefix_0.IsNullOrDestroyed()) && (!prefix_1.IsNullOrDestroyed()))
+                    {
+                        Vector3 diff = prefix_0_position - prefix_1_position;
+                        Vector3 prefix_2_position = prefix_1_position - diff; //new Vector3(prefix_0_position.x, prefix_1_position.y - (prefix_0_position.y - prefix_1_position.y), prefix_0_position.z);
+                        position_x = prefix_2_position.x;
+                        position_y = prefix_2_position.y;
+                        AddSlot(__instance, 4, position_x, position_y);
+                    }
+                    else { Main.logger_instance.Error("prefix_2"); }                    
+
+                    GameObject suffix_0 = Functions.GetChild(__instance, "ModSlot (2)");
+                    Vector3 suffix_0_position = new Vector3();
+                    if (!suffix_0.IsNullOrDestroyed()) { suffix_0_position = suffix_0.transform.position; }
+                    else { Main.logger_instance.Error("suffix_0 is null"); }
+
+                    GameObject suffix_1 = Functions.GetChild(__instance, "ModSlot (3)");
+                    Vector3 suffix_1_position = new Vector3();
+                    if (!suffix_1.IsNullOrDestroyed()) { suffix_1_position = suffix_1.transform.position; }
+                    else { Main.logger_instance.Error("suffix_1 is null"); }
+
+                    if ((!suffix_0.IsNullOrDestroyed()) && (!suffix_1.IsNullOrDestroyed()))
+                    {
+                        Vector3 diff = suffix_0_position - suffix_1_position;
+                        Vector3 Suffix_2_position = suffix_1_position - diff;
+                        position_x = Suffix_2_position.x;
+                        AddSlot(__instance, 5, position_x, position_y);
+                    }
+                    else { Main.logger_instance.Error("Suffix_2"); }                    
+
+                    Main.logger_instance.Msg("Slots Set");
+                    /*}
+                    else
+                    {
+                        Main.logger_instance.Error("Slots already Set");
+                    }*/
+                }
+            }
+
 
             [HarmonyPatch(typeof(CraftingMainUI), "Initialize")]
             public class CraftingMainUI_Initialize
@@ -404,7 +634,36 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                     if (!main_ui.IsNullOrDestroyed()) //&& (Crafting_Main_Item_Container.rect_transform.IsNullOrDestroyed()))
                     {
                         Crafting_Main_Item_Container.rect_transform = main_ui.gameObject.GetComponent<RectTransform>();
-                    }                    
+                    }
+
+                    /*if ((Functions.GetChild(__instance.gameObject, "ModSlot (4)").IsNullOrDestroyed()) ||
+                        (Functions.GetChild(__instance.gameObject, "ModSlot (5)")).IsNullOrDestroyed())
+                    {
+                        //Set new slots here
+                        GameObject prefix_0 = Functions.GetChild(__instance.gameObject, "ModSlot");
+                        Vector3 prefix_0_position = prefix_0.transform.position;
+                        Main.logger_instance.Msg("prefix_0 position = " + prefix_0_position.ToString());
+
+                        GameObject prefix_1 = Functions.GetChild(__instance.gameObject, "ModSlot (1)");
+                        Vector3 prefix_1_position = prefix_1.transform.position;
+                        Main.logger_instance.Msg("prefix_1 position = " + prefix_1_position.ToString());
+
+                        Vector3 prefix_2_position = new Vector3(prefix_0_position.x, prefix_0_position.y + prefix_1_position.y, prefix_0_position.z);
+                        GameObject prefix_2 = Object.Instantiate(prefix_1, prefix_2_position, prefix_1.transform.rotation);
+                        prefix_2.name = "ModSlot (4)";
+
+                        GameObject suffix_0 = Functions.GetChild(__instance.gameObject, "ModSlot (2)");
+                        Vector3 suffix_0_position = suffix_0.transform.position;
+                        Main.logger_instance.Msg("suffix_0 position = " + suffix_0_position.ToString());
+
+                        GameObject suffix_1 = Functions.GetChild(__instance.gameObject, "ModSlot (3)");
+                        Vector3 suffix_1_position = suffix_1.transform.position;
+                        Main.logger_instance.Msg("suffix_1 position = " + suffix_1_position.ToString());
+
+                        Vector3 Suffix_2_position = new Vector3(suffix_0_position.x, suffix_0_position.y + suffix_1_position.y, suffix_0_position.z);
+                        GameObject Suffix_2 = Object.Instantiate(suffix_1, Suffix_2_position, suffix_1.transform.rotation);
+                        Suffix_2.name = "ModSlot (5)";
+                    }*/
                 }
             }
         }
@@ -780,9 +1039,9 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                             hidden_list.Clear();
 
                             //Use to Debug
-                            Main.logger_instance.Msg("Unused count = " + unused_holder.transform.childCount);
-                            Main.logger_instance.Msg("Incompatible count = " + incompatible_holder.transform.childCount);
-                            Main.logger_instance.Msg("Hidden count = " + hidden_holder.transform.childCount);
+                            //Main.logger_instance.Msg("Unused count = " + unused_holder.transform.childCount);
+                            //Main.logger_instance.Msg("Incompatible count = " + incompatible_holder.transform.childCount);
+                            //Main.logger_instance.Msg("Hidden count = " + hidden_holder.transform.childCount);
                         }
                     }
                 }

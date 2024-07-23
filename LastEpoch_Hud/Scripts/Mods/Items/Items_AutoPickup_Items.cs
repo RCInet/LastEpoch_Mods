@@ -30,11 +30,9 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
             [HarmonyPrefix]
             static bool Prefix(ref GroundItemManager __instance, ref Actor __0, ref ItemData __1, ref UnityEngine.Vector3 __2, bool __3)
             {
-                bool result = true;
-
-                //Repair Unique SubType if need here
                 if (Scenes.IsGameScene())
                 {
+                    //Fix unique subtype
                     if (__1.isUniqueSetOrLegendary())
                     {
                         UniqueList.Entry unique = UniqueList.getUnique(__1.uniqueID);
@@ -47,12 +45,18 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                 __1.subType = unique.subTypes[rand];
                                 __1.id[2] = unique.subTypes[rand]; //subtype
                                 __1.RefreshIDAndValues();
-                                Main.logger_instance.Msg("Repair subtype from " + backup + " to " + __1.subType); //Uncomment for debug
                             }
                         }
                     }
+                    //Fix Load items with more than 4 affixs
+                    if ((__1.rarity == 5) || (__1.rarity == 6))
+                    {
+                        __1.rarity = 4;                        
+                        __1.RefreshIDAndValues();                        
+                    }
                 }
 
+                bool result = true;
                 if (CanRun())
                 {
                     if ((Item.isKey(__1.itemType)) || (ItemList.isCraftingItem(__1.itemType)))

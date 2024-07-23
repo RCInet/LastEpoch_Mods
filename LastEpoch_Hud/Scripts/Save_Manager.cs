@@ -68,9 +68,13 @@ namespace LastEpoch_Hud.Scripts
                 {
                     Enable_CombatLog = false,
                     Enable_PotionResplenishment = false,
-                    Enable_Craft_IncompatibleAffixs = false,          //Show Unused Affix and Allow craft                    
+                    Enable_Craft_IncompatibleAffixs = false,    //Show Unused Affix and Allow craft                    
                     Enable_Craft_BypassReq = false,
-                    Enable_Craft_ShowSpecialAffixs = false
+                    Enable_Craft_ShowSpecialAffixs = false,
+                    Craft_Items_Nb_Prefixs = 3,                       //2 to 3 Prefix
+                    Craft_Items_Nb_Suffixs = 3,                       //2 to 3 Suffix
+                    Craft_Idols_Nb_Prefixs = 3,                       //1 to 3 Prefix
+                    Craft_Idols_Nb_Suffixs = 3                        //1 to 3 Suffix
                 },
                 Login =
                 {
@@ -513,6 +517,10 @@ namespace LastEpoch_Hud.Scripts
                 public bool Enable_Craft_IncompatibleAffixs;
                 public bool Enable_Craft_BypassReq;
                 public bool Enable_Craft_ShowSpecialAffixs;
+                public int Craft_Items_Nb_Prefixs;
+                public int Craft_Items_Nb_Suffixs;
+                public int Craft_Idols_Nb_Prefixs;
+                public int Craft_Idols_Nb_Suffixs;
             }
             //Login
             public struct Login
