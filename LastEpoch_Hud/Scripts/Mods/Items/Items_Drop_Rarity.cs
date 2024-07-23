@@ -26,31 +26,38 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
         public static void Update_ColorAndTexture()
         {
             color = new Color(R, G, B, A);
-            if (texture.IsNullOrDestroyed()) { Initialize_Texture(color); }
+            if (texture.IsNullOrDestroyed()) { texture = Create_Texture(color); }
             if (!texture.IsNullOrDestroyed())
             {
-                if (sprite.IsNullOrDestroyed()) { Initialize_Sprite(texture); }
+                if (sprite.IsNullOrDestroyed()) { sprite = Create_Sprite(texture); }
                 if (sprite.IsNullOrDestroyed()) { Main.logger_instance.Error("Sprite create Fail"); }
             }
             else { Main.logger_instance.Error("Can't create sprite, texture is null"); }
         }
-        public static void Initialize_Texture(Color color)
+        public static Texture2D Create_Texture(Color color)
         {
-            texture = new Texture2D(100, 100);
-            Color[] pixels = new Color[100 * 100];
+            Texture2D texture2d = new Texture2D(2, 2);
+            Color[] pixels = new Color[2 * 2];
             for (int i = 0; i < pixels.Length; i++) { pixels[i] = color; }
-            texture.SetPixels(pixels);
-            texture.Apply();
+            texture2d.SetPixels(pixels);
+            texture2d.Apply();
+
+            return texture2d;
         }
-        public static void Initialize_Sprite(Texture2D texture)
+        public static Sprite Create_Sprite(Texture2D texture2d)
         {
-            sprite = Sprite.Create(new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(texture.width / 2, texture.height / 2), 100.0f, texture);
+            Sprite sprite = Sprite.Create(new Rect(0.0f, 0.0f, texture2d.width, texture2d.height), new Vector2(texture2d.width / 2, texture2d.height / 2), 100.0f, texture2d);
+
+            return sprite;
         }
         public static bool IsNewRarity(ItemDataUnpacked item)
         {
-            int nb_affix = item.affixes.Count;
-            if ((!item.IsNullOrDestroyed()) && (nb_affix > 4)) { return true; }
-            else {  return false; }
+            if (!item.IsNullOrDestroyed())
+            {
+                if (item.affixes.Count > 4) { return true; }
+                else { return false; }
+            }
+            else { return false; }
         }
 
         //Unlock rarity for 5 and 6 affixs
@@ -97,15 +104,18 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
             [HarmonyPostfix]
             static void Postfix(ref TooltipItemManager __instance)
             {
-                bool res = false;
+                UpdateTooltip = false;
                 if (Scenes.IsGameScene())
                 {
                     if (!__instance.activeParameters.IsNullOrDestroyed())
                     {
-                        if (IsNewRarity(__instance.activeParameters.Item)) { res = true; }
+                        if (IsNewRarity(__instance.activeParameters.Item))
+                        {
+                            Update_ColorAndTexture();
+                            UpdateTooltip = true;
+                        }
                     }
                 }
-                UpdateTooltip = res;
             }
         }
 
@@ -129,9 +139,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
             {
                 if ((Scenes.IsGameScene()) && (UpdateTooltip))
                 {
-                    Main.logger_instance.Msg("UITooltipItem:OnUpdateTick");
-                    Update_ColorAndTexture();
-
                     if (!__instance.itemBackground.IsNullOrDestroyed())
                     {
                         if (__instance.itemBackground.color != color) { __instance.itemBackground.color = color; }
@@ -158,20 +165,15 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
             {
                 if (IsNewRarity(__0.itemData))
                 {
-                    Main.logger_instance.Msg("GroundItemLabel:initialise");
                     Update_ColorAndTexture();
 
                     //Text Color
                     TMPro.TextMeshProUGUI text = __instance.itemText;
                     text.faceColor = color; //Text color
 
+                    //Border
                     GameObject image_obj = Functions.GetChild(__instance.gameObject, "Image");
                     if (!image_obj.IsNullOrDestroyed()) { image_obj.active = true; }
-
-                    //Border
-                    /*UnityEngine.UI.Image background_image = __instance.borderBase.GetComponent<UnityEngine.UI.Image>();
-                    background_image.sprite = sprite;
-                    background_image.color = color;*/
                 }
             }
         }

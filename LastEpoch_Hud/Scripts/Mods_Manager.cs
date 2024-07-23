@@ -21,6 +21,7 @@ namespace LastEpoch_Hud.Scripts
         GameObject items_nbsocket_obj = null;
         GameObject items_autosell_timer_obj = null;
         GameObject items_headhunter_obj = null;
+        GameObject items_crafting_obj = null;
         GameObject minimap_icons_obj = null;        
 
         bool initialized = false;
@@ -91,7 +92,12 @@ namespace LastEpoch_Hud.Scripts
             items_headhunter_obj.active = false;
             items_headhunter_obj.AddComponent<Mods.Items.Items_HeadHunter>();
             Mods_Objects.Add(items_headhunter_obj);
-                        
+
+            items_crafting_obj = Object.Instantiate(new GameObject { name = "Mod_Items_Crafting" }, Vector3.zero, Quaternion.identity);
+            items_crafting_obj.active = false;
+            items_crafting_obj.AddComponent<Mods.Items.Items_Crafting>();
+            Mods_Objects.Add(items_crafting_obj);
+
             character_bank_from_anywhere = Object.Instantiate(new GameObject { name = "Mod_Items_Headhunter" }, Vector3.zero, Quaternion.identity);
             character_bank_from_anywhere.active = false;
             character_bank_from_anywhere.AddComponent<Mods.Character.Character_Bank_Anywhere>();
@@ -127,6 +133,7 @@ namespace LastEpoch_Hud.Scripts
                 character_permanentbuffs_obj.GetComponent<Mods.Character.Character_PermanentBuffs>().Enable();
                 Mods.Items.Items_Update.Reqs(); //Used to update item req
                 items_headhunter_obj.active = true;
+                items_crafting_obj.active = true;
                 minimap_icons_obj.active = true; //Enable/Disable Minimap Icons
             }
         }
@@ -148,6 +155,7 @@ namespace LastEpoch_Hud.Scripts
                 character_permanentbuffs_obj.GetComponent<Mods.Character.Character_PermanentBuffs>().Disable();
                 character_safetp_obj.active = false;
                 items_headhunter_obj.active = false;
+                items_crafting_obj.active = false;
                 minimap_icons_obj.active = false;
             }
         }

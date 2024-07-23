@@ -74,14 +74,7 @@ namespace LastEpoch_Hud.Scripts
                     }
                     if ((crafting_panel_ui.IsNullOrDestroyed()) && (!game_uibase.craftingPanel.IsNullOrDestroyed()))
                     {
-                        if (!game_uibase.craftingPanel.instance.IsNullOrDestroyed())
-                        {
-                            crafting_panel_ui = game_uibase.craftingPanel.instance.GetComponent<CraftingPanelUI>();
-                            if (!crafting_panel_ui.IsNullOrDestroyed())
-                            {
-                                Mods.Items.Items_Crafting.Crafting_Main_Ui.InitializeSlots(crafting_panel_ui);
-                            }
-                        }                            
+                        if (!game_uibase.craftingPanel.instance.IsNullOrDestroyed()) { crafting_panel_ui = game_uibase.craftingPanel.instance.GetComponent<CraftingPanelUI>(); }                            
                     }
                     if ((BlessingsPanel.IsNullOrDestroyed()) && (!InventoryPanelUI.IsNullOrDestroyed())) { BlessingsPanel = InventoryPanelUI.blessingPanel; }
                 }
