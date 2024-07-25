@@ -458,7 +458,12 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             {
                 if (CanRun())
                 {
-                    if (Save_Manager.instance.data.Skills.Enable_RemoveCooldown) { __1.RemoveCooldown(); }
+                    try
+                    {
+                        if (Save_Manager.instance.data.Skills.Enable_RemoveCooldown) { __1.RemoveCooldown(); }
+                    }
+                    catch { } //Fix Portal error
+                    
                     /*try
                     {
                         System.Type type = __1.GetType();
