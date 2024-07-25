@@ -33,6 +33,7 @@ namespace LastEpoch_Hud.Scripts
         public static ItemFiltering.ItemFilterManager filter_manager = null;
         public static CameraManager camera_manager = null;
         public static CraftingSlotManager craft_slot_manager = null;
+        public static UIPanel craft_materials_holder = null;
         public static CraftingPanelUI crafting_panel_ui = null;
         public static ProtectionClass player_protection_class = null;
         
@@ -75,6 +76,10 @@ namespace LastEpoch_Hud.Scripts
                     if ((crafting_panel_ui.IsNullOrDestroyed()) && (!game_uibase.craftingPanel.IsNullOrDestroyed()))
                     {
                         if (!game_uibase.craftingPanel.instance.IsNullOrDestroyed()) { crafting_panel_ui = game_uibase.craftingPanel.instance.GetComponent<CraftingPanelUI>(); }                            
+                    }
+                    if ((craft_materials_holder.IsNullOrDestroyed()) && (!game_uibase.craftingMaterialsPanel.IsNullOrDestroyed()))
+                    {
+                        craft_materials_holder = game_uibase.craftingMaterialsPanel;
                     }
                     if ((BlessingsPanel.IsNullOrDestroyed()) && (!InventoryPanelUI.IsNullOrDestroyed())) { BlessingsPanel = InventoryPanelUI.blessingPanel; }
                 }
