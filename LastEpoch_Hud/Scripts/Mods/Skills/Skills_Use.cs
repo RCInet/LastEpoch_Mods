@@ -462,7 +462,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                     {
                         if (Save_Manager.instance.data.Skills.Enable_RemoveCooldown) { __1.RemoveCooldown(); }
                     }
-                    catch { } //Fix Portal error
+                    catch { } //Sometimes we have Portal error
                     
                     /*try
                     {

@@ -1140,6 +1140,24 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                     glass_lense_offset_max = glass_lense.GetComponent<RectTransform>().offsetMax;
                                 }
                             }
+                            GameObject upgrade_available = Functions.GetChild(prefix_0, "upgradeAvailable");
+                            if (!upgrade_available.IsNullOrDestroyed())
+                            {
+                                UnityEngine.UI.Image upg_img = upgrade_available.GetComponent<UnityEngine.UI.Image>();
+                                if (!upg_img.IsNullOrDestroyed())
+                                {
+                                    upgrade_button_image = upg_img.sprite;
+                                }
+                                GameObject upgrade_available_indicator = Functions.GetChild(upgrade_available, "Upgrade Available Indicator");
+                                if (!upgrade_available_indicator.IsNullOrDestroyed())
+                                {
+                                    UnityEngine.UI.Image upg_ind_img = upgrade_available_indicator.GetComponent<UnityEngine.UI.Image>();
+                                    if (!upg_ind_img.IsNullOrDestroyed())
+                                    {
+                                        upgrade_button_indicator_image = upg_ind_img.sprite;
+                                    }
+                                }
+                            }
                         }
                         else { Main.logger_instance.Error("prefix_0 is null"); }
 
@@ -1297,6 +1315,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
             private static Vector2 shards_btn_offset_max;
 
             private static Sprite add_shard_btn_image;
+            private static Sprite upgrade_button_image;
+            private static Sprite upgrade_button_indicator_image;
 
             private static Material shard_ico_material;
             private static Vector2 shard_ico_offset_min;
@@ -1355,9 +1375,9 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                     add_shards_btn.onClick.AddListener(Slot6_OnClick_Action);
                 }
                 add_shards_btn_obj.GetComponent<UnityEngine.UI.Image>().sprite = add_shard_btn_image;
-                //RectTransform shards_btn_recttransform = add_shards_btn_obj.GetComponent<RectTransform>();
-                //shards_btn_recttransform.offsetMax = shards_btn_offset_max;
-                //shards_btn_recttransform.offsetMin = shards_btn_offset_min;
+                RectTransform shards_btn_recttransform = add_shards_btn_obj.GetComponent<RectTransform>();
+                shards_btn_recttransform.offsetMax = shards_btn_offset_max;
+                shards_btn_recttransform.offsetMin = shards_btn_offset_min;
                 //recttransform.lossyScale = lossy_scale;
                 GameObject shards_ico_obj = new GameObject { name = "ShardIcon" };
                 shards_ico_obj.active = false;
@@ -1414,12 +1434,14 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 upgrade_obj.AddComponent<UnityEngine.UI.Button>();
                 upgrade_obj.AddComponent<CraftingUpgradeButton>();
                 upgrade_obj.transform.SetParent(slot_obj.transform);
+                upgrade_obj.GetComponent<UnityEngine.UI.Image>().sprite = upgrade_button_image;
                 GameObject upgrade_indicator_obj = new GameObject { name = "Upgrade Available Indicator" };
                 upgrade_indicator_obj.active = false;
                 upgrade_indicator_obj.AddComponent<UnityEngine.CanvasRenderer>();
                 upgrade_indicator_obj.AddComponent<UnityEngine.UI.Image>();
                 upgrade_indicator_obj.AddComponent<UnityEngine.UI.LayoutElement>();
                 upgrade_indicator_obj.transform.SetParent(upgrade_obj.transform);
+                upgrade_indicator_obj.GetComponent<UnityEngine.UI.Image>().sprite = upgrade_button_indicator_image;
 
                 GameObject affix_desc_obj = new GameObject { name = "affixDescHolder" };
                 affix_desc_obj.active = false;

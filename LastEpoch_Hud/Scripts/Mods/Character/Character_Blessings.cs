@@ -204,7 +204,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                 Hud_Manager.Hud_Base.Resume_Click(); //Close Hud
 
                 //Unlock all timelines
-                if (!ItemContainersManager.instance.IsNullOrDestroyed())
+                if (!ItemContainersManager.Instance.IsNullOrDestroyed())
                 {
                     System.Collections.Generic.List<TimelineID> timelines_id = new System.Collections.Generic.List<TimelineID>();
                     timelines_id.Add(TimelineID.UndeadAbom);
@@ -228,7 +228,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                         ui.active = true;
                         foreach (TimelineID t_id in timelines_id)
                         {
-                            ItemContainersManager.instance.populateBlessingOptions(t_id, 0, 3, 2);
+                            ItemContainersManager.Instance.populateBlessingOptions(t_id, 0, 3, 2);
                             BlessingRewardPanelManager.instance._selectedOption = 1;
                             BlessingRewardPanelManager.instance.ConfirmSelection();
                         }
