@@ -500,7 +500,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                     }
                     
                     latest_string = __0;
-                    Main.logger_instance.Msg("CraftingManager.CheckForgeCapability  string = " + __0);
+                    //Main.logger_instance.Msg("CraftingManager.CheckForgeCapability  string = " + __0);
                 }
             }
         }
@@ -957,7 +957,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 [HarmonyPrefix]
                 static bool Prefix(ref CraftingSlotManager __instance)
                 {
-                    Main.logger_instance.Msg("CraftingSlotManager.Forge();");
                     bool result = true;
                     forgin = true;
                     __instance.forgeButton.gameObject.active = false;
@@ -978,7 +977,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                             if (legendary) { Current.item.rarity = 9; }
                             if (affix_tier > -1) //update affix
                             {
-                                Main.logger_instance.Msg("Upgrade Affix");
+                                //Main.logger_instance.Msg("Upgrade Affix");
                                 if (!idol)
                                 {
                                     bool force_upgrade = false;
@@ -1024,7 +1023,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                             }
                             else
                             {
-                                Main.logger_instance.Msg("Add Affix");
+                                //Main.logger_instance.Msg("Add Affix");
                                 int nb_prefix = 0;
                                 int nb_suffix = 0;
                                 bool already_contain_affix = false;
