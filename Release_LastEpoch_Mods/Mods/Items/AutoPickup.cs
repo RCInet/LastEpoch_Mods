@@ -72,7 +72,7 @@ namespace LastEpochMods.Mods.Items
                     if (((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Key) && (Item.isKey(__1.itemType))) ||
                         ((Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Materials) && (ItemList.isCraftingItem(__1.itemType))))
                     {
-                        bool pickup = ItemContainersManager.instance.attemptToPickupItem(__1, __0.position()); // __2);
+                        bool pickup = ItemContainersManager.Instance.attemptToPickupItem(__1, __0.position()); // __2);
                         if (pickup)
                         {
                             if ((Save_Manager.Data.UserData.Items.AutoPickup.AutoStore_Materials) && (ItemList.isCraftingItem(__1.itemType)))
@@ -117,7 +117,7 @@ namespace LastEpochMods.Mods.Items
                                 }
                                 if ((FilterShow) && (Save_Manager.Data.UserData.Items.AutoPickup.AutoPickup_Filter))
                                 {
-                                    bool pickup = ItemContainersManager.instance.attemptToPickupItem(__1, __0.position()); //__2); //Pickup
+                                    bool pickup = ItemContainersManager.Instance.attemptToPickupItem(__1, __0.position()); //__2); //Pickup
                                     if (pickup) { result = false; }
 
                                 }
