@@ -173,6 +173,12 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
             public static string cant_craft_unique = "unique_craft";
             public static string no_forgin_potencial_key = "Crafting_ForgeButton_Title_NoPotential";
             public static string no_forgin_potencial = "no_forgin_potencial_craft";
+            //public static string cannot_add_affix_key = "";
+            //public static string cannot_add_affix = "cannot_add_affix";
+            public static string add_affix_key = "Crafting_ForgeButton_Title_AddAffix";
+            public static string add_affix = "add_affix";
+            public static string upgrade_affix_key = "Crafting_ForgeButton_Title_UpgradeAffix";
+            public static string upgrade_affix = "upgrade_affix";
 
             [HarmonyPatch(typeof(Localization), "TryGetText")]
             public class Localization_TryGetText
@@ -184,7 +190,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                     bool result = true;
                     if ((__0 == affix_is_maxed_key) || (__0 == cant_craft_unique_key) ||
                         (__0 == no_forgin_potencial_key) || (__0 == no_space_prefix_key) ||
-                        (__0 == no_space_suffix_key) || (__0 == no_space_affix_key))
+                        (__0 == no_space_suffix_key) || (__0 == no_space_affix_key) ||
+                        /*(__0 == cannot_add_affix_key) ||*/ (__0 == add_affix_key) || (__0 == upgrade_affix_key))
                     {
                         __result = true;
                         result = false;
@@ -230,6 +237,21 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                     else if (__0 == no_forgin_potencial_key)
                     {
                         __result = no_forgin_potencial;
+                        result = false;
+                    }
+                    /*else if (__0 == cannot_add_affix_key)
+                    {
+                        __result = cannot_add_affix;
+                        result = false;
+                    }*/
+                    else if (__0 == add_affix_key)
+                    {
+                        __result = add_affix;
+                        result = false;
+                    }
+                    else if (__0 == upgrade_affix_key)
+                    {
+                        __result = upgrade_affix;
                         result = false;
                     }
 
@@ -469,7 +491,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                 __result = true;
                             }
                         }
-                        else if (__0 == Locales.affix_is_maxed) //(__0 == "Affix is Maxed")
+                        else if (__0 == Locales.affix_is_maxed)
                         {
                             if ((affix_tier == 4) || (affix_tier == 5)) { __0 = forge_string; }
 
@@ -483,20 +505,14 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                             else if (affix_tier > 5) { __0 = "Maxed"; }
                             else { __0 = "Use Upgrade Button"; }
                         }
-                        else if (__0 == "Cannot Add Affixes") //need to make locale, use en game languague until done
+                        /*else if (__0 == "Cannot Add Affixes") //should be use soon to allow 6 affix for rune of discovery //need to make locale, use en game languague until done
                         {
                             __0 = rune_of_discovery_string;
                             __1 = false;
                             __result = true;
-                        }
-                        else if (__0 == "Add Affix") //When Adding a new affix //need to make locale, use en game languague until done
-                        {
-                            __0 = forge_string;
-                        }
-                        else if (__0 == "Upgrade Affix") //When upgrading affix from T1 to T5 //need to make locale, use en game languague until done
-                        {
-                            __0 = forge_string;
-                        } 
+                        }*/
+                        else if (__0 == Locales.add_affix) { __0 = forge_string; }
+                        else if (__0 == Locales.upgrade_affix) { __0 = forge_string; } 
                     }
                     
                     latest_string = __0;
