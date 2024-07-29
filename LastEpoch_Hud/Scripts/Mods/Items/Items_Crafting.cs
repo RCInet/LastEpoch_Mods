@@ -11,8 +11,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
         public static Items_Crafting instance { get; private set; }
         public Items_Crafting(System.IntPtr ptr) : base(ptr) { }
 
-        public static bool enable_forgin_potencial_cost = false; //should be remove
-
         void Awake()
         {
             instance = this;
@@ -511,8 +509,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                             __1 = false;
                             __result = true;
                         }*/
-                        else if (__0 == Locales.add_affix) { __0 = forge_string; }
-                        else if (__0 == Locales.upgrade_affix) { __0 = forge_string; } 
+                        else if (__0 == Locales.add_affix) { __0 = forge_string; } //Don't use default forge function when add affix
+                        else if (__0 == Locales.upgrade_affix) { __0 = forge_string; } //Don't use default forge function when upgrade affix < T5
                     }
                     
                     latest_string = __0;
@@ -978,7 +976,42 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                     __instance.forgeButton.gameObject.active = false;
                     affix_id = -1;
                     affix_tier = -1;
-                    if (Crafting_Manager.latest_string == Crafting_Manager.forge_string) //Allow use Runes
+
+                    //glyphs
+                    bool glyph_of_hope = false; //25% no forgin potencial cost
+                    bool glyph_of_chaos = false; //Change affix //Not Added
+                    bool glyph_of_order = false; //don't roll when upgrade
+                    bool glyph_of_despair = false; //chance to seal
+                    bool glyph_of_insight = false; //prefix to experimental //Not Added
+                    bool glyph_of_envy = false; //increase monolith stability //Not Added
+
+                    OneItemContainer glyph_container = __instance.GetSupport();
+                    if (!glyph_container.IsNullOrDestroyed())
+                    {
+                        if (!glyph_container.content.IsNullOrDestroyed())
+                        {
+                            if (glyph_container.content.data.itemType == 103)
+                            {
+                                ushort sub_type = glyph_container.content.data.subType;
+                                switch (sub_type)
+                                {
+                                    case 0: { glyph_of_hope = true; break; }
+                                    case 1: { glyph_of_chaos = true; break; }
+                                    case 2: { glyph_of_order = true; break; }
+                                    case 3: { glyph_of_despair = true; break; }
+                                    case 4: { glyph_of_insight = true; break; }
+                                    case 5: { glyph_of_envy = true; break; }
+
+                                }
+                            }
+                        }
+                    }
+                    
+                    bool forgin_no_cost = Save_Manager.instance.data.modsNotInHud.Craft_No_Forgin_Potencial_Cost;
+                    int glyph_of_hope_result = UnityEngine.Random.Range(0, 4); //25% chance no forgin potencial cost when Glyph of Hope
+                    if ((glyph_of_hope) && (glyph_of_hope_result == 0)) { forgin_no_cost = false; }
+
+                    if (Crafting_Manager.latest_string == Crafting_Manager.forge_string) //Forge Mod
                     {
                         if ((Scenes.IsGameScene()) && (!Current.item.IsNullOrDestroyed()))
                         {
@@ -993,10 +1026,10 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                             if (legendary) { Current.item.rarity = 9; }
                             if (affix_tier > -1) //update affix
                             {
-                                //Main.logger_instance.Msg("Upgrade Affix");
                                 if (!idol)
                                 {
                                     bool force_upgrade = false;
+                                    ItemAffix seal_affix = null;
                                     foreach (ItemAffix affix in Current.item.affixes)
                                     {
                                         if (affix.affixId == affix_id)
@@ -1005,7 +1038,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                             if ((affix_tier == affix.affixTier) && (affix_tier < 6))
                                             {
                                                 bool error = false;
-                                                if ((!legendary) && (enable_forgin_potencial_cost))
+                                                if ((!legendary) && (!forgin_no_cost))
                                                 {
                                                     int min = 0;
                                                     int max = 0;
@@ -1023,38 +1056,55 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                                     force_upgrade = true;
                                                     affix.affixTier++;
                                                     affix_tier = (int)affix.affixTier;
-                                                    affix.affixRoll = (byte)Random.Range(0f, 255f);
+                                                    if (!glyph_of_order) { affix.affixRoll = (byte)Random.Range(0f, 255f); }
+                                                    if (glyph_of_despair) { seal_affix = affix; }
                                                 }
                                             }
                                             break;
                                         }
                                     }
-                                    if (force_upgrade)
+                                    if (glyph_of_hope)
                                     {
+                                        //remove one glyph of hope from character items
+                                    }
+                                    if (glyph_of_order)
+                                    {
+                                        //remove one glyph of order from character items
+                                    }
+                                    if (glyph_of_despair)
+                                    //if (force_seal) //glyph of despair
+                                    {
+                                        seal_affix.affixTier = Save_Manager.instance.data.modsNotInHud.Craft_Seal_Tier;
+                                        Current.item.SealAffix(seal_affix);
+                                        //remove one glyph of despair from character items
+                                    }
+                                    if (force_upgrade)
+                                    {                                        
                                         Current.item.RefreshIDAndValues();
                                         result = false;
                                     }
                                     else { Main.logger_instance.Error("Error when upgrading item"); }
                                 }
                             }
-                            else
+                            else //Add Affix
                             {
-                                //Main.logger_instance.Msg("Add Affix");
                                 int nb_prefix = 0;
                                 int nb_suffix = 0;
                                 bool already_contain_affix = false;
+                                bool already_contain_seal = false;
                                 foreach (ItemAffix item_affix in Current.item.affixes)
                                 {
                                     if (item_affix.affixId == affix_id) { already_contain_affix = true; break; }
-                                    if (item_affix.affixType == AffixList.AffixType.PREFIX) { nb_prefix++; }
-                                    else if (item_affix.affixType == AffixList.AffixType.SUFFIX) { nb_suffix++; }
+                                    if ((item_affix.affixType == AffixList.AffixType.PREFIX) && (!item_affix.isSealedAffix)) { nb_prefix++; }
+                                    else if ((item_affix.affixType == AffixList.AffixType.SUFFIX) && (!item_affix.isSealedAffix)) { nb_suffix++; }
+                                    else if (item_affix.isSealedAffix) { already_contain_seal = true; }
                                 }
                                 if (!already_contain_affix)
                                 {
                                     AffixList.AffixType new_affix_type = AffixList.instance.GetAffixType(affix_id);
                                     if (((new_affix_type == AffixList.AffixType.PREFIX) && (nb_prefix < Save_Manager.instance.data.modsNotInHud.Craft_Items_Nb_Prefixs)) ||
                                         ((new_affix_type == AffixList.AffixType.SUFFIX) && (nb_suffix < Save_Manager.instance.data.modsNotInHud.Craft_Items_Nb_Suffixs)))
-                                    {
+                                    {                                        
                                         ItemAffix affix = new ItemAffix
                                         {
                                             affixId = (ushort)affix_id,
@@ -1063,6 +1113,13 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                                             affixType = new_affix_type
                                         };
                                         Current.item.affixes.Add(affix);
+                                                                                
+                                        if ((!already_contain_seal) && (glyph_of_despair))
+                                        {
+                                            affix.affixTier = Save_Manager.instance.data.modsNotInHud.Craft_Seal_Tier;
+                                            Current.item.SealAffix(affix);
+                                            //remove one glyph of despair from character items
+                                        }
                                         if (!legendary)
                                         {
                                             int count = Current.item.affixes.Count;
@@ -1077,9 +1134,18 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                             }
                         }
                     }
-                    else if (Crafting_Manager.latest_string == Crafting_Manager.rune_of_discovery_string)
+                    /*else if (Crafting_Manager.latest_string == Crafting_Manager.seal_string) //Should be use to force seal
                     {
-                        //Add 6 shard to item here
+                        ItemAffix affix = null;
+                        foreach (ItemAffix item_affix in Current.item.affixes)
+                        {
+                            if (item_affix.affixId == affix_id) { affix = item_affix; break; }
+                        }
+                        if (!affix.IsNullOrDestroyed()) { Current.item.SealAffix(affix); }                        
+                    }*/
+                    else if (Crafting_Manager.latest_string == Crafting_Manager.rune_of_discovery_string) //shoud be use for rune of discovery
+                    {
+                        //Default = Add 4 affix maximum                        
                     }
                     __instance.forgeButton.gameObject.active = true;
                     forgin = false;
@@ -1170,6 +1236,13 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                             position_x = prefix_2_position.x;
                             position_y = prefix_2_position.y;
                             AddSlot(__instance, 4, position_x, position_y);
+                                                        
+                            GameObject seal = Functions.GetChild(__instance, "SealedAffixInfoHolder");
+                            if (!seal.IsNullOrDestroyed())
+                            {
+                                seal.transform.position = seal.transform.position - (prefix_1_position - seal.transform.position);
+                            }
+
                         }
                         else { Main.logger_instance.Error("prefix_2"); }
 
@@ -1219,24 +1292,27 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 {
                     foreach (ItemAffix affix in Current.item.affixes)
                     {
-                        if (affix.affixType == AffixList.AffixType.PREFIX)
+                        if (!affix.isSealedAffix)
                         {
-                            nb_prefix++;
-                            if (nb_prefix == 3)
+                            if (affix.affixType == AffixList.AffixType.PREFIX)
                             {
-                                Slot5_Id = affix.affixId;
-                                Slot5_Tier = affix.affixTier;
-                                Slot5_Name = affix.affixName;
+                                nb_prefix++;
+                                if (nb_prefix == 3)
+                                {
+                                    Slot5_Id = affix.affixId;
+                                    Slot5_Tier = affix.affixTier;
+                                    Slot5_Name = affix.affixName;
+                                }
                             }
-                        }
-                        else if (affix.affixType == AffixList.AffixType.SUFFIX)
-                        {
-                            nb_suffix++;
-                            if (nb_suffix == 3)
+                            else if (affix.affixType == AffixList.AffixType.SUFFIX)
                             {
-                                Slot6_Id = affix.affixId;
-                                Slot6_Tier = affix.affixTier;
-                                Slot6_Name = affix.affixName;
+                                nb_suffix++;
+                                if (nb_suffix == 3)
+                                {
+                                    Slot6_Id = affix.affixId;
+                                    Slot6_Tier = affix.affixTier;
+                                    Slot6_Name = affix.affixName;
+                                }
                             }
                         }
                     }

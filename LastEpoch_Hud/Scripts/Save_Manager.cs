@@ -68,13 +68,15 @@ namespace LastEpoch_Hud.Scripts
                 {
                     Enable_CombatLog = false,
                     Enable_PotionResplenishment = false,
-                    Enable_Craft_IncompatibleAffixs = false,    //Show Unused Affix and Allow craft                    
+                    Enable_Craft_IncompatibleAffixs = false,        //Show Unused Affix and Allow craft                    
                     Enable_Craft_BypassReq = false,
                     Enable_Craft_ShowSpecialAffixs = false,
-                    Craft_Items_Nb_Prefixs = 3,                       //2 to 3 Prefix
-                    Craft_Items_Nb_Suffixs = 3,                       //2 to 3 Suffix
-                    Craft_Idols_Nb_Prefixs = 3,                       //1 to 3 Prefix
-                    Craft_Idols_Nb_Suffixs = 3                        //1 to 3 Suffix
+                    Craft_Items_Nb_Prefixs = 3,                     //2 to 3 Prefix
+                    Craft_Items_Nb_Suffixs = 3,                     //2 to 3 Suffix
+                    Craft_Idols_Nb_Prefixs = 3,                     //1 to 3 Prefix
+                    Craft_Idols_Nb_Suffixs = 3,                     //1 to 3 Suffix
+                    Craft_Seal_Tier = 0,                            //When using glyph of despair, set seal tier to : 0 = T1, 1 = T2, 2 = T3, 3 = T4, 4 = T5, 5 = T6, 6 = T7
+                    Craft_No_Forgin_Potencial_Cost = true           //When add or upgrade normal item with tier < T5
                 },
                 Login =
                 {
@@ -521,6 +523,8 @@ namespace LastEpoch_Hud.Scripts
                 public int Craft_Items_Nb_Suffixs;
                 public int Craft_Idols_Nb_Prefixs;
                 public int Craft_Idols_Nb_Suffixs;
+                public byte Craft_Seal_Tier;
+                public bool Craft_No_Forgin_Potencial_Cost;
             }
             //Login
             public struct Login

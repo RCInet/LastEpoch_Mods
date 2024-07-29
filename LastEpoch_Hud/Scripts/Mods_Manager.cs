@@ -37,7 +37,6 @@ namespace LastEpoch_Hud.Scripts
             character_autopotion_obj.AddComponent<Mods.Character.Character_AutoPotions>();
             Mods_Objects.Add(character_autopotion_obj);
 
-            //character_potionreplenishment_obj
             character_potionreplenishment_obj = Object.Instantiate(new GameObject { name = "Mod_Character_PotionReplenishment" }, Vector3.zero, Quaternion.identity);
             character_potionreplenishment_obj.active = false;
             character_potionreplenishment_obj.AddComponent<Mods.Character.Character_PotionReplenishment>();
