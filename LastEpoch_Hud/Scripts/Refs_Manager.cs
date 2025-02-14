@@ -1,5 +1,7 @@
 ﻿using MelonLoader;
 using UnityEngine;
+using Il2CppItemFiltering;
+using Il2Cpp;
 
 namespace LastEpoch_Hud.Scripts
 {
@@ -13,9 +15,10 @@ namespace LastEpoch_Hud.Scripts
         public static CharacterSelect character_select;
         public static SceneList scene_list;
         public static InventoryPanelUI InventoryPanelUI = null;
+        public static EternityCachePanelUI EternityCachePanelUI = null;
         public static GameObject BlessingsPanel = null;
         public static Actor player_actor = null;
-        public static LE.Data.CharacterData player_data = null;
+        public static Il2CppLE.Data.CharacterData player_data = null;
         public static CharacterDataTracker player_data_tracker = null;
         public static PlayerHealth player_health = null;
         public static HealthPotion health_potion = null;
@@ -30,7 +33,7 @@ namespace LastEpoch_Hud.Scripts
         public static UniqueList unique_list = null;
         public static SetBonusesList set_bonuses_list = null;
         public static QuestList quest_list = null;
-        public static ItemFiltering.ItemFilterManager filter_manager = null;
+        public static ItemFilterManager filter_manager = null;
         public static CameraManager camera_manager = null;
         public static CraftingSlotManager craft_slot_manager = null;
         public static UIPanel craft_materials_holder = null;
@@ -72,6 +75,15 @@ namespace LastEpoch_Hud.Scripts
                         {
                             InventoryPanelUI = game_uibase.inventoryPanel.instance.GetComponent<InventoryPanelUI>();
                         }
+                    }                    
+                    if ((EternityCachePanelUI.IsNullOrDestroyed()) && (!game_uibase.eternityCachePanel.IsNullOrDestroyed()))
+                    {
+                        //Items_Crafting_Eternity_Anywhere mod from https://github.com/RolandSolymosi
+                        if (game_uibase.eternityCachePanel.instance.IsNullOrDestroyed())
+                        {
+                            game_uibase.eternityCachePanel.GetInstance();
+                        }
+                        EternityCachePanelUI = game_uibase.eternityCachePanel.instance.GetComponent<EternityCachePanelUI>();
                     }
                     if ((crafting_panel_ui.IsNullOrDestroyed()) && (!game_uibase.craftingPanel.IsNullOrDestroyed()))
                     {
@@ -96,7 +108,7 @@ namespace LastEpoch_Hud.Scripts
                 if (exp_tracker.IsNullOrDestroyed()) { exp_tracker = PlayerFinder.getExperienceTracker(); }
                 if (player_treedata.IsNullOrDestroyed()) { player_treedata = PlayerFinder.getLocalTreeData(); }
                 if (player_gold_tracker.IsNullOrDestroyed()) { player_gold_tracker = PlayerFinder.getLocalGoldTracker(); }
-                if ((filter_manager.IsNullOrDestroyed()) && (!ItemFiltering.ItemFilterManager.Instance.IsNullOrDestroyed())) { filter_manager = ItemFiltering.ItemFilterManager.Instance; }
+                if ((filter_manager.IsNullOrDestroyed()) && (!ItemFilterManager.Instance.IsNullOrDestroyed())) { filter_manager = ItemFilterManager.Instance; }
                 if ((camera_manager.IsNullOrDestroyed()) && (!CameraManager.instance.IsNullOrDestroyed())) { camera_manager = CameraManager.instance; }
                 
             }
@@ -109,6 +121,8 @@ namespace LastEpoch_Hud.Scripts
         private static readonly System.Action<bool> Action_SetOnline = new System.Action<bool>(SetOnline);
         private static void SetOnline(bool result)
         {
+            //Patched by https://github.com/RolandSolymosi // BUG: For some reason the game always return true in action delegates
+            result = character_select.isOnlineTabShowing;
             if (online != result)
             {
                 Main.logger_instance.Msg("Refs Manager : Online = " + result);

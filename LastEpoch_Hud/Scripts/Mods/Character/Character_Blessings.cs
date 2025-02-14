@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using MelonLoader;
-using UnhollowerBaseLib;
 using UnityEngine;
+using Il2Cpp;
 
 namespace LastEpoch_Hud.Scripts.Mods.Character
 {
@@ -37,7 +37,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                         {
                             bool found = false;
                             ushort container_id = (ushort)(timeline_id + base_container);
-                            foreach (LE.Data.ItemLocationPair item_pair in Refs_Manager.player_data_tracker.charData.SavedItems)
+                            foreach (Il2CppLE.Data.ItemLocationPair item_pair in Refs_Manager.player_data_tracker.charData.SavedItems)
                             {
                                 if (item_pair.ContainerID == container_id)
                                 {
@@ -114,9 +114,9 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
 
             return item;
         }
-        LE.Data.ItemLocationPair CreateBlessingData(ItemDataUnpacked item, ushort container_id)
+        Il2CppLE.Data.ItemLocationPair CreateBlessingData(ItemDataUnpacked item, ushort container_id)
         {
-            Il2CppStructArray<byte> Data = new Il2CppStructArray<byte>(11);
+            Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStructArray<byte> Data = new Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStructArray<byte>(11);
             Data[0] = 2;
             Data[1] = item.itemType;
             Data[2] = (byte)item.subType;
@@ -129,21 +129,21 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
             Data[9] = 0;
             Data[10] = 0;
 
-            LE.Data.ItemLocationPair new_blessing = new LE.Data.ItemLocationPair
+            Il2CppLE.Data.ItemLocationPair new_blessing = new Il2CppLE.Data.ItemLocationPair
             {
                 ContainerID = container_id,
                 Data = Data,
                 FormatVersion = 2,
-                InventoryPosition = new LE.Data.ItemInventoryPosition(0, 0),
+                InventoryPosition = new Il2CppLE.Data.ItemInventoryPosition(0, 0),
                 Quantity = 1,
                 TabID = 0
             };
 
             return new_blessing;
         }
-        public static LE.Data.BlessingData CreateBlessingDataForSave(ushort subtype)
+        public static Il2CppLE.Data.BlessingData CreateBlessingDataForSave(ushort subtype)
         {
-            LE.Data.BlessingData result = new LE.Data.BlessingData
+            Il2CppLE.Data.BlessingData result = new Il2CppLE.Data.BlessingData
             {
                 SubtypeId = subtype,
                 ImplicitValue = UnityEngine.Random.Range(0f, 1f),
@@ -266,7 +266,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
 
                             //Add OpenBlessings
                             bool blessing_data_already_in_player = false;
-                            foreach (LE.Data.BlessingData blessing_data in Refs_Manager.player_data_tracker.charData.OpenBlessings)
+                            foreach (Il2CppLE.Data.BlessingData blessing_data in Refs_Manager.player_data_tracker.charData.OpenBlessings)
                             {
                                 if (blessing_data.SubtypeId == item.subTypeID)
                                 {

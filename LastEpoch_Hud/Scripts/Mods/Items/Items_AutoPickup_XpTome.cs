@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Il2Cpp;
 
 namespace LastEpoch_Hud.Scripts.Mods.Items
 {

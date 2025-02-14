@@ -3,6 +3,7 @@ using MelonLoader;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Il2Cpp;
 
 namespace LastEpoch_Hud.Scripts.Mods.Items
 {

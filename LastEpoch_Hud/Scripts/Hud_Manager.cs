@@ -2,7 +2,9 @@
 using MelonLoader;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
+using Il2Cpp;
 
 namespace LastEpoch_Hud.Scripts
 {
@@ -279,7 +281,7 @@ namespace LastEpoch_Hud.Scripts
                                     case "Toggle_Items_Pickup_Range_Pickup": { Save_Manager.instance.data.Items.Pickup.Enable_RangePickup = __instance.isOn; break; }
                                     case "Toggle_Items_Pickup_Hide_Notifications": { Save_Manager.instance.data.Items.Pickup.Enable_HideMaterialsNotifications = __instance.isOn; break; }
 
-                                    //case "Toggle_Items_Craft_Enable": { Save_Manager.instance.data.Items.CraftingSlot.Enable_Mod = __instance.isOn; break; }
+                                    case "Toggle_Items_Craft_Enable": { Save_Manager.instance.data.Items.CraftingSlot.Enable_Mod = __instance.isOn; break; }
                                     case "Toggle_Items_Craft_ForginPotencial": { Save_Manager.instance.data.Items.CraftingSlot.Enable_ForginPotencial = __instance.isOn; break; }
                                     case "Toggle_Items_Craft_Implicit0": { Save_Manager.instance.data.Items.CraftingSlot.Enable_Implicit_0 = __instance.isOn; break; }
                                     case "Toggle_Items_Craft_Implicit1": { Save_Manager.instance.data.Items.CraftingSlot.Enable_Implicit_1 = __instance.isOn; break; }
@@ -836,29 +838,6 @@ namespace LastEpoch_Hud.Scripts
                     }
                 }
             }
-
-            [HarmonyPatch(typeof(Dropdown), "OnSelectItem")]
-            public class Dropdown_OnSelectItem
-            {
-                [HarmonyPostfix]
-                static void Postfix(ref Dropdown __instance, Toggle __0)
-                {
-                    if (!hud_object.IsNullOrDestroyed())
-                    {
-                        if ((hud_object.active) && (!__instance.IsNullOrDestroyed()) &&
-                            (!Refs_Manager.player_data.IsNullOrDestroyed()))
-                        {
-                            switch (__instance.name)
-                            {
-                                case "Dropdown_Character_Data_Classes": { if (!Refs_Manager.player_data.IsNullOrDestroyed()) { Refs_Manager.player_data.CharacterClass = __instance.value; } break; }
-                                case "Dropdown_Items_ForceDrop_Type": { Content.Items.ForceDrop.SelectType(); break; }
-                                case "Dropdown_Items_ForceDrop_Rarity": { Content.Items.ForceDrop.SelectRarity(); break; }
-                                case "Dropdown_Items_ForceDrop_Item": { Content.Items.ForceDrop.SelectItem(); break; }
-                            }
-                        }
-                    }
-                }
-            }
         }
         public class Events
         {
@@ -1177,7 +1156,7 @@ namespace LastEpoch_Hud.Scripts
                         GameObject character_data_content = Functions.GetViewportContent(content_obj, "Character_Data", "Character_Data_Content");
                         if (!character_data_content.IsNullOrDestroyed())
                         {
-                            Data.class_dropdown = Functions.Get_DopboxInPanel(character_data_content, "Classe", "Dropdown_Character_Data_Classes");
+                            Data.class_dropdown = Functions.Get_DopboxInPanel(character_data_content, "Classe", "Dropdown_Character_Data_Classes", new System.Action<int>((_) => { if (!Refs_Manager.player_data.IsNullOrDestroyed()) { Refs_Manager.player_data.CharacterClass = Data.class_dropdown.value; } }));
                             
                             Data.died_toggle = Functions.Get_ToggleInPanel(character_data_content, "Died", "Toggle_Character_Data_Died");
                             Data.hardcore_toggle = Functions.Get_ToggleInPanel(character_data_content, "Hardcore", "Toggle_Character_Data_Hardcore");
@@ -1492,32 +1471,33 @@ namespace LastEpoch_Hud.Scripts
 
                 public class Cheats
                 {
+                    // BUG: For some reason the game always return true in action delegates
                     public static Toggle godmode_toggle = null;
                     public static readonly System.Action<bool> Godmode_Toggle_Action = new System.Action<bool>(Set_Godmode_Enable);
                     private static void Set_Godmode_Enable(bool enable)
                     {
-                        Save_Manager.instance.data.Character.Cheats.Enable_GodMode = enable;
+                        Save_Manager.instance.data.Character.Cheats.Enable_GodMode = godmode_toggle.isOn;
                     }
 
                     public static Toggle lowlife_toggle = null;
                     public static readonly System.Action<bool> Lowlife_Toggle_Action = new System.Action<bool>(Set_Lowlife_Enable);
                     private static void Set_Lowlife_Enable(bool enable)
                     {
-                        Save_Manager.instance.data.Character.Cheats.Enable_LowLife = enable;
+                        Save_Manager.instance.data.Character.Cheats.Enable_LowLife = lowlife_toggle.isOn;
                     }
 
                     public static Toggle allow_choosing_blessing = null;
                     public static readonly System.Action<bool> AllowChooseBlessings_Toggle_Action = new System.Action<bool>(Set_AllowChooseBlessings_Enable);
                     private static void Set_AllowChooseBlessings_Enable(bool enable)
                     {
-                        Save_Manager.instance.data.Character.Cheats.Enable_CanChooseBlessing = enable;
+                        Save_Manager.instance.data.Character.Cheats.Enable_CanChooseBlessing = allow_choosing_blessing.isOn;
                     }
 
                     public static Toggle unlock_all_idols = null;
                     public static readonly System.Action<bool> UnlockAllIdols_Toggle_Action = new System.Action<bool>(Set_UnlockAllIdols_Enable);
                     private static void Set_UnlockAllIdols_Enable(bool enable)
                     {
-                        Save_Manager.instance.data.Character.Cheats.Enable_UnlockAllIdolsSlots = enable;
+                        Save_Manager.instance.data.Character.Cheats.Enable_UnlockAllIdolsSlots = unlock_all_idols.isOn;
                         Mods.Character.Character_UnlockAllIdols.Update();
                     }
 
@@ -1525,7 +1505,7 @@ namespace LastEpoch_Hud.Scripts
                     public static readonly System.Action<bool> AutoPot_Toggle_Action = new System.Action<bool>(Set_AutoPot_Enable);
                     private static void Set_AutoPot_Enable(bool enable)
                     {
-                        Save_Manager.instance.data.Character.Cheats.Enable_AutoPot = enable;
+                        Save_Manager.instance.data.Character.Cheats.Enable_AutoPot = autoPot_toggle.isOn;
                     }
                     public static Text autopot_text = null;
                     public static Slider autopot_slider = null;
@@ -1534,7 +1514,7 @@ namespace LastEpoch_Hud.Scripts
                     public static readonly System.Action<bool> Density_Toggle_Action = new System.Action<bool>(Set_Density_Enable);
                     private static void Set_Density_Enable(bool enable)
                     {
-                        Save_Manager.instance.data.Character.Cheats.Enable_DensityMultiplier = enable;
+                        Save_Manager.instance.data.Character.Cheats.Enable_DensityMultiplier = density_toggle.isOn;
                     }
                     public static Text density_text = null;
                     public static Slider density_slider = null;
@@ -1543,7 +1523,7 @@ namespace LastEpoch_Hud.Scripts
                     public static readonly System.Action<bool> Experience_Toggle_Action = new System.Action<bool>(Set_Experience_Enable);
                     private static void Set_Experience_Enable(bool enable)
                     {
-                        Save_Manager.instance.data.Character.Cheats.Enable_ExperienceMultiplier = enable;
+                        Save_Manager.instance.data.Character.Cheats.Enable_ExperienceMultiplier = experience_toggle.isOn;
                     }
                     public static Text experience_text = null;
                     public static Slider experience_slider = null;
@@ -1552,7 +1532,7 @@ namespace LastEpoch_Hud.Scripts
                     public static readonly System.Action<bool> Ability_Toggle_Action = new System.Action<bool>(Set_Ability_Enable);
                     private static void Set_Ability_Enable(bool enable)
                     {
-                        Save_Manager.instance.data.Character.Cheats.Enable_AbilityMultiplier = enable;
+                        Save_Manager.instance.data.Character.Cheats.Enable_AbilityMultiplier = ability_toggle.isOn;
                     }
                     public static Text ability_text = null;
                     public static Slider ability_slider = null;
@@ -1561,7 +1541,7 @@ namespace LastEpoch_Hud.Scripts
                     public static readonly System.Action<bool> Favor_Toggle_Action = new System.Action<bool>(Set_Favor_Enable);
                     private static void Set_Favor_Enable(bool enable)
                     {
-                        Save_Manager.instance.data.Character.Cheats.Enable_FavorMultiplier = enable;
+                        Save_Manager.instance.data.Character.Cheats.Enable_FavorMultiplier = favor_toggle.isOn;
                     }
                     public static Text favor_text = null;
                     public static Slider favor_slider = null;
@@ -1570,7 +1550,7 @@ namespace LastEpoch_Hud.Scripts
                     public static readonly System.Action<bool> ItemDropMulti_Toggle_Action = new System.Action<bool>(Set_ItemDropMulti_Enable);
                     private static void Set_ItemDropMulti_Enable(bool enable)
                     {
-                        Save_Manager.instance.data.Character.Cheats.Enable_ItemDropMultiplier = enable;
+                        Save_Manager.instance.data.Character.Cheats.Enable_ItemDropMultiplier = itemdropmultiplier_toggle.isOn;
                     }
                     public static Text itemdropmultiplier_text = null;
                     public static Slider itemdropmultiplier_slider = null;
@@ -1579,7 +1559,7 @@ namespace LastEpoch_Hud.Scripts
                     public static readonly System.Action<bool> ItemDropChance_Toggle_Action = new System.Action<bool>(Set_ItemDropChance_Enable);
                     private static void Set_ItemDropChance_Enable(bool enable)
                     {
-                        Save_Manager.instance.data.Character.Cheats.Enable_ItemDropChance = enable;
+                        Save_Manager.instance.data.Character.Cheats.Enable_ItemDropChance = itemdropchance_toggle.isOn;
                     }
                     public static Text itemdropchance_text = null;
                     public static Slider itemdropchance_slider = null;
@@ -1588,7 +1568,7 @@ namespace LastEpoch_Hud.Scripts
                     public static readonly System.Action<bool> GoldMulti_Toggle_Action = new System.Action<bool>(Set_GoldMulti_Enable);
                     private static void Set_GoldMulti_Enable(bool enable)
                     {
-                        Save_Manager.instance.data.Character.Cheats.Enable_GoldDropMultiplier = enable;
+                        Save_Manager.instance.data.Character.Cheats.Enable_GoldDropMultiplier = golddropmultiplier_toggle.isOn;
                     }
                     public static Text golddropmultiplier_text = null;
                     public static Slider golddropmultiplier_slider = null;
@@ -1597,7 +1577,7 @@ namespace LastEpoch_Hud.Scripts
                     public static readonly System.Action<bool> GoldChance_Toggle_Action = new System.Action<bool>(Set_GoldChance_Enable);
                     private static void Set_GoldChance_Enable(bool enable)
                     {
-                        Save_Manager.instance.data.Character.Cheats.Enable_GoldDropChance = enable;
+                        Save_Manager.instance.data.Character.Cheats.Enable_GoldDropChance = golddropchance_toggle.isOn;
                     }
                     public static Text golddropchance_text = null;
                     public static Slider golddropchance_slider = null;
@@ -1606,7 +1586,7 @@ namespace LastEpoch_Hud.Scripts
                     public static readonly System.Action<bool> Waypoints_Toggle_Action = new System.Action<bool>(Set_Waypoints_Enable);
                     private static void Set_Waypoints_Enable(bool enable)
                     {
-                        Save_Manager.instance.data.Character.Cheats.Enable_WaypointsUnlock = enable;
+                        Save_Manager.instance.data.Character.Cheats.Enable_WaypointsUnlock = waypoints_toggle.isOn;
                     }
 
                     public static Button level_once_button = null;
@@ -1850,9 +1830,9 @@ namespace LastEpoch_Hud.Scripts
                         GameObject items_forcedrop_content = Functions.GetViewportContent(content_obj, "Items_Pickup", "Items_ForceDrop_Content");
                         if (!items_forcedrop_content.IsNullOrDestroyed())
                         {
-                            ForceDrop.forcedrop_type_dropdown = Functions.Get_DopboxInPanel(items_forcedrop_content, "Type", "Dropdown_Items_ForceDrop_Type");
-                            ForceDrop.forcedrop_rarity_dropdown = Functions.Get_DopboxInPanel(items_forcedrop_content, "Rarity", "Dropdown_Items_ForceDrop_Rarity");
-                            ForceDrop.forcedrop_items_dropdown = Functions.Get_DopboxInPanel(items_forcedrop_content, "Item", "Dropdown_Items_ForceDrop_Item");                            
+                            ForceDrop.forcedrop_type_dropdown = Functions.Get_DopboxInPanel(items_forcedrop_content, "Type", "Dropdown_Items_ForceDrop_Type", new System.Action<int>((_) => { Content.Items.ForceDrop.SelectType(); }));
+                            ForceDrop.forcedrop_rarity_dropdown = Functions.Get_DopboxInPanel(items_forcedrop_content, "Rarity", "Dropdown_Items_ForceDrop_Rarity", new System.Action<int>((_) => { Content.Items.ForceDrop.SelectRarity(); }));
+                            ForceDrop.forcedrop_items_dropdown = Functions.Get_DopboxInPanel(items_forcedrop_content, "Item", "Dropdown_Items_ForceDrop_Item", new System.Action<int>((_) => { Content.Items.ForceDrop.SelectItem(); }));
                             ForceDrop.forcedrop_quantity_text = Functions.Get_TextInButton(items_forcedrop_content, "Quantity", "Value");
                             ForceDrop.forcedrop_quantity_slider = Functions.Get_SliderInPanel(items_forcedrop_content, "Quantity", "Slider_Items_ForceDrop_Quantity");
                             GameObject new_obj = Functions.GetChild(content_obj, "Items_Pickup");
@@ -1862,7 +1842,8 @@ namespace LastEpoch_Hud.Scripts
                             }
                         }
                         else { Main.logger_instance.Error("Forcedrop"); }
-                        
+
+                        CraftingSlot.enable_mod = Functions.Get_ToggleInLabel(content_obj, "Items_Craft", "Toggle_Items_Craft_Enable", makeSureItsActive: true);
                         GameObject items_craft_content = Functions.GetViewportContent(content_obj, "Items_Craft", "Items_Craft_Content");
                         if (!items_craft_content.IsNullOrDestroyed())
                         {
@@ -2066,7 +2047,7 @@ namespace LastEpoch_Hud.Scripts
                             Requirements.set_req_toggle.isOn = Save_Manager.instance.data.Items.Req.set;
 
                             //Craft
-                            //CraftingSlot.enable_mod.isOn = Save_Manager.instance.data.Items.CraftingSlot.Enable_Mod;
+                            CraftingSlot.enable_mod.isOn = Save_Manager.instance.data.Items.CraftingSlot.Enable_Mod;
                             CraftingSlot.forgin_potencial_toggle.isOn = Save_Manager.instance.data.Items.CraftingSlot.Enable_ForginPotencial;
                             CraftingSlot.forgin_potencial_slider.value = Save_Manager.instance.data.Items.CraftingSlot.ForginPotencial;
 
@@ -2271,11 +2252,12 @@ namespace LastEpoch_Hud.Scripts
                 }
                 public class Requirements
                 {
+                    // BUG: For some reason the game always return true in action delegates
                     public static Toggle class_req_toggle = null;
                     public static readonly System.Action<bool> Class_Toggle_Action = new System.Action<bool>(Class_Enable);
                     private static void Class_Enable(bool enable)
                     {
-                        Save_Manager.instance.data.Items.Req.classe = enable;
+                        Save_Manager.instance.data.Items.Req.classe = class_req_toggle.isOn;
                         //Items_Req_Class.Enable();
                     }
                     
@@ -2283,14 +2265,14 @@ namespace LastEpoch_Hud.Scripts
                     public static readonly System.Action<bool> Level_Toggle_Action = new System.Action<bool>(Level_Enable);
                     private static void Level_Enable(bool enable)
                     {
-                        Save_Manager.instance.data.Items.Req.level = enable;
+                        Save_Manager.instance.data.Items.Req.level = level_req_toggle.isOn;
                     }
 
                     public static Toggle set_req_toggle = null;
                     public static readonly System.Action<bool> Set_Toggle_Action = new System.Action<bool>(Set_Enable);
                     private static void Set_Enable(bool enable)
                     {
-                        Save_Manager.instance.data.Items.Req.set = enable;
+                        Save_Manager.instance.data.Items.Req.set = set_req_toggle.isOn;
                         //Items_Req_Set.Enable();
                     }
                 }
@@ -2639,6 +2621,8 @@ namespace LastEpoch_Hud.Scripts
                 }
                 public class CraftingSlot
                 {
+                    public static Toggle enable_mod = null;
+
                     public static Toggle forgin_potencial_toggle = null;
                     public static Text forgin_potencial_text = null;
                     public static Slider forgin_potencial_slider = null;

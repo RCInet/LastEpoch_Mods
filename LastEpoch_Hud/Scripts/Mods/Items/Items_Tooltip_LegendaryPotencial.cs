@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using UnityEngine;
+using Il2Cpp;
 
 namespace LastEpoch_Hud.Scripts.Mods.Items
 {
@@ -73,7 +74,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 int legendary_potencial = 0;
                 if (!Refs_Manager.player_data.IsNullOrDestroyed())
                 {
-                    foreach (LE.Data.ItemLocationPair item_loc_pair in Refs_Manager.player_data.SavedItems)
+                    foreach (Il2CppLE.Data.ItemLocationPair item_loc_pair in Refs_Manager.player_data.SavedItems)
                     {
                         if (legendary_potencial > 3) { break; }
                         if ((item.rarity == 7) && (item_loc_pair.Data.Count > 9))
@@ -95,8 +96,9 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                 return legendary_potencial;
             }
         }
-        
-        [HarmonyPatch(typeof(TooltipItemManager), "OpenTooltip", new System.Type[] { typeof(ItemDataUnpacked), typeof(TooltipItemManager.SlotType), typeof(Vector2), typeof(Vector3), typeof(GameObject) })]
+
+        //[HarmonyPatch(typeof(TooltipItemManager), "OpenTooltip", new System.Type[] { typeof(ItemDataUnpacked), typeof(TooltipItemManager.SlotType), typeof(Vector2), typeof(Vector3), typeof(GameObject) })]
+        [HarmonyPatch(typeof(TooltipItemManager), "OpenTooltip", new System.Type[] { typeof(ItemDataUnpacked), typeof(TooltipItemManager.SlotType), typeof(Vector2), typeof(Vector3), typeof(GameObject), typeof(Vector2) })]
         public class TooltipItemManager_OpenTooltip
         {
             [HarmonyPostfix]

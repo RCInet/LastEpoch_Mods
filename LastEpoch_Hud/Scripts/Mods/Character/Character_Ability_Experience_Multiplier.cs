@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using UnityEngine;
 
 namespace LastEpoch_Hud.Scripts.Mods.Character
 {
@@ -18,7 +17,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
             else { return false; }
         }
         
-        [HarmonyPatch(typeof(ExperienceTracker), "GainExp")]
+        [HarmonyPatch(typeof(Il2Cpp.ExperienceTracker), "GainExp")]
         public class ExperienceTracker_GainExp
         {
             [HarmonyPrefix]

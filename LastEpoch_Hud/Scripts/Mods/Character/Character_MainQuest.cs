@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Il2Cpp;
 
 namespace LastEpoch_Hud.Scripts.Mods.Character
 {
@@ -22,7 +23,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                     {
                         QuestState state = QuestState.NotStarted;
                         bool found = false;
-                        foreach (LE.Data.SavedQuest saved_quest in Refs_Manager.player_data.SavedQuests)
+                        foreach (Il2CppLE.Data.SavedQuest saved_quest in Refs_Manager.player_data.SavedQuests)
                         {
                             if (saved_quest.QuestID == quest.id)
                             {
@@ -34,7 +35,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                         Main.logger_instance.Msg("Quest Name = " + quest.name + " Id = " + quest.id + ", Type = " + quest.questType.ToString() + ", State = " + state.ToString() + ", Chapter = " + quest.chapter);
                         if (!found)
                         {                            
-                            LE.Data.SavedQuest q = new LE.Data.SavedQuest
+                            Il2CppLE.Data.SavedQuest q = new Il2CppLE.Data.SavedQuest
                             {
                                 QuestID = quest.id,
                                 State = QuestState.NotStarted

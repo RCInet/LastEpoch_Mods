@@ -17,20 +17,20 @@ namespace LastEpoch_Hud.Scripts.Mods.Login
             }
             else { return false; }
         }
-        public static void Hide_Online(ref LE.UI.Login.UnityUI.LandingZonePanel __instance)
+        public static void Hide_Online(ref Il2CppLE.UI.Login.UnityUI.LandingZonePanel __instance)
         {
             if (!__instance.playOnlineButton.IsNullOrDestroyed()) { __instance.playOnlineButton.gameObject.SetActive(false); }
             if (!__instance.manageAccountButton.IsNullOrDestroyed()) { __instance.manageAccountButton.gameObject.SetActive(false); }
         }
-        public static void AutoClickOffline(ref LE.UI.Login.UnityUI.LandingZonePanel __instance)
+        public static void AutoClickOffline(ref Il2CppLE.UI.Login.UnityUI.LandingZonePanel __instance)
         {
             __instance.OnPlayOfflineClicked();
         }
-        [HarmonyPatch(typeof(LE.UI.Login.UnityUI.LandingZonePanel), "OnOnEnable")]
+        [HarmonyPatch(typeof(Il2CppLE.UI.Login.UnityUI.LandingZonePanel), "OnOnEnable")]
         public class LandingZonePanel_OnOnEnable
         {
             [HarmonyPostfix]
-            static void Postfix(ref LE.UI.Login.UnityUI.LandingZonePanel __instance)
+            static void Postfix(ref Il2CppLE.UI.Login.UnityUI.LandingZonePanel __instance)
             {
                 if (CanRun())
                 {

@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using UnityEngine;
+using Il2Cpp;
 
 namespace LastEpoch_Hud.Scripts.Mods.Cosmetics
 {
@@ -7,7 +8,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Cosmetics
     {
         public static TabUIElement tab_element = null;
         public static UIPanel mtx_shop_panel = null;
-        public static LE.UI.MTXStore.MTXStoreController mtx_store_controller = null;
+        public static Il2CppLE.UI.MTXStore.MTXStoreController mtx_store_controller = null;
 
         public static void UnlockTab()
         {
@@ -75,11 +76,11 @@ namespace LastEpoch_Hud.Scripts.Mods.Cosmetics
                 SetupShopBtn();
             }
         }
-        [HarmonyPatch(typeof(LE.UI.MTXStore.MTXStoreController), "OnEnterState")]
+        [HarmonyPatch(typeof(Il2CppLE.UI.MTXStore.MTXStoreController), "OnEnterState")]
         public class MTXStoreController_OnEnterState
         {
             [HarmonyPostfix]
-            static void Postfix(ref LE.UI.MTXStore.MTXStoreController __instance, LE.UI.MTXStore.MTXStoreController.MTXStoreUIState __0, LE.UI.MTXStore.MTXStoreController.MTXStoreUIState __1)
+            static void Postfix(ref Il2CppLE.UI.MTXStore.MTXStoreController __instance, Il2CppLE.UI.MTXStore.MTXStoreController.MTXStoreUIState __0, Il2CppLE.UI.MTXStore.MTXStoreController.MTXStoreUIState __1)
             {
                 mtx_store_controller = __instance;
                 __instance.loadingUIOverlay.active = false;

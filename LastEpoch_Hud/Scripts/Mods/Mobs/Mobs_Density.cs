@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Il2Cpp;
 
 namespace LastEpoch_Hud.Scripts.Mods.Mobs
 {
@@ -17,8 +18,10 @@ namespace LastEpoch_Hud.Scripts.Mods.Mobs
             else { return false; }
         }
 
-        [HarmonyPatch(typeof(SpawnerPlacementManager), "Start")]
-        public class SpawnerPlacementManager_Start
+        //[HarmonyPatch(typeof(SpawnerPlacementManager), "Start")] //Patched by https://github.com/RolandSolymosi
+       // The Start of SpawnerPlacementManager still return access violation exception with ML 6+ interop dll 
+        [HarmonyPatch(typeof(SpawnerPlacementManager), "RollSpawners")]
+        public class SpawnerPlacementManager_RollSpawners
         {
             [HarmonyPrefix]
             public static void Prefix(ref SpawnerPlacementManager __instance)

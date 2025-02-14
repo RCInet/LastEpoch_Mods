@@ -1,5 +1,5 @@
 ﻿using HarmonyLib;
-using LE.MicrotransactionSystem;
+using Il2CppLE.MicrotransactionSystem;
 
 namespace LastEpoch_Hud.Scripts.Mods.Cosmetics
 {

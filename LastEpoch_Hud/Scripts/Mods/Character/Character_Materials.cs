@@ -1,4 +1,6 @@
-﻿namespace LastEpoch_Hud.Scripts.Mods.Character
+﻿using Il2Cpp;
+
+namespace LastEpoch_Hud.Scripts.Mods.Character
 {
     public class Character_Materials
     {

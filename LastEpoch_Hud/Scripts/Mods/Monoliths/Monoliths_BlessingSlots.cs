@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Il2Cpp;
 
 namespace LastEpoch_Hud.Scripts.Mods.Monoliths
 {
@@ -19,11 +20,11 @@ namespace LastEpoch_Hud.Scripts.Mods.Monoliths
         }
 
         //Fix by Silver-D for LastEpoch v1.1.2 (see issue "Setting Blessings to 5 results in Null Reference Exception on reward panel")
-        [HarmonyPatch(typeof(LE.Gameplay.Monolith.MonolithUIManager), "OpenBlessingsRewardPanelAfterDelay")]
+        [HarmonyPatch(typeof(Il2CppLE.Gameplay.Monolith.MonolithUIManager), "OpenBlessingsRewardPanelAfterDelay")]
         public class MonolithUIManager_OpenBlessingsRewardPanelAfterDelay
         {
             [HarmonyPrefix]
-            static void Prefix(Cysharp.Threading.Tasks.UniTaskVoid __result, TimelineID __0, int __1, float __2, ref int __3)
+            static void Prefix(Il2CppCysharp.Threading.Tasks.UniTaskVoid __result, TimelineID __0, int __1, float __2, ref int __3)
             {
                 if (CanRun())
                 {

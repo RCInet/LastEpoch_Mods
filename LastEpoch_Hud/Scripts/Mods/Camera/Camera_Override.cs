@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace LastEpoch_Hud.Scripts.Mods.Camera
+﻿namespace LastEpoch_Hud.Scripts.Mods.Camera
 {
     public class Camera_Override
     {

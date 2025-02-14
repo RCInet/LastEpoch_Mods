@@ -62,7 +62,8 @@ namespace LastEpoch_Hud.Scripts
                 KeyBinds =
                 {
                     BankStashs = KeyCode.F3,
-                    HeadhunterBuffs = KeyCode.F2
+                    HeadhunterBuffs = KeyCode.F2,
+                    EternityCache = KeyCode.F4                      //Items_Crafting_Eternity_Anywhere mod from https://github.com/RolandSolymosi
                 },
                 modsNotInHud =
                 {
@@ -206,6 +207,7 @@ namespace LastEpoch_Hud.Scripts
                     },
                     CraftingSlot =
                     {
+                        Enable_Mod = false,
                         Enable_ForginPotencial = false,
                         ForginPotencial = 255,
                         Enable_Implicit_0 = false,
@@ -468,6 +470,7 @@ namespace LastEpoch_Hud.Scripts
             if (data.ModVersion != Main.mod_version)
             {
                 //Update save when mod update here
+                data.KeyBinds.EternityCache = KeyCode.F4;
 
                 data.ModVersion = Main.mod_version;
                 data_changed = true;
@@ -510,6 +513,7 @@ namespace LastEpoch_Hud.Scripts
             {
                 public UnityEngine.KeyCode BankStashs;
                 public UnityEngine.KeyCode HeadhunterBuffs;
+                public UnityEngine.KeyCode EternityCache;
             }
             //Options not in hud (you have to set in defaultconfig before build)
             public struct ModsNotInHud
@@ -679,6 +683,8 @@ namespace LastEpoch_Hud.Scripts
             }
             public struct CraftingSlot
             {
+                public bool Enable_Mod;  //added by https://github.com/RolandSolymosi
+
                 public bool Enable_ForginPotencial;
                 public float ForginPotencial;
 

@@ -1,4 +1,6 @@
-﻿namespace LastEpoch_Hud.Scripts.Mods.Items
+﻿using Il2Cpp;
+
+namespace LastEpoch_Hud.Scripts.Mods.Items
 {
     public class Items_Req_Class
     {

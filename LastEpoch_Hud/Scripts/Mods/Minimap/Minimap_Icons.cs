@@ -2,6 +2,9 @@
 using MelonLoader;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Il2Cpp;
+using Il2CppDMM;
+using Il2CppItemFiltering;
 
 namespace LastEpoch_Hud.Scripts.Mods.Minimap
 {
@@ -67,13 +70,13 @@ namespace LastEpoch_Hud.Scripts.Mods.Minimap
             {
                 if (!Refs_Manager.filter_manager.Filter.IsNullOrDestroyed())
                 {
-                    foreach (ItemFiltering.Rule rule in Refs_Manager.filter_manager.Filter.rules)
+                    foreach (Rule rule in Refs_Manager.filter_manager.Filter.rules)
                     {
                         if ((rule.isEnabled) && (rule.Match(item.TryCast<ItemDataUnpacked>())) &&
                             (((rule.levelDependent) && (rule.LevelInBounds(Refs_Manager.player_actor.stats.level))) ||
                             (!rule.levelDependent)))
                         {
-                            if (rule.type == ItemFiltering.Rule.RuleOutcome.SHOW)
+                            if (rule.type == Rule.RuleOutcome.SHOW)
                             {
                                 result = true;
                                 break;
@@ -92,7 +95,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Minimap
             [HarmonyPostfix]
             static void Postfix(ref GroundItemVisuals __instance, ItemDataUnpacked __0, uint __1) //, GroundItemLabel __2, bool __3)
             {
-                if ((CanRun()) && (!DMM.DMMap.Instance.IsNullOrDestroyed()))
+                if ((CanRun()) && (!DMMap.Instance.IsNullOrDestroyed()))
                 {
                     if (items_in_map.IsNullOrDestroyed()) { items_in_map = new System.Collections.Generic.List<objects_structure>(); }
                     if (__0.rarity < 7)
@@ -120,9 +123,9 @@ namespace LastEpoch_Hud.Scripts.Mods.Minimap
 
                             GameObject base_object = Object.Instantiate(new GameObject(name: Scenes.SceneName + "_icon_" + __1), Vector3.zero, Quaternion.identity);
                             Object.DontDestroyOnLoad(base_object);
-                            base_object.transform.position = DMM.DMMap.Instance.WorldtoUI(__instance.gameObject.transform.position);
+                            base_object.transform.position = DMMap.Instance.WorldtoUI(__instance.gameObject.transform.position);
                             base_object.transform.localPosition = __instance.gameObject.transform.localPosition;
-                            base_object.AddComponent<DMM.DMMapIcon>();
+                            base_object.AddComponent<DMMapIcon>();
                             base_object.AddComponent<Minimap_Icons_UI>();
                             base_object.GetComponent<Minimap_Icons_UI>().icon = UITooltipItem.SetItemSprite(__0);
 
@@ -139,7 +142,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Minimap
             [HarmonyPostfix]
             static void Postfix(uint __1)
             {
-                if ((CanRun()) && (!DMM.DMMap.Instance.IsNullOrDestroyed()) &&
+                if ((CanRun()) && (!DMMap.Instance.IsNullOrDestroyed()) &&
                     (!items_in_map.IsNullOrDestroyed()))
                 {
                     bool found = false;
@@ -166,14 +169,14 @@ namespace LastEpoch_Hud.Scripts.Mods.Minimap
         public static Minimap_Icons_UI instance { get; private set; }
         public Minimap_Icons_UI(System.IntPtr ptr) : base(ptr) { }
                 
-        DMM.DMMapIcon map_icon = null;
+        DMMapIcon map_icon = null;
         public Sprite icon = null;
         bool initialized = false;
 
         void Awake()
         {
             instance = this;
-            map_icon = this.gameObject.GetComponent<DMM.DMMapIcon>();
+            map_icon = this.gameObject.GetComponent<DMMapIcon>();
             map_icon.scaleMultiplier = 1f;
             if (!Save_Manager.instance.IsNullOrDestroyed())
             {

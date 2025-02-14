@@ -1,6 +1,7 @@
 ﻿using MelonLoader;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Il2Cpp;
 
 namespace LastEpoch_Hud.Scripts.Mods.Character
 {
