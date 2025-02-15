@@ -5,6 +5,9 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Il2Cpp;
+using System.IO;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace LastEpoch_Hud
 {
@@ -15,7 +18,7 @@ namespace LastEpoch_Hud
         public const string game_name = "Last Epoch";
         public const string mod_name = "LastEpoch_Hud";
         public const string mod_version = "4.1.0-r3"; //LastEpoch 1.1.7.13
-        public static bool debug = true;
+        public static bool debug = true;        
 
         public override void OnInitializeMelon()
         {
@@ -51,6 +54,13 @@ namespace LastEpoch_Hud
         }
 
         public static Selected current = Selected.Unknow;
+        private static string dictionary_path = Application.dataPath + "/../Mods/" + Main.mod_name + "/Locales";
+        public static string dictionnary_filename = "";
+        public static Dictionary<string, string> current_dictionary = null;
+        public static bool update = false;
+        public static bool debug_text = false; //used to generate default json from prefab
+        public static List<string> debug_json;
+        public static char[] igrone_str = { '+', '%', '0', '1' };
 
         [HarmonyPatch(typeof(Localization), "get_Locale")]
         public class Localization_get_Locale
@@ -62,23 +72,38 @@ namespace LastEpoch_Hud
                 current = Selected.Unknow;
                 switch (__result)
                 {
-                    case "English (en)": { current = Selected.English; break; }
-                    case "French (fr)": { current = Selected.French; break; }
-                    case "Korean (ko)": { current = Selected.Korean; break; }
-                    case "German (Germany) (de-DE)": { current = Selected.German; break; }
-                    case "Russian (ru)": { current = Selected.Russian; break; }
-                    case "Polish (pl)": { current = Selected.Polish; break; }
-                    case "Portuguese (pt)": { current = Selected.Portuguese; break; }
-                    case "Chinese (Simplified) (zh)": { current = Selected.Chinese; break; }
-                    case "Spanish (Spain) (es-ES)": { current = Selected.Spanish; break; }
+                    case "English (en)": { current = Selected.English; dictionnary_filename = "en"; break; }
+                    case "French (fr)": { current = Selected.French; dictionnary_filename = "fr"; break; }
+                    case "Korean (ko)": { current = Selected.Korean; dictionnary_filename = "ko"; break; }
+                    case "German (Germany) (de-DE)": { current = Selected.German; dictionnary_filename = "de"; break; }
+                    case "Russian (ru)": { current = Selected.Russian; dictionnary_filename = "ru"; break; }
+                    case "Polish (pl)": { current = Selected.Polish; dictionnary_filename = "pl"; break; }
+                    case "Portuguese (pt)": { current = Selected.Portuguese; dictionnary_filename = "pt"; break; }
+                    case "Chinese (Simplified) (zh)": { current = Selected.Chinese; dictionnary_filename = "zh"; break; }
+                    case "Spanish (Spain) (es-ES)": { current = Selected.Spanish; dictionnary_filename = "es"; break; }
                 }
                 if (current != backup)
                 {
                     if (backup == Selected.Unknow) { Main.logger_instance.Msg("Locale initialized to " + current.ToString()); }
                     else { Main.logger_instance.Msg("Locale change to " + current.ToString()); }
-
-                    //Here to Update mods text
+                    update = LoadDictionary();
                 }
+            }
+        }
+
+        private static bool LoadDictionary()
+        {
+            string full_path = dictionary_path + "/" + dictionnary_filename + Extensions.json;
+            if ((Directory.Exists(dictionary_path)) && (File.Exists(full_path)))
+            {
+                current_dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(full_path));
+                return true;
+            }
+            else
+            {
+                Main.logger_instance.Error("Dictionnary not found for " + current.ToString() + " (" + full_path + ")");
+                Main.logger_instance.Error("If you want to use locale for hud, copy " + dictionary_path + "/base" + Extensions.json + " to " + dictionnary_filename + Extensions.json + ", then edit this file");
+                return false;
             }
         }
     }
@@ -147,6 +172,17 @@ namespace LastEpoch_Hud
                     result = obj.transform.GetChild(i).gameObject;
                     break;
                 }
+            }
+
+            return result;
+        }
+        public static List<GameObject> GetAllChild(GameObject obj)
+        {
+            List<GameObject> result = new List<GameObject>();
+            for (int i = 0; i < obj.transform.childCount; i++)
+            {
+                string obj_name = obj.transform.GetChild(i).gameObject.name;
+                result.Add(obj.transform.GetChild(i).gameObject);
             }
 
             return result;

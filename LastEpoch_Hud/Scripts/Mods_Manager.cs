@@ -98,7 +98,7 @@ namespace LastEpoch_Hud.Scripts
             items_crafting_obj.AddComponent<Mods.Items.Items_Crafting>();
             Mods_Objects.Add(items_crafting_obj);
 
-            character_bank_from_anywhere = Object.Instantiate(new GameObject { name = "Mod_Items_Headhunter" }, Vector3.zero, Quaternion.identity);
+            character_bank_from_anywhere = Object.Instantiate(new GameObject { name = "Mod_Bank_Anywhere" }, Vector3.zero, Quaternion.identity);
             character_bank_from_anywhere.active = false;
             character_bank_from_anywhere.AddComponent<Mods.Character.Character_Bank_Anywhere>();
             Mods_Objects.Add(character_bank_from_anywhere);

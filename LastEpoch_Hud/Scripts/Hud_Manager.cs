@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using Il2Cpp;
+using System.Reflection.Emit;
+using System.Linq;
 
 namespace LastEpoch_Hud.Scripts
 {
@@ -34,6 +36,7 @@ namespace LastEpoch_Hud.Scripts
         {
             Update_Hud_Scale();
             Update_Refs();
+            Update_Locale();
 
             if (!hud_object.IsNullOrDestroyed())
             {
@@ -158,6 +161,102 @@ namespace LastEpoch_Hud.Scripts
                 if (hud_canvas.scaleFactor != game_canvas.scaleFactor) { hud_canvas.scaleFactor = game_canvas.scaleFactor; }
             }
         } 
+        void Update_Locale()
+        {
+            if (Locales.update)
+            {
+                Locales.update = false;
+                if (Locales.debug_text)
+                {
+                    Locales.debug_json = new System.Collections.Generic.List<string>();
+                    Locales.debug_json.Add("{");
+                }
+
+                //need to make a function to remove all this trash
+                foreach (GameObject level_0_go in Functions.GetAllChild(hud_object))
+                {
+                    foreach (GameObject level_1_go in Functions.GetAllChild(level_0_go))
+                    {
+                        ReplaceText(level_1_go);
+                        foreach (GameObject level_2_go in Functions.GetAllChild(level_1_go))
+                        {
+                            ReplaceText(level_2_go);
+                            foreach (GameObject level_3_go in Functions.GetAllChild(level_2_go))
+                            {
+                                ReplaceText(level_3_go);
+                                foreach (GameObject level_4_go in Functions.GetAllChild(level_3_go))
+                                {
+                                    ReplaceText(level_4_go);
+                                    foreach (GameObject level_5_go in Functions.GetAllChild(level_4_go))
+                                    {
+                                        ReplaceText(level_5_go);
+                                        foreach (GameObject level_6_go in Functions.GetAllChild(level_5_go))
+                                        {
+                                            ReplaceText(level_6_go);
+                                            foreach (GameObject level_7_go in Functions.GetAllChild(level_6_go))
+                                            {
+                                                ReplaceText(level_7_go);
+                                                foreach (GameObject level_8_go in Functions.GetAllChild(level_7_go))
+                                                {
+                                                    ReplaceText(level_8_go);
+
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (Locales.debug_text)
+                {
+                    Locales.debug_json.Add("}");
+                    string json = "";
+                    foreach (string s in Locales.debug_json)
+                    {
+                        json += s;
+                    }
+
+                    Main.logger_instance.Msg("Copy to " + Locales.dictionnary_filename + Extensions.json);
+                    Main.logger_instance.Msg(json);
+                }
+            }
+        }
+        void ReplaceText(GameObject go)
+        {
+            try
+            {
+                Text label = go.GetComponent<Text>();
+                if (!label.IsNullOrDestroyed())
+                {
+                    bool ignore = false;
+                    foreach (char c in label.text)
+                    {
+                        if (Locales.igrone_str.Contains(c)) { ignore = true; break; }
+                    }
+                    if (!ignore)
+                    {
+                        if (Locales.debug_text)
+                        {
+                            //string s = "\"" + label.text + "\": \"\", ";
+                            string s = "\"" + label.text + "\": \"" + label.text + "\", "; //generate default en.json
+                            if (!Locales.debug_json.Contains(s)) { Locales.debug_json.Add(s); }
+                        }
+
+                        if (Locales.current_dictionary != null)
+                        {
+                            if (Locales.current_dictionary.ContainsKey(label.text)) { label.text = Locales.current_dictionary[label.text]; }
+                            else { Main.logger_instance.Error(label.text + ", not found in dictionnary"); }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                //Not a textbox
+            }
+        }
         void Update_Hud_Content()
         {
             if ((Content.Character.enable) && (Content.Character.need_update)) { Content.Character.Update_PlayerData(); }            
