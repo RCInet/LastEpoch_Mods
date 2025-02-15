@@ -80,6 +80,11 @@ namespace UnityEngine.EventSystems
         public GameObject pointerDrag { get; set; }
 
         /// <summary>
+        /// The object that should receive the 'OnPointerClick' event.
+        /// </summary>
+        public GameObject pointerClick { get; set; }
+
+        /// <summary>
         /// RaycastResult associated with the current event.
         /// </summary>
         public RaycastResult pointerCurrentRaycast { get; set; }
@@ -139,6 +144,7 @@ namespace UnityEngine.EventSystems
         /// </summary>
         /// <example>
         /// <code>
+        /// <![CDATA[
         /// using UnityEngine;
         /// using System.Collections;
         /// using UnityEngine.UI;
@@ -154,7 +160,8 @@ namespace UnityEngine.EventSystems
         ///         Debug.Log(i);
         ///     }
         /// }
-        /// </code>
+        /// ]]>
+        ///</code>
         /// </example>
         public int clickCount { get; set; }
 
@@ -181,6 +188,66 @@ namespace UnityEngine.EventSystems
         /// </summary>
         public InputButton button { get; set; }
 
+
+        /// <summary>
+        /// The amount of pressure currently applied by a touch.
+        /// </summary>
+        /// <remarks>
+        /// If the device does not report pressure, the value of this property is 1.0f.
+        /// </remarks>
+        /// <seealso cref="UnityEngine.UIElements.IPointerEvent" />
+        public float pressure { get; set; }
+        /// <summary>
+        /// The pressure applied to an additional pressure-sensitive control on the stylus.
+        /// </summary>
+        /// <seealso cref="UnityEngine.UIElements.IPointerEvent" />
+        public float tangentialPressure { get; set; }
+        /// <summary>
+        /// The angle of the stylus relative to the surface, in radians
+        /// </summary>
+        /// <remarks>
+        /// A value of 0 indicates that the stylus is parallel to the surface. A value of pi/2 indicates that it is perpendicular to the surface.
+        /// </remarks>
+        /// <seealso cref="UnityEngine.UIElements.IPointerEvent" />
+        public float altitudeAngle { get; set; }
+        /// <summary>
+        /// The angle of the stylus relative to the x-axis, in radians.
+        /// </summary>
+        /// <remarks>
+        /// A value of 0 indicates that the stylus is pointed along the x-axis of the device.
+        /// </remarks>
+        /// <seealso cref="UnityEngine.UIElements.IPointerEvent" />
+        public float azimuthAngle { get; set; }
+        /// <summary>
+        /// The rotation of the stylus around its axis, in radians.
+        /// </summary>
+        /// <seealso cref="UnityEngine.UIElements.IPointerEvent" />
+        public float twist { get; set; }
+        /// <summary>
+        /// An estimate of the radius of a touch.
+        /// </summary>
+        /// <remarks>
+        /// Add `radiusVariance` to get the maximum touch radius, subtract it to get the minimum touch radius.
+        /// </remarks>
+        /// <seealso cref="UnityEngine.UIElements.IPointerEvent" />
+        public Vector2 radius { get; set; }
+        /// <summary>
+        /// The accuracy of the touch radius.
+        /// </summary>
+        /// <remarks>
+        /// Add this value to the radius to get the maximum touch radius, subtract it to get the minimum touch radius.
+        /// </remarks>
+        public Vector2 radiusVariance { get; set; }
+        /// <summary>
+        /// Specifies in the case of a pointer exit if the pointer has fully exited the area or if it has just entered a child.
+        /// </summary>
+        public bool fullyExited { get; set; }
+        /// <summary>
+        /// Specifies in the case of a pointer enter if the pointer has entered a new area or if it has just reentered a parent after leaving a child.
+        /// </summary>
+        public bool reentered { get; set; }
+        /// <seealso cref="UnityEngine.UIElements.IPointerEvent" />
+
         public PointerEventData(EventSystem eventSystem) : base(eventSystem)
         {
             eligibleForClick = false;
@@ -196,6 +263,14 @@ namespace UnityEngine.EventSystems
             useDragThreshold = true;
             dragging = false;
             button = InputButton.Left;
+
+            pressure = 0f;
+            tangentialPressure = 0f;
+            altitudeAngle = 0f;
+            azimuthAngle = 0f;
+            twist = 0f;
+            radius = Vector2.zero;
+            radiusVariance = Vector2.zero;
         }
 
         /// <summary>
@@ -261,6 +336,13 @@ namespace UnityEngine.EventSystems
             sb.AppendLine(pointerCurrentRaycast.ToString());
             sb.AppendLine("<b>Press Raycast:</b>");
             sb.AppendLine(pointerPressRaycast.ToString());
+            sb.AppendLine("<b>pressure</b>: " + pressure);
+            sb.AppendLine("<b>tangentialPressure</b>: " + tangentialPressure);
+            sb.AppendLine("<b>altitudeAngle</b>: " + altitudeAngle);
+            sb.AppendLine("<b>azimuthAngle</b>: " + azimuthAngle);
+            sb.AppendLine("<b>twist</b>: " + twist);
+            sb.AppendLine("<b>radius</b>: " + radius);
+            sb.AppendLine("<b>radiusVariance</b>: " + radiusVariance);
             return sb.ToString();
         }
     }

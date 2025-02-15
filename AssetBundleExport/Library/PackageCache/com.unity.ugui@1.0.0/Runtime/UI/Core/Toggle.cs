@@ -12,7 +12,7 @@ namespace UnityEngine.UI
     /// The toggle component is a Selectable that controls a child graphic which displays the on / off state.
     /// When a toggle event occurs a callback is sent to any registered listeners of UI.Toggle._onValueChanged.
     /// </remarks>
-    [AddComponentMenu("UI/Toggle", 31)]
+    [AddComponentMenu("UI/Toggle", 30)]
     [RequireComponent(typeof(RectTransform))]
     public class Toggle : Selectable, IPointerClickHandler, ISubmitHandler, ICanvasElement
     {
@@ -70,6 +70,7 @@ namespace UnityEngine.UI
         /// </summary>
         /// <example>
         /// <code>
+        /// <![CDATA[
         /// //Attach this script to a Toggle GameObject. To do this, go to Create>UI>Toggle.
         /// //Set your own Text in the Inspector window
         ///
@@ -100,7 +101,8 @@ namespace UnityEngine.UI
         ///         m_Text.text =  "New Value : " + m_Toggle.isOn;
         ///     }
         /// }
-        /// </code>
+        /// ]]>
+        ///</code>
         /// </example>
         public ToggleEvent onValueChanged = new ToggleEvent();
 
@@ -201,6 +203,7 @@ namespace UnityEngine.UI
         /// </summary>
         /// <example>
         /// <code>
+        /// <![CDATA[
         /// /Attach this script to a Toggle GameObject. To do this, go to Create>UI>Toggle.
         /// //Set your own Text in the Inspector window
         ///
@@ -231,7 +234,8 @@ namespace UnityEngine.UI
         ///         m_Text.text =  "Toggle is : " + m_Toggle.isOn;
         ///     }
         /// }
-        /// </code>
+        /// ]]>
+        ///</code>
         /// </example>
 
         public bool isOn
@@ -260,7 +264,7 @@ namespace UnityEngine.UI
 
             // if we are in a group and set to true, do group logic
             m_IsOn = value;
-            if (m_Group != null && IsActive())
+            if (m_Group != null && m_Group.isActiveAndEnabled && IsActive())
             {
                 if (m_IsOn || (!m_Group.AnyTogglesOn() && !m_Group.allowSwitchOff))
                 {

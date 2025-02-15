@@ -37,46 +37,66 @@ namespace UnityEngine.UI
         /// <returns></returns>
         public static Vector3 RelativeMouseAtScaled(Vector2 position)
         {
-            #if !UNITY_EDITOR
+            #if !UNITY_EDITOR && !UNITY_WSA
             // If the main display is now the same resolution as the system then we need to scale the mouse position. (case 1141732)
             if (Display.main.renderingWidth != Display.main.systemWidth || Display.main.renderingHeight != Display.main.systemHeight)
             {
-                // Calculate any padding that may be added when the rendering apsect ratio does not match the system aspect ratio.
-                int widthPlusPadding = Screen.fullScreen ? Display.main.renderingWidth : (int)(Display.main.renderingHeight * (Display.main.systemWidth / (float)Display.main.systemHeight));
+                // The system will add padding when in full-screen and using a non-native aspect ratio. (case UUM-7893)
+                // For example Rendering 1920x1080 with a systeem resolution of 3440x1440 would create black bars on each side that are 330 pixels wide.
+                // we need to account for this or it will offset our coordinates when we are not on the main display.
+                var systemAspectRatio = Display.main.systemWidth / (float)Display.main.systemHeight;
 
-                // Calculate the padding on each side of the screen.
-                int padding = Screen.fullScreen ? 0 : (int)((widthPlusPadding - Display.main.renderingWidth) * 0.5f);
-                int widthPlusRightPadding = widthPlusPadding - padding;
-
-                // If we are not inside of the main display then we must adjust the mouse position so it is scaled by
-                // the main display and adjusted for any padding that may have been added due to different aspect ratios.
-                if ((position.y < 0 || position.y > Display.main.renderingHeight ||
-                     position.x < 0 || position.x > widthPlusRightPadding))
+                var sizePlusPadding = new Vector2(Display.main.renderingWidth, Display.main.renderingHeight);
+                var padding = Vector2.zero;
+                if (Screen.fullScreen)
                 {
-                    if (!Screen.fullScreen)
+                    var aspectRatio = Screen.width / (float)Screen.height;
+                    if (Display.main.systemHeight * aspectRatio < Display.main.systemWidth)
                     {
-                        // When in windowed mode, the window will be centered with the 0,0 coordinate at the top left, we need to adjust so it is relative to the screen instead.
-                        position.x -= (Display.main.renderingWidth - Display.main.systemWidth) * 0.5f;
-                        position.y -= (Display.main.renderingHeight - Display.main.systemHeight) * 0.5f;
+                        // Horizontal padding
+                        sizePlusPadding.x = Display.main.renderingHeight * systemAspectRatio;
+                        padding.x = (sizePlusPadding.x - Display.main.renderingWidth) * 0.5f;
                     }
                     else
                     {
-                        // Scale the mouse position
-                        position.x += padding;
+                        // Vertical padding
+                        sizePlusPadding.y = Display.main.renderingWidth / systemAspectRatio;
+                        padding.y = (sizePlusPadding.y - Display.main.renderingHeight) * 0.5f;
+                    }
+                }
 
-                        float xScale = Display.main.systemWidth / (float)widthPlusPadding;
-                        float yScale = Display.main.systemHeight / (float)Display.main.renderingHeight;
-                        position.x *= xScale;
-                        position.y *= yScale;
+                var sizePlusPositivePadding = sizePlusPadding - padding;
+
+                // If we are not inside of the main display then we must adjust the mouse position so it is scaled by
+                // the main display and adjusted for any padding that may have been added due to different aspect ratios.
+                if (position.y < -padding.y || position.y > sizePlusPositivePadding.y ||
+                     position.x < -padding.x || position.x > sizePlusPositivePadding.x)
+                {
+                    var adjustedPosition = position;
+
+                    if (!Screen.fullScreen)
+                    {
+                        // When in windowed mode, the window will be centered with the 0,0 coordinate at the top left, we need to adjust so it is relative to the screen instead.
+                        adjustedPosition.x -= (Display.main.renderingWidth - Display.main.systemWidth) * 0.5f;
+                        adjustedPosition.y -= (Display.main.renderingHeight - Display.main.systemHeight) * 0.5f;
+                    }
+                    else
+                    {
+                        // Scale the mouse position to account for the black bars when in a non-native aspect ratio.
+                        adjustedPosition += padding;
+                        adjustedPosition.x *= Display.main.systemWidth / sizePlusPadding.x;
+                        adjustedPosition.y *= Display.main.systemHeight / sizePlusPadding.y;
                     }
 
-                    return Display.RelativeMouseAt(position);
+                    var relativePos = Display.RelativeMouseAt(adjustedPosition);
+
+                    // If we are not on the main display then return the adjusted position.
+                    if (relativePos.z != 0)
+                        return relativePos;
                 }
-                else
-                {
-                    // We are using the main display.
-                    return new Vector3(position.x, position.y, 0);
-                }
+
+                // We are using the main display.
+                return new Vector3(position.x, position.y, 0);
             }
             #endif
             return Display.RelativeMouseAt(position);

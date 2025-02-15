@@ -15,6 +15,7 @@ namespace UnityEngine.UI.Tests
     public class RectMask2DClipping : IPrebuildSetup
     {
         GameObject m_PrefabRoot;
+        GameObject m_CameraGO;
 
         const string kPrefabPath = "Assets/Resources/Mask2DRectCullingPrefab.prefab";
 
@@ -26,14 +27,14 @@ namespace UnityEngine.UI.Tests
             rootCanvasGO.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
             rootCanvasGO.transform.SetParent(rootGO.transform);
 
-            var maskGO = new GameObject("Mask", typeof(RectMask2D), typeof(RectTransform));
+            var maskGO = new GameObject("Mask", typeof(RectTransform), typeof(RectMask2D));
             var maskTransform = maskGO.GetComponent<RectTransform>();
             maskTransform.SetParent(rootCanvasGO.transform);
             maskTransform.localPosition = Vector3.zero;
             maskTransform.sizeDelta = new Vector2(200, 200);
             maskTransform.localScale = Vector3.one;
 
-            var imageGO = new GameObject("Image", typeof(ImageHook), typeof(RectTransform));
+            var imageGO = new GameObject("Image", typeof(RectTransform), typeof(ImageHook));
             var imageTransform = imageGO.GetComponent<RectTransform>();
             imageTransform.SetParent(maskTransform);
             imageTransform.localPosition = new Vector3(-125, 0, 0);
@@ -53,7 +54,7 @@ namespace UnityEngine.UI.Tests
         public void TestSetup()
         {
             m_PrefabRoot = Object.Instantiate(Resources.Load("Mask2DRectCullingPrefab")) as GameObject;
-            new GameObject("Camera", typeof(Camera));
+            m_CameraGO = new GameObject("Camera", typeof(Camera));
         }
 
         [UnityTest]
@@ -94,6 +95,7 @@ namespace UnityEngine.UI.Tests
         public void TearDown()
         {
             Object.DestroyImmediate(m_PrefabRoot);
+            GameObject.DestroyImmediate(m_CameraGO);
         }
 
         [OneTimeTearDown]

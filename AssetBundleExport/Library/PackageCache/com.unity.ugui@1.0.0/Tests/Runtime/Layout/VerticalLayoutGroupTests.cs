@@ -15,8 +15,6 @@ namespace LayoutTests
         GameObject m_PrefabRoot;
         const string kPrefabPath = "Assets/Resources/VerticalLayoutGroupPrefab.prefab";
 
-        private VerticalLayoutGroup m_LayoutGroup;
-
         public void Setup()
         {
 #if UNITY_EDITOR
@@ -86,14 +84,11 @@ namespace LayoutTests
         public void TestSetup()
         {
             m_PrefabRoot = Object.Instantiate(Resources.Load("VerticalLayoutGroupPrefab")) as GameObject;
-            m_LayoutGroup = m_PrefabRoot.GetComponentInChildren<VerticalLayoutGroup>();
         }
 
-        [OneTimeTearDown]
+        [TearDown]
         public void TearDown()
         {
-            EventSystem.current = null;
-            m_LayoutGroup = null;
             Object.DestroyImmediate(m_PrefabRoot);
         }
 
@@ -108,27 +103,75 @@ namespace LayoutTests
         [Test]
         public void TestCalculateLayoutInputHorizontal()
         {
-            m_LayoutGroup.CalculateLayoutInputHorizontal();
-            m_LayoutGroup.SetLayoutHorizontal();
-            m_LayoutGroup.CalculateLayoutInputVertical();
-            m_LayoutGroup.SetLayoutVertical();
+            var layoutGroup = m_PrefabRoot.GetComponentInChildren<VerticalLayoutGroup>();
+            layoutGroup.CalculateLayoutInputHorizontal();
+            layoutGroup.SetLayoutHorizontal();
+            layoutGroup.CalculateLayoutInputVertical();
+            layoutGroup.SetLayoutVertical();
 
-            Assert.AreEqual(31, m_LayoutGroup.minWidth);
-            Assert.AreEqual(206, m_LayoutGroup.preferredWidth);
-            Assert.AreEqual(1, m_LayoutGroup.flexibleWidth);
+            Assert.AreEqual(31, layoutGroup.minWidth);
+            Assert.AreEqual(206, layoutGroup.preferredWidth);
+            Assert.AreEqual(1, layoutGroup.flexibleWidth);
         }
 
         [Test]
         public void TestCalculateLayoutInputVertical()
         {
-            m_LayoutGroup.CalculateLayoutInputHorizontal();
-            m_LayoutGroup.SetLayoutHorizontal();
-            m_LayoutGroup.CalculateLayoutInputVertical();
-            m_LayoutGroup.SetLayoutVertical();
+            var layoutGroup = m_PrefabRoot.GetComponentInChildren<VerticalLayoutGroup>();
+            layoutGroup.CalculateLayoutInputHorizontal();
+            layoutGroup.SetLayoutHorizontal();
+            layoutGroup.CalculateLayoutInputVertical();
+            layoutGroup.SetLayoutVertical();
 
-            Assert.AreEqual(40, m_LayoutGroup.minHeight);
-            Assert.AreEqual(145, m_LayoutGroup.preferredHeight);
-            Assert.AreEqual(1, m_LayoutGroup.flexibleHeight);
+            Assert.AreEqual(40, layoutGroup.minHeight);
+            Assert.AreEqual(145, layoutGroup.preferredHeight);
+            Assert.AreEqual(1, layoutGroup.flexibleHeight);
+        }
+
+        [Test]
+        public void TestCalculateLayoutVertical()
+        {
+            var parentGO = m_PrefabRoot.transform.GetChild(0).GetChild(0);
+            var element1GO = parentGO.GetChild(0);
+            var element1Trans = element1GO.GetComponent<RectTransform>();
+            var element2GO = parentGO.GetChild(1);
+            var element2Trans = element2GO.GetComponent<RectTransform>();
+            var element3GO = parentGO.GetChild(2);
+            var element3Trans = element3GO.GetComponent<RectTransform>();
+
+            var layoutGroup = m_PrefabRoot.GetComponentInChildren<VerticalLayoutGroup>();
+            layoutGroup.CalculateLayoutInputHorizontal();
+            layoutGroup.SetLayoutHorizontal();
+            layoutGroup.CalculateLayoutInputVertical();
+            layoutGroup.SetLayoutVertical();
+
+            Assert.AreEqual(-19.4f, element1Trans.anchoredPosition.y, 0.1f);
+            Assert.AreEqual(-39.4f, element2Trans.anchoredPosition.y, 0.1f);
+            Assert.AreEqual(-68.9f, element3Trans.anchoredPosition.y, 0.1f);
+        }
+
+        [Test]
+        public void TestCalculateLayoutVerticalReversed()
+        {
+            var parentGO = m_PrefabRoot.transform.GetChild(0).GetChild(0);
+            var element1GO = parentGO.GetChild(0);
+            var element1Trans = element1GO.GetComponent<RectTransform>();
+            var element2GO = parentGO.GetChild(1);
+            var element2Trans = element2GO.GetComponent<RectTransform>();
+            var element3GO = parentGO.GetChild(2);
+            var element3Trans = element3GO.GetComponent<RectTransform>();
+
+            var layoutGroup = m_PrefabRoot.GetComponentInChildren<VerticalLayoutGroup>();
+            layoutGroup.reverseArrangement = true;
+            layoutGroup.CalculateLayoutInputHorizontal();
+            layoutGroup.SetLayoutHorizontal();
+            layoutGroup.CalculateLayoutInputVertical();
+            layoutGroup.SetLayoutVertical();
+
+
+            //Assert.AreEqual(-78.6f, element1Trans.anchoredPosition.y, 0.1f);
+            Assert.AreEqual(-58.6f, element2Trans.anchoredPosition.y, 0.1f);
+            Assert.AreEqual(-29.1f, element3Trans.anchoredPosition.y, 0.1f);
         }
     }
 }

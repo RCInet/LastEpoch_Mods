@@ -33,7 +33,7 @@ public class RaycastSortingTests : IPrebuildSetup
         backCanvas.planeDistance = 100;
         backCanvas.worldCamera = camera;
 
-        var backCanvasBackground = new GameObject("BackCanvasBackground", typeof(Image), typeof(RectTransform));
+        var backCanvasBackground = new GameObject("BackCanvasBackground", typeof(RectTransform), typeof(Image));
         var backCanvasBackgroundTransform = backCanvasBackground.GetComponent<RectTransform>();
         backCanvasBackgroundTransform.SetParent(backCanvasGO.transform);
         backCanvasBackgroundTransform.anchorMin = Vector2.zero;
@@ -42,7 +42,7 @@ public class RaycastSortingTests : IPrebuildSetup
         backCanvasBackgroundTransform.anchoredPosition3D = Vector3.zero;
         backCanvasBackgroundTransform.localScale = Vector3.one;
 
-        var backCanvasDeeper = new GameObject("BackCanvasDeeperHierarchy", typeof(Image), typeof(RectTransform));
+        var backCanvasDeeper = new GameObject("BackCanvasDeeperHierarchy", typeof(RectTransform), typeof(Image));
         var backCanvasDeeperTransform = backCanvasDeeper.GetComponent<RectTransform>();
         backCanvasDeeperTransform.SetParent(backCanvasBackgroundTransform);
         backCanvasDeeperTransform.anchorMin = new Vector2(0.5f, 0);
@@ -59,7 +59,7 @@ public class RaycastSortingTests : IPrebuildSetup
         frontCanvas.planeDistance = 50;
         frontCanvas.worldCamera = camera;
 
-        var frontCanvasTopLevel = new GameObject("FrontCanvasTopLevel", typeof(Text), typeof(RectTransform));
+        var frontCanvasTopLevel = new GameObject("FrontCanvasTopLevel", typeof(RectTransform), typeof(Text));
         var frontCanvasTopLevelTransform = frontCanvasTopLevel.GetComponent<RectTransform>();
         frontCanvasTopLevelTransform.SetParent(frontCanvasGO.transform);
         frontCanvasTopLevelTransform.anchorMin = Vector2.zero;

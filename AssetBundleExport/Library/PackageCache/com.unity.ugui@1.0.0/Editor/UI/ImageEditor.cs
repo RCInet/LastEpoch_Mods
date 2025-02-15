@@ -35,6 +35,47 @@ namespace UnityEditor.UI
         AnimBool m_ShowTiled;
         AnimBool m_ShowFilled;
         AnimBool m_ShowType;
+        bool m_bIsDriven;
+
+        private class Styles
+        {
+            public static GUIContent text = EditorGUIUtility.TrTextContent("Fill Origin");
+            public static GUIContent[] OriginHorizontalStyle =
+            {
+                EditorGUIUtility.TrTextContent("Left"),
+                EditorGUIUtility.TrTextContent("Right")
+            };
+
+            public static GUIContent[] OriginVerticalStyle =
+            {
+                EditorGUIUtility.TrTextContent("Bottom"),
+                EditorGUIUtility.TrTextContent("Top")
+            };
+
+            public static GUIContent[] Origin90Style =
+            {
+                EditorGUIUtility.TrTextContent("BottomLeft"),
+                EditorGUIUtility.TrTextContent("TopLeft"),
+                EditorGUIUtility.TrTextContent("TopRight"),
+                EditorGUIUtility.TrTextContent("BottomRight")
+            };
+
+            public static GUIContent[] Origin180Style =
+            {
+                EditorGUIUtility.TrTextContent("Bottom"),
+                EditorGUIUtility.TrTextContent("Left"),
+                EditorGUIUtility.TrTextContent("Top"),
+                EditorGUIUtility.TrTextContent("Right")
+            };
+
+            public static GUIContent[] Origin360Style =
+            {
+                EditorGUIUtility.TrTextContent("Bottom"),
+                EditorGUIUtility.TrTextContent("Right"),
+                EditorGUIUtility.TrTextContent("Top"),
+                EditorGUIUtility.TrTextContent("Left")
+            };
+        }
 
         protected override void OnEnable()
         {
@@ -70,10 +111,14 @@ namespace UnityEditor.UI
             m_ShowFilled.valueChanged.AddListener(Repaint);
 
             SetShowNativeSize(true);
+
+            m_bIsDriven = false;
         }
 
         protected override void OnDisable()
         {
+            base.OnDisable();
+
             m_ShowType.valueChanged.RemoveListener(Repaint);
             m_ShowSlicedOrTiled.valueChanged.RemoveListener(Repaint);
             m_ShowSliced.valueChanged.RemoveListener(Repaint);
@@ -84,6 +129,10 @@ namespace UnityEditor.UI
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
+
+            Image image = target as Image;
+            RectTransform rect = image.GetComponent<RectTransform>();
+            m_bIsDriven = (rect.drivenByObject as Slider)?.fillRect == rect;
 
             SpriteGUI();
             AppearanceControlsGUI();
@@ -185,7 +234,7 @@ namespace UnityEditor.UI
 
                 if (EditorGUILayout.BeginFadeGroup(m_ShowTiled.faded))
                 {
-                    if (image.sprite != null && !image.hasBorder && (image.sprite.texture.wrapMode != TextureWrapMode.Repeat || image.sprite.packed))
+                    if (image.sprite != null && !image.hasBorder && (image.sprite.texture != null && image.sprite.texture.wrapMode != TextureWrapMode.Repeat || image.sprite.packed))
                         EditorGUILayout.HelpBox("It looks like you want to tile a sprite with no border. It would be more efficient to modify the Sprite properties, clear the Packing tag and set the Wrap mode to Repeat.", MessageType.Warning);
                 }
                 EditorGUILayout.EndFadeGroup();
@@ -198,25 +247,33 @@ namespace UnityEditor.UI
                     {
                         m_FillOrigin.intValue = 0;
                     }
+                    var shapeRect = EditorGUILayout.GetControlRect(true);
                     switch ((Image.FillMethod)m_FillMethod.enumValueIndex)
                     {
                         case Image.FillMethod.Horizontal:
-                            m_FillOrigin.intValue = (int)(Image.OriginHorizontal)EditorGUILayout.EnumPopup("Fill Origin", (Image.OriginHorizontal)m_FillOrigin.intValue);
+                            EditorGUI.Popup(shapeRect, m_FillOrigin, Styles.OriginHorizontalStyle, Styles.text);
                             break;
                         case Image.FillMethod.Vertical:
-                            m_FillOrigin.intValue = (int)(Image.OriginVertical)EditorGUILayout.EnumPopup("Fill Origin", (Image.OriginVertical)m_FillOrigin.intValue);
+                            EditorGUI.Popup(shapeRect, m_FillOrigin, Styles.OriginVerticalStyle, Styles.text);
                             break;
                         case Image.FillMethod.Radial90:
-                            m_FillOrigin.intValue = (int)(Image.Origin90)EditorGUILayout.EnumPopup("Fill Origin", (Image.Origin90)m_FillOrigin.intValue);
+                            EditorGUI.Popup(shapeRect, m_FillOrigin, Styles.Origin90Style, Styles.text);
                             break;
                         case Image.FillMethod.Radial180:
-                            m_FillOrigin.intValue = (int)(Image.Origin180)EditorGUILayout.EnumPopup("Fill Origin", (Image.Origin180)m_FillOrigin.intValue);
+                            EditorGUI.Popup(shapeRect, m_FillOrigin, Styles.Origin180Style, Styles.text);
                             break;
                         case Image.FillMethod.Radial360:
-                            m_FillOrigin.intValue = (int)(Image.Origin360)EditorGUILayout.EnumPopup("Fill Origin", (Image.Origin360)m_FillOrigin.intValue);
+                            EditorGUI.Popup(shapeRect, m_FillOrigin, Styles.Origin360Style, Styles.text);
                             break;
                     }
-                    EditorGUILayout.PropertyField(m_FillAmount);
+
+                    if (m_bIsDriven)
+                        EditorGUILayout.HelpBox("The Fill amount property is driven by Slider.", MessageType.None);
+                    using (new EditorGUI.DisabledScope(m_bIsDriven))
+                    {
+                        EditorGUILayout.PropertyField(m_FillAmount);
+                    }
+
                     if ((Image.FillMethod)m_FillMethod.enumValueIndex > Image.FillMethod.Vertical)
                     {
                         EditorGUILayout.PropertyField(m_FillClockwise, m_ClockwiseContent);

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine.UI;
+using UnityEngine.Pool;
 
 namespace UnityEngine.EventSystems
 {
@@ -13,6 +13,13 @@ namespace UnityEngine.EventSystems
             if ((data as T) == null)
                 throw new ArgumentException(String.Format("Invalid type: {0} passed to event expecting {1}", data.GetType(), typeof(T)));
             return data as T;
+        }
+
+        private static readonly EventFunction<IPointerMoveHandler> s_PointerMoveHandler = Execute;
+
+        private static void Execute(IPointerMoveHandler handler, BaseEventData eventData)
+        {
+            handler.OnPointerMove(ValidateEventData<PointerEventData>(eventData));
         }
 
         private static readonly EventFunction<IPointerEnterHandler> s_PointerEnterHandler = Execute;
@@ -134,6 +141,11 @@ namespace UnityEngine.EventSystems
             handler.OnCancel(eventData);
         }
 
+        public static EventFunction<IPointerMoveHandler> pointerMoveHandler
+        {
+            get { return s_PointerMoveHandler; }
+        }
+
         public static EventFunction<IPointerEnterHandler> pointerEnterHandler
         {
             get { return s_PointerEnterHandler; }
@@ -233,16 +245,15 @@ namespace UnityEngine.EventSystems
             }
         }
 
-        private static readonly ObjectPool<List<IEventSystemHandler>> s_HandlerListPool = new ObjectPool<List<IEventSystemHandler>>(null, l => l.Clear());
-
         public static bool Execute<T>(GameObject target, BaseEventData eventData, EventFunction<T> functor) where T : IEventSystemHandler
         {
-            var internalHandlers = s_HandlerListPool.Get();
+            var internalHandlers = ListPool<IEventSystemHandler>.Get();
             GetEventList<T>(target, internalHandlers);
             //  if (s_InternalHandlers.Count > 0)
             //      Debug.Log("Executinng " + typeof (T) + " on " + target);
 
-            for (var i = 0; i < internalHandlers.Count; i++)
+            var internalHandlersCount = internalHandlers.Count;
+            for (var i = 0; i < internalHandlersCount; i++)
             {
                 T arg;
                 try
@@ -267,7 +278,7 @@ namespace UnityEngine.EventSystems
             }
 
             var handlerCount = internalHandlers.Count;
-            s_HandlerListPool.Release(internalHandlers);
+            ListPool<IEventSystemHandler>.Release(internalHandlers);
             return handlerCount > 0;
         }
 
@@ -280,7 +291,8 @@ namespace UnityEngine.EventSystems
         {
             GetEventChain(root, s_InternalTransformList);
 
-            for (var i = 0; i < s_InternalTransformList.Count; i++)
+            var internalTransformListCount = s_InternalTransformList.Count;
+            for (var i = 0; i < internalTransformListCount; i++)
             {
                 var transform = s_InternalTransformList[i];
                 if (Execute(transform.gameObject, eventData, callbackFunction))
@@ -315,7 +327,9 @@ namespace UnityEngine.EventSystems
 
             var components = ListPool<Component>.Get();
             go.GetComponents(components);
-            for (var i = 0; i < components.Count; i++)
+
+            var componentsCount = components.Count;
+            for (var i = 0; i < componentsCount; i++)
             {
                 if (!ShouldSendToComponent<T>(components[i]))
                     continue;
@@ -332,10 +346,10 @@ namespace UnityEngine.EventSystems
         /// </summary>
         public static bool CanHandleEvent<T>(GameObject go) where T : IEventSystemHandler
         {
-            var internalHandlers = s_HandlerListPool.Get();
+            var internalHandlers = ListPool<IEventSystemHandler>.Get();
             GetEventList<T>(go, internalHandlers);
             var handlerCount = internalHandlers.Count;
-            s_HandlerListPool.Release(internalHandlers);
+            ListPool<IEventSystemHandler>.Release(internalHandlers);
             return handlerCount != 0;
         }
 

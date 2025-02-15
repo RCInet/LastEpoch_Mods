@@ -54,6 +54,12 @@ public class CanvasGroupTests
         m_ChildCanvasTwoRenderer = childTwoObject.GetComponent<CanvasRenderer>();
     }
 
+    [TearDown]
+    public void TearDown()
+    {
+        GameObject.DestroyImmediate(m_CanvasObject);
+    }
+
     private void SetUpCanvasGroupState()
     {
         m_CanvasGroup.enabled = false;
@@ -193,11 +199,5 @@ public class CanvasGroupTests
         m_CanvasTwoGroup.enabled = true;
         m_CanvasTwoGroup.ignoreParentGroups = true;
         Assert.AreEqual(m_CanvasAlpha, m_ChildCanvasTwoRenderer.GetInheritedAlpha());
-    }
-
-    [TearDown]
-    public void TearDown()
-    {
-        //GameObject.DestroyImmediate(m_CanvasObject);
     }
 }

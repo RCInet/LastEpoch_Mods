@@ -36,7 +36,7 @@ namespace UnityEngine.EventSystems
         {}
 #endif
         /// <summary>
-        /// This callback is called if an associated RectTransform has its dimensions changed. The call is also made to all child rect transforms, even if the child transform itself doesn't change - as it could have, depending on its anchoring.
+        /// This callback is called when the dimensions of an associated RectTransform change. It is always called before Awake, OnEnable, or Start. The call is also made to all child RectTransforms, regardless of whether their dimensions change (which depends on how they are anchored).
         /// </summary>
         protected virtual void OnRectTransformDimensionsChange()
         {}

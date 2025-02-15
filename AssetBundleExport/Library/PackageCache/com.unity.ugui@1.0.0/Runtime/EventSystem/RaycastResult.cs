@@ -37,12 +37,32 @@ namespace UnityEngine.EventSystems
         public int depth;
 
         /// <summary>
+        /// The sorting group ID when the hit object is influenced by a SortingGroup.
+        /// </summary>
+        /// <remarks>
+        /// For UI.Graphic elements will always be 0.
+        /// For 3D objects this will always be 0.
+        /// For 2D objects if a SortingOrder is influencing the same object as the hit collider then the renderers sortingGroupID will be used; otherwise SortingGroup.invalidSortingGroupID.
+        /// </remarks>
+        public int sortingGroupID;
+
+        /// <summary>
+        /// The sorting group order when the hit object is influenced by a SortingGroup.
+        /// </summary>
+        /// <remarks>
+        /// For UI.Graphic elements this will always be 0.
+        /// For 3D objects this will always be 0.
+        /// For 2D objects if a SortingOrder is influencing the same object as the hit collider then the renderers sortingGroupOrder will be used.
+        /// </remarks>
+        public int sortingGroupOrder;
+
+        /// <summary>
         /// The SortingLayer of the hit object.
         /// </summary>
         /// <remarks>
         /// For UI.Graphic elements this will be the values from that graphic's Canvas
         /// For 3D objects this will always be 0.
-        /// For 2D objects if a SpriteRenderer is attached to the same object as the hit collider that SpriteRenderer sortingLayerID will be used.
+        /// For 2D objects if a 2D Renderer (Sprite, Tilemap, SpriteShape) is attached to the same object as the hit collider that sortingLayerID will be used.
         /// </remarks>
         public int sortingLayer;
 
@@ -52,7 +72,7 @@ namespace UnityEngine.EventSystems
         /// <remarks>
         /// For Graphic elements this will be the values from that graphics Canvas
         /// For 3D objects this will always be 0.
-        /// For 2D objects if a SpriteRenderer is attached to the same object as the hit collider that SpriteRenderer sortingOrder will be used.
+        /// For 2D objects if a 2D Renderer (Sprite, Tilemap, SpriteShape) is attached to the same object as the hit collider that sortingOrder will be used.
         /// </remarks>
         public int sortingOrder;
 

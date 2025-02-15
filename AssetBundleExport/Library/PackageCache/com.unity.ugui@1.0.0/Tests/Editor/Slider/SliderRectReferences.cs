@@ -3,26 +3,31 @@ using UnityEngine.UI;
 using UnityEngine;
 
 [Category("Slider")]
-public class SliderRectRefernces : TestBehaviourBase<UnityEngine.UI.Slider>
+public class SliderRectRefernces : Behaviour
 {
     private Slider slider;
     private GameObject emptyGO;
+    private GameObject rootGO;
 
     [SetUp]
-    public override void TestSetup()
+    public void TestSetup()
     {
-        base.TestSetup();
-
-        var rootChildGO = new GameObject("root child");
-        rootChildGO.AddComponent<Canvas>();
+        rootGO = new GameObject("root child");
+        rootGO.AddComponent<Canvas>();
 
         var sliderGameObject = new GameObject("Slider");
         slider = sliderGameObject.AddComponent<Slider>();
 
         emptyGO = new GameObject("base", typeof(RectTransform));
 
-        sliderGameObject.transform.SetParent(rootChildGO.transform);
+        sliderGameObject.transform.SetParent(rootGO.transform);
         emptyGO.transform.SetParent(sliderGameObject.transform);
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        GameObject.DestroyImmediate(rootGO);
     }
 
     [Test]

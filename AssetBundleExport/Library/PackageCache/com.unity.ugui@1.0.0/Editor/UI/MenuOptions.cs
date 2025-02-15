@@ -3,8 +3,6 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEditor.Experimental.SceneManagement;
 
 namespace UnityEditor.UI
 {
@@ -14,6 +12,27 @@ namespace UnityEditor.UI
 
     static internal class MenuOptions
     {
+        enum MenuOptionsPriorityOrder
+        {
+            // 2000 - Text (TMP 4.0)
+            Image = 2001,
+            RawImage = 2002,
+            Panel = 2003,
+            // 2020 - Button (TMP 4.0)
+            Toggle = 2021,
+            // 2022 - Dropdown (TMP 4.0)
+            // 2023 - Input Field (TMP 4.0)
+            Slider = 2024,
+            Scrollbar = 2025,
+            ScrollView = 2026,
+            Canvas = 2060,
+            EventSystem = 2061,
+            Text = 2080,
+            Button = 2081,
+            Dropdown = 2082,
+            InputField = 2083,
+        };
+
         private const string kUILayerName = "UI";
 
         private const string kStandardSpritePath       = "UI/Skin/UISprite.psd";
@@ -183,7 +202,7 @@ namespace UnityEditor.UI
 
         // Graphic elements
 
-        [MenuItem("GameObject/UI/Text", false, 2000)]
+        [MenuItem("GameObject/UI/Legacy/Text", false, (int)MenuOptionsPriorityOrder.Text)]
         static public void AddText(MenuCommand menuCommand)
         {
             GameObject go;
@@ -192,7 +211,7 @@ namespace UnityEditor.UI
             PlaceUIElementRoot(go, menuCommand);
         }
 
-        [MenuItem("GameObject/UI/Image", false, 2001)]
+        [MenuItem("GameObject/UI/Image", false, (int)MenuOptionsPriorityOrder.Image)]
         static public void AddImage(MenuCommand menuCommand)
         {
             GameObject go;
@@ -201,7 +220,7 @@ namespace UnityEditor.UI
             PlaceUIElementRoot(go, menuCommand);
         }
 
-        [MenuItem("GameObject/UI/Raw Image", false, 2002)]
+        [MenuItem("GameObject/UI/Raw Image", false, (int)MenuOptionsPriorityOrder.RawImage)]
         static public void AddRawImage(MenuCommand menuCommand)
         {
             GameObject go;
@@ -214,7 +233,7 @@ namespace UnityEditor.UI
 
         // Button and toggle are controls you just click on.
 
-        [MenuItem("GameObject/UI/Button", false, 2030)]
+        [MenuItem("GameObject/UI/Legacy/Button", false, (int)MenuOptionsPriorityOrder.Button)]
         static public void AddButton(MenuCommand menuCommand)
         {
             GameObject go;
@@ -223,7 +242,7 @@ namespace UnityEditor.UI
             PlaceUIElementRoot(go, menuCommand);
         }
 
-        [MenuItem("GameObject/UI/Toggle", false, 2031)]
+        [MenuItem("GameObject/UI/Toggle", false, (int)MenuOptionsPriorityOrder.Toggle)]
         static public void AddToggle(MenuCommand menuCommand)
         {
             GameObject go;
@@ -234,7 +253,7 @@ namespace UnityEditor.UI
 
         // Slider and Scrollbar modify a number
 
-        [MenuItem("GameObject/UI/Slider", false, 2033)]
+        [MenuItem("GameObject/UI/Slider", false, (int)MenuOptionsPriorityOrder.Slider)]
         static public void AddSlider(MenuCommand menuCommand)
         {
             GameObject go;
@@ -243,7 +262,7 @@ namespace UnityEditor.UI
             PlaceUIElementRoot(go, menuCommand);
         }
 
-        [MenuItem("GameObject/UI/Scrollbar", false, 2034)]
+        [MenuItem("GameObject/UI/Scrollbar", false, (int)MenuOptionsPriorityOrder.Scrollbar)]
         static public void AddScrollbar(MenuCommand menuCommand)
         {
             GameObject go;
@@ -254,7 +273,7 @@ namespace UnityEditor.UI
 
         // More advanced controls below
 
-        [MenuItem("GameObject/UI/Dropdown", false, 2035)]
+        [MenuItem("GameObject/UI/Legacy/Dropdown", false, (int)MenuOptionsPriorityOrder.Dropdown)]
         static public void AddDropdown(MenuCommand menuCommand)
         {
             GameObject go;
@@ -263,7 +282,7 @@ namespace UnityEditor.UI
             PlaceUIElementRoot(go, menuCommand);
         }
 
-        [MenuItem("GameObject/UI/Input Field", false, 2036)]
+        [MenuItem("GameObject/UI/Legacy/Input Field", false, (int)MenuOptionsPriorityOrder.InputField)]
         public static void AddInputField(MenuCommand menuCommand)
         {
             GameObject go;
@@ -274,7 +293,7 @@ namespace UnityEditor.UI
 
         // Containers
 
-        [MenuItem("GameObject/UI/Canvas", false, 2060)]
+        [MenuItem("GameObject/UI/Canvas", false, (int)MenuOptionsPriorityOrder.Canvas)]
         static public void AddCanvas(MenuCommand menuCommand)
         {
             var go = CreateNewUI();
@@ -290,7 +309,7 @@ namespace UnityEditor.UI
             Selection.activeGameObject = go;
         }
 
-        [MenuItem("GameObject/UI/Panel", false, 2061)]
+        [MenuItem("GameObject/UI/Panel", false, (int)MenuOptionsPriorityOrder.Panel)]
         static public void AddPanel(MenuCommand menuCommand)
         {
             GameObject go;
@@ -304,7 +323,7 @@ namespace UnityEditor.UI
             rect.sizeDelta = Vector2.zero;
         }
 
-        [MenuItem("GameObject/UI/Scroll View", false, 2062)]
+        [MenuItem("GameObject/UI/Scroll View", false, (int)MenuOptionsPriorityOrder.ScrollView)]
         static public void AddScrollView(MenuCommand menuCommand)
         {
             GameObject go;
@@ -344,7 +363,7 @@ namespace UnityEditor.UI
             return root;
         }
 
-        [MenuItem("GameObject/UI/Event System", false, 2100)]
+        [MenuItem("GameObject/UI/Event System", false, (int)MenuOptionsPriorityOrder.EventSystem)]
         public static void CreateEventSystem(MenuCommand menuCommand)
         {
             GameObject parent = menuCommand.context as GameObject;
@@ -410,10 +429,7 @@ namespace UnityEditor.UI
             if (EditorUtility.IsPersistent(canvas) || (canvas.hideFlags & HideFlags.HideInHierarchy) != 0)
                 return false;
 
-            if (StageUtility.GetStageHandle(canvas.gameObject) != StageUtility.GetCurrentStageHandle())
-                return false;
-
-            return true;
+            return StageUtility.GetStageHandle(canvas.gameObject) == StageUtility.GetCurrentStageHandle();
         }
     }
 }

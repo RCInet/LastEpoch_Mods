@@ -7,20 +7,27 @@ public class SliderTests
 {
     private Slider slider;
     private GameObject emptyGO;
+    private GameObject rootGO;
 
     [SetUp]
     public void Setup()
     {
-        var rootChildGO = new GameObject("root child");
-        rootChildGO.AddComponent<Canvas>();
+        rootGO = new GameObject("root child");
+        rootGO.AddComponent<Canvas>();
 
         var sliderGameObject = new GameObject("Slider");
         slider = sliderGameObject.AddComponent<Slider>();
 
         emptyGO = new GameObject("base", typeof(RectTransform));
 
-        sliderGameObject.transform.SetParent(rootChildGO.transform);
+        sliderGameObject.transform.SetParent(rootGO.transform);
         emptyGO.transform.SetParent(sliderGameObject.transform);
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        GameObject.DestroyImmediate(rootGO);
     }
 
     [Test]

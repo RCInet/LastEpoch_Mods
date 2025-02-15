@@ -41,7 +41,8 @@ namespace UnityEngine.UI
         /// </summary>
         public void Cull()
         {
-            for (var i = 0; i < m_Clippers.Count; ++i)
+            var clippersCount = m_Clippers.Count;
+            for (var i = 0; i < clippersCount; ++i)
             {
                 m_Clippers[i].PerformClipping();
             }
@@ -65,6 +66,15 @@ namespace UnityEngine.UI
         public static void Unregister(IClipper c)
         {
             instance.m_Clippers.Remove(c);
+        }
+
+        /// <summary>
+        /// Disable a IClipper element
+        /// </summary>
+        /// <param name="c">The Element to try and disable.</param>
+        public static void Disable(IClipper c)
+        {
+            instance.m_Clippers.DisableItem(c);
         }
     }
 }

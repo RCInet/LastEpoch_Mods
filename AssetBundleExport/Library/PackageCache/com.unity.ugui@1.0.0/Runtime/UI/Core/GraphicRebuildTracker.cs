@@ -37,6 +37,15 @@ namespace UnityEngine.UI
             m_Tracked.Remove(g);
         }
 
+        /// <summary>
+        /// Remove a Graphic to the list of tracked Graphics
+        /// </summary>
+        /// <param name="g">The graphic to remove from tracking.</param>
+        public static void DisableTrackGraphic(Graphic g)
+        {
+            m_Tracked.DisableItem(g);
+        }
+
         static void OnRebuildRequested()
         {
             StencilMaterial.ClearAll();

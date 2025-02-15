@@ -101,6 +101,13 @@ namespace UnityEngine.EventSystems
                 pointerData.pointerCurrentRaycast = raycast;
                 m_RaycastResultCache.Clear();
             }
+
+            pointerData.pressure = input.pressure;
+            pointerData.altitudeAngle = input.altitudeAngle;
+            pointerData.azimuthAngle = input.azimuthAngle;
+            pointerData.radius = Vector2.one * input.radius;
+            pointerData.radiusVariance = Vector2.one * input.radiusVariance;
+
             return pointerData;
         }
 
@@ -114,6 +121,14 @@ namespace UnityEngine.EventSystems
             @to.scrollDelta = @from.scrollDelta;
             @to.pointerCurrentRaycast = @from.pointerCurrentRaycast;
             @to.pointerEnter = @from.pointerEnter;
+
+            @to.pressure = @from.pressure;
+            @to.tangentialPressure = @from.tangentialPressure;
+            @to.altitudeAngle = @from.altitudeAngle;
+            @to.azimuthAngle = @from.azimuthAngle;
+            @to.twist = @from.twist;
+            @to.radius = @from.radius;
+            @to.radiusVariance = @from.radiusVariance;
         }
 
         /// <summary>
@@ -158,7 +173,8 @@ namespace UnityEngine.EventSystems
 
             public bool AnyPressesThisFrame()
             {
-                for (int i = 0; i < m_TrackedButtons.Count; i++)
+                var trackedButtonsCount = m_TrackedButtons.Count;
+                for (int i = 0; i < trackedButtonsCount; i++)
                 {
                     if (m_TrackedButtons[i].eventData.PressedThisFrame())
                         return true;
@@ -168,7 +184,8 @@ namespace UnityEngine.EventSystems
 
             public bool AnyReleasesThisFrame()
             {
-                for (int i = 0; i < m_TrackedButtons.Count; i++)
+                var trackedButtonsCount = m_TrackedButtons.Count;
+                for (int i = 0; i < trackedButtonsCount; i++)
                 {
                     if (m_TrackedButtons[i].eventData.ReleasedThisFrame())
                         return true;
@@ -179,7 +196,8 @@ namespace UnityEngine.EventSystems
             public ButtonState GetButtonState(PointerEventData.InputButton button)
             {
                 ButtonState tracked = null;
-                for (int i = 0; i < m_TrackedButtons.Count; i++)
+                var trackedButtonsCount = m_TrackedButtons.Count;
+                for (int i = 0; i < trackedButtonsCount; i++)
                 {
                     if (m_TrackedButtons[i].button == button)
                     {
@@ -282,11 +300,15 @@ namespace UnityEngine.EventSystems
             // copy the apropriate data into right and middle slots
             PointerEventData rightData;
             GetPointerData(kMouseRightId, out rightData, true);
+            rightData.Reset();
+
             CopyFromTo(leftData, rightData);
             rightData.button = PointerEventData.InputButton.Right;
 
             PointerEventData middleData;
             GetPointerData(kMouseMiddleId, out middleData, true);
+            middleData.Reset();
+
             CopyFromTo(leftData, middleData);
             middleData.button = PointerEventData.InputButton.Middle;
 

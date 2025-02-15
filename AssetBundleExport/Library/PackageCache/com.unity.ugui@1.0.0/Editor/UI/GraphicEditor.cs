@@ -18,29 +18,46 @@ namespace UnityEditor.UI
         protected SerializedProperty m_Color;
         protected SerializedProperty m_Material;
         protected SerializedProperty m_RaycastTarget;
+        protected SerializedProperty m_RaycastPadding;
         protected SerializedProperty m_Maskable;
 
         private GUIContent m_CorrectButtonContent;
         protected AnimBool m_ShowNativeSize;
 
+        GUIContent m_PaddingContent;
+        GUIContent m_LeftContent;
+        GUIContent m_RightContent;
+        GUIContent m_TopContent;
+        GUIContent m_BottomContent;
+        static private bool m_ShowPadding = false;
+
         protected virtual void OnDisable()
         {
             Tools.hidden = false;
             m_ShowNativeSize.valueChanged.RemoveListener(Repaint);
+            SceneView.duringSceneGui -= DrawAnchorsOnSceneView;
         }
 
         protected virtual void OnEnable()
         {
             m_CorrectButtonContent = EditorGUIUtility.TrTextContent("Set Native Size", "Sets the size to match the content.");
+            m_PaddingContent = EditorGUIUtility.TrTextContent("Raycast Padding");
+            m_LeftContent = EditorGUIUtility.TrTextContent("Left");
+            m_RightContent = EditorGUIUtility.TrTextContent("Right");
+            m_TopContent = EditorGUIUtility.TrTextContent("Top");
+            m_BottomContent = EditorGUIUtility.TrTextContent("Bottom");
 
             m_Script = serializedObject.FindProperty("m_Script");
             m_Color = serializedObject.FindProperty("m_Color");
             m_Material = serializedObject.FindProperty("m_Material");
             m_RaycastTarget = serializedObject.FindProperty("m_RaycastTarget");
+            m_RaycastPadding = serializedObject.FindProperty("m_RaycastPadding");
             m_Maskable = serializedObject.FindProperty("m_Maskable");
 
             m_ShowNativeSize = new AnimBool(false);
             m_ShowNativeSize.valueChanged.AddListener(Repaint);
+
+            SceneView.duringSceneGui += DrawAnchorsOnSceneView;
         }
 
         public override void OnInspectorGUI()
@@ -51,6 +68,37 @@ namespace UnityEditor.UI
             RaycastControlsGUI();
             MaskableControlsGUI();
             serializedObject.ApplyModifiedProperties();
+        }
+
+        void DrawAnchorsOnSceneView(SceneView sceneView)
+        {
+            if (!target || targets.Length > 1)
+                return;
+
+            if (!sceneView.drawGizmos || !EditorGUIUtility.IsGizmosAllowedForObject(target))
+                return;
+
+            Graphic graphic = target as Graphic;
+
+            RectTransform gui = graphic.rectTransform;
+            Transform ownSpace = gui.transform;
+            Rect rectInOwnSpace = gui.rect;
+
+            Handles.color = Handles.UIColliderHandleColor;
+            DrawRect(rectInOwnSpace, ownSpace, graphic.raycastPadding);
+        }
+
+        void DrawRect(Rect rect, Transform space, Vector4 offset)
+        {
+            Vector3 p0 = space.TransformPoint(new Vector2(rect.x + offset.x, rect.y + offset.y));
+            Vector3 p1 = space.TransformPoint(new Vector2(rect.x + offset.x, rect.yMax - offset.w));
+            Vector3 p2 = space.TransformPoint(new Vector2(rect.xMax - offset.z, rect.yMax - offset.w));
+            Vector3 p3 = space.TransformPoint(new Vector2(rect.xMax - offset.z, rect.y + offset.y));
+
+            Handles.DrawLine(p0, p1);
+            Handles.DrawLine(p1, p2);
+            Handles.DrawLine(p2, p3);
+            Handles.DrawLine(p3, p0);
         }
 
         /// <summary>
@@ -110,7 +158,58 @@ namespace UnityEditor.UI
         /// </summary>
         protected void RaycastControlsGUI()
         {
+            EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(m_RaycastTarget);
+            if (EditorGUI.EndChangeCheck() && target is Graphic graphic)
+            {
+                graphic.SetRaycastDirty();
+            }
+
+            float height = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+            if (m_ShowPadding)
+                height += (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * 4;
+
+            var rect = EditorGUILayout.GetControlRect(true, height);
+            EditorGUI.BeginProperty(rect, m_PaddingContent, m_RaycastPadding);
+            rect.height = EditorGUIUtility.singleLineHeight;
+
+            using (var check = new EditorGUI.ChangeCheckScope())
+            {
+                m_ShowPadding = EditorGUI.Foldout(rect, m_ShowPadding, m_PaddingContent, true);
+                if (check.changed)
+                {
+                    SceneView.RepaintAll();
+                }
+            }
+
+            if (m_ShowPadding)
+            {
+                using (var check = new EditorGUI.ChangeCheckScope())
+                {
+                    EditorGUI.indentLevel++;
+                    Vector4 newPadding = m_RaycastPadding.vector4Value;
+
+                    rect.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+                    newPadding.x = EditorGUI.FloatField(rect, m_LeftContent, newPadding.x);
+
+                    rect.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+                    newPadding.y = EditorGUI.FloatField(rect, m_BottomContent, newPadding.y);
+
+                    rect.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+                    newPadding.z = EditorGUI.FloatField(rect, m_RightContent, newPadding.z);
+
+                    rect.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+                    newPadding.w = EditorGUI.FloatField(rect, m_TopContent, newPadding.w);
+
+                    if (check.changed)
+                    {
+                        m_RaycastPadding.vector4Value = newPadding;
+                    }
+                    EditorGUI.indentLevel--;
+                }
+            }
+
+            EditorGUI.EndProperty();
         }
     }
 }

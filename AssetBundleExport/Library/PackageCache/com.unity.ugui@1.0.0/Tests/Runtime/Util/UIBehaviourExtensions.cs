@@ -116,6 +116,11 @@ namespace UnityEngine.UI.Tests
         {
             UIBehaviourExtensions.InvokeMethodAndRethrow<Selectable>(selectable, "TriggerAnimation", triggerName);
         }
+
+        public static void InvokeOnSelect(this Selectable selectable, string triggerName)
+        {
+            UIBehaviourExtensions.InvokeMethodAndRethrow<Selectable>(selectable, "OnSelect", triggerName);
+        }
     }
 
     public static class GraphicExtension

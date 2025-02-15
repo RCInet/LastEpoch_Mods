@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine.Pool;
 
 namespace UnityEngine.UI
 {
@@ -11,6 +12,7 @@ namespace UnityEngine.UI
     /// </remarks>
     /// <example>
     /// <code>
+    /// <![CDATA[
     /// using UnityEngine;
     /// using UnityEngine.UI;
     ///
@@ -34,16 +36,17 @@ namespace UnityEngine.UI
     ///         }
     ///     }
     /// }
-    /// </code>
+    /// ]]>
+    ///</code>
     /// </example>
     public class VertexHelper : IDisposable
     {
         private List<Vector3> m_Positions;
         private List<Color32> m_Colors;
-        private List<Vector2> m_Uv0S;
-        private List<Vector2> m_Uv1S;
-        private List<Vector2> m_Uv2S;
-        private List<Vector2> m_Uv3S;
+        private List<Vector4> m_Uv0S;
+        private List<Vector4> m_Uv1S;
+        private List<Vector4> m_Uv2S;
+        private List<Vector4> m_Uv3S;
         private List<Vector3> m_Normals;
         private List<Vector4> m_Tangents;
         private List<int> m_Indices;
@@ -62,10 +65,15 @@ namespace UnityEngine.UI
 
             m_Positions.AddRange(m.vertices);
             m_Colors.AddRange(m.colors32);
-            m_Uv0S.AddRange(m.uv);
-            m_Uv1S.AddRange(m.uv2);
-            m_Uv2S.AddRange(m.uv3);
-            m_Uv3S.AddRange(m.uv4);
+            List<Vector4> tempUVList = new List<Vector4>();
+            m.GetUVs(0, tempUVList);
+            m_Uv0S.AddRange(tempUVList);
+            m.GetUVs(1, tempUVList);
+            m_Uv1S.AddRange(tempUVList);
+            m.GetUVs(2, tempUVList);
+            m_Uv2S.AddRange(tempUVList);
+            m.GetUVs(3, tempUVList);
+            m_Uv3S.AddRange(tempUVList);
             m_Normals.AddRange(m.normals);
             m_Tangents.AddRange(m.tangents);
             m_Indices.AddRange(m.GetIndices(0));
@@ -77,10 +85,10 @@ namespace UnityEngine.UI
             {
                 m_Positions = ListPool<Vector3>.Get();
                 m_Colors = ListPool<Color32>.Get();
-                m_Uv0S = ListPool<Vector2>.Get();
-                m_Uv1S = ListPool<Vector2>.Get();
-                m_Uv2S = ListPool<Vector2>.Get();
-                m_Uv3S = ListPool<Vector2>.Get();
+                m_Uv0S = ListPool<Vector4>.Get();
+                m_Uv1S = ListPool<Vector4>.Get();
+                m_Uv2S = ListPool<Vector4>.Get();
+                m_Uv3S = ListPool<Vector4>.Get();
                 m_Normals = ListPool<Vector3>.Get();
                 m_Tangents = ListPool<Vector4>.Get();
                 m_Indices = ListPool<int>.Get();
@@ -97,10 +105,10 @@ namespace UnityEngine.UI
             {
                 ListPool<Vector3>.Release(m_Positions);
                 ListPool<Color32>.Release(m_Colors);
-                ListPool<Vector2>.Release(m_Uv0S);
-                ListPool<Vector2>.Release(m_Uv1S);
-                ListPool<Vector2>.Release(m_Uv2S);
-                ListPool<Vector2>.Release(m_Uv3S);
+                ListPool<Vector4>.Release(m_Uv0S);
+                ListPool<Vector4>.Release(m_Uv1S);
+                ListPool<Vector4>.Release(m_Uv2S);
+                ListPool<Vector4>.Release(m_Uv3S);
                 ListPool<Vector3>.Release(m_Normals);
                 ListPool<Vector4>.Release(m_Tangents);
                 ListPool<int>.Release(m_Indices);
@@ -228,7 +236,7 @@ namespace UnityEngine.UI
         /// <param name="uv3">UV3 of the vert</param>
         /// <param name="normal">Normal of the vert.</param>
         /// <param name="tangent">Tangent of the vert</param>
-        public void AddVert(Vector3 position, Color32 color, Vector2 uv0, Vector2 uv1, Vector2 uv2, Vector2 uv3, Vector3 normal, Vector4 tangent)
+        public void AddVert(Vector3 position, Color32 color, Vector4 uv0, Vector4 uv1, Vector4 uv2, Vector4 uv3, Vector3 normal, Vector4 tangent)
         {
             InitializeListIfRequired();
 
@@ -251,9 +259,9 @@ namespace UnityEngine.UI
         /// <param name="uv1">UV1 of the vert</param>
         /// <param name="normal">Normal of the vert.</param>
         /// <param name="tangent">Tangent of the vert</param>
-        public void AddVert(Vector3 position, Color32 color, Vector2 uv0, Vector2 uv1, Vector3 normal, Vector4 tangent)
+        public void AddVert(Vector3 position, Color32 color, Vector4 uv0, Vector4 uv1, Vector3 normal, Vector4 tangent)
         {
-            AddVert(position, color, uv0, uv1, Vector2.zero, Vector2.zero, normal, tangent);
+            AddVert(position, color, uv0, uv1, Vector4.zero, Vector4.zero, normal, tangent);
         }
 
         /// <summary>
@@ -262,9 +270,9 @@ namespace UnityEngine.UI
         /// <param name="position">Position of the vert</param>
         /// <param name="color">Color of the vert</param>
         /// <param name="uv0">UV of the vert</param>
-        public void AddVert(Vector3 position, Color32 color, Vector2 uv0)
+        public void AddVert(Vector3 position, Color32 color, Vector4 uv0)
         {
-            AddVert(position, color, uv0, Vector2.zero, s_DefaultNormal, s_DefaultTangent);
+            AddVert(position, color, uv0, Vector4.zero, s_DefaultNormal, s_DefaultTangent);
         }
 
         /// <summary>

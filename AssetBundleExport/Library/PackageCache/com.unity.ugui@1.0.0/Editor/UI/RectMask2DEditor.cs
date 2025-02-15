@@ -34,7 +34,7 @@ namespace UnityEditor.UI
 
         public override void OnInspectorGUI()
         {
-            m_ShowOffsets = EditorGUILayout.Foldout(m_ShowOffsets, m_PaddingContent);
+            m_ShowOffsets = EditorGUILayout.Foldout(m_ShowOffsets, m_PaddingContent, true);
 
             if (m_ShowOffsets)
                 OffsetGUI();

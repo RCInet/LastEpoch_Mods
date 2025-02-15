@@ -17,12 +17,17 @@ namespace UnityEngine.UI.Tests
         bool m_dirtyLayout;
         bool m_dirtyMaterial;
 
+        Camera m_camera;
+        GameObject m_CanvasRoot;
+
         [SetUp]
         public void TestSetup()
         {
-            var canvasRoot = new GameObject("Canvas", typeof(RectTransform), typeof(Canvas));
+            m_CanvasRoot = new GameObject("Canvas", typeof(RectTransform), typeof(Canvas));
             GameObject gameObject = new GameObject("Image", typeof(RectTransform), typeof(Image));
-            gameObject.transform.SetParent(canvasRoot.transform);
+            gameObject.transform.SetParent(m_CanvasRoot.transform);
+
+            m_camera = new GameObject("Camera", typeof(Camera)).GetComponent<Camera>();
 
             m_Image = gameObject.GetComponent<Image>();
 
@@ -57,6 +62,10 @@ namespace UnityEngine.UI.Tests
         {
             m_Image = null;
             m_Sprite = null;
+
+            GameObject.DestroyImmediate(m_CanvasRoot);
+            GameObject.DestroyImmediate(m_camera.gameObject);
+            m_camera = null;
         }
 
         private void ResetDirtyFlags()
@@ -91,7 +100,7 @@ namespace UnityEngine.UI.Tests
         public void RaycastOverImageWithoutASpriteReturnTrue()
         {
             m_Image.sprite = null;
-            bool raycast = m_Image.Raycast(new Vector2(10, 10), new Camera());
+            bool raycast = m_Image.Raycast(new Vector2(10, 10), m_camera);
             Assert.AreEqual(true, raycast);
         }
 
@@ -107,7 +116,18 @@ namespace UnityEngine.UI.Tests
         public void RaycastOverImageWithoutASpriteReturnsTrueWithCoordinatesOutsideTheBoundaries(float alphaThreshold, float x, float y)
         {
             m_Image.alphaHitTestMinimumThreshold = 1.0f - alphaThreshold;
-            bool raycast = m_Image.Raycast(new Vector2(x, y), new Camera());
+            bool raycast = m_Image.Raycast(new Vector2(x, y), m_camera);
+            Assert.IsTrue(raycast);
+        }
+
+        [Test]
+        public void RaycastOverImage_IgnoresDisabledCanvasGroup()
+        {
+            var canvasGroup = m_CanvasRoot.AddComponent<CanvasGroup>();
+            canvasGroup.blocksRaycasts = false;
+            canvasGroup.enabled = false;
+
+            bool raycast = m_Image.Raycast(new Vector2(1000, 1000), m_camera);
             Assert.IsTrue(raycast);
         }
 

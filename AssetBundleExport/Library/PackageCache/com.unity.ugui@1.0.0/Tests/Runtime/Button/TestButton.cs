@@ -7,6 +7,7 @@ class TestButton : Button
     public bool isStateHighlighted { get { return currentSelectionState == SelectionState.Highlighted; } }
     public bool isStatePressed { get { return currentSelectionState == SelectionState.Pressed; } }
     public bool isStateDisabled { get { return currentSelectionState == SelectionState.Disabled; } }
+    public bool isStateSelected { get { return currentSelectionState == SelectionState.Selected; } }
 
     private bool IsTransitionTo(int index, SelectionState selectionState)
     {

@@ -14,6 +14,7 @@ using UnityEditor;
 public class ScrollRectStableLayout : IPrebuildSetup
 {
     GameObject m_PrefabRoot;
+    GameObject m_CameraGO;
 
     const string kPrefabPath = "Assets/Resources/ScrollRectStableLayoutPrefab.prefab";
 
@@ -90,7 +91,7 @@ public class ScrollRectStableLayout : IPrebuildSetup
     public void TestSetup()
     {
         m_PrefabRoot = Object.Instantiate(Resources.Load("ScrollRectStableLayoutPrefab")) as GameObject;
-        new GameObject("Camera", typeof(Camera));
+        m_CameraGO = new GameObject("Camera", typeof(Camera));
     }
 
     [UnityTest]
@@ -114,6 +115,7 @@ public class ScrollRectStableLayout : IPrebuildSetup
     public void TearDown()
     {
         Object.DestroyImmediate(m_PrefabRoot);
+        GameObject.DestroyImmediate(m_CameraGO);
     }
 
     [OneTimeTearDown]

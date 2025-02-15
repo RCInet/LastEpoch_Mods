@@ -116,5 +116,50 @@ namespace LayoutTests
             Assert.AreEqual(1, layoutGroup.flexibleHeight);
             Assert.AreEqual(1, layoutGroup.flexibleHeight);
         }
+
+        [Test]
+        public void TestCalculateLayoutHorizontal()
+        {
+            var parentGO = m_PrefabRoot.transform.GetChild(0).GetChild(0);
+            var element1GO = parentGO.GetChild(0);
+            var element1Trans = element1GO.GetComponent<RectTransform>();
+            var element2GO = parentGO.GetChild(1);
+            var element2Trans = element2GO.GetComponent<RectTransform>();
+            var element3GO = parentGO.GetChild(2);
+            var element3Trans = element3GO.GetComponent<RectTransform>();
+
+            HorizontalLayoutGroup layoutGroup = m_PrefabRoot.GetComponentInChildren<HorizontalLayoutGroup>();
+            layoutGroup.CalculateLayoutInputHorizontal();
+            layoutGroup.SetLayoutHorizontal();
+            layoutGroup.CalculateLayoutInputVertical();
+            layoutGroup.SetLayoutVertical();
+
+            Assert.AreEqual(13.6f, element1Trans.anchoredPosition.x, 0.1f);
+            Assert.AreEqual(31.3f, element2Trans.anchoredPosition.x, 0.1f);
+            Assert.AreEqual(66.6f, element3Trans.anchoredPosition.x, 0.1f);
+        }
+
+        [Test]
+        public void TestCalculateLayoutHorizontalReversed()
+        {
+            var parentGO = m_PrefabRoot.transform.GetChild(0).GetChild(0);
+            var element1GO = parentGO.GetChild(0);
+            var element1Trans = element1GO.GetComponent<RectTransform>();
+            var element2GO = parentGO.GetChild(1);
+            var element2Trans = element2GO.GetComponent<RectTransform>();
+            var element3GO = parentGO.GetChild(2);
+            var element3Trans = element3GO.GetComponent<RectTransform>();
+
+            HorizontalLayoutGroup layoutGroup = m_PrefabRoot.GetComponentInChildren<HorizontalLayoutGroup>();
+            layoutGroup.reverseArrangement = true;
+            layoutGroup.CalculateLayoutInputHorizontal();
+            layoutGroup.SetLayoutHorizontal();
+            layoutGroup.CalculateLayoutInputVertical();
+            layoutGroup.SetLayoutVertical();
+
+            Assert.AreEqual(84.4f, element1Trans.anchoredPosition.x, 0.1f);
+            Assert.AreEqual(66.7f, element2Trans.anchoredPosition.x, 0.1f);
+            Assert.AreEqual(31.4f, element3Trans.anchoredPosition.x, 0.1f);
+        }
     }
 }

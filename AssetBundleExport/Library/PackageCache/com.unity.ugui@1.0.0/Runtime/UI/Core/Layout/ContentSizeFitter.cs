@@ -57,7 +57,10 @@ namespace UnityEngine.UI
             }
         }
 
+        // field is never assigned warning
+        #pragma warning disable 649
         private DrivenRectTransformTracker m_Tracker;
+        #pragma warning restore 649
 
         protected ContentSizeFitter()
         {}

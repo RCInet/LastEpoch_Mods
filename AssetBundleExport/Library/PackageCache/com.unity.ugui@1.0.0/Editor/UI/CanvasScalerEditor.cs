@@ -21,6 +21,7 @@ namespace UnityEditor.UI
         SerializedProperty m_DefaultSpriteDPI;
         SerializedProperty m_DynamicPixelsPerUnit;
         SerializedProperty m_ReferencePixelsPerUnit;
+        SerializedProperty m_PresetInfoIsWorld;
 
         const int kSliderEndpointLabelsHeight = 12;
 
@@ -46,6 +47,7 @@ namespace UnityEditor.UI
             }
         }
         private static Styles s_Styles;
+        private bool bIsPreset;
 
         protected virtual void OnEnable()
         {
@@ -59,6 +61,12 @@ namespace UnityEditor.UI
             m_DefaultSpriteDPI = serializedObject.FindProperty("m_DefaultSpriteDPI");
             m_DynamicPixelsPerUnit = serializedObject.FindProperty("m_DynamicPixelsPerUnit");
             m_ReferencePixelsPerUnit = serializedObject.FindProperty("m_ReferencePixelsPerUnit");
+            m_PresetInfoIsWorld = serializedObject.FindProperty("m_PresetInfoIsWorld");
+
+            if (m_SerializedObject == null || m_SerializedObject.targetObject == null)
+                bIsPreset = false;
+            else
+                bIsPreset = m_SerializedObject.targetObject is Component ? ((int)(m_SerializedObject.targetObject as Component).gameObject.hideFlags == 93) : !AssetDatabase.Contains(m_SerializedObject.targetObject);
         }
 
         public override void OnInspectorGUI()
@@ -68,29 +76,41 @@ namespace UnityEditor.UI
 
             bool allAreRoot = true;
             bool showWorldDiffers = false;
-            bool showWorld = ((target as CanvasScaler).GetComponent<Canvas>().renderMode == RenderMode.WorldSpace);
-            for (int i = 0; i < targets.Length; i++)
+            bool showWorld = false;
+
+            if (bIsPreset)
             {
-                CanvasScaler scaler = targets[i] as CanvasScaler;
-                Canvas canvas = scaler.GetComponent<Canvas>();
-                if (!canvas.isRootCanvas)
+                showWorld = m_PresetInfoIsWorld.boolValue;
+            }
+            else
+            {
+                showWorld = ((target as CanvasScaler).GetComponent<Canvas>().renderMode == RenderMode.WorldSpace);
+
+                m_PresetInfoIsWorld.boolValue = showWorld;
+                serializedObject.ApplyModifiedProperties();
+
+                for (int i = 0; i < targets.Length; i++)
                 {
-                    allAreRoot = false;
-                    break;
+                    CanvasScaler scaler = targets[i] as CanvasScaler;
+                    Canvas canvas = scaler.GetComponent<Canvas>();
+                    if (!canvas.isRootCanvas)
+                    {
+                        allAreRoot = false;
+                        break;
+                    }
+                    if (showWorld && canvas.renderMode != RenderMode.WorldSpace || !showWorld && canvas.renderMode == RenderMode.WorldSpace)
+                    {
+                        showWorldDiffers = true;
+                        break;
+                    }
                 }
-                if (showWorld && canvas.renderMode != RenderMode.WorldSpace || !showWorld && canvas.renderMode == RenderMode.WorldSpace)
+
+                if (!allAreRoot)
                 {
-                    showWorldDiffers = true;
-                    break;
+                    EditorGUILayout.HelpBox("Non-root Canvases will not be scaled.", MessageType.Warning);
+                    return;
                 }
             }
-
-            if (!allAreRoot)
-            {
-                EditorGUILayout.HelpBox("Non-root Canvases will not be scaled.", MessageType.Warning);
-                return;
-            }
-
             serializedObject.Update();
 
             EditorGUI.showMixedValue = showWorldDiffers;

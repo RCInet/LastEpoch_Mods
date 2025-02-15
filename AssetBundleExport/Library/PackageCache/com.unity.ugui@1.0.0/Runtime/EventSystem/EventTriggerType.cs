@@ -74,7 +74,7 @@ namespace UnityEngine.EventSystems
         InitializePotentialDrag = 12,
 
         /// <summary>
-        /// Intercepts IBeginDragHandler.OnBeginDrag.</
+        /// Intercepts IBeginDragHandler.OnBeginDrag.
         /// </summary>
         BeginDrag = 13,
 

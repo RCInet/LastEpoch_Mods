@@ -213,11 +213,12 @@ namespace UnityEngine.UI
             // However, in this case we set both the horizontal and vertical position when invoked for the vertical axis.
             // Since we only set the horizontal position and not the size, it shouldn't affect children's layout,
             // and thus shouldn't break the rule that all horizontal layout must be calculated before all vertical layout.
-
+            var rectChildrenCount = rectChildren.Count;
             if (axis == 0)
             {
                 // Only set the sizes when invoked for horizontal axis, not the positions.
-                for (int i = 0; i < rectChildren.Count; i++)
+
+                for (int i = 0; i < rectChildrenCount; i++)
                 {
                     RectTransform rect = rectChildren[i];
 
@@ -242,15 +243,15 @@ namespace UnityEngine.UI
             {
                 cellCountX = m_ConstraintCount;
 
-                if (rectChildren.Count > cellCountX)
-                    cellCountY = rectChildren.Count / cellCountX + (rectChildren.Count % cellCountX > 0 ? 1 : 0);
+                if (rectChildrenCount > cellCountX)
+                    cellCountY = rectChildrenCount / cellCountX + (rectChildrenCount % cellCountX > 0 ? 1 : 0);
             }
             else if (m_Constraint == Constraint.FixedRowCount)
             {
                 cellCountY = m_ConstraintCount;
 
-                if (rectChildren.Count > cellCountY)
-                    cellCountX = rectChildren.Count / cellCountY + (rectChildren.Count % cellCountY > 0 ? 1 : 0);
+                if (rectChildrenCount > cellCountY)
+                    cellCountX = rectChildrenCount / cellCountY + (rectChildrenCount % cellCountY > 0 ? 1 : 0);
             }
             else
             {
@@ -272,14 +273,14 @@ namespace UnityEngine.UI
             if (startAxis == Axis.Horizontal)
             {
                 cellsPerMainAxis = cellCountX;
-                actualCellCountX = Mathf.Clamp(cellCountX, 1, rectChildren.Count);
-                actualCellCountY = Mathf.Clamp(cellCountY, 1, Mathf.CeilToInt(rectChildren.Count / (float)cellsPerMainAxis));
+                actualCellCountX = Mathf.Clamp(cellCountX, 1, rectChildrenCount);
+                actualCellCountY = Mathf.Clamp(cellCountY, 1, Mathf.CeilToInt(rectChildrenCount / (float)cellsPerMainAxis));
             }
             else
             {
                 cellsPerMainAxis = cellCountY;
-                actualCellCountY = Mathf.Clamp(cellCountY, 1, rectChildren.Count);
-                actualCellCountX = Mathf.Clamp(cellCountX, 1, Mathf.CeilToInt(rectChildren.Count / (float)cellsPerMainAxis));
+                actualCellCountY = Mathf.Clamp(cellCountY, 1, rectChildrenCount);
+                actualCellCountX = Mathf.Clamp(cellCountX, 1, Mathf.CeilToInt(rectChildrenCount / (float)cellsPerMainAxis));
             }
 
             Vector2 requiredSpace = new Vector2(
@@ -291,7 +292,7 @@ namespace UnityEngine.UI
                 GetStartOffset(1, requiredSpace.y)
             );
 
-            for (int i = 0; i < rectChildren.Count; i++)
+            for (int i = 0; i < rectChildrenCount; i++)
             {
                 int positionX;
                 int positionY;

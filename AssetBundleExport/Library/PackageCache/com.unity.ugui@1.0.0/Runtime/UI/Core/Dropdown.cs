@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.Pool;
 using UnityEngine.UI.CoroutineTween;
 
 namespace UnityEngine.UI
 {
-    [AddComponentMenu("UI/Dropdown", 35)]
+    [AddComponentMenu("UI/Legacy/Dropdown", 102)]
     [RequireComponent(typeof(RectTransform))]
     /// <summary>
     ///   A standard dropdown that presents a list of options when clicked, of which one can be chosen.
@@ -190,6 +191,7 @@ namespace UnityEngine.UI
         /// </remarks>
         /// /// <example>
         /// <code>
+        /// <![CDATA[
         /// //Create a new Dropdown GameObject by going to the Hierarchy and clicking __Create__>__UI__>__Dropdown__. Attach this script to the Dropdown GameObject.
         ///
         /// using UnityEngine;
@@ -269,7 +271,8 @@ namespace UnityEngine.UI
         ///         }
         ///     }
         /// }
-        /// </code>
+        /// ]]>
+        ///</code>
         /// </example>
         public List<OptionData> options
         {
@@ -290,7 +293,8 @@ namespace UnityEngine.UI
         /// Use this to detect when a user selects one or more options in the Dropdown. Add a listener to perform an action when this UnityEvent detects a selection by the user. See https://unity3d.com/learn/tutorials/topics/scripting/delegates for more information on delegates.
         /// </remarks>
         /// <example>
-        ///  <code>
+        /// <code>
+        /// <![CDATA[
         /// //Create a new Dropdown GameObject by going to the Hierarchy and clicking Create>UI>Dropdown. Attach this script to the Dropdown GameObject.
         /// //Set your own Text in the Inspector window
         ///
@@ -321,7 +325,8 @@ namespace UnityEngine.UI
         ///         m_Text.text =  "New Value : " + change.value;
         ///     }
         /// }
-        /// </code>
+        /// ]]>
+        ///</code>
         /// </example>
         public DropdownEvent onValueChanged { get { return m_OnValueChanged; } set { m_OnValueChanged = value; } }
 
@@ -347,6 +352,7 @@ namespace UnityEngine.UI
         /// </summary>
         /// <example>
         /// <code>
+        /// <![CDATA[
         /// //Create a new Dropdown GameObject by going to the Hierarchy and clicking __Create__>__UI__>__Dropdown__. Attach this script to the Dropdown GameObject.
         /// //Set your own Text in the Inspector window
         ///
@@ -382,7 +388,8 @@ namespace UnityEngine.UI
         ///         m_Text.text = m_Message;
         ///     }
         /// }
-        /// </code>
+        /// ]]>
+        ///</code>
         /// </example>
         public int value
         {
@@ -429,9 +436,6 @@ namespace UnityEngine.UI
             if (!Application.isPlaying)
                 return;
             #endif
-
-            m_AlphaTweenRunner = new TweenRunner<FloatTween>();
-            m_AlphaTweenRunner.Init(this);
 
             if (m_CaptionImage)
                 m_CaptionImage.enabled = (m_CaptionImage.sprite != null);
@@ -508,8 +512,10 @@ namespace UnityEngine.UI
         /// Add multiple options to the options of the Dropdown based on a list of OptionData objects.
         /// </summary>
         /// <param name="options">The list of OptionData to add.</param>
-        /// /// <remarks>
+        /// <remarks>
+        /// <![CDATA[
         /// See AddOptions(List<string> options) for code example of usages.
+        /// ]]>
         /// </remarks>
         public void AddOptions(List<OptionData> options)
         {
@@ -526,6 +532,7 @@ namespace UnityEngine.UI
         /// <param name="options">The list of text strings to add.</param>
         /// <example>
         /// <code>
+        /// <![CDATA[
         /// //Create a new Dropdown GameObject by going to the Hierarchy and clicking Create>UI>Dropdown. Attach this script to the Dropdown GameObject.
         ///
         /// using System.Collections.Generic;
@@ -549,11 +556,13 @@ namespace UnityEngine.UI
         ///         m_Dropdown.AddOptions(m_DropOptions);
         ///     }
         /// }
-        /// </code>
+        /// ]]>
+        ///</code>
         /// </example>
         public void AddOptions(List<string> options)
         {
-            for (int i = 0; i < options.Count; i++)
+            var optionsCount = options.Count;
+            for (int i = 0; i < optionsCount; i++)
                 this.options.Add(new OptionData(options[i]));
             RefreshShownValue();
         }
@@ -563,11 +572,14 @@ namespace UnityEngine.UI
         /// </summary>
         /// <param name="options">The list of Sprites to add.</param>
         /// <remarks>
+        /// <![CDATA[
         /// See AddOptions(List<string> options) for code example of usages.
+        /// ]]>
         /// </remarks>
         public void AddOptions(List<Sprite> options)
         {
-            for (int i = 0; i < options.Count; i++)
+            var optionsCount = options.Count;
+            for (int i = 0; i < optionsCount; i++)
                 this.options.Add(new OptionData(options[i]));
             RefreshShownValue();
         }
@@ -643,8 +655,7 @@ namespace UnityEngine.UI
             }
 
             // checks if a Canvas already exists before overriding it. (case 958281 - [UI] Child Canvas' Sorting Layer is changed to the same value as the parent)
-            Canvas discardableCanvas;
-            if (!templateGo.TryGetComponent<Canvas>(out discardableCanvas))
+            if (!templateGo.TryGetComponent<Canvas>(out _))
             {
                 Canvas popupCanvas = templateGo.AddComponent<Canvas>();
                 popupCanvas.overrideSorting = true;
@@ -737,10 +748,11 @@ namespace UnityEngine.UI
                 return;
 
             // case 1064466 rootCanvas should be last element returned by GetComponentsInParent()
-            Canvas rootCanvas = list[list.Count - 1];
-            for (int i = 0; i < list.Count; i++)
+            var listCount = list.Count;
+            Canvas rootCanvas = list[listCount - 1];
+            for (int i = 0; i < listCount; i++)
             {
-                if (list[i].isRootCanvas)
+                if (list[i].isRootCanvas || list[i].overrideSorting)
                 {
                     rootCanvas = list[i];
                     break;
@@ -789,7 +801,8 @@ namespace UnityEngine.UI
             m_Items.Clear();
 
             Toggle prev = null;
-            for (int i = 0; i < options.Count; ++i)
+            var optionsCount = options.Count;
+            for (int i = 0; i < optionsCount; ++i)
             {
                 OptionData data = options[i];
                 DropdownItem item = AddItem(data, value == i, itemTemplate, m_Items);
@@ -857,12 +870,13 @@ namespace UnityEngine.UI
                     RectTransformUtility.FlipLayoutOnAxis(dropdownRectTransform, axis, false, false);
             }
 
-            for (int i = 0; i < m_Items.Count; i++)
+            var itemsCount = m_Items.Count;
+            for (int i = 0; i < itemsCount; i++)
             {
                 RectTransform itemRect = m_Items[i].rectTransform;
                 itemRect.anchorMin = new Vector2(itemRect.anchorMin.x, 0);
                 itemRect.anchorMax = new Vector2(itemRect.anchorMax.x, 0);
-                itemRect.anchoredPosition = new Vector2(itemRect.anchoredPosition.x, offsetMin.y + itemSize.y * (m_Items.Count - 1 - i) + itemSize.y * itemRect.pivot.y);
+                itemRect.anchoredPosition = new Vector2(itemRect.anchoredPosition.x, offsetMin.y + itemSize.y * (itemsCount - 1 - i) + itemSize.y * itemRect.pivot.y);
                 itemRect.sizeDelta = new Vector2(itemRect.sizeDelta.x, itemSize.y);
             }
 
@@ -942,6 +956,10 @@ namespace UnityEngine.UI
             // Add button since it's needed to block, and to close the dropdown when blocking area is clicked.
             Button blockerButton = blocker.AddComponent<Button>();
             blockerButton.onClick.AddListener(Hide);
+
+            //add canvas group to ensure clicking outside the dropdown will hide it (UUM-33691)
+            CanvasGroup blockerCanvasGroup = blocker.AddComponent<CanvasGroup>();
+            blockerCanvasGroup.ignoreParentGroups = true;
 
             return blocker;
         }
@@ -1088,7 +1106,8 @@ namespace UnityEngine.UI
 
         private void ImmediateDestroyDropdownList()
         {
-            for (int i = 0; i < m_Items.Count; i++)
+            var itemsCount = m_Items.Count;
+            for (int i = 0; i < itemsCount; i++)
             {
                 if (m_Items[i] != null)
                     DestroyItem(m_Items[i]);

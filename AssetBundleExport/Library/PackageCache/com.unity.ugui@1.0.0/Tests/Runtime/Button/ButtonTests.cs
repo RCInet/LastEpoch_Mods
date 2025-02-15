@@ -53,8 +53,6 @@ public class ButtonTests : IPrebuildSetup
 #endif
     }
 
-    #region Press
-
     [Test]
     public void PressShouldCallClickHandler()
     {
@@ -87,9 +85,19 @@ public class ButtonTests : IPrebuildSetup
         Assert.False(called);
     }
 
-    #endregion
-
-    #region Submit
+    [Test]
+    public void SelectShouldHoldThePreviousStateAfterDisablingAndEnabling()
+    {
+        TestButton button = m_PrefabRoot.GetComponentInChildren<TestButton>();
+        button.onClick.AddListener(() => {
+            button.Select();
+            button.enabled = false;
+        });
+        button.OnPointerClick(new PointerEventData(m_PrefabRoot.GetComponentInChildren<EventSystem>()) { button = PointerEventData.InputButton.Left });
+        Assert.False(button.enabled, "Expected button to not be enabled");
+        button.enabled = true;
+        Assert.True(button.isStateSelected, "Expected selected state to be true");
+    }
 
     [Test]
     public void SubmitShouldCallClickHandler()
@@ -123,10 +131,6 @@ public class ButtonTests : IPrebuildSetup
         Assert.False(called);
     }
 
-    #endregion
-
-    #region Submit Transition
-
     [UnityTest]
     public IEnumerator SubmitShouldTransitionToPressedStateAndBackToNormal()
     {
@@ -144,6 +148,4 @@ public class ButtonTests : IPrebuildSetup
 
         Assert.True(button.isStateNormal);
     }
-
-    #endregion
 }
