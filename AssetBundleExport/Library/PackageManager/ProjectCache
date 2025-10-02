@@ -1,248 +1,119 @@
 m_ProjectFiles:
   m_ManifestFileStatus:
-    m_FilePath: C:/Code/Github/LastEpoch_Mods/AssetBundleExport/Packages/manifest.json
+    m_FilePath: C:/Users/13700k/code/LastEpoch_Mods/AssetBundleExport/Packages/manifest.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638869171906209120
-    m_Hash: 2695456548
+      ticks: 638950370852915182
+    m_Hash: 3722052622
   m_LockFileStatus:
-    m_FilePath: C:/Code/Github/LastEpoch_Mods/AssetBundleExport/Packages/packages-lock.json
+    m_FilePath: C:/Users/13700k/code/LastEpoch_Mods/AssetBundleExport/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638869171906269607
-    m_Hash: 544042157
+      ticks: 638950370852986406
+    m_Hash: 3502271580
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_LocalPackages:
   m_LocalFileStatus: []
-m_ProjectPath: C:/Code/Github/LastEpoch_Mods/AssetBundleExport/Packages
+m_ProjectPath: C:/Users/13700k/code/LastEpoch_Mods/AssetBundleExport/Packages
 m_EditorVersion: 6000.0.42f1 (feb9a7235030)
 m_ResolvedPackages:
-- packageId: com.unity.addressables@2.3.16
+- packageId: com.unity.asset-manager-for-unity@1.7.0
   testable: 0
   isDirectDependency: 1
-  version: 2.3.16
+  version: 1.7.0
   source: 1
-  resolvedPath: C:\Code\Github\LastEpoch_Mods\AssetBundleExport\Library\PackageCache\com.unity.addressables@1d7f6a740e58
-  assetPath: Packages/com.unity.addressables
-  name: com.unity.addressables
-  displayName: Addressables
+  resolvedPath: C:\Users\13700k\code\LastEpoch_Mods\AssetBundleExport\Library\PackageCache\com.unity.asset-manager-for-unity@a7a57dade898
+  assetPath: Packages/com.unity.asset-manager-for-unity
+  name: com.unity.asset-manager-for-unity
+  displayName: Asset Manager
   author:
     name: 
     email: 
     url: 
   category: 
   type: 
-  description: 'The Addressable Asset System allows the developer to ask for an asset
-    via its address. Once an asset (e.g. a prefab) is marked "addressable", it generates
-    an address which can be called from anywhere. Wherever the asset resides (local
-    or remote), the system will locate it and its dependencies, then return it.
-
-
-    Use
-    ''Window->Asset Management->Addressables'' to begin working with the system.
-
-
-    Addressables
-    use asynchronous loading to support loading from any location with any collection
-    of dependencies. Whether you have been using direct references, traditional asset
-    bundles, or Resource folders, addressables provide a simpler way to make your
-    game more dynamic. Addressables simultaneously opens up the world of asset bundles
-    while managing all the complexity.
-
-
-    For usage samples, see github.com/Unity-Technologies/Addressables-Sample'
+  description: Asset Manager for Unity is an In-Editor tool that allows you to easily
+    browse, upload and import assets between the Unity Editor and Unity Cloud.
   errors: []
   versions:
     all:
-    - 0.0.8-preview
-    - 0.0.12-preview
-    - 0.0.15-preview
-    - 0.0.16-preview
-    - 0.0.18-preview
-    - 0.0.22-preview
-    - 0.0.26-preview
-    - 0.0.27-preview
-    - 0.1.2-preview
-    - 0.2.1-preview
-    - 0.2.2-preview
-    - 0.3.5-preview
-    - 0.4.6-preview
-    - 0.4.8-preview
-    - 0.5.2-preview
-    - 0.5.3-preview
-    - 0.6.6-preview
-    - 0.6.7-preview
-    - 0.6.8-preview
-    - 0.7.4-preview
-    - 0.7.5-preview
-    - 0.8.4-preview
-    - 0.8.6-preview
-    - 1.1.3-preview
-    - 1.1.4-preview
-    - 1.1.5
-    - 1.1.7
-    - 1.1.9
-    - 1.1.10
+    - 0.1.1
+    - 0.2.0
+    - 0.3.0
+    - 0.4.0
+    - 0.4.2
+    - 0.4.3
+    - 0.4.4
+    - 0.5.0
+    - 0.5.1
+    - 0.5.2
+    - 0.6.0
+    - 0.7.0
+    - 0.7.1
+    - 0.7.2
+    - 0.8.0
+    - 0.9.0
+    - 1.0.0-exp.1
+    - 1.0.0-exp.2
+    - 1.0.0-exp.3
+    - 1.0.0-exp.5
+    - 1.0.0-pre.1
+    - 1.0.0
+    - 1.1.0
+    - 1.2.1
     - 1.2.2
     - 1.2.3
     - 1.2.4
-    - 1.3.3
-    - 1.3.8
+    - 1.3.0
     - 1.4.0
     - 1.5.0
     - 1.5.1
     - 1.6.0
-    - 1.6.2
-    - 1.7.4
-    - 1.7.5
-    - 1.8.3
-    - 1.8.4
-    - 1.8.5
-    - 1.9.2
-    - 1.10.0
-    - 1.11.2
-    - 1.12.0
-    - 1.13.1
-    - 1.14.2
-    - 1.15.1
-    - 1.16.1
-    - 1.16.6
-    - 1.16.7
-    - 1.16.8
-    - 1.16.10
-    - 1.16.12
-    - 1.16.13
-    - 1.16.15
-    - 1.16.16
-    - 1.16.19
-    - 1.17.0-preview
-    - 1.17.2-preview
-    - 1.17.4-preview
-    - 1.17.5-preview
-    - 1.17.6-preview
-    - 1.17.13
-    - 1.17.15
-    - 1.17.17
-    - 1.18.2
-    - 1.18.4
-    - 1.18.9
-    - 1.18.11
-    - 1.18.13
-    - 1.18.15
-    - 1.18.16
-    - 1.18.19
-    - 1.19.4
-    - 1.19.6
-    - 1.19.9
-    - 1.19.11
-    - 1.19.13
-    - 1.19.14
-    - 1.19.15
-    - 1.19.17
-    - 1.19.18
-    - 1.19.19
-    - 1.20.0
-    - 1.20.3
-    - 1.20.5
-    - 1.21.1
-    - 1.21.2
-    - 1.21.3
-    - 1.21.8
-    - 1.21.9
-    - 1.21.10
-    - 1.21.12
-    - 1.21.14
-    - 1.21.15
-    - 1.21.17
-    - 1.21.18
-    - 1.21.19
-    - 1.21.20
-    - 1.21.21
-    - 1.22.2
-    - 1.22.3
-    - 1.23.1
-    - 1.24.0
-    - 1.25.0
-    - 1.25.1
-    - 2.0.3
-    - 2.0.4
-    - 2.0.6
-    - 2.0.8
-    - 2.1.0
-    - 2.2.2
-    - 2.3.0
-    - 2.3.1
-    - 2.3.7
-    - 2.3.16
-    - 2.4.1
-    - 2.4.2
-    - 2.4.3
-    - 2.4.4
-    - 2.4.5
-    - 2.4.6
-    - 2.5.0
-    - 2.6.0
+    - 1.7.0
     compatible:
-    - 2.3.16
-    - 2.4.1
-    - 2.4.2
-    - 2.4.3
-    - 2.4.4
-    - 2.4.5
-    - 2.4.6
-    - 2.5.0
-    - 2.6.0
-    recommended: 2.3.16
+    - 1.2.1
+    - 1.2.2
+    - 1.2.3
+    - 1.2.4
+    - 1.3.0
+    - 1.4.0
+    - 1.5.0
+    - 1.5.1
+    - 1.6.0
+    - 1.7.0
+    recommended: 1.7.0
     deprecated: []
   dependencies:
-  - name: com.unity.profiling.core
-    version: 1.0.2
-  - name: com.unity.test-framework
-    version: 1.4.5
-  - name: com.unity.modules.assetbundle
-    version: 1.0.0
-  - name: com.unity.modules.jsonserialize
-    version: 1.0.0
-  - name: com.unity.modules.imageconversion
-    version: 1.0.0
-  - name: com.unity.modules.unitywebrequest
-    version: 1.0.0
-  - name: com.unity.scriptablebuildpipeline
-    version: 2.2.11
-  - name: com.unity.modules.unitywebrequestassetbundle
-    version: 1.0.0
-  resolvedDependencies:
-  - name: com.unity.profiling.core
-    version: 1.0.2
-  - name: com.unity.test-framework
-    version: 1.4.6
-  - name: com.unity.ext.nunit
-    version: 2.0.5
   - name: com.unity.modules.imgui
     version: 1.0.0
-  - name: com.unity.modules.jsonserialize
-    version: 1.0.0
-  - name: com.unity.modules.assetbundle
-    version: 1.0.0
-  - name: com.unity.modules.imageconversion
-    version: 1.0.0
+  - name: com.unity.settings-manager
+    version: 2.0.1
+  - name: com.unity.nuget.newtonsoft-json
+    version: 3.2.1
   - name: com.unity.modules.unitywebrequest
     version: 1.0.0
-  - name: com.unity.scriptablebuildpipeline
-    version: 2.2.11
-  - name: com.unity.modules.unitywebrequestassetbundle
+  resolvedDependencies:
+  - name: com.unity.modules.imgui
+    version: 1.0.0
+  - name: com.unity.settings-manager
+    version: 2.0.1
+  - name: com.unity.nuget.newtonsoft-json
+    version: 3.2.1
+  - name: com.unity.modules.unitywebrequest
     version: 1.0.0
   keywords:
   - asset
-  - resources
-  - bundle
-  - bundles
-  - assetbundles
+  - packages
+  - preview
+  - management
+  - versioning
+  - pipeline
+  - library
   registry:
     id: main
     name: 
@@ -255,18 +126,18 @@ m_ResolvedPackages:
   entitlements:
     licensingModel: 1
   isAssetStorePackage: 0
-  datePublishedTicks: 638737711408620000
-  documentationUrl: https://docs.unity3d.com/Packages/com.unity.addressables@2.3/manual/index.html
+  datePublishedTicks: 638926836066110000
+  documentationUrl: https://docs.unity3d.com/Packages/com.unity.asset-manager-for-unity@1.7/manual/index.html
   hasRepository: 1
   repository:
     type: git
-    url: https://github.cds.internal.unity3d.com/unity/Addressables.git
-    revision: b9c1ade8ed188d968af457b5e3797b1ef4ca0cc4
+    url: https://github.cds.internal.unity3d.com/unity/com.unity.asset-manager-for-unity.git
+    revision: 5e97f678970544b5d25637288be26cc8a405a85d
     path: 
   unityLifecycle:
-    version: 2.3.16
+    version: 1.2.1
     nextVersion: 
-    recommendedVersion: 
+    recommendedVersion: 1.7.0
     isDeprecated: 0
     deprecationMessage: 
   isDeprecated: 0
@@ -274,143 +145,25 @@ m_ResolvedPackages:
   git:
     hash: 
     revision: 
-  upmReserved: '{"changelog":"- Fixed compile error due to using restricted namespaces\n-
-    Moved AddressableAssetEntryTreeViewState into the UnityEditor.AddressableAssets
-    namespace to fix compile errors in user code."}'
+  upmReserved: '{"changelog":"[Added]\n- Added debugging logs in the import process.
+    Can be enabled using the \"Enable debug logs\" in the Preferences.\n- Add the
+    ability to retrieve programmatically the Unity GUIDs associated to an imported
+    asset via the new `AssetManagerClient.GetImportedAssetGUIDs` method.\n- Added
+    a new organization selector in the Asset Manager window.\n\n[Fixed]\n- Fix error
+    when uploading assets with circular dependencies."}'
   assetStore:
     productId: 
-  fingerprint: 1d7f6a740e5827c3a66943394e723c0110989ea9
+  fingerprint: a7a57dade89883c2680042c4f84e47f23f35a887
   editorCompatibility:
     compatibilityLevel: 0
-    minimumPackageVersion: 2.3.16
-    minimumUnityVersion: 2023.1.0a1
-- packageId: com.unity.ai.navigation@2.0.6
-  testable: 0
-  isDirectDependency: 1
-  version: 2.0.6
-  source: 1
-  resolvedPath: C:\Code\Github\LastEpoch_Mods\AssetBundleExport\Library\PackageCache\com.unity.ai.navigation@c74b2724ed42
-  assetPath: Packages/com.unity.ai.navigation
-  name: com.unity.ai.navigation
-  displayName: AI Navigation
-  author:
-    name: 
-    email: 
-    url: 
-  category: 
-  type: 
-  description: The AI Navigation package contains high-level components that allow
-    you to use navmeshes to incorporate navigation and pathfinding in your game.
-    With this package installed you can build and use navmeshes at runtime and at
-    edit time, create dynamic obstacles, and use links to allow specific actions
-    (like jumping) as your characters navigate between navmeshes.
-  errors: []
-  versions:
-    all:
-    - 1.0.0-exp.2
-    - 1.0.0-exp.3
-    - 1.0.0-exp.4
-    - 1.1.0-pre.1
-    - 1.1.0-pre.2
-    - 1.1.1
-    - 1.1.3
-    - 1.1.4
-    - 1.1.5
-    - 1.1.6
-    - 2.0.0-pre.3
-    - 2.0.0-pre.4
-    - 2.0.0
-    - 2.0.3
-    - 2.0.4
-    - 2.0.5
-    - 2.0.6
-    - 2.0.7
-    - 2.0.8
-    compatible:
-    - 2.0.6
-    - 2.0.7
-    - 2.0.8
-    recommended: 2.0.8
-    deprecated: []
-  dependencies:
-  - name: com.unity.modules.ai
-    version: 1.0.0
-  resolvedDependencies:
-  - name: com.unity.modules.ai
-    version: 1.0.0
-  keywords:
-  - carving
-  - mesh
-  - navigation
-  - navmesh
-  - NavMesh
-  - navmesh agent
-  - navmesh link
-  - navmeshlink
-  - navmesh modifier
-  - navmeshmodifier
-  - navmesh modifier volume
-  - navmeshmodifiervolume
-  - navmesh obstacle
-  - navmesh surface
-  - navmeshsurface
-  - offmesh link
-  - off-mesh link
-  - pathfinding
-  registry:
-    id: main
-    name: 
-    url: https://packages.unity.com
-    scopes: []
-    isDefault: 1
-    capabilities: 7
-    configSource: 0
-  hideInEditor: 1
-  entitlements:
-    licensingModel: 1
-  isAssetStorePackage: 0
-  datePublishedTicks: 638744428199200000
-  documentationUrl: https://docs.unity3d.com/Packages/com.unity.ai.navigation@2.0/manual/index.html
-  hasRepository: 1
-  repository:
-    type: git
-    url: https://github.cds.internal.unity3d.com/unity/com.unity.ai.navigation.git
-    revision: 40d59de7f59b90e8da1a6176e78784a85f3e7f80
-    path: 
-  unityLifecycle:
-    version: 2.0.6
-    nextVersion: 
-    recommendedVersion: 
-    isDeprecated: 0
-    deprecationMessage: 
-  isDeprecated: 0
-  deprecationMessage: 
-  git:
-    hash: 
-    revision: 
-  upmReserved: '{"changelog":"### Added\n* New **OffMesh Link Converter** tool in
-    the **Window** > **AI** > **Navigation Updater** window to help you automatically
-    replace **OffMesh Links** with **NavMesh Links** in the scenes and prefabs of
-    your project.\n\n### Fixed\n* Fixed a regression that caused controls in the
-    navigation scene view overlay popup to display on top of one another when foldouts
-    were open. (Requires Unity 6000.0.22f1 or newer)\n* The AI Navigation overlay
-    was rarely needed upon the initial installation of the package. Now it is hidden
-    by default and you can enable it through the [Overlay Menu](https://docs.unity3d.com/Manual/display-and-hide-overlay.html).\n*
-    Fixed a regression that caused the Editor to allocate unnecessary memory on some
-    platforms, when the project contained package test files."}'
-  assetStore:
-    productId: 
-  fingerprint: c74b2724ed42c1aa0380e294156d7f54a7ae2ec6
-  editorCompatibility:
-    compatibilityLevel: 0
-    minimumPackageVersion: 2.0.6
-    minimumUnityVersion: 2023.2.0a18
+    minimumPackageVersion: 1.2.1
+    minimumUnityVersion: 2022.3.0a1
 - packageId: com.unity.assetbundlebrowser@https://github.com/Unity-Technologies/AssetBundles-Browser.git
   testable: 0
   isDirectDependency: 1
   version: 1.7.0
   source: 5
-  resolvedPath: C:\Code\Github\LastEpoch_Mods\AssetBundleExport\Library\PackageCache\com.unity.assetbundlebrowser@ad2a81ec3068
+  resolvedPath: C:\Users\13700k\code\LastEpoch_Mods\AssetBundleExport\Library\PackageCache\com.unity.assetbundlebrowser@ad2a81ec3068
   assetPath: Packages/com.unity.assetbundlebrowser
   name: com.unity.assetbundlebrowser
   displayName: Asset Bundle Browser
@@ -497,430 +250,12 @@ m_ResolvedPackages:
     compatibilityLevel: 0
     minimumPackageVersion: 1.1.4
     minimumUnityVersion: 2018.1.0a1
-- packageId: com.unity.collab-proxy@2.7.1
-  testable: 0
-  isDirectDependency: 1
-  version: 2.7.1
-  source: 1
-  resolvedPath: C:\Code\Github\LastEpoch_Mods\AssetBundleExport\Library\PackageCache\com.unity.collab-proxy@50ac96531b63
-  assetPath: Packages/com.unity.collab-proxy
-  name: com.unity.collab-proxy
-  displayName: Version Control
-  author:
-    name: 
-    email: 
-    url: 
-  category: Editor
-  type: 
-  description: The package gives you the ability to use Unity Version Control in
-    the Unity editor. To use Unity Version Control, a subscription is required. Learn
-    more about how you can get started for free by visiting https://unity.com/solutions/version-control
-  errors: []
-  versions:
-    all:
-    - 1.2.3-preview
-    - 1.2.4-preview
-    - 1.2.6
-    - 1.2.7
-    - 1.2.9
-    - 1.2.11
-    - 1.2.15
-    - 1.2.16
-    - 1.2.17-preview.3
-    - 1.3.2
-    - 1.3.3
-    - 1.3.4
-    - 1.3.5
-    - 1.3.6
-    - 1.3.7
-    - 1.3.8
-    - 1.3.9
-    - 1.4.9
-    - 1.5.7
-    - 1.6.0
-    - 1.7.1
-    - 1.8.0
-    - 1.9.0
-    - 1.10.2
-    - 1.11.2
-    - 1.12.5
-    - 1.13.5
-    - 1.14.1
-    - 1.14.4
-    - 1.14.7
-    - 1.14.9
-    - 1.14.12
-    - 1.14.13
-    - 1.14.15
-    - 1.14.16
-    - 1.14.17
-    - 1.14.18
-    - 1.15.1
-    - 1.15.4
-    - 1.15.7
-    - 1.15.9
-    - 1.15.12
-    - 1.15.13
-    - 1.15.15
-    - 1.15.16
-    - 1.15.17
-    - 1.15.18
-    - 1.17.0
-    - 1.17.1
-    - 1.17.2
-    - 1.17.6
-    - 1.17.7
-    - 2.0.0-preview.6
-    - 2.0.0-preview.8
-    - 2.0.0-preview.15
-    - 2.0.0-preview.17
-    - 2.0.0-preview.20
-    - 2.0.0-preview.21
-    - 2.0.0-preview.22
-    - 2.0.0
-    - 2.0.1
-    - 2.0.3
-    - 2.0.4
-    - 2.0.5
-    - 2.0.7
-    - 2.1.0-preview.3
-    - 2.1.0-preview.5
-    - 2.1.0-preview.6
-    - 2.1.0
-    - 2.2.0
-    - 2.3.1
-    - 2.4.3
-    - 2.4.4
-    - 2.5.1
-    - 2.5.2
-    - 2.6.0
-    - 2.7.1
-    - 2.8.1
-    - 2.8.2
-    compatible:
-    - 2.7.1
-    - 2.8.1
-    - 2.8.2
-    recommended: 2.7.1
-    deprecated: []
-  dependencies: []
-  resolvedDependencies: []
-  keywords:
-  - backup
-  - cloud
-  - collab
-  - collaborate
-  - collaboration
-  - control
-  - devops
-  - plastic
-  - plasticscm
-  - source
-  - team
-  - teams
-  - version
-  - vcs
-  - uvcs
-  registry:
-    id: main
-    name: 
-    url: https://packages.unity.com
-    scopes: []
-    isDefault: 1
-    capabilities: 7
-    configSource: 0
-  hideInEditor: 1
-  entitlements:
-    licensingModel: 1
-  isAssetStorePackage: 0
-  datePublishedTicks: 638751271186710000
-  documentationUrl: https://docs.unity3d.com/Packages/com.unity.collab-proxy@2.7/manual/index.html
-  hasRepository: 1
-  repository:
-    type: git
-    url: https://github.cds.internal.unity3d.com/unity/com.unity.cloud.collaborate.git
-    revision: cf9c21f84be18cbe2d6a93ec7cfbeb01b4310bbe
-    path: 
-  unityLifecycle:
-    version: 2.7.1
-    nextVersion: 
-    recommendedVersion: 
-    isDeprecated: 0
-    deprecationMessage: 
-  isDeprecated: 0
-  deprecationMessage: 
-  git:
-    hash: 
-    revision: 
-  upmReserved: "{\"changelog\":\"### Added\\n\\n- You can now Shelve your selected
-    Pending Changes, inspect the shelves content, and apply them to your workspace.\\n-
-    You can now Shelve your Pending Changes when switching to another branch (or
-    changeset) and decide if you want to apply them automatically after the switch.\\n-
-    You can now create a code review from the list of branches (or changesets) opening
-    either the Desktop App or the Unity Cloud website.\\n\\n### Changed\\n\\n- Serialize
-    the Checkin comment and tick selection so they are kept on any domain reload
-    and play mode.\\n- Optimized incoming changes & merge to only reload the Package
-    Manager when needed.\\n- Added dedicated toolbar buttons to open the list of
-    branches and the Branch Explorer of the Desktop App.\\n- Reworded the changeset
-    context menu \\\"Undo this change\\\" to \\\"Revert this file to the previous
-    revision\\\" so it\u2019s more explicit.\\n- Moved the 'Unity Version Control'
-    menu item under 'Window'/'Version Control' submenu starting from Unity 6.1.\\n-
-    Improve the Create workspace window to suggest the matching Unity Cloud project
-    if it exists.\\n\\n### Fixed\\n\\n- Ensured ignore.conf is not being reformatted
-    when adding or removing an ignore rule, so it keeps empty lines and comments.\\n-
-    Fixed missing checked-out for renamed assets.\\n- Fixed rename asset leaves 'Added'
-    + 'Remove locally' status instead of 'Moved'.\\n- Fixed console error GUI Error:
-    Invalid GUILayout state in PlasticWindow view which is caused under some circumstances.\\n-
-    Fixed null exception on entering in Play Mode before creating the workspace.\\n-
-    Fixed lock statuses to correctly refresh in Project View and Inspector after
-    merging.\\n- Fixed a performance issue by preventing the ConfigureLogging call
-    on every domain reload when Unity Version Control is not used, reducing the load
-    time by ~200ms. .\\n- Fixed the create branch operation to work in Gluon mode
-    which uses partial workspaces.\"}"
-  assetStore:
-    productId: 
-  fingerprint: 50ac96531b6358586ccfdf8cc845939bf50d9fab
-  editorCompatibility:
-    compatibilityLevel: 0
-    minimumPackageVersion: 2.7.1
-    minimumUnityVersion: 2021.3.0f1
-- packageId: com.unity.ide.rider@3.0.31
-  testable: 0
-  isDirectDependency: 1
-  version: 3.0.31
-  source: 1
-  resolvedPath: C:\Code\Github\LastEpoch_Mods\AssetBundleExport\Library\PackageCache\com.unity.ide.rider@7921be93db40
-  assetPath: Packages/com.unity.ide.rider
-  name: com.unity.ide.rider
-  displayName: JetBrains Rider Editor
-  author:
-    name: 
-    email: 
-    url: 
-  category: 
-  type: assets
-  description: The JetBrains Rider Editor package provides an integration for using
-    the JetBrains Rider IDE as a code editor for Unity. It adds support for generating
-    .csproj files for code completion and auto-discovery of installations.
-  errors: []
-  versions:
-    all:
-    - 1.0.2
-    - 1.0.6
-    - 1.0.8
-    - 1.1.0
-    - 1.1.1
-    - 1.1.2-preview
-    - 1.1.2-preview.2
-    - 1.1.3-preview.1
-    - 1.1.4-preview
-    - 1.1.4
-    - 1.2.0-preview
-    - 1.2.1
-    - 2.0.0-preview
-    - 2.0.1
-    - 2.0.2
-    - 2.0.3
-    - 2.0.5
-    - 2.0.7
-    - 3.0.1
-    - 3.0.2
-    - 3.0.3
-    - 3.0.4
-    - 3.0.5
-    - 3.0.6
-    - 3.0.7
-    - 3.0.9
-    - 3.0.10
-    - 3.0.12
-    - 3.0.13
-    - 3.0.14
-    - 3.0.15
-    - 3.0.16
-    - 3.0.17
-    - 3.0.18
-    - 3.0.20
-    - 3.0.21
-    - 3.0.22
-    - 3.0.24
-    - 3.0.25
-    - 3.0.26
-    - 3.0.27
-    - 3.0.28
-    - 3.0.31
-    - 3.0.34
-    - 3.0.35
-    - 3.0.36
-    compatible:
-    - 3.0.31
-    - 3.0.34
-    - 3.0.35
-    - 3.0.36
-    recommended: 3.0.36
-    deprecated: []
-  dependencies:
-  - name: com.unity.ext.nunit
-    version: 1.0.6
-  resolvedDependencies:
-  - name: com.unity.ext.nunit
-    version: 2.0.5
-  keywords: []
-  registry:
-    id: main
-    name: 
-    url: https://packages.unity.com
-    scopes: []
-    isDefault: 1
-    capabilities: 7
-    configSource: 0
-  hideInEditor: 1
-  entitlements:
-    licensingModel: 1
-  isAssetStorePackage: 0
-  datePublishedTicks: 638548308080000000
-  documentationUrl: https://docs.unity3d.com/Packages/com.unity.ide.rider@3.0/manual/index.html
-  hasRepository: 1
-  repository:
-    type: git
-    url: https://github.cds.internal.unity3d.com/unity/com.unity.ide.rider.git
-    revision: ccd778a2275ff09f1a83bc924cfb2fb4d5b63566
-    path: 
-  unityLifecycle:
-    version: 3.0.31
-    nextVersion: 
-    recommendedVersion: 
-    isDeprecated: 0
-    deprecationMessage: 
-  isDeprecated: 0
-  deprecationMessage: 
-  git:
-    hash: 
-    revision: 
-  upmReserved: '{"changelog":"fix RIDER-104519 Rider is reporting errors in scripts
-    that work fine in Unity when utilizing DOTS - when Player project, by generating
-    projects for all assemblies in \"com.unity.entities\", \"com.unity.collections\"\nfix
-    RIDER-111622 Unity Rider package is not compatible with Rider Dev builds"}'
-  assetStore:
-    productId: 
-  fingerprint: 7921be93db40ec070fcb01ed82d1c3df1bbdddcd
-  editorCompatibility:
-    compatibilityLevel: 0
-    minimumPackageVersion: 3.0.31
-    minimumUnityVersion: 2019.2.6f1
-- packageId: com.unity.ide.visualstudio@2.0.22
-  testable: 0
-  isDirectDependency: 1
-  version: 2.0.22
-  source: 1
-  resolvedPath: C:\Code\Github\LastEpoch_Mods\AssetBundleExport\Library\PackageCache\com.unity.ide.visualstudio@8140e851d83e
-  assetPath: Packages/com.unity.ide.visualstudio
-  name: com.unity.ide.visualstudio
-  displayName: Visual Studio Editor
-  author:
-    name: 
-    email: 
-    url: 
-  category: 
-  type: assets
-  description: Code editor integration for supporting Visual Studio as code editor
-    for unity. Adds support for generating csproj files for intellisense purposes,
-    auto discovery of installations, etc.
-  errors: []
-  versions:
-    all:
-    - 1.0.2
-    - 1.0.3
-    - 1.0.4
-    - 1.0.9
-    - 1.0.10
-    - 1.0.11
-    - 2.0.0
-    - 2.0.1
-    - 2.0.2
-    - 2.0.3
-    - 2.0.5
-    - 2.0.7
-    - 2.0.8
-    - 2.0.9
-    - 2.0.11
-    - 2.0.12
-    - 2.0.14
-    - 2.0.15
-    - 2.0.16
-    - 2.0.17
-    - 2.0.18
-    - 2.0.20
-    - 2.0.21
-    - 2.0.22
-    - 2.0.23
-    compatible:
-    - 2.0.22
-    - 2.0.23
-    recommended: 2.0.23
-    deprecated: []
-  dependencies:
-  - name: com.unity.test-framework
-    version: 1.1.9
-  resolvedDependencies:
-  - name: com.unity.test-framework
-    version: 1.4.6
-  - name: com.unity.ext.nunit
-    version: 2.0.5
-  - name: com.unity.modules.imgui
-    version: 1.0.0
-  - name: com.unity.modules.jsonserialize
-    version: 1.0.0
-  keywords: []
-  registry:
-    id: main
-    name: 
-    url: https://packages.unity.com
-    scopes: []
-    isDefault: 1
-    capabilities: 7
-    configSource: 0
-  hideInEditor: 1
-  entitlements:
-    licensingModel: 1
-  isAssetStorePackage: 0
-  datePublishedTicks: 638326061910000000
-  documentationUrl: https://docs.unity3d.com/Packages/com.unity.ide.visualstudio@2.0/manual/index.html
-  hasRepository: 1
-  repository:
-    type: git
-    url: https://github.cds.internal.unity3d.com/unity/com.unity.ide.visualstudio.git
-    revision: 700b44077345e97d37d464ff25507638983aed64
-    path: 
-  unityLifecycle:
-    version: 2.0.22
-    nextVersion: 
-    recommendedVersion: 
-    isDeprecated: 0
-    deprecationMessage: 
-  isDeprecated: 0
-  deprecationMessage: 
-  git:
-    hash: 
-    revision: 
-  upmReserved: '{"changelog":"Integration:\n\n- Add support for `XDG_DATA_DIRS` and
-    `.desktop` files on Linux for `VS Code` discovery.\n- Use compile-time platform-specifics
-    instead of using runtime conditions.\n\nProject generation:\n\n- Suppress `USG0001`
-    warnings.\n- Mark referenced assemblies as private (to not copy extra files to
-    output directory when building).\n- Add Unity capability to SDK-Style projects.\n-
-    Prevent circular dependency errors with SDK-Style projects."}'
-  assetStore:
-    productId: 
-  fingerprint: 8140e851d83e922ca2021b04a89519de94ebe38c
-  editorCompatibility:
-    compatibilityLevel: 0
-    minimumPackageVersion: 2.0.22
-    minimumUnityVersion: 2019.4.25f1
 - packageId: com.unity.multiplayer.center@1.0.0
   testable: 0
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Code\Github\LastEpoch_Mods\AssetBundleExport\Library\PackageCache\com.unity.multiplayer.center@f3fb577b3546
+  resolvedPath: C:\Users\13700k\code\LastEpoch_Mods\AssetBundleExport\Library\PackageCache\com.unity.multiplayer.center@f3fb577b3546
   assetPath: Packages/com.unity.multiplayer.center
   name: com.unity.multiplayer.center
   displayName: Multiplayer Center
@@ -1005,350 +340,12 @@ m_ResolvedPackages:
     compatibilityLevel: 0
     minimumPackageVersion: 1.0.0
     minimumUnityVersion: 6000.0.0a1
-- packageId: com.unity.test-framework@1.4.6
-  testable: 0
-  isDirectDependency: 1
-  version: 1.4.6
-  source: 1
-  resolvedPath: C:\Code\Github\LastEpoch_Mods\AssetBundleExport\Library\PackageCache\com.unity.test-framework@5ac417e07314
-  assetPath: Packages/com.unity.test-framework
-  name: com.unity.test-framework
-  displayName: Test Framework
-  author:
-    name: 
-    email: 
-    url: 
-  category: Unity Test Framework
-  type: 
-  description: Test framework for running Edit mode and Play mode tests in Unity.
-  errors: []
-  versions:
-    all:
-    - 0.0.4-preview
-    - 0.0.29-preview
-    - 1.0.0
-    - 1.0.7
-    - 1.0.9
-    - 1.0.11
-    - 1.0.12
-    - 1.0.13
-    - 1.0.14
-    - 1.0.16
-    - 1.0.17
-    - 1.0.18
-    - 1.1.0
-    - 1.1.1
-    - 1.1.2
-    - 1.1.3
-    - 1.1.5
-    - 1.1.8
-    - 1.1.9
-    - 1.1.11
-    - 1.1.13
-    - 1.1.14
-    - 1.1.16
-    - 1.1.18
-    - 1.1.19
-    - 1.1.20
-    - 1.1.22
-    - 1.1.24
-    - 1.1.26
-    - 1.1.27
-    - 1.1.29
-    - 1.1.30
-    - 1.1.31
-    - 1.1.33
-    - 1.3.0
-    - 1.3.1
-    - 1.3.2
-    - 1.3.3
-    - 1.3.4
-    - 1.3.5
-    - 1.3.7
-    - 1.3.8
-    - 1.3.9
-    - 1.4.0
-    - 1.4.1
-    - 1.4.2
-    - 1.4.3
-    - 1.4.4
-    - 1.4.5
-    - 1.4.6
-    - 2.0.1-exp.1
-    - 2.0.1-exp.2
-    - 2.0.1-pre.12
-    - 2.0.1-pre.18
-    compatible:
-    - 1.4.6
-    - 2.0.1-exp.1
-    - 2.0.1-exp.2
-    - 2.0.1-pre.12
-    - 2.0.1-pre.18
-    recommended: 1.4.6
-    deprecated: []
-  dependencies:
-  - name: com.unity.ext.nunit
-    version: 2.0.3
-  - name: com.unity.modules.imgui
-    version: 1.0.0
-  - name: com.unity.modules.jsonserialize
-    version: 1.0.0
-  resolvedDependencies:
-  - name: com.unity.ext.nunit
-    version: 2.0.5
-  - name: com.unity.modules.imgui
-    version: 1.0.0
-  - name: com.unity.modules.jsonserialize
-    version: 1.0.0
-  keywords:
-  - Test
-  - TestFramework
-  registry:
-    id: main
-    name: 
-    url: https://packages.unity.com
-    scopes: []
-    isDefault: 1
-    capabilities: 7
-    configSource: 0
-  hideInEditor: 1
-  entitlements:
-    licensingModel: 1
-  isAssetStorePackage: 0
-  datePublishedTicks: 638743524358990000
-  documentationUrl: https://docs.unity3d.com/Packages/com.unity.test-framework@1.4/manual/index.html
-  hasRepository: 1
-  repository:
-    type: git
-    url: https://github.com/Unity-Technologies/com.unity.test-framework.git
-    revision: 9c6028f63a9b875e714b65de151b74e170152d49
-    path: 
-  unityLifecycle:
-    version: 1.4.6
-    nextVersion: 
-    recommendedVersion: 
-    isDeprecated: 0
-    deprecationMessage: 
-  isDeprecated: 0
-  deprecationMessage: 
-  git:
-    hash: 
-    revision: 
-  upmReserved: '{"changelog":"- Fixed an issue where the architecture flag would
-    not be parsed for the StandaloneOSX platform.\n- Fixed an issue where the test
-    results ui and progress bar would not update before a user input, such as mouse
-    movement, was detected (UTF-609).\n- Fixed an issue where root of the test tree
-    was marked as NotRun, when all the tests were run and at least one test is ignore.\n-
-    Ensure that an error is raised and the test run is stopped if a playmode test
-    method exits playmode (DSTR-1091). \n- Async editmode tests are no longer throw
-    error when yielding a different value than null (DSTR-1066)\n- Fixed an issue
-    where the \"C# Test Script\" button was always disabled in One Column view in
-    Project tab. (DSTR-1083)\n- Async and UnityTest can now use ParametrizedIgnore
-    attribute. (DSTR-1068)\n- Corrected Timeout to only apply to the test method
-    and not the teardown methods, ensuring that TearDown is always run if a test
-    case times out (DSTR-1077).\n- Added a queue size indicator in the player side
-    test result ui. This can be used to track the progress of sending back result
-    data to the editor.\n- Parent node of the test tree is now updated after all
-    children finish running and have a result."}'
-  assetStore:
-    productId: 
-  fingerprint: 5ac417e07314c8f6afba8109738c32b82d391e68
-  editorCompatibility:
-    compatibilityLevel: 0
-    minimumPackageVersion: 1.4.6
-    minimumUnityVersion: 2019.4.1f1
-- packageId: com.unity.timeline@1.8.7
-  testable: 0
-  isDirectDependency: 1
-  version: 1.8.7
-  source: 1
-  resolvedPath: C:\Code\Github\LastEpoch_Mods\AssetBundleExport\Library\PackageCache\com.unity.timeline@c58b4ee65782
-  assetPath: Packages/com.unity.timeline
-  name: com.unity.timeline
-  displayName: Timeline
-  author:
-    name: 
-    email: 
-    url: 
-  category: 
-  type: assets
-  description: Use Unity Timeline to create cinematic content, game-play sequences,
-    audio sequences, and complex particle effects.
-  errors: []
-  versions:
-    all:
-    - 1.2.0
-    - 1.2.1
-    - 1.2.2
-    - 1.2.3
-    - 1.2.4
-    - 1.2.5
-    - 1.2.6
-    - 1.2.7
-    - 1.2.9
-    - 1.2.10
-    - 1.2.11
-    - 1.2.12
-    - 1.2.13
-    - 1.2.14
-    - 1.2.15
-    - 1.2.16
-    - 1.2.17
-    - 1.2.18
-    - 1.3.0-preview.2
-    - 1.3.0-preview.3
-    - 1.3.0-preview.5
-    - 1.3.0-preview.6
-    - 1.3.0-preview.7
-    - 1.3.0
-    - 1.3.1
-    - 1.3.2
-    - 1.3.3
-    - 1.3.4
-    - 1.3.5
-    - 1.3.6
-    - 1.3.7
-    - 1.4.0-preview.1
-    - 1.4.0-preview.2
-    - 1.4.0-preview.3
-    - 1.4.0-preview.5
-    - 1.4.0-preview.6
-    - 1.4.0-preview.7
-    - 1.4.0
-    - 1.4.1
-    - 1.4.2
-    - 1.4.3
-    - 1.4.4
-    - 1.4.5
-    - 1.4.6
-    - 1.4.7
-    - 1.4.8
-    - 1.5.0-pre.2
-    - 1.5.0-preview.1
-    - 1.5.0-preview.2
-    - 1.5.0-preview.3
-    - 1.5.0-preview.4
-    - 1.5.0-preview.5
-    - 1.5.1-pre.1
-    - 1.5.1-pre.2
-    - 1.5.1-pre.3
-    - 1.5.2
-    - 1.5.4
-    - 1.5.5
-    - 1.5.6
-    - 1.5.7
-    - 1.6.0-pre.1
-    - 1.6.0-pre.3
-    - 1.6.0-pre.4
-    - 1.6.0-pre.5
-    - 1.6.1
-    - 1.6.2
-    - 1.6.3
-    - 1.6.4
-    - 1.6.5
-    - 1.7.0-pre.1
-    - 1.7.0-pre.2
-    - 1.7.0
-    - 1.7.1
-    - 1.7.2
-    - 1.7.3
-    - 1.7.4
-    - 1.7.5
-    - 1.7.6
-    - 1.7.7
-    - 1.8.0
-    - 1.8.1
-    - 1.8.2
-    - 1.8.3
-    - 1.8.4
-    - 1.8.5
-    - 1.8.6
-    - 1.8.7
-    - 1.8.8
-    compatible:
-    - 1.8.7
-    - 1.8.8
-    recommended: 1.8.8
-    deprecated: []
-  dependencies:
-  - name: com.unity.modules.audio
-    version: 1.0.0
-  - name: com.unity.modules.director
-    version: 1.0.0
-  - name: com.unity.modules.animation
-    version: 1.0.0
-  - name: com.unity.modules.particlesystem
-    version: 1.0.0
-  resolvedDependencies:
-  - name: com.unity.modules.audio
-    version: 1.0.0
-  - name: com.unity.modules.director
-    version: 1.0.0
-  - name: com.unity.modules.animation
-    version: 1.0.0
-  - name: com.unity.modules.particlesystem
-    version: 1.0.0
-  keywords:
-  - unity
-  - animation
-  - editor
-  - timeline
-  - tools
-  registry:
-    id: main
-    name: 
-    url: https://packages.unity.com
-    scopes: []
-    isDefault: 1
-    capabilities: 7
-    configSource: 0
-  hideInEditor: 1
-  entitlements:
-    licensingModel: 1
-  isAssetStorePackage: 0
-  datePublishedTicks: 638524833900000000
-  documentationUrl: https://docs.unity3d.com/Packages/com.unity.timeline@1.8/manual/index.html
-  hasRepository: 1
-  repository:
-    type: git
-    url: https://github.cds.internal.unity3d.com/unity/com.unity.timeline.git
-    revision: d6432ca638481c3d0e4c01f87f9cdbe3c4b1d529
-    path: 
-  unityLifecycle:
-    version: 1.8.7
-    nextVersion: 
-    recommendedVersion: 
-    isDeprecated: 0
-    deprecationMessage: 
-  isDeprecated: 0
-  deprecationMessage: 
-  git:
-    hash: 
-    revision: 
-  upmReserved: '{"changelog":"### Added\n\n- Released ronl-workflow-custom-marker.md
-    Added a new workflow to the Timeline Workflows documentation:\n- Released ronl-workflow-custom-marker.md
-    The `Create a custom Notes marker` workflow demonstrates how to create a custom
-    marker for adding notes to Timeline instances. This workflow also demonstrates
-    how to change the default appearance of a custom marker with scripting and a
-    Unity Style Sheet (USS).\n\n### Fixed\n\n- Fixed bug where using , and . (<>)
-    to step frames in the Animation Window while the Timeline Window was linked would
-    sometimes not work. [IN-56667](https://unity3d.atlassian.net/servicedesk/customer/portal/2/IN-56667)\n-
-    When the Timeline and Animation windows are linked and the Timeline Window is
-    active, moving the playhead in the Timeline Window will cause the animation window
-    to repaint immediately."}'
-  assetStore:
-    productId: 
-  fingerprint: c58b4ee65782ad38338e29f7ee67787cb6998f04
-  editorCompatibility:
-    compatibilityLevel: 0
-    minimumPackageVersion: 1.8.7
-    minimumUnityVersion: 2019.3.0a1
 - packageId: com.unity.ugui@2.0.0
   testable: 0
   isDirectDependency: 1
   version: 2.0.0
   source: 2
-  resolvedPath: C:\Code\Github\LastEpoch_Mods\AssetBundleExport\Library\PackageCache\com.unity.ugui@9496653a3df6
+  resolvedPath: C:\Users\13700k\code\LastEpoch_Mods\AssetBundleExport\Library\PackageCache\com.unity.ugui@9496653a3df6
   assetPath: Packages/com.unity.ugui
   name: com.unity.ugui
   displayName: Unity UI
@@ -1438,129 +435,6 @@ m_ResolvedPackages:
     compatibilityLevel: 0
     minimumPackageVersion: 2.0.0
     minimumUnityVersion: 2019.2.0a1
-- packageId: com.unity.visualscripting@1.9.5
-  testable: 0
-  isDirectDependency: 1
-  version: 1.9.5
-  source: 1
-  resolvedPath: C:\Code\Github\LastEpoch_Mods\AssetBundleExport\Library\PackageCache\com.unity.visualscripting@1b53f46e931b
-  assetPath: Packages/com.unity.visualscripting
-  name: com.unity.visualscripting
-  displayName: Visual Scripting
-  author:
-    name: 
-    email: 
-    url: 
-  category: 
-  type: tool
-  description: 'Visual scripting is a workflow that uses visual, node-based graphs
-    to design behaviors rather than write lines of C# script.
-
-
-    Enabling artists,
-    designers and programmers alike, visual scripting can be used to design final
-    logic, quickly create prototypes, iterate on gameplay and create custom nodes
-    to help streamline collaboration.
-
-
-    Visual scripting is compatible with third-party
-    APIs, including most packages, assets and custom libraries.'
-  errors: []
-  versions:
-    all:
-    - 1.5.0
-    - 1.5.1-pre.3
-    - 1.5.1-pre.5
-    - 1.5.1
-    - 1.5.2
-    - 1.6.0-pre.3
-    - 1.6.0
-    - 1.6.1
-    - 1.7.1
-    - 1.7.2
-    - 1.7.3
-    - 1.7.5
-    - 1.7.6
-    - 1.7.7
-    - 1.7.8
-    - 1.8.0-pre.1
-    - 1.8.0
-    - 1.9.0
-    - 1.9.1
-    - 1.9.2
-    - 1.9.4
-    - 1.9.5
-    - 1.9.6
-    - 1.9.7
-    - 1.9.8
-    compatible:
-    - 1.9.5
-    - 1.9.6
-    - 1.9.7
-    - 1.9.8
-    recommended: 1.9.8
-    deprecated:
-    - 1.8.0-pre.1
-  dependencies:
-  - name: com.unity.ugui
-    version: 1.0.0
-  - name: com.unity.modules.jsonserialize
-    version: 1.0.0
-  resolvedDependencies:
-  - name: com.unity.ugui
-    version: 2.0.0
-  - name: com.unity.modules.ui
-    version: 1.0.0
-  - name: com.unity.modules.imgui
-    version: 1.0.0
-  - name: com.unity.modules.jsonserialize
-    version: 1.0.0
-  keywords: []
-  registry:
-    id: main
-    name: 
-    url: https://packages.unity.com
-    scopes: []
-    isDefault: 1
-    capabilities: 7
-    configSource: 0
-  hideInEditor: 1
-  entitlements:
-    licensingModel: 1
-  isAssetStorePackage: 0
-  datePublishedTicks: 638659692270900000
-  documentationUrl: 
-  hasRepository: 1
-  repository:
-    type: git
-    url: https://github.cds.internal.unity3d.com/unity/com.unity.visualscripting.git
-    revision: 3621ef0207747a605f195118ba99d1a8bdb19433
-    path: 
-  unityLifecycle:
-    version: 1.9.5
-    nextVersion: 
-    recommendedVersion: 
-    isDeprecated: 0
-    deprecationMessage: 
-  isDeprecated: 0
-  deprecationMessage: 
-  git:
-    hash: 
-    revision: 
-  upmReserved: '{"changelog":"### Fixed\n- Fixed \"NullReferenceException\" error
-    when returning to the State Graph from the Script Graph. [UVSB-1905](https://issuetracker.unity3d.com/product/unity/issues/guid/UVSB-1905)\n-
-    Fixed compilation error when a graph contains a reference to a method with an
-    \"in\" parameter. [UVSB-2544](https://issuetracker.unity3d.com/product/unity/issues/guid/UVSB-2487)\n-
-    Added missing truncate function to Formula node [UVSB-2526](https://issuetracker.unity3d.com/product/unity/issues/guid/UVSB-2525)\n-
-    Fixed an error when creating a Script Graph asset in an empty project\n\n###
-    Changed\n- Updated deprecated EditorAnalytics APIs to new ones"}'
-  assetStore:
-    productId: 
-  fingerprint: 1b53f46e931bea668e53f1feb0ac9138170c9455
-  editorCompatibility:
-    compatibilityLevel: 0
-    minimumPackageVersion: 1.9.5
-    minimumUnityVersion: 2021.3.0a1
 - packageId: com.unity.modules.accessibility@1.0.0
   testable: 0
   isDirectDependency: 1
@@ -3982,121 +2856,43 @@ m_ResolvedPackages:
     compatibilityLevel: 0
     minimumPackageVersion: 1.0.0
     minimumUnityVersion: 
-- packageId: com.unity.ext.nunit@2.0.5
+- packageId: com.unity.settings-manager@2.0.1
   testable: 0
   isDirectDependency: 0
-  version: 2.0.5
+  version: 2.0.1
   source: 1
-  resolvedPath: C:\Code\Github\LastEpoch_Mods\AssetBundleExport\Library\PackageCache\com.unity.ext.nunit@60ef35ffd3cd
-  assetPath: Packages/com.unity.ext.nunit
-  name: com.unity.ext.nunit
-  displayName: Custom NUnit
-  author:
-    name: 
-    email: 
-    url: 
-  category: Libraries
-  type: assets
-  description: A custom version of NUnit used by Unity Test Framework. Based on NUnit
-    version 3.5 and works with all platforms, il2cpp and Mono AOT.
-  errors: []
-  versions:
-    all:
-    - 0.1.5-preview
-    - 0.1.6-preview
-    - 0.1.9-preview
-    - 1.0.0
-    - 1.0.5
-    - 1.0.6
-    - 2.0.2
-    - 2.0.3
-    - 2.0.4
-    - 2.0.5
-    compatible:
-    - 2.0.5
-    recommended: 2.0.5
-    deprecated: []
-  dependencies: []
-  resolvedDependencies: []
-  keywords:
-  - nunit
-  - unittest
-  - test
-  registry:
-    id: main
-    name: 
-    url: https://packages.unity.com
-    scopes: []
-    isDefault: 1
-    capabilities: 7
-    configSource: 0
-  hideInEditor: 1
-  entitlements:
-    licensingModel: 1
-  isAssetStorePackage: 0
-  datePublishedTicks: 638236642220000000
-  documentationUrl: https://docs.unity3d.com/Packages/com.unity.ext.nunit@2.0/manual/index.html
-  hasRepository: 1
-  repository:
-    type: git
-    url: https://github.cds.internal.unity3d.com/unity/com.unity.ext.nunit.git
-    revision: 469fe0d46bfc26fbb32a53885ca4d12abcdae4ae
-    path: 
-  unityLifecycle:
-    version: 2.0.5
-    nextVersion: 
-    recommendedVersion: 
-    isDeprecated: 0
-    deprecationMessage: 
-  isDeprecated: 0
-  deprecationMessage: 
-  git:
-    hash: 
-    revision: 
-  upmReserved: '{"changelog":"- Fixing bug for InstanceID as struct changes"}'
-  assetStore:
-    productId: 
-  fingerprint: 60ef35ffd3cd5e2f5c8887a4a4ca6148854cd092
-  editorCompatibility:
-    compatibilityLevel: 0
-    minimumPackageVersion: 2.0.5
-    minimumUnityVersion: 2019.4.0a1
-- packageId: com.unity.profiling.core@1.0.2
-  testable: 0
-  isDirectDependency: 0
-  version: 1.0.2
-  source: 1
-  resolvedPath: C:\Code\Github\LastEpoch_Mods\AssetBundleExport\Library\PackageCache\com.unity.profiling.core@aac7b93912bc
-  assetPath: Packages/com.unity.profiling.core
-  name: com.unity.profiling.core
-  displayName: Unity Profiling Core API
+  resolvedPath: C:\Users\13700k\code\LastEpoch_Mods\AssetBundleExport\Library\PackageCache\com.unity.settings-manager@56a930affa1e
+  assetPath: Packages/com.unity.settings-manager
+  name: com.unity.settings-manager
+  displayName: Settings Manager
   author:
     name: 
     email: 
     url: 
   category: 
   type: asset
-  description: The Unity Profiling Core package provides an API for code instrumentation
-    markup, and for profiling statistic collection.
+  description: A framework for making any serializable field a setting, complete
+    with a pre-built settings interface.
   errors: []
   versions:
     all:
-    - 0.1.0-preview.1
-    - 0.2.0-preview.1
-    - 0.2.1-preview.1
-    - 1.0.0-pre.1
+    - 0.1.0-preview.4
+    - 0.1.0-preview.8
     - 1.0.0
+    - 1.0.1
     - 1.0.2
+    - 1.0.3
+    - 2.0.0
+    - 2.0.1
+    - 2.1.0
     compatible:
-    - 1.0.2
-    recommended: 1.0.2
+    - 2.0.1
+    - 2.1.0
+    recommended: 2.0.1
     deprecated: []
   dependencies: []
   resolvedDependencies: []
-  keywords:
-  - profiler
-  - profiling
-  - api
+  keywords: []
   registry:
     id: main
     name: 
@@ -4109,16 +2905,16 @@ m_ResolvedPackages:
   entitlements:
     licensingModel: 1
   isAssetStorePackage: 0
-  datePublishedTicks: 637828752310000000
+  datePublishedTicks: 637744099390000000
   documentationUrl: 
   hasRepository: 1
   repository:
     type: git
-    url: https://github.cds.internal.unity3d.com/unity/profiler.git
-    revision: 2189ba14439d76a4083f59fae87163b4bdfd49c2
+    url: https://github.com/Unity-Technologies/com.unity.settings-manager.git
+    revision: 9b7c12d04ef880168151c127fd6b37b5931197dc
     path: 
   unityLifecycle:
-    version: 1.0.2
+    version: 2.0.1
     nextVersion: 
     recommendedVersion: 
     isDeprecated: 0
@@ -4131,161 +2927,62 @@ m_ResolvedPackages:
   upmReserved: 
   assetStore:
     productId: 
-  fingerprint: aac7b93912bc5df5fe06b04ff1b758493cdc2346
+  fingerprint: 56a930affa1e4462d3595b5c19a1c2a4bf2015d2
   editorCompatibility:
     compatibilityLevel: 0
-    minimumPackageVersion: 1.0.2
-    minimumUnityVersion: 2020.1.0a1
-- packageId: com.unity.scriptablebuildpipeline@2.2.11
+    minimumPackageVersion: 2.0.1
+    minimumUnityVersion: 2018.4.0a1
+- packageId: com.unity.nuget.newtonsoft-json@3.2.1
   testable: 0
   isDirectDependency: 0
-  version: 2.2.11
+  version: 3.2.1
   source: 1
-  resolvedPath: C:\Code\Github\LastEpoch_Mods\AssetBundleExport\Library\PackageCache\com.unity.scriptablebuildpipeline@8e62a84f8b2e
-  assetPath: Packages/com.unity.scriptablebuildpipeline
-  name: com.unity.scriptablebuildpipeline
-  displayName: Scriptable Build Pipeline
+  resolvedPath: C:\Users\13700k\code\LastEpoch_Mods\AssetBundleExport\Library\PackageCache\com.unity.nuget.newtonsoft-json@74deb55db2a0
+  assetPath: Packages/com.unity.nuget.newtonsoft-json
+  name: com.unity.nuget.newtonsoft-json
+  displayName: Newtonsoft Json
   author:
     name: 
     email: 
     url: 
   category: 
-  type: 
-  description: The Scriptable Build Pipeline moves the asset bundle build pipeline
-    to C#.  Use the pre-defined build flows, or create your own using the divided
-    up APIs.  This system improves build time, fixes incremental build, and provides
-    greater flexibility.
+  type: library
+  description: 'Newtonsoft Json for use in Unity projects and Unity packages. Currently
+    synced to version 13.0.2.
+
+
+    This package is used for advanced json serialization
+    and deserialization. Most Unity users will be better suited using the existing
+    json tools built into Unity.
+
+    To avoid assembly clashes, please use this
+    package if you intend to use Newtonsoft Json.'
   errors: []
   versions:
     all:
-    - 0.0.5-preview
-    - 0.0.6-preview
-    - 0.0.8-preview
-    - 0.0.9-preview
-    - 0.0.10-preview
-    - 0.0.14-preview
-    - 0.0.15-preview
-    - 0.1.0-preview
-    - 0.2.0-preview
-    - 1.0.1-preview
-    - 1.1.0-preview
-    - 1.1.1-preview
-    - 1.2.1-preview
-    - 1.3.5-preview
-    - 1.4.1-preview
-    - 1.5.0-preview
-    - 1.5.1
-    - 1.5.2
-    - 1.5.4
-    - 1.5.6
-    - 1.5.10
-    - 1.6.3-preview
-    - 1.6.4-preview
-    - 1.6.5-preview
-    - 1.7.2
-    - 1.7.3
-    - 1.8.2
-    - 1.8.4
-    - 1.8.6
-    - 1.9.0
-    - 1.10.0
-    - 1.11.1
-    - 1.11.2
-    - 1.12.0
-    - 1.13.1
-    - 1.14.0
-    - 1.14.1
-    - 1.15.1
-    - 1.15.2
-    - 1.16.1
-    - 1.17.0
-    - 1.18.0
-    - 1.19.0
-    - 1.19.1
-    - 1.19.2
-    - 1.19.3
-    - 1.19.4
-    - 1.19.5
-    - 1.19.6
-    - 1.20.1
-    - 1.20.2
-    - 1.21.0
-    - 1.21.1
-    - 1.21.2
-    - 1.21.3
-    - 1.21.5
-    - 1.21.7
-    - 1.21.8
-    - 1.21.9
-    - 1.21.20
-    - 1.21.21
-    - 1.21.22
-    - 1.21.23
-    - 1.21.24
-    - 1.21.25
-    - 1.22.1
-    - 1.22.2
-    - 1.22.4
-    - 1.22.5
-    - 2.0.1
+    - 1.0.0-preview.2
+    - 1.0.0-preview.3
+    - 1.0.0-preview.4
+    - 1.0.1-preview.1
+    - 1.1.2
+    - 2.0.0-preview
+    - 2.0.0-preview.1
+    - 2.0.0-preview.2
+    - 2.0.0
+    - 2.0.1-preview.1
     - 2.0.2
-    - 2.1.0
-    - 2.1.2
-    - 2.1.3
-    - 2.1.4
-    - 2.1.5
-    - 2.2.4
-    - 2.2.11
-    - 2.3.0
-    - 2.3.1
-    - 2.3.2
-    - 2.3.3
-    - 2.3.4
-    - 2.3.5
-    - 2.3.6
-    - 2.3.7
-    - 2.3.8
-    - 2.4.0
+    - 3.0.1
+    - 3.0.2
+    - 3.1.0
+    - 3.2.0
+    - 3.2.1
     compatible:
-    - 2.1.4
-    - 2.1.5
-    - 2.2.4
-    - 2.2.11
-    - 2.3.0
-    - 2.3.1
-    - 2.3.2
-    - 2.3.3
-    - 2.3.4
-    - 2.3.5
-    - 2.3.6
-    - 2.3.7
-    - 2.3.8
-    - 2.4.0
-    recommended: 2.1.5
+    - 3.2.1
+    recommended: 3.2.1
     deprecated: []
-  dependencies:
-  - name: com.unity.test-framework
-    version: 1.4.5
-  - name: com.unity.modules.assetbundle
-    version: 1.0.0
-  resolvedDependencies:
-  - name: com.unity.test-framework
-    version: 1.4.6
-  - name: com.unity.ext.nunit
-    version: 2.0.5
-  - name: com.unity.modules.imgui
-    version: 1.0.0
-  - name: com.unity.modules.jsonserialize
-    version: 1.0.0
-  - name: com.unity.modules.assetbundle
-    version: 1.0.0
-  keywords:
-  - build
-  - bundle
-  - bundles
-  - assetbundles
-  - cache
-  - server
+  dependencies: []
+  resolvedDependencies: []
+  keywords: []
   registry:
     id: main
     name: 
@@ -4298,16 +2995,16 @@ m_ResolvedPackages:
   entitlements:
     licensingModel: 1
   isAssetStorePackage: 0
-  datePublishedTicks: 638737711394240000
-  documentationUrl: https://docs.unity3d.com/Packages/com.unity.scriptablebuildpipeline@2.2/manual/index.html
+  datePublishedTicks: 638186318800000000
+  documentationUrl: 
   hasRepository: 1
   repository:
     type: git
-    url: https://github.cds.internal.unity3d.com/unity/Addressables.git
-    revision: b9c1ade8ed188d968af457b5e3797b1ef4ca0cc4
+    url: https://github.cds.internal.unity3d.com/unity/com.unity.nuget.newtonsoft-json.git
+    revision: d8e49aef8979bef617144382052ec2f479645eaf
     path: 
   unityLifecycle:
-    version: 2.1.4
+    version: 3.2.1
     nextVersion: 
     recommendedVersion: 
     isDeprecated: 0
@@ -4317,13 +3014,13 @@ m_ResolvedPackages:
   git:
     hash: 
     revision: 
-  upmReserved: '{"changelog":"- Added a Log Asset Warnings setting that optionally
-    disables logging of asset warnings during build process."}'
+  upmReserved: '{"changelog":"* Fixed Newtonsoft DLL when compiling with netstandard
+    2.0."}'
   assetStore:
     productId: 
-  fingerprint: 8e62a84f8b2ec9a3d0b4290cf948e59765d9a0ed
+  fingerprint: 74deb55db2a0c29ddfda576608bcb86abbd13ee6
   editorCompatibility:
     compatibilityLevel: 0
-    minimumPackageVersion: 2.1.4
-    minimumUnityVersion: 2023.1.0a1
+    minimumPackageVersion: 3.2.1
+    minimumUnityVersion: 2018.4.0a1
 m_BuiltInPackagesHash: 5cc2183adbed14326d9ff00e3ac2b5eedcc9d592

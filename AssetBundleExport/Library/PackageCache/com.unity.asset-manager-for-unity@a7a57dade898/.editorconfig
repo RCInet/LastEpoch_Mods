@@ -1,0 +1,17 @@
+[*.asmdef]
+scrape_api = true
+
+[**/Tests/**.asmdef]
+scrape_api = false
+
+[*.Tests.asmdef]
+scrape_api = false
+
+[**/Samples/**.asmdef]
+scrape_api = false
+
+[Editor/Settings/**.asmdef]
+scrape_api = false
+
+[Runtime/**.asmdef]
+scrape_api = false

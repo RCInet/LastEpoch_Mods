@@ -1,0 +1,92 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True" class="px-2">
+    <ui:VisualElement name="assetManagerSettingsContainer">
+        <ui:VisualElement name="titleContainer">
+            <ui:Label name="titleLabel" />
+        </ui:VisualElement>
+        <ui:ScrollView>
+            <ui:Foldout name="importSettingsFoldout" class="settings-foldout">
+                <ui:HelpBox message-type="Error" name="importLocationErrorBox" />
+                <ui:VisualElement class="flex-row">
+                    <ui:Label name="importSettingsDefaultLocationLabel" class="settings-label" />
+                    <ui:Label name="importLocationPath" class="asset-manager-path" />
+                    <ui:VisualElement class="toolbar-menu">
+                        <ui:VisualElement class="folder-image" />
+                        <uie:ToolbarMenu name="importLocationDropdown" class="asset-manager-dropdown" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement class="flex-row">
+                    <ui:Label name="importSettingsCreateSubfolderLabel" class="settings-label" />
+                    <ui:Toggle name="subfolderCreationToggle" />
+                </ui:VisualElement>
+                <ui:VisualElement class="flex-row">
+                    <ui:Label name="importSettingsKeepHigherVersionLabel" class="settings-label" />
+                    <ui:Toggle name="keepHigherVersionToggle" />
+                </ui:VisualElement>
+                <ui:VisualElement class="flex-row">
+                    <ui:Label name="disableReimportModalLabel" class="settings-label" />
+                    <ui:Toggle name="disableReimportModalToggle" class="upload-settings-toggle" />
+                </ui:VisualElement>
+            </ui:Foldout>
+            <ui:Foldout name="cacheSettingsFoldout" class="settings-foldout">
+                <ui:HelpBox message-type="Error" name="disabledErrorBox" />
+                <ui:VisualElement class="flex-row">
+                    <ui:Label name="cacheManagementLocationLabel" class="settings-label" />
+                    <ui:Label name="assetManagerCachePath" class="asset-manager-path" />
+                    <ui:VisualElement class="toolbar-menu">
+                        <ui:VisualElement class="folder-image" />
+                        <uie:ToolbarMenu name="cacheLocationDropdown" class="asset-manager-dropdown" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement class="flex-row">
+                    <ui:Label name="cacheManagementMaxSizeLabel" class="settings-label" />
+                    <ui:SliderInt name="maxCacheSize" show-input-field="true" class="settings-slider" />
+                    <ui:VisualElement name="cacheSizeOnDiskContainer" />
+                </ui:VisualElement>
+                <ui:VisualElement class="flex-row">
+                    <ui:Label name="cacheManagementSizeLabel" class="settings-label" />
+                    <ui:Label name="cacheSizeOnDisk" class="asset-manager-path" />
+                    <ui:Button name="refresh" class="settings-button" />
+                </ui:VisualElement>
+                <ui:VisualElement class="flex-row">
+                    <ui:Button name="cleanCache" class="settings-button" />
+                    <ui:Button name="clearExtraCache" class="settings-button" />
+                </ui:VisualElement>
+            </ui:Foldout>
+            <ui:Foldout name="uploadSettingsFoldout" class="settings-foldout">
+                <ui:VisualElement class="flex-row">
+                    <ui:Label name="tagsCreationUploadLabel" class="settings-label" />
+                    <ui:Toggle name="tagsCreationUploadToggle" class="upload-settings-toggle" />
+                </ui:VisualElement>
+                <ui:VisualElement class="flex-row">
+                    <ui:Label name="tagsCreationUploadConfidenceLabel" class="settings-label" />
+                    <ui:SliderInt name="tagsCreationUploadConfidenceValue" show-input-field="true" high-value="100" class="settings-slider" />
+                </ui:VisualElement>
+                <ui:VisualElement class="flex-row">
+                    <ui:Label name="uploadDependenciesWithLatestLabel" class="settings-label" />
+                    <ui:Toggle name="uploadDependenciesWithLatestToggle" class="upload-settings-toggle" />
+                </ui:VisualElement>
+                <ui:HelpBox message-type="Info" name="uploadDependenciesHelpBox" class="info-helpbox" />
+            </ui:Foldout>
+            <ui:Foldout name="projectWindowSettingsFoldout" class="settings-foldout">
+                <ui:VisualElement class="flex-row">
+                    <ui:Label name="projectWindowShowIconOverlayLabel" class="settings-label" />
+                    <ui:Toggle name="projectWindowShowIconOverlayToggle" class="upload-settings-toggle" />
+                </ui:VisualElement>
+                <ui:VisualElement class="flex-row">
+                    <ui:Label name="projectWindowIconOverlayPositionLabel" class="settings-label" />
+                    <ui:DropdownField label="Dropdown" name="projectWindowIconOverlayPositionDropdown" />
+                </ui:VisualElement>
+                <ui:VisualElement class="flex-row">
+                    <ui:Label name="projectWindowIconOverlayDisplayTypeLabel" class="settings-label" />
+                    <ui:Toggle name="projectWindowIconOverlayDisplayTypeToggle" class="upload-settings-toggle" />
+                </ui:VisualElement>
+            </ui:Foldout>
+            <ui:Foldout name="debugSettingsFoldout" class="settings-foldout">
+                <ui:VisualElement class="flex-row">
+                    <ui:Label name="debugLogsLabel" class="settings-label" />
+                    <ui:Toggle name="debugLogsToggle" class="upload-settings-toggle" />
+                </ui:VisualElement>
+            </ui:Foldout>
+        </ui:ScrollView>
+    </ui:VisualElement>
+</ui:UXML>

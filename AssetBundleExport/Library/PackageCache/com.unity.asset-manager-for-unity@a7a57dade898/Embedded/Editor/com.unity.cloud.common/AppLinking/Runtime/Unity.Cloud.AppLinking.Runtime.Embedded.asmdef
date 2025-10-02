@@ -1,0 +1,20 @@
+{
+  "name": "Unity.Cloud.AppLinking.Runtime.Embedded",
+  "rootNamespace": "Unity.Cloud.AppLinking.Runtime",
+  "references": [
+    "GUID:180b84aeaa9c9da4a8ad1f35cd75a700",
+    "GUID:1a3229173a54aa6489be335f48af32b7",
+    "GUID:9004f1c3ff4c4a8459372f35881a6aef"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

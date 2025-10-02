@@ -26,39 +26,17 @@
     {
       "Annotation": "BuildPlayerDataGenerator Library/BuildPlayerData/Editor/TypeDb-All.json",
       "DisplayName": "Extracting script serialization layouts",
-      "Action": "\"C:/Program Files/Unity/Hub/Editor/6000.0.42f1/Editor/Data\\Tools\\netcorerun\\netcorerun.exe\" \"C:/Program Files/Unity/Hub/Editor/6000.0.42f1/Editor/Data/Tools/BuildPlayerDataGenerator/BuildPlayerDataGenerator.exe\" -a=\"C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\ScriptAssemblies\\Assembly-CSharp.dll\" -a=\"C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\ScriptAssemblies\\Unity.Addressables.dll\" -a=\"C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\ScriptAssemblies\\Unity.AI.Navigation.dll\" -a=\"C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\ScriptAssemblies\\Unity.Multiplayer.Center.Common.dll\" -a=\"C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\ScriptAssemblies\\Unity.Profiling.Core.dll\" -a=\"C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\ScriptAssemblies\\Unity.ResourceManager.dll\" -a=\"C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\ScriptAssemblies\\Unity.ScriptableBuildPipeline.dll\" -a=\"C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\ScriptAssemblies\\Unity.TextMeshPro.dll\" -a=\"C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\ScriptAssemblies\\Unity.Timeline.dll\" -a=\"C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\ScriptAssemblies\\Unity.VisualScripting.Core.dll\" -a=\"C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\ScriptAssemblies\\Unity.VisualScripting.Flow.dll\" -a=\"C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\ScriptAssemblies\\Unity.VisualScripting.State.dll\" -a=\"C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\ScriptAssemblies\\UnityEngine.TestRunner.dll\" -a=\"C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\ScriptAssemblies\\UnityEngine.UI.dll\" -a=\"C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.ext.nunit@60ef35ffd3cd\\net40\\unity-custom\\nunit.framework.dll\" -a=\"C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.visualscripting@1b53f46e931b\\Runtime\\VisualScripting.Flow\\Dependencies\\NCalc\\Unity.VisualScripting.Antlr3.Runtime.dll\" -s=\"C:\\Program Files\\Unity\\Hub\\Editor\\6000.0.42f1\\Editor\\Data\\Managed\\UnityEngine\" -s=\"C:\\Program Files\\Unity\\Hub\\Editor\\6000.0.42f1\\Editor\\Data\\NetStandard\\compat\\2.1.0\\shims\\netfx\" -s=\"C:\\Program Files\\Unity\\Hub\\Editor\\6000.0.42f1\\Editor\\Data\\NetStandard\\compat\\2.1.0\\shims\\netstandard\" -s=\"C:\\Program Files\\Unity\\Hub\\Editor\\6000.0.42f1\\Editor\\Data\\NetStandard\\EditorExtensions\" -s=\"C:\\Program Files\\Unity\\Hub\\Editor\\6000.0.42f1\\Editor\\Data\\NetStandard\\Extensions\\2.0.0\" -s=\"C:\\Program Files\\Unity\\Hub\\Editor\\6000.0.42f1\\Editor\\Data\\NetStandard\\ref\\2.1.0\" -s=\"C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\ScriptAssemblies\" -s=\"C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.ext.nunit@60ef35ffd3cd\\net40\\unity-custom\" -s=\"C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.visualscripting@1b53f46e931b\\Runtime\\VisualScripting.Flow\\Dependencies\\NCalc\" -o=\"Library/BuildPlayerData/Editor\" -rn=\"\" -tn=\"TypeDb-All.json\"",
+      "Action": "\"C:/Program Files/Unity/Hub/Editor/6000.0.42f1/Editor/Data\\Tools\\netcorerun\\netcorerun.exe\" \"C:/Program Files/Unity/Hub/Editor/6000.0.42f1/Editor/Data/Tools/BuildPlayerDataGenerator/BuildPlayerDataGenerator.exe\" -a=\"C:\\Users\\13700k\\code\\LastEpoch_Mods\\AssetBundleExport\\Library\\ScriptAssemblies\\Assembly-CSharp.dll\" -a=\"C:\\Users\\13700k\\code\\LastEpoch_Mods\\AssetBundleExport\\Library\\ScriptAssemblies\\Unity.Multiplayer.Center.Common.dll\" -a=\"C:\\Users\\13700k\\code\\LastEpoch_Mods\\AssetBundleExport\\Library\\ScriptAssemblies\\Unity.TextMeshPro.dll\" -a=\"C:\\Users\\13700k\\code\\LastEpoch_Mods\\AssetBundleExport\\Library\\ScriptAssemblies\\UnityEngine.UI.dll\" -a=\"C:\\Users\\13700k\\code\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.nuget.newtonsoft-json@74deb55db2a0\\Runtime\\Newtonsoft.Json.dll\" -s=\"C:\\Program Files\\Unity\\Hub\\Editor\\6000.0.42f1\\Editor\\Data\\Managed\\UnityEngine\" -s=\"C:\\Program Files\\Unity\\Hub\\Editor\\6000.0.42f1\\Editor\\Data\\NetStandard\\compat\\2.1.0\\shims\\netfx\" -s=\"C:\\Program Files\\Unity\\Hub\\Editor\\6000.0.42f1\\Editor\\Data\\NetStandard\\compat\\2.1.0\\shims\\netstandard\" -s=\"C:\\Program Files\\Unity\\Hub\\Editor\\6000.0.42f1\\Editor\\Data\\NetStandard\\EditorExtensions\" -s=\"C:\\Program Files\\Unity\\Hub\\Editor\\6000.0.42f1\\Editor\\Data\\NetStandard\\Extensions\\2.0.0\" -s=\"C:\\Program Files\\Unity\\Hub\\Editor\\6000.0.42f1\\Editor\\Data\\NetStandard\\ref\\2.1.0\" -s=\"C:\\Users\\13700k\\code\\LastEpoch_Mods\\AssetBundleExport\\Library\\ScriptAssemblies\" -s=\"C:\\Users\\13700k\\code\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.nuget.newtonsoft-json@74deb55db2a0\\Runtime\" -o=\"Library/BuildPlayerData/Editor\" -rn=\"\" -tn=\"TypeDb-All.json\"",
       "Inputs": [
         "C:/Program Files/Unity/Hub/Editor/6000.0.42f1/Editor/Data/Tools/netcorerun/netcorerun.exe",
         "C:/Program Files/Unity/Hub/Editor/6000.0.42f1/Editor/Data/Tools/BuildPlayerDataGenerator/BuildPlayerDataGenerator.exe",
         "Library/ScriptAssemblies/Assembly-CSharp.dll",
-        "Library/ScriptAssemblies/Unity.Addressables.dll",
-        "Library/ScriptAssemblies/Unity.AI.Navigation.dll",
         "Library/ScriptAssemblies/Unity.Multiplayer.Center.Common.dll",
-        "Library/ScriptAssemblies/Unity.Profiling.Core.dll",
-        "Library/ScriptAssemblies/Unity.ResourceManager.dll",
-        "Library/ScriptAssemblies/Unity.ScriptableBuildPipeline.dll",
         "Library/ScriptAssemblies/Unity.TextMeshPro.dll",
-        "Library/ScriptAssemblies/Unity.Timeline.dll",
-        "Library/ScriptAssemblies/Unity.VisualScripting.Core.dll",
-        "Library/ScriptAssemblies/Unity.VisualScripting.Flow.dll",
-        "Library/ScriptAssemblies/Unity.VisualScripting.State.dll",
-        "Library/ScriptAssemblies/UnityEngine.TestRunner.dll",
         "Library/ScriptAssemblies/UnityEngine.UI.dll",
-        "Library/PackageCache/com.unity.ext.nunit@60ef35ffd3cd/net40/unity-custom/nunit.framework.dll",
-        "Library/PackageCache/com.unity.visualscripting@1b53f46e931b/Runtime/VisualScripting.Flow/Dependencies/NCalc/Unity.VisualScripting.Antlr3.Runtime.dll"
+        "Library/PackageCache/com.unity.nuget.newtonsoft-json@74deb55db2a0/Runtime/Newtonsoft.Json.dll"
       ],
       "InputFlags": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
         0,
         0,
         0,
@@ -212,49 +190,16 @@
       "File": "Library/Bee/500b0aESkipCompile-inputdata.json"
     },
     {
-      "File": "Library/PackageCache/com.unity.ext.nunit@60ef35ffd3cd/net40/unity-custom/nunit.framework.dll"
-    },
-    {
-      "File": "Library/PackageCache/com.unity.visualscripting@1b53f46e931b/Runtime/VisualScripting.Flow/Dependencies/NCalc/Unity.VisualScripting.Antlr3.Runtime.dll"
+      "File": "Library/PackageCache/com.unity.nuget.newtonsoft-json@74deb55db2a0/Runtime/Newtonsoft.Json.dll"
     },
     {
       "File": "Library/ScriptAssemblies/Assembly-CSharp.dll"
     },
     {
-      "File": "Library/ScriptAssemblies/Unity.Addressables.dll"
-    },
-    {
-      "File": "Library/ScriptAssemblies/Unity.AI.Navigation.dll"
-    },
-    {
       "File": "Library/ScriptAssemblies/Unity.Multiplayer.Center.Common.dll"
     },
     {
-      "File": "Library/ScriptAssemblies/Unity.Profiling.Core.dll"
-    },
-    {
-      "File": "Library/ScriptAssemblies/Unity.ResourceManager.dll"
-    },
-    {
-      "File": "Library/ScriptAssemblies/Unity.ScriptableBuildPipeline.dll"
-    },
-    {
       "File": "Library/ScriptAssemblies/Unity.TextMeshPro.dll"
-    },
-    {
-      "File": "Library/ScriptAssemblies/Unity.Timeline.dll"
-    },
-    {
-      "File": "Library/ScriptAssemblies/Unity.VisualScripting.Core.dll"
-    },
-    {
-      "File": "Library/ScriptAssemblies/Unity.VisualScripting.Flow.dll"
-    },
-    {
-      "File": "Library/ScriptAssemblies/Unity.VisualScripting.State.dll"
-    },
-    {
-      "File": "Library/ScriptAssemblies/UnityEngine.TestRunner.dll"
     },
     {
       "File": "Library/ScriptAssemblies/UnityEngine.UI.dll"
@@ -294,6 +239,6 @@
   "SharedResources": [],
   "Scanners": [],
   "Identifier": "Library/Bee/500b0aESkipCompile.dag.json",
-  "PayloadsFile": "C:/Code/Github/LastEpoch_Mods/AssetBundleExport/Library/Bee/500b0aESkipCompile.dag.payloads",
+  "PayloadsFile": "C:/Users/13700k/code/LastEpoch_Mods/AssetBundleExport/Library/Bee/500b0aESkipCompile.dag.payloads",
   "RelativePathToRoot": "../.."
 }

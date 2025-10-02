@@ -1,0 +1,38 @@
+{
+  "name": "com.unity.asset-manager-for-unity",
+  "displayName": "Asset Manager",
+  "version": "1.7.0",
+  "unity": "2022.3",
+  "description": "Asset Manager for Unity is an In-Editor tool that allows you to easily browse, upload and import assets between the Unity Editor and Unity Cloud.",
+  "keywords": [
+    "asset",
+    "packages",
+    "preview",
+    "management",
+    "versioning",
+    "pipeline",
+    "library"
+  ],
+  "dependencies": {
+    "com.unity.settings-manager": "2.0.1",
+    "com.unity.nuget.newtonsoft-json": "3.2.1",
+    "com.unity.modules.unitywebrequest": "1.0.0",
+    "com.unity.modules.imgui": "1.0.0"
+  },
+  "relatedPackages": {
+    "com.unity.asset-manager-for-unity.tests": "1.7.0"
+  },
+  "_upm": {
+    "changelog": "[Added]\n- Added debugging logs in the import process. Can be enabled using the \"Enable debug logs\" in the Preferences.\n- Add the ability to retrieve programmatically the Unity GUIDs associated to an imported asset via the new `AssetManagerClient.GetImportedAssetGUIDs` method.\n- Added a new organization selector in the Asset Manager window.\n\n[Fixed]\n- Fix error when uploading assets with circular dependencies."
+  },
+  "upmCi": {
+    "footprint": "dd33f1bbcf4bb5460b71ceefea70f8546db3fad8"
+  },
+  "documentationUrl": "https://docs.unity3d.com/Packages/com.unity.asset-manager-for-unity@1.7/manual/index.html",
+  "repository": {
+    "url": "https://github.cds.internal.unity3d.com/unity/com.unity.asset-manager-for-unity.git",
+    "type": "git",
+    "revision": "5e97f678970544b5d25637288be26cc8a405a85d"
+  },
+  "_fingerprint": "a7a57dade89883c2680042c4f84e47f23f35a887"
+}

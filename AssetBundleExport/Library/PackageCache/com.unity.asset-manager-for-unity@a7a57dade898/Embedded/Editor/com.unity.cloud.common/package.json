@@ -1,0 +1,28 @@
+{
+  "name": "com.unity.cloud.common",
+  "version": "1.2.0",
+  "displayName": "Unity Cloud Common",
+  "description": "Unity Cloud Common provides functionalities needed by the Unity Cloud SDKs.",
+  "unity": "2022.3",
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.2.1",
+    "com.unity.modules.unitywebrequest": "1.0.0",
+    "com.unity.modules.imgui": "1.0.0"
+  },
+  "relatedPackages": {
+    "com.unity.cloud.common.tests": "1.2.0"
+  },
+  "_upm": {
+    "changelog": "### Added\n- `WebAppNames` class.\n\n### Changed\n- `WebAppUrlComposer` and `ServiceHostResolverFactory` classes are no longer experimental.\n- Experimental `WebAppUrlComposer` static properties `Asset-Manager` and `Documentation` moved to a new `WebAppNames` class.\n\n### Fixed\n- Fixed race condition in `SingleReaderSingleWriterNativeStream`.\n- Fixed exception thrown when a request is canceled.\n- Fixed `ObjectDisposedException` thrown in some cases when accessing the `HttpResponseMessage` object.\n- Fix race condition where sometimes the UnityHttpClient would have cached a uninitialized value that resulted in an ArgumentNullException thrown at runtime.\n- Fixed http request task not completing in some cases when the request is canceled.\n\n### Removed\n- `UnityCloudPlayerSettings.SetAppNamespace` method and `UnityCloudPlayerSettings.OnAppNamespaceChanged` event.\n- `ServiceHostResolverFactory.CreateForUnityServicesGateway` method."
+  },
+  "upmCi": {
+    "footprint": "bb88ef89814cf33c6fa10870131f128a5aa2fb71"
+  },
+  "documentationUrl": "https://docs.unity3d.com/Packages/com.unity.cloud.common@1.2/manual/index.html",
+  "repository": {
+    "url": "https://github.cds.internal.unity3d.com/unity/digital-twins-sdk.git",
+    "type": "git",
+    "revision": "c3009db5a5263255e0b659965ee80e81ca0bb9fa"
+  },
+  "_fingerprint": "2c1c718dbc511ac34430e22b4a8dbd49c9ecc8c5"
+}

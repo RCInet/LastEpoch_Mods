@@ -1,0 +1,22 @@
+{
+  "name": "Unity.Cloud.Common.Editor.Embedded",
+  "rootNamespace": "Unity.Cloud.Common.Editor",
+  "references": [
+    "GUID:343deaaf83e0cee4ca978e7df0b80d21",
+    "GUID:2bafac87e7f4b9b418d9448d219b01ab",
+    "GUID:180b84aeaa9c9da4a8ad1f35cd75a700",
+    "GUID:1a3229173a54aa6489be335f48af32b7",
+    "GUID:aba4206144ab140418116d2ff609c873"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

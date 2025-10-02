@@ -1,0 +1,19 @@
+{
+  "name": "Unity.Cloud.Assets.Runtime.Embedded",
+  "rootNamespace": "Unity.Cloud.Assets.Runtime",
+  "references": [
+    "GUID:180b84aeaa9c9da4a8ad1f35cd75a700",
+    "GUID:e50c451ab0b790f4d9aa0d14794e2633"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

@@ -1,0 +1,22 @@
+{
+  "name": "Unity.Cloud.Identity.Runtime.Embedded",
+  "rootNamespace": "Unity.Cloud.Identity.Runtime",
+  "references": [
+    "GUID:f953291ca9671d54396f3f8c1433b1f5",
+    "GUID:180b84aeaa9c9da4a8ad1f35cd75a700",
+    "GUID:1a3229173a54aa6489be335f48af32b7",
+    "GUID:9004f1c3ff4c4a8459372f35881a6aef",
+    "GUID:ad8eb604f00e3bd4c9977d26fdf8e6b5"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

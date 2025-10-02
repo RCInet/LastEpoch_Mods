@@ -1,0 +1,18 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" ae="Unity.AssetManager.UI.Editor" editor-extension-mode="True" class="px-2">
+    <ui:VisualElement name="inspectorPageContainer" class="inspector-page-container justify-space-between">
+        <ui:VisualElement name="inspector-page-top" class="inspector-page-top">
+            <ui:VisualElement name="inspector-page-title-container" class="inspector-page-title-container">
+                <ui:Label name="inspector-page-title" class="text-bold flex-shrink-1 flex-grow-1" />
+            </ui:VisualElement>
+            <ui:Button tabindex="-1" display-tooltip-when-elided="true" name="closeButton" class="details-page-close-button" style="margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0;" />
+        </ui:VisualElement>
+        <ui:ScrollView name="inspector-page-scrollview" mode="Vertical" class="inspector-page-scrollview">
+            <ui:VisualElement name="inspector-page-content-container" />
+            <ui:VisualElement name="upload-metadata-container" class="px-2"/>
+        </ui:ScrollView>
+        <ui:VisualElement name="footer" class="inspector-page-footer px-2">
+            <ui:VisualElement name="footer-container" class="inspector-footer-container">
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

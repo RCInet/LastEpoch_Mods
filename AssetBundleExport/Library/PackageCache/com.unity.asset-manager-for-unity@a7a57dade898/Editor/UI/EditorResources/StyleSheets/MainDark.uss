@@ -1,0 +1,466 @@
+:root{
+    --icon-tint-color: #C4C4C4;
+}
+
+/************************************************
+* General
+************************************************/
+
+.horizontal-separator {
+    background-color: #202020;
+}
+
+.unity-base-slider__input:focus .unity-base-slider__dragger {
+    background-color: #656565;
+}
+
+/************************************************
+* Loading Screen
+************************************************/
+.LoadingScreen {
+    background-color: #202020;
+}
+
+/************************************************
+* Two Pane SplitView
+************************************************/
+
+.unity-text-element {
+    color: #D2D2D2;
+}
+
+#unity-dragline-anchor {
+    background-color: #202020;
+}
+
+.unity-list-view__item--selected {
+    color: #D2D2D2;
+}
+
+#categorySelected {
+    background-color: #2C5D87;
+}
+
+#categorySelected:hover {
+    background-color: #2C5D87;
+}
+
+.unity-collection-view__item--selected {
+    background-color: #2C5D87 !important;
+}
+
+.unity-collection-view__item--selected:hover {
+    background-color: #2C5D87 !important;
+}
+
+.unity-list-view__item.unity-collection-view__item--selected:hover {
+    background-color: #2C5D87 !important;
+}
+
+.unity-list-view__item--selected {
+    background-color: #2C5D87 !important;
+}
+
+.unity-list-view__item--selected:hover {
+    background-color: #2C5D87 !important;
+}
+
+.unity-list-view__item.unity-list-view__item--selected:hover {
+    background-color: #2C5D87 !important;
+}
+
+.unity-list-view__item:hover {
+    background-color: #656565;
+}
+
+.collections-top-level-folder > Toggle > VisualElement{
+    background-color: #3d3d3d;
+}
+
+/************************************************
+* Tab View
+************************************************/
+TabView {
+    border-color: #191919;
+}
+
+.tab-button--selected .tab-button-label {
+    color: white;
+}
+
+.tab-button-underscore-bar {
+    background-color: #DEDEDE;
+}
+
+/************************************************
+* Search View
+************************************************/
+
+.AssetManagerSearchView {
+    background-color: #202020;
+    border-color: #202020;
+}
+
+SearchBar {
+    background-color: #2D2D2D;
+}
+
+#inputSearch {
+    background-color: #2A2A2A;
+    border-color: #0F0F0F;
+}
+
+.SearchFilterChip {
+    background-color: #434343;
+}
+
+.SearchFilterChip>Label {
+    color: #C4C4C4;
+}
+
+/************************************************
+* Loading Icon
+************************************************/
+
+.loading-bar {
+    background-color: black;
+}
+
+.unity-top-container{
+    background-color: #2D2D2D;
+}
+
+.unity-settings-button{
+    background-color: #2D2D2D;
+}
+
+.unity-settings-button:hover{
+    background-color: #585858;
+}
+
+/************************************************
+* Bread Crumbs and Role Container
+************************************************/
+.unity-breadcrumbs-and-role-container{
+    background-color: #2D2D2D;
+}
+
+/************************************************
+* Bread Crumbs
+************************************************/
+.unity-breadcrumbs-button:hover {
+    color: rgb(255, 255, 255);
+}
+
+.unity_breadcrumbs-button:focus {
+    color: rgb(255, 255, 255);
+}
+
+/************************************************
+* Filters
+************************************************/
+
+.unity-filters-sort-container {
+    background-color: #2D2D2D;
+}
+
+.unity-filters {
+    background-color: #2D2D2D;
+}
+
+.unity-filters-button {
+    background-color: #515151;
+    color: #D2D2D2;
+}
+
+.unity-filters-button:enabled:hover {
+    background-color: #676767;
+    color: #EEEEEE;
+}
+
+.unity-filters-popup {
+    background-color: #2D2D2D;
+    border-color: #515151;
+}
+
+.unity-filters-popup-separator-line {
+    background-color: #515151;
+}
+
+.unity-filters-chip--set
+{
+    background-color: #2C5D87;
+}
+
+.unity-filters-popup-section-label
+{
+    color: #999999;
+}
+
+.unity-filters-popup-filter-selection-checkbox
+{
+    background-color: #2D2D2D;
+    border-color: rgba(0,0,0,0);
+}
+
+/************************************************
+* Saved View Controls
+************************************************/
+
+.unity-save-view-dropdown-button {
+    border-color: #303030;
+    border-bottom-color: #242424;
+    background-color: #585858;
+}
+
+.unity-save-view-dropdown-button:hover:enabled {
+    background-color: #676767;
+}
+
+/************************************************
+* Sort
+************************************************/
+.unity-sort-order{
+    background-color: #2D2D2D;
+}
+
+.unity-sort-order:hover{
+    background-color: #676767;
+}
+
+/************************************************
+* Grid View
+************************************************/
+
+.AssetManagerContentView {
+    background-color: #2D2D2D;
+}
+
+.grid-view--item {
+    background-color: #202020;
+}
+
+.grid-view--item-label {
+    background-color: #424242;
+}
+
+GridMessageView > .unity-label {
+    color: rgba(135, 135, 135, 1);
+}
+
+.grid-view--item-ignore .grid-view--item-overlay {
+    background-color: rgba(45, 45, 45, 0.9);
+}
+
+.grid-view--item-ignore:hover .grid-view--item-overlay {
+    background-color: rgba(45, 45, 45, 0.3);
+}
+
+.grid-view--item-ignore .grid-view--item-label {
+    background-color: rgba(20, 20, 20, 0.4);
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/************************************************
+* Error View
+************************************************/
+
+.errorView-action-button-link{
+    color: #3A72B0;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+/************************************************
+* Chips
+************************************************/
+
+Chip, TagChip, ProjectChip, UserChip {
+    background-color: rgba(66, 66, 66, 1);
+}
+
+TagChip:hover, ProjectChip:hover, UserChip:hover {
+    background-color: rgba(88, 88, 88, 1);
+}
+
+RoleChip {
+    border-color: #585858;
+}
+
+RoleChip:hover {
+    border-color: #6E6E6E;
+    background-color: #383838;
+}
+
+/************************************************
+* Multi Selection Page Container
+************************************************/
+
+.multi-selection-foldout > Toggle {
+    background-color: rgba(32, 32, 32, 1);
+}
+
+.upload-metadata-title {
+    background-color: rgba(32, 32, 32, 1);
+}
+
+/************************************************
+* Details Page Container
+************************************************/
+
+.details-page-thumbnail-container {
+    background-color: #2D2D2D;
+}
+
+.progress-bar {
+    background-color: #80A3FF;
+}
+
+.progress-bar-background {
+    background-color: #1B1B1B;
+}
+
+.details-files-foldout > Toggle{
+    background-color: rgba(32, 32, 32, 1);
+}
+
+.details-files-foldout-uvcs-chip-icon
+{
+    -unity-background-image-tint-color: rgb(53,185,121);
+}
+
+.details-files-foldout-uvcs-chip > Label
+{
+    color: rgb(177,241,182);
+}
+
+.no-files-warning-box {
+    background-color: rgba(60, 60, 60, 1);
+    border-color: rgba(23, 23, 23, 1);
+}
+
+.same-files-warning-box {
+    background-color: rgba(60, 60, 60, 1);
+    border-color: rgba(23, 23, 23, 1);
+}
+
+.outdated-warning-box {
+    background-color: rgba(60, 60, 60, 1);
+    border-color: rgba(23, 23, 23, 1);
+}
+
+.details-page-close-button:hover, .details-page-download-cancel-button:hover {
+    background-color: #505050;
+}
+
+.import-to-button,
+.remove-dropdown-button {
+    border-color: #303030;
+    border-bottom-color: #242424;
+    background-color: #585858;
+}
+
+.import-to-button:hover:enabled,
+.remove-dropdown-button:hover:enabled {
+    background-color: #676767;
+}
+
+.import-popup {
+    background-color: #2D2D2D;
+    border-color: #515151;
+}
+
+.asset-version-details-foldout > Toggle {
+    background-color: rgba(32, 32, 32, 1);
+}
+
+.asset-version-label--filled
+{
+    background-color: #585858;
+    border-color: #585858;
+}
+
+.asset-version-label--imported
+{
+    border-color: #C4C4C4;
+}
+
+/************************************************
+* User Settings
+************************************************/
+
+.settings-foldout {
+    background-color: #474747;
+    border-color: #191919;
+}
+
+.toolbar-menu,
+.asset-manager-dropdown {
+    background-color: #585858;
+    border-color: #191919;
+}
+
+/************************************************
+* Cancellable Progress Bar
+************************************************/
+
+.cancellable-progress-bar {
+    background-color: #3A3A3A;
+}
+
+.cancellable-progress-bar--foreground {
+    background-color: #3A79BB;
+}
+
+/************************************************
+* Custom Section
+************************************************/
+
+.upload-page-custom-section,
+.in-project-page-custom-section {
+    background-color: #3E3E3E;
+    border-color: #191919;
+}
+
+.upload-page-settings-panel {
+    background-color: rgba(0,0,0,0.5);
+}
+
+/************************************************
+* Popup
+************************************************/
+
+PopupContainer {
+    background-color: #3E3E3E;
+    border-color: #515151;
+}
+
+/************************************************
+* Reimport Window
+************************************************/
+
+.reimport-window-footer {
+    background-color: #424242;
+}
+
+.reimport-window-warning-container {
+    background-color: #424242;
+    border-color: #232323;
+}
+
+.reimport-foldout-content {
+    background-color: #232323;
+}
+
+.reimport-foldout-header-dropdown
+{
+    background-color: #515151;
+    border-color: #232323;
+}
+
+/************************************************
+* Blocking Progress Panel
+************************************************/
+.blocking-progress-panel-container {
+    background-color: #2D2D2D;
+    border-color: #515151;
+}
