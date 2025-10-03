@@ -1,0 +1,2980 @@
+/************************************************
+* General
+************************************************/
+
+.horizontal-separator {
+    height: 1px;
+    flex-shrink: 0;
+}
+
+.flex-shrink-0 {
+    flex-shrink: 0;
+}
+
+.flex-shrink-1 {
+    flex-shrink: 1;
+}
+
+.flex-grow-1 {
+    flex-grow: 1;
+}
+
+.incomplete-file-icon {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Warning.png');
+    -unity-background-image-tint-color: #FF554A;
+}
+
+.flex-row {
+    flex-direction: row;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+/************************************************
+* Loading Screen
+************************************************/
+.LoadingScreen {
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.LoadingScreen Label {
+    font-size: 14px;
+    -unity-font-style: bold;
+    margin-top: 12px;
+}
+
+/************************************************
+* Two Pane SplitView / Categories
+************************************************/
+
+.collapsed-sidebar {
+    min-width: 32px;
+    max-width: 32px;
+    border-right-width: 1px;
+    border-right-color: black;
+}
+
+.expanded-sidebar {
+    min-width: 160px;
+    max-width: none;
+}
+
+.collapse-sidebar-button {
+    height: 32px;
+    width: 32px;
+    flex-shrink: 0;
+    justify-content: center;
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Left-Arrow.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+    background-size: 24px 24px;
+    background-position-x: left 0;
+}
+
+.collapse-sidebar-button:focus {
+    border-width: 1px;
+    border-color: #7BAEFA;
+}
+
+.expand-sidebar-button {
+    height: 32px;
+    width: 32px;
+    justify-content: center;
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Right-Arrow.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+    background-size: 24px 24px;
+}
+
+.expand-sidebar-button:focus {
+    border-width: 1px;
+    border-color: #7BAEFA;
+}
+
+.sidebar-text-field > TextInput > TextElement{
+    padding-left: 10px;
+}
+
+.sidebar-top-section {
+    flex-direction: row;
+    justify-content: space-between;
+    min-height: 29px;
+    max-height: 29px;
+}
+
+#FooterContainer {
+    justify-content: flex-end;
+    margin-top: 8px;
+    flex-grow: 1;
+    flex-shrink: 0;
+}
+
+.SidebarTitle {
+    margin: 8px 0 0 8px;
+    -unity-font-style: bold;
+}
+
+.SidebarContentTitle {
+    -unity-font-style: bold;
+}
+
+.sidebar-item-container {
+    flex-direction: row;
+    align-items: center;
+    margin-left: 5px;
+    height: 20px;
+}
+
+SideBarFoldout .unity-base-field__input {
+    flex-shrink: 1;
+}
+
+SideBarFoldout Image {
+    max-height: 16px;
+    max-width: 16px;
+    align-self: center;
+    flex-shrink: 0;
+}
+
+SideBarFoldout ToolbarSpacer {
+    flex-shrink: 0;
+}
+
+SideBarFoldout Label {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    flex-shrink: 1;
+}
+
+SideBarFoldout Toggle {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+SideBarAllAssetsFoldout Image {
+    width: 16px;
+    height: 16px;
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/All-Assets.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+}
+
+SideBarCollectionFoldout Image.icon-folder-open {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Folder-Open.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+    width: 16px;
+    height: 16px;
+}
+
+SideBarCollectionFoldout Image.icon-folder-close {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Folder-Close.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+    width: 16px;
+    height: 16px;
+}
+
+#categoryFoldoutButton {
+    height: 100%;
+    width: 30px;
+}
+
+SideBarButton > ListView {
+    margin-left: 5px;
+}
+
+SideBarButton {
+    flex-direction: row;
+    min-height: 32px;
+    width: auto;
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0);
+}
+
+SideBarButton:focus {
+    border-width: 1px;
+    border-color: #7BAEFA;
+}
+
+SideBarButton > Image {
+    max-height: 16px;
+    max-width: 16px;
+    align-self: center;
+}
+
+SideBarButton > Label {
+    align-self: center;
+}
+
+.SideBarContainer {
+    justify-content: space-between;
+    flex-basis: auto;
+}
+
+.SelectionInspectorContainer {
+    min-width: 200px;
+    flex-basis: auto;
+}
+
+.ContentPanel {
+    flex-basis: auto;
+    flex-direction: row;
+    flex-grow: 1;
+    width: 100%;
+}
+
+TwoPaneSplitView {
+    flex: 1 0 0;
+}
+
+#unity-dragline-anchor {
+    width: 1px;
+}
+
+.ProjectsDropdown {
+    height: 30px;
+    padding-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 5px;
+}
+
+.unity-base-popup-field__text {
+    text-overflow: ellipsis;
+}
+
+.unity-base-popup-field__arrow {
+    margin-left: 10px;
+}
+
+#categories-scrollView {
+    padding-top: 10px;
+}
+
+.NoProjectsWarning {
+    flex-direction: row;
+    align-items: center;
+    margin: 1px 3px 10px 10px;
+    padding-top: 10px
+}
+
+.NoProjectSelected {
+    -unity-font-style: italic;
+    margin-left: 10px;
+    margin-top: 5px;
+}
+
+/*!* Overrides the blue triangle in foldout*!*/
+.unity-foldout__toggle > .unity-toggle__input:focus:checked > .unity-toggle__checkmark {
+    background-image: resource("uipackageresources/images/d_in_foldout_on.png");
+}
+
+.unity-foldout__toggle > .unity-toggle__input:focus > .unity-toggle__checkmark {
+    background-image: resource("uipackageresources/images/d_in_foldout.png");
+}
+
+.unity-foldout {
+    margin-left: 5px;
+}
+
+.unity-foldout__toggle {
+    margin-left: 0;
+}
+
+.unity-collection-view__item {
+    margin-left: 5px;
+}
+
+.removed-arrow {
+    margin-left: 22px;
+}
+
+.allAssetsFolder Toggle {
+    padding-left: 0;
+}
+
+.allAssetsFolder {
+    margin-left: 5px;
+}
+
+.collections-top-level-folder > Toggle {
+    padding-left: 4px;
+}
+
+.collections-top-level-folder > Toggle > VisualElement > Image {
+    display: none;
+    width: 0;
+}
+
+.collections-top-level-folder > Toggle > VisualElement > ToolbarSpacer {
+    width: 3px;
+}
+
+.collections-top-level-folder > Toggle > VisualElement > Label {
+    -unity-font-style: bold;
+}
+
+.SearchBar__placeholder {
+    -unity-font-style: italic;
+    opacity: 0.5;
+}
+
+/*This is a UIToolkit issue where the second element of the foldouts' list
+is not intended properly and we need this to fix that issue*/
+.unity-foldout--depth-1 .unity-foldout__toggle,
+.unity-foldout--depth-2 .unity-foldout__toggle,
+.unity-foldout--depth-3 .unity-foldout__toggle,
+.unity-foldout--depth-4 .unity-foldout__toggle,
+.unity-foldout--depth-max .unity-foldout__toggle {
+    margin-left: 0;
+}
+
+/************************************************
+* Top Container
+************************************************/
+.unity-top-container {
+    flex-direction: row;
+    flex-grow: 1;
+    flex-shrink: 0;
+}
+
+/************************************************
+* Top Left Container
+************************************************/
+.unity-top-left-container {
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-grow: 1;
+    flex-shrink: 1;
+    padding-top: 8px;
+    padding-right: 12px;
+    flex-wrap: wrap;
+}
+
+/************************************************
+* Top Right Container
+************************************************/
+.unity-top-right-container {
+    flex-direction: row;
+    justify-content: flex-end;
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+/************************************************
+* Bread Crumbs
+************************************************/
+
+.unity-breadcrumbs {
+    flex-direction: row;
+    align-self: center;
+    padding-left: 6px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.unity-breadcrumbs-arrow {
+    width: 16px;
+    min-width: 16px;
+    height: 16px;
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Caret-Right.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+}
+
+.unity-breadcrumbs-button {
+    height: 16px;
+    padding-left: 8px;
+    padding-right: 8px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -unity-text-overflow-position: end;
+}
+
+.unity-breadcrumbs-button.highlight {
+    -unity-font-style: bold;
+}
+
+/************************************************
+* Update All Button
+************************************************/
+UpdateAllButton {
+    margin-top: 5px;
+    margin-right: 5px;
+    align-self: flex-end;
+}
+
+UpdateAllButton > .unity-button {
+    padding: 1px;
+}
+
+.unity-update-all-button-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.unity-update-all-button-icon.active {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/AssetStatus/ArrowDown@2x.png');
+}
+
+.unity-update-all-button-icon.inactive {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/AssetStatus/ArrowDownInactive@2x.png');
+}
+
+.unity-update-all-button-container {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+/************************************************
+* Page Title
+************************************************/
+PageTitle {
+    margin-left: 8px;
+    -unity-font-style: bold;
+}
+
+/************************************************
+* Settings Button
+************************************************/
+.unity-settings-button {
+    height: 20px;
+    width: 20px;
+    flex-shrink: 0;
+    border-width: 0;
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+    margin-top: 8px;
+    margin-right: 8px;
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Gear.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+}
+
+/************************************************
+* Filters
+************************************************/
+.unity-filters-sort-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+    flex-grow: 1;
+    justify-content: space-between;
+}
+
+.unity-filters {
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+    padding-top: 6px;
+    padding-left: 8px;
+    padding-bottom: 6px;
+}
+
+.unity-filters-button {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    flex-grow: 0;
+    justify-content: flex-start;
+    align-items: center;
+    border-width: 1px;
+    margin: 0;
+    margin-bottom: 5px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    border-radius: 11px;
+}
+
+.unity-filters-button-caret {
+    width: 12px;
+    height: 12px;
+    margin-left: 12px;
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Caret-Down.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+}
+
+.unity-filters-popup {
+    flex-direction: column;
+    position: absolute;
+    padding: 5px;
+    margin-top: 5px;
+    min-width: 160px;
+    border-width: 1px;
+    border-radius: 8px;
+}
+
+.unity-filters-popup-search-bar {
+    margin-left: 0;
+    margin-right: 5px;
+    margin-bottom: 8px;
+    flex-grow: 1;
+    width: auto;
+}
+
+.unity-filters-popup-section-label {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.unity-filters-popup-section-label--other {
+    margin-top: 16px;
+}
+
+.unity-filters-popup-filter-selection {
+    flex-direction: row;
+    font-size: 14px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-right: 8px;
+    padding-left: 8px;
+    border-radius: 5px;
+}
+
+.unity-filters-popup-filter-selection:hover {
+    background-color: #2F60C1;
+}
+
+.unity-filters-popup-filter-selection-checkmark {
+    position: absolute;
+    left: 10px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Check.png');
+    -unity-background-image-tint-color: white;
+}
+
+.unity-filters-popup-filter-selection-checkbox {
+    margin-left: 8px;
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border-width: 1px;
+}
+
+.unity-filters-popup-filter-no-selection {
+    font-size: 14px;
+    padding: 3px 8px;
+}
+
+.unity-filters-popup-filter-selection-container {
+    flex-direction: row;
+    flex-shrink: 0;
+    padding: 3px 8px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.unity-filters-popup-filter-selection-number-field {
+    width: 150px;
+    padding: 3px 8px;
+}
+
+.unity-filters-popup-filter-selection-number-field .unity-double-field__label {
+    min-width: 50px;
+}
+
+.unity-filters-popup-filter-selection-label {
+    min-width: 40px;
+}
+
+.unity-filters-popup-separator-line {
+    height: 1px;
+    margin: 8px;
+}
+
+.unity-filters-chip-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.unity-filters-chip {
+    flex-direction: row;
+    border-radius: 11px;
+    flex-shrink: 0;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.unity-filters-chip-delete {
+    margin-left: 8px;
+    margin-right: 4px;
+    width: 11px;
+    height: 11px;
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Close.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+}
+
+/************************************************
+* Saved View Controls
+************************************************/
+.unity-saved-view-controls {
+    flex-direction: row;
+    flex-shrink: 0;
+    padding-top: 6px;
+    padding-right: 8px;
+    padding-bottom: 6px;
+    margin-bottom: 3px;
+}
+
+.unity-saved-view-sort-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+    flex-grow: 1;
+    justify-content: flex-end;
+
+    overflow: hidden;
+}
+
+.unity-save-view-button {
+    flex-direction: row;
+    height: 23px;
+    flex-grow: 1;
+    margin-left: 0;
+    margin-right: 0;
+    border-right-width: 0;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.unity-save-view-dropdown-button {
+    height: 23px;
+    width: 20px;
+    margin: 0;
+    padding: 5px;
+    margin-right: 0;
+    margin-left: 0;
+    border-width: 1px;
+    border-left-width: 0;
+    border-radius: 0 3px 3px 0;
+}
+
+.unity-save-view-button-container {
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.unity-save-view-button-container DropdownField .unity-popup-field__input {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+}
+
+.unity-save-view-button-container DropdownField .unity-base-popup-field__arrow {
+    margin-left: -6px;
+}
+
+/************************************************
+* Sort
+************************************************/
+.unity-sort {
+    flex-direction: row;
+    flex-shrink: 0;
+    padding-top: 6px;
+    padding-right: 8px;
+    padding-bottom: 6px;
+    margin-bottom: 3px;
+}
+
+.unity-sort-dropdown > .unity-label {
+    min-width: 0;
+    align-self: center;
+}
+
+.unity-sort-dropdown > .unity-popup-field__input {
+    width: 110px;
+}
+
+.unity-sort-order {
+    border-width: 0;
+    margin: 0;
+    padding: 0;
+    width: 21px;
+    height: 21px;
+    align-self: center;
+}
+
+.unity-sort-order:focus {
+    border-width: 1px;
+}
+
+.unity-sort-order--ascending {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Arrow-Up.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+}
+
+.unity-sort-order--descending {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Arrow-Down.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+}
+
+/************************************************
+* Organization selection
+************************************************/
+.unity-org-selector {
+    flex-direction: row;
+    flex-shrink: 1;
+    flex-grow: 1;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    margin-right: 20px;
+}
+
+.unity-org-selector-dropdown > .unity-label {
+    min-width: 0;
+    align-self: center;
+}
+
+.unity-org-selector-dropdown > .unity-popup-field__input {
+    flex-direction: row;
+    flex-shrink: 0;
+    flex-grow: 1;
+    justify-content: flex-end;
+
+    background-color: transparent;
+    border-top-color: transparent;
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+}
+
+/************************************************
+* NOT LOGGED IN VIEW
+************************************************/
+
+.header-container {
+    flex-direction: row;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.header-thumbnail {
+    width: 64px;
+    height: 64px;
+    -unity-background-scale-mode: scale-to-fit;
+    margin-left: 14px;
+    margin-right: 14px;
+    margin-top: 14px;
+    margin-bottom: 14px;
+}
+
+.header-project-info {
+    margin-top: 14px;
+}
+
+.header-project-name {
+    font-size: 14px;
+    -unity-font-style: bold;
+    margin-top: 12px;
+}
+
+.header-user-email {
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.main-container {
+    align-items: center;
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.status-icon {
+    width: 100px;
+    height: 100px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.progress-bar {
+    width: 200px;
+}
+
+.progress-label {
+    -unity-font-style: bold;
+    font-size: 14px;
+    margin-top: 15px;
+    margin-left: 30px;
+    margin-right: 30px;
+    -unity-text-align: upper-center;
+    white-space: normal;
+}
+
+.bottom-button {
+    height: 28px;
+    margin: 15px;
+    font-size: 13px;
+    -unity-font-style: bold;
+}
+
+.info-text {
+    margin-top: 5px;
+    white-space: normal;
+    -unity-text-align: upper-center;
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-bottom: 15px;
+    font-size: 13px;
+    max-width: 400px;
+}
+
+.main-container-light {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+
+.bottom-button-blue {
+    background-color: rgb(33, 150, 243);
+    color: rgb(255, 255, 255);
+    border-left-color: rgba(0, 0, 0, 0.1);
+    border-right-color: rgba(0, 0, 0, 0.1);
+    border-top-color: rgba(0, 0, 0, 0.1);
+    border-bottom-color: rgba(0, 0, 0, 0.2);
+}
+
+.bottom-button-blue:hover {
+    background-color: rgb(11, 131, 228);
+}
+
+.link {
+    color: rgb(61, 119, 194);
+    -unity-font-style: bold;
+    white-space: normal;
+}
+
+/************************************************
+* Tab View
+************************************************/
+TabView {
+    flex-direction: row;
+    justify-content: flex-start;
+    min-height: 32px;
+    flex-shrink: 0;
+    padding-left: 5px;
+    flex-wrap: wrap;
+    border-bottom-width: 1px;
+}
+
+.tab-button {
+    justify-content: center;
+}
+
+.tab-button-label {
+    font-size: 12px;
+    -unity-text-align: middle-center;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.tab-button-underscore-bar {
+    display: none;
+    background-color: white;
+    height: 2px;
+    flex-grow: 1;
+    position: absolute;
+    bottom: 2px;
+    right: 0;
+    left: 0;
+}
+
+.tab-button--selected .tab-button-underscore-bar {
+    display: flex;
+}
+
+/************************************************
+* Search View
+************************************************/
+
+.AssetManagerSearchView {
+    width: 100%;
+    height: 70px;
+}
+
+SearchBar {
+    height: 42px;
+    flex-shrink: 0;
+}
+
+.page-title-label {
+    align-self: flex-start;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    margin-left: 10px;
+    height: 30px;
+}
+
+#inputSearch {
+    height: 30px;
+    width: auto;
+    min-width: 0;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: nowrap;
+    border-radius: 4px;
+    margin: 8px;
+    border-width: 1px;
+}
+
+#unity-search {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Search.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+}
+
+#search-clear {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Close.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+}
+
+.SearchContentSplitView {
+    min-width: 130px; /* Roughly the width of a grid item */
+    flex-grow: 1;
+}
+
+/* The search icon in the search bar*/
+#unity-search {
+    height: 16px;
+    width: 16px;
+    margin: 0 5px 0 5px;
+}
+
+#refresh-button-icon {
+    height: 20px;
+    width: 20px;
+    cursor: link;
+}
+
+TextField {
+    height: 100%;
+    width: 100%;
+}
+
+#unity-text-input {
+    height: auto;
+}
+
+.search-chip-container {
+    justify-content: space-between;
+    flex-direction: row;
+}
+
+.SearchFilterChip {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    justify-content: space-around;
+    width: auto;
+    flex-shrink: 1;
+    max-width: 150px;
+    border-radius: 8px;
+    padding: 1px 4px 1px 8px;
+    margin-left: 6px;
+    height: 18px;
+}
+
+.SearchFilterChip > Label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: auto;
+    padding-right: 5px;
+}
+
+.SearchFilterChip > Button {
+    flex-shrink: 0;
+}
+
+#search-clear {
+    visibility: hidden;
+    margin-right: 5px;
+    height: 10px;
+    width: 10px;
+    flex-shrink: 0;
+}
+
+/************************************************
+* Chips
+************************************************/
+
+Chip, TagChip {
+    padding: 1px 10px;
+    border-radius: 8px;
+    height: 16px;
+    margin: 2px;
+    margin-left: 0;
+    margin-right: 4px;
+    flex-shrink: 0;
+}
+
+TagChip {
+    cursor: link;
+}
+
+ProjectChip, UserChip {
+    height: 16px;
+    padding: 0;
+    padding-right: 8px;
+    border-radius: 8px;
+    margin-right: 5px;
+    flex-shrink: 1;
+    flex-direction: row;
+    cursor: link;
+}
+
+RoleChip {
+    flex-shrink: 0;
+    flex-grow: 0;
+    align-self: center;
+    margin-left: 8px;
+    border-width: 1px;
+    border-radius: 10px;
+    padding: 1px 4px;
+    cursor: link;
+}
+
+Chip > Label, TagChip > Label, ProjectChip > Label, UserChip > Label {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    flex-shrink: 1;
+    -unity-text-overflow-position: end;
+}
+
+RoleChip > Label {
+    -unity-text-align: middle-center;
+}
+
+ProjectChip > Image {
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    border-radius: 8px;
+    background-color: blueviolet;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+UserChip #InitialsCircle {
+    width: 16px;
+    height: 16px;
+    padding: 2px;
+    margin: 0;
+    margin-right: 8px;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+UserChip #Initials {
+    -unity-text-align: middle-center;
+    -unity-font-style: bold;
+    color: white;
+    font-size: 8px;
+    flex-shrink: 0;
+    padding: 0;
+    padding-top: 1px;
+}
+
+/************************************************
+* Grid View
+************************************************/
+
+.AssetManagerContentView {
+    height: 100%;
+}
+
+AssetsGridView {
+    flex-grow: 1;
+}
+
+.grid-view {
+    margin-bottom: 2px;
+    padding-top: 2px;
+    flex-grow: 1;
+    min-width: 100%;
+}
+
+.grid-view--item {
+    flex-basis: auto;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 0;
+    flex-shrink: 0;
+    height: 150px;
+    margin: 3px;
+    width: 125px;
+    border-width: 2px;
+    border-radius: 5px;
+    border-color: rgba(0, 0, 0, 0);
+}
+
+.grid-view--item .loading-icon {
+    position: absolute;
+}
+
+.asset-preview-thumbnail {
+    align-self: center;
+    flex-basis: auto;
+    flex-grow: 1;
+    flex-shrink: 0;
+    height: 100%;
+    width: 100%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.grid-view--item-label {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    bottom: 0;
+    width: 100%;
+    height: 25px;
+    visibility: visible;
+    font-size: 11px;
+    padding-left: 6px;
+    -unity-text-align: middle-left;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+.grid-view--item-selected {
+    border-color: rgb(127, 214, 252); /* Similar blue to Prefabs icons in the Editor */
+}
+
+.grid-view--item:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.grid-view--item-selected:hover {
+    border-color: rgb(127, 214, 252); /* Similar blue to Prefabs icons in the Editor */
+}
+
+.grid-view--item-overlay {
+    display: none;
+}
+
+.grid-view--item:hover .grid-view--item-overlay {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.grid-view--item-ignore .grid-view--item-overlay {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.grid-view--item-ignore:hover .grid-view--item-overlay {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.grid-view--item-hovered .asset-preview--upload .asset-preview-asset-type-icon {
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0);
+}
+
+.grid-view--item-hovered .asset-preview--upload.no-thumbnail .asset-preview-asset-type-icon {
+    -unity-background-image-tint-color: rgba(255, 255, 255, 255);
+}
+
+.grid-view--item-hovered .asset-preview--upload .asset-preview-toggle {
+    display: flex;
+}
+
+.grid-view--item-dummy {
+    border-color: rgba(255, 255, 255, 0.5);
+    border-radius: 2px;
+    cursor: arrow;
+    flex-basis: auto;
+    flex-grow: 0;
+    flex-shrink: 0;
+    height: 150px;
+    margin: 2px;
+    width: 125px;
+}
+
+.grid-view--item-download_progress_bar > * {
+    height: 3px;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+}
+
+.grid-view--item-download_cancel_button {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Close.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+}
+
+.grid-view--item-imported_status {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    top: 0;
+    left: 0;
+}
+
+.grid-view--status-icon {
+    position: absolute;
+    bottom: 3px;
+    right: 3px;
+    border-radius: 10px;
+    background-size: 14px 14px;
+    width: 20px;
+    height: 20px;
+}
+
+.grid-view--item-linked {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Common/Link.png');
+    position: absolute;
+    top: 3px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    border-radius: 0;
+}
+
+.grid-view--item-imported_status-imported {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/AssetStatus/OfflineCheck@2x.png');
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.grid-view--item-imported_status-up_to_date {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/AssetStatus/Checkmark@2x.png');
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.grid-view--item-imported_status-out_of_date {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/AssetStatus/ArrowDown@2x.png');
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.grid-view--item-imported_status-error {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/AssetStatus/Warning@2x.png');
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.grid-view--item-upload-add {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/AssetStatus/Plus@2x.png');
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    margin: 4px;
+    bottom: 0;
+    right: 0;
+}
+
+.grid-view--item-upload-skip {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/AssetStatus/Checkmark@2x.png');
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.grid-view--item-upload-override {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/AssetStatus/ArrowUp@2x.png');
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.grid-view--item-upload-duplicate {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/AssetStatus/Plus@2x.png');
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    margin: 4px;
+    bottom: 0;
+    right: 0;
+}
+
+.grid-view--item-upload-outside {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/AssetStatus/Warning@2x.png');
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    margin: 4px;
+    bottom: 0;
+    right: 0;
+}
+
+.grid-view--row {
+    flex-direction: row;
+    flex-shrink: 0;
+    justify-content: flex-start;
+    margin: 2px 6px;
+}
+
+GridMessageView {
+    top: 50%;
+    left: 50%;
+    translate: -50%;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+GridMessageView > .unity-label {
+    -unity-text-align: middle-center;
+    font-size: 22px;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: Ellipsis;
+    height: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.messageView-button {
+    -unity-text-align: middle-center;
+    white-space: normal;
+    overflow: hidden;
+    font-size: 12px;
+    text-overflow: Ellipsis;
+    align-self: center;
+    flex-shrink: 1;
+}
+
+.unity-button.messageView-action-button-link {
+    align-self: center;
+    font-size: 14px;
+    background-image: none;
+    border-width: 0;
+    padding: 0;
+    cursor: link;
+    -unity-text-align: lower-center;
+    text-overflow: Ellipsis;
+    overflow: hidden;
+    flex-shrink: 1;
+    color: rgba(76, 126, 255, 1);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.asset-preview {
+    height: 100%;
+    width: 100%;
+    justify-content: space-around;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.asset-preview > DraggableImage {
+    align-self: center;
+    flex-basis: auto;
+    flex-grow: 1;
+    flex-shrink: 0;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.no-thumbnail > DraggableImage {
+    width: 48px;
+}
+
+.asset-preview > .asset-preview-asset-type-icon {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 20px;
+    height: 20px;
+}
+
+.no-thumbnail > .asset-preview-asset-type-icon {
+    position: relative;
+    display: flex;
+    align-self: center;
+    top: auto;
+    left: auto;
+    width: 48px;
+    height: 48px;
+}
+
+.asset-preview-toggle {
+    display: none;
+    position: absolute;
+    top: 5px;
+    left: 2px;
+    width: 24px;
+    height: 24px;
+    background-color: rgba(25, 25, 25, 0.8);
+    padding: 3px;
+    padding-left: 5px;
+    border-radius: 4px;
+}
+
+.asset-preview-toggle .unity-toggle__checkmark {
+    border-color: dimgray;
+    border-width: 1px;
+    border-radius: 2px;
+}
+
+.asset-preview-toggle:hover .unity-toggle__checkmark {
+    border-color: darkgray;
+    border-width: 1px;
+    border-radius: 2px;
+}
+
+.no-thumbnail > .asset-preview-thumbnail {
+    display: none;
+}
+
+/************************************************
+* Error View
+************************************************/
+
+HelpBox {
+    min-height: 60px;
+    border-width: 1px;
+    margin: 5px;
+    padding: 10px;
+    flex-shrink: 0;
+    border-radius: 0;
+    border-bottom-width: 1px;
+}
+
+HelpBox > Label {
+    margin-right: 4px;
+    margin-left: 4px;
+    font-size: 12px;
+    min-width: 90px;
+}
+
+HelpBox > Button {
+    align-self: flex-end;
+}
+
+.HelpBoxContainer {
+    flex-shrink: 0;
+}
+
+.info-helpbox{
+    padding:2px;
+    min-height: 0px;
+    margin:0px 5px;
+}
+
+.info-helpbox > Label{
+    font-size:10px;
+}
+
+/************************************************
+* Inspector Page Container
+************************************************/
+
+#inspector-page-top {
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 10px;
+}
+
+.inspector-page-title-container {
+    flex-direction: row;
+    flex-shrink: 1;
+}
+
+#inspector-page-title {
+    padding: 5px;
+    align-self: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -unity-text-overflow-position: end;
+}
+
+.inspector-page-close-button {
+    width: 24px;
+    height: 24px;
+    border-width: 0;
+    background-size: 12px 12px;
+    background-color: rgba(0, 0, 0, 0);
+    align-self: center;
+    flex-shrink: 0;
+}
+
+.inspector-page-scrollview {
+    align-self: flex-start;
+    flex-grow: 1;
+    flex-shrink: 1;
+    width: 100%;
+}
+
+.inspector-page-content-container {
+    flex-grow: 0;
+    flex-shrink: 0;
+    padding: 10px;
+}
+
+.inspector-page-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.inspector-page-top {
+    flex-direction: row;
+    flex-shrink: 0;
+    justify-content: space-between;
+    align-content: center;
+    margin: 10px;
+}
+
+.inspector-page-scrollview > #unity-content-and-vertical-scroll-container > #unity-content-viewport > #unity-content-container {
+    flex-shrink: 0;
+}
+
+.inspector-page-footer {
+    justify-content: flex-end;
+    padding: 8px;
+    flex-shrink: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.inspector-page-footer-container {
+    flex-direction: column;
+    flex-shrink: 0;
+    width: 100%;
+    align-items: center;
+}
+
+/************************************************
+* Multi Selection Page Container
+************************************************/
+
+MultiAssetDetailsPage {
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: scroll;
+}
+
+.multi-selection-foldout {
+    -unity-font-style: bold;
+    margin-top: 20px;
+    flex-grow: 1;
+}
+
+.multi-selection-foldout > Toggle {
+    padding: 8px 10px 8px 10px;
+    margin: 0 0 5px 0;
+}
+
+.multi-selection-foldout > Toggle > VisualElement {
+    flex-direction: row-reverse;
+}
+
+.multi-selection-foldout > Toggle > VisualElement > Label {
+    position: absolute;
+    left: 5px;
+}
+
+.multi-selection-foldout > * > .unity-foldout__content {
+    margin-left: 0;
+}
+
+/************************************************
+* Details Page Container
+************************************************/
+
+AssetDetailsPage {
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: scroll;
+}
+
+.details-page-top {
+    flex-direction: row;
+    flex-shrink: 0;
+    justify-content: space-between;
+    align-content: center;
+    margin: 10px;
+}
+
+.details-page-asset-name-container {
+    flex-direction: row;
+    flex-shrink: 1;
+}
+
+.details-page-dashboard-link {
+    cursor: link;
+    margin-left: 4px;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    align-self: center;
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/External-Link.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+}
+
+.details-page-tabs {
+    height: 27px;
+    flex-shrink: 0;
+    flex-direction: row;
+    margin-bottom: 5px;
+}
+
+.details-page-tabs Button {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    border-radius: 0;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin: 0;
+    color: rgb(158, 158, 158);
+}
+
+.details-page-tabs Button:hover {
+    color: rgb(222, 222, 222);
+}
+
+.details-page-tabs Button:disabled {
+    color: rgb(222, 222, 222);
+    opacity: 1;
+    border-bottom-width: 2px;
+    border-color: rgb(222, 222, 222);
+}
+
+.details-page-tabs Button.details-page-tabs-button--disabled {
+    color: rgb(158, 158, 158);
+    border-width: 0;
+}
+
+.asset-name {
+    padding: 5px;
+    align-self: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -unity-text-overflow-position: end;
+}
+
+.asset-version {
+    padding: 0 5px;
+    align-self: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -unity-font-style: bold;
+    border-color: rgba(255, 255, 255, 0.5);
+    border-width: 1px;
+    border-radius: 5px;
+    height: 18px;
+    -unity-text-overflow-position: end;
+}
+
+.details-page-close-button {
+    width: 24px;
+    height: 24px;
+    border-width: 0;
+    background-size: 12px 12px;
+    background-color: rgba(0, 0, 0, 0);
+    align-self: center;
+    flex-shrink: 0;
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Close.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+}
+
+.details-page-scrollview {
+    align-self: flex-start;
+    flex-grow: 1;
+    flex-shrink: 1;
+    width: 100%;
+}
+
+.asset-version-details-foldout {
+    margin-bottom: 8px;
+}
+
+.asset-version-details-foldout > Toggle {
+    margin: 0;
+    padding: 2px 4px;
+    -unity-font-style: bold;
+    border-width: 0;
+}
+
+.asset-version-label-container {
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.asset-version-label {
+    margin: 2px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    border-width: 1px;
+}
+
+.details-page-content-container {
+    flex-grow: 0;
+    flex-shrink: 0;
+    padding: 10px;
+}
+
+.details-page-scrollview > #unity-content-and-vertical-scroll-container > #unity-content-viewport > #unity-content-container {
+    flex-shrink: 0;
+}
+
+.details-page-entries-container {
+    flex-shrink: 0;
+}
+
+.details-page-thumbnail-container {
+    min-width: 100px;
+    min-height: 200px;
+    width: 100%;
+    border-radius: 8px;
+    padding: 8px 4px;
+    align-self: center;
+}
+
+.details-page-thumbnail-container .asset-preview > DraggableImage {
+    position: relative;
+    flex-grow: 1;
+    bottom: 0;
+    height: auto;
+    width: auto;
+}
+
+.details-page-chip-container {
+    flex-direction: row;
+    align-items: center;
+}
+
+.details-page-download-progress-container {
+    display: none;
+    margin-bottom: 4px;
+    margin-top: 4px;
+    height: 20px;
+    align-items: center;
+}
+
+.progress-bar-container {
+    width: 100%;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-direction: row;
+}
+
+.grid-view--item > * > .progress-bar-container {
+    position: absolute;
+    bottom: 0;
+}
+
+.progress-bar--error {
+    background-color: #902020;
+}
+
+.progress-bar--success {
+    background-color: #14A859;
+}
+
+.progress-bar--warning {
+    background-color: #C99700;
+}
+
+.details-page-progress-bar * {
+    height: 4px;
+    flex-grow: 1;
+    flex-shrink: 0;
+    border-radius: 2px;
+}
+
+.details-page-download-cancel-button {
+    flex-grow: 0;
+    flex-shrink: 0;
+    height: 12px;
+    width: 12px;
+    cursor: link;
+    margin-left: 4px;
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Close.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+}
+
+.details-files-foldout {
+    -unity-font-style: bold;
+    flex-grow: 1;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 0;
+}
+
+.details-files-foldout > Toggle {
+    padding: 8px 10px 8px 10px;
+    margin: 0 0 5px 0;
+}
+
+.details-files-foldout > Toggle > VisualElement {
+    flex-direction: row-reverse;
+}
+
+.details-files-foldout > Toggle > VisualElement > Label {
+    position: absolute;
+    left: 5px;
+}
+
+.details-files-foldout-uvcs-chip {
+    position: absolute;
+    right: 32px;
+    top: 3px;
+    padding: 2px 4px;
+    border-radius: 10px;
+    flex-direction: row-reverse;
+    background-color: rgba(0, 255, 0, 0.1);
+}
+
+.details-files-foldout-uvcs-chip-icon {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Check-Circle.png');
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+}
+
+#files-foldout-optimize-and-convert {
+    margin-top: 0;
+}
+
+.no-files-warning-box {
+    width: auto;
+    height: 55px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    flex-shrink: 0;
+    border-width: 1px;
+    flex-direction: row;
+    overflow: hidden;
+}
+
+.same-files-warning-box {
+    width: auto;
+    height: 55px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    flex-shrink: 0;
+    border-width: 1px;
+    flex-direction: row;
+    overflow: hidden;
+}
+
+.outdated-warning-box {
+    width: auto;
+    height: 55px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    flex-shrink: 0;
+    border-width: 1px;
+    flex-direction: row;
+    overflow: hidden;
+}
+
+.no-dependencies-label {
+    align-self: center;
+    -unity-font-style: bold;
+    margin: 10px 0;
+    flex-wrap: wrap;
+    white-space: normal;
+    -unity-text-align: middle-center;
+}
+
+.no-files-warning-box > Image {
+    width: 25px;
+    height: 25px;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: 10px;
+    flex-shrink: 0;
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Common/Warning.png');
+}
+
+.no-files-warning-box > Label {
+    height: 25px;
+    margin-top: auto;
+    margin-bottom: auto;
+    padding-left: 10px;
+    margin-right: 10px;
+    color: white;
+    flex-shrink: 1;
+    -unity-text-align: middle-left;
+    overflow: visible;
+    white-space: normal;
+}
+
+.same-files-warning-box > Image {
+    width: 25px;
+    height: 25px;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: 10px;
+    flex-shrink: 0;
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Common/Warning.png');
+}
+
+.same-files-warning-box > Label {
+    height: 25px;
+    margin-top: auto;
+    margin-bottom: auto;
+    padding-left: 10px;
+    margin-right: 10px;
+    color: white;
+    flex-shrink: 1;
+    -unity-text-align: middle-left;
+    overflow: visible;
+    white-space: normal;
+}
+
+.outdated-warning-box > Image {
+    width: 25px;
+    height: 25px;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: 10px;
+    flex-shrink: 0;
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Common/Warning.png');
+}
+
+.outdated-warning-box > Label {
+    height: 25px;
+    margin-top: auto;
+    margin-bottom: auto;
+    padding-left: 10px;
+    margin-right: 10px;
+    color: white;
+    flex-shrink: 1;
+    -unity-text-align: middle-left;
+    overflow: visible;
+    white-space: normal;
+}
+
+.asset-details-page-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.image-container {
+    height: 200px;
+    max-width: 400px;
+}
+
+.text-bold {
+    -unity-font-style: bold;
+}
+
+.sub-text {
+    color: #6A6A6A;
+}
+
+.mt-1 {
+    margin-top: 5px;
+}
+
+.mb-1 {
+    margin-bottom: 5px;
+}
+
+.mb-2 {
+    margin-bottom: 10px;
+}
+
+.mr-1 {
+    margin-right: 5px;
+}
+
+.my-1 {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.mx-1 {
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.py-1 {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.py-2 {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.px-1 {
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.px-2 {
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.justify-space-between {
+    justify-content: space-between;
+}
+
+.self-center {
+    align-self: center;
+}
+
+.big-button {
+    flex-direction: row;
+    height: 40px;
+    width: 100%;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.import-button,
+.remove-button {
+    flex-direction: row;
+    height: 40px;
+    flex-grow: 1;
+    margin-left: 0;
+    margin-right: 0;
+    border-right-width: 0;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+    padding-left: 40px;
+}
+
+.import-to-button,
+.remove-dropdown-button {
+    height: 40px;
+    width: 40px;
+    margin: 0;
+    padding: 0;
+    margin-right: 0;
+    margin-left: 0;
+    border-width: 1px;
+    border-left-width: 0;
+    border-radius: 0 3px 3px 0;
+}
+
+.import-buttons-container,
+.remove-buttons-container {
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.import-buttons-container DropdownField .unity-popup-field__input {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+}
+
+.remove-buttons-container DropdownField .unity-popup-field__input {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+}
+
+.import-popup {
+    flex-direction: column;
+    position: absolute;
+    right: 0;
+    padding: 5px;
+    min-width: 160px;
+    border-width: 1px;
+    border-radius: 8px;
+}
+
+.import-popup-import-to {
+    flex-direction: row;
+    font-size: 14px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 24px;
+    padding-right: 24px;
+    border-radius: 5px;
+}
+
+.import-popup-import-to:hover {
+    background-color: #2F60C1;
+}
+
+.import-popup-import-to > Image {
+    margin-left: 6px;
+    margin-right: 4px;
+    width: 16px;
+    height: 16px;
+}
+
+.details-page-file-item {
+    flex-direction: row;
+}
+
+.details-page-file-item.unity-collection-view__item--selected {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.details-page-file-item.unity-list-view__item.unity-collection-view__item--selected:hover {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.details-page-file-item.unity-collection-view__item:hover {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.details-page-file-item-icon {
+    background-size: 16px 16px;
+    width: 20px;
+    flex-shrink: 0;
+}
+
+.details-page-file-item-label {
+    overflow: hidden;
+    flex-grow: 1;
+    flex-shrink: 1;
+    text-overflow: ellipsis;
+    margin-left: 5px;
+    font-size: 10px;
+    -unity-text-align: middle-left;
+    white-space: nowrap;
+}
+
+.details-page-dependency-item {
+    flex-direction: row;
+    align-items: center;
+    height: 30px;
+    margin: 0 0 10px;
+    border-radius: 0;
+    justify-content: space-between;
+}
+
+.details-page-dependency-item-info {
+    flex-direction: row;
+}
+
+.details-page-dependency-item-status {
+    flex-direction: row;
+    align-self: flex-end;
+    flex-shrink: 0;
+    height: 100%;
+}
+
+.details-page-dependency-item-icon {
+    height: 16px;
+    width: 16px;
+    flex-shrink: 0;
+    align-self: center;
+}
+
+.details-page-dependency-item-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-right: 12px;
+    height: 30px;
+    font-size: 10px;
+    -unity-text-align: middle-left;
+    white-space: nowrap;
+}
+
+.details-files-foldout .unity-foldout__content {
+    margin-left: 0;
+}
+
+.details-page-three-dots-item {
+    background-size: 16px 16px;
+    width: 25px;
+    flex-shrink: 0;
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Settings.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+}
+
+.details-page-footer {
+    justify-content: flex-end;
+    padding: 8px;
+    flex-shrink: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.details-page-footer-container {
+    flex-direction: column;
+    flex-shrink: 0;
+    width: 100%;
+    align-items: center;
+}
+
+.whitespace-wrap {
+    white-space: normal;
+}
+
+.label-1 {
+    width: 50px;
+}
+
+.details-page-entry-label {
+    width: 90px;
+    height: 16px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -unity-text-align: middle-left;
+    -unity-font-style: bold;
+}
+
+.details-page-entry {
+    flex-shrink: 1;
+    flex-direction: row;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    align-items: center;
+}
+
+.details-page-entry-value {
+    -unity-text-align: middle-left;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    flex-shrink: 1;
+
+}
+
+.details-page-entry-value-text {
+    white-space: normal;
+    max-height: 150px;
+}
+
+.details-page-loading-label {
+    justify-content: center;
+    flex-grow: 1;
+    margin-top: 24px;
+    -unity-font-style: normal;
+    -unity-text-align: middle-center;
+}
+
+/************************************************
+* Timestamp picker
+************************************************/
+
+.timestamp-picker-field {
+    width: 55px;
+    height: 18px;
+    flex-shrink: 1;
+}
+
+.timestamp-picker-field .unity-base-popup-field__arrow {
+    margin: 0 4px 0 0;
+}
+
+.timestamp-picker-field.unity-integer-field {
+    margin-left: 0;
+}
+
+.invalid-field-label {
+    color: red;
+}
+
+.invalid-text-field .unity-base-text-field__input {
+    border-color: red;
+    border-width: 1px;
+    border-radius: 4px;
+}
+
+/************************************************
+* Multi-selection picker
+************************************************/
+
+.multi-selection-picker-entry {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+
+.multi-selection-picker-text {
+    -unity-font-style: bold;
+}
+
+.multi-selection-picker-label {
+    -unity-font-style: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right:5px;
+    min-width: 20px;
+    flex-shrink: 1;
+    max-width: 150px;
+}
+
+/************************************************
+* Upload metadata
+************************************************/
+
+.horizontal-separator {
+    height: 1px;
+    width: 100%;
+    background-color: black;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    align-self: center;
+}
+
+.upload-metadata-title {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: -5px;
+    font-size: 13px;
+    padding-left: 10px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -unity-font-style: bold;
+    align-items: center;
+}
+
+.add-custom-field-section {
+    align-items: center;
+}
+
+.add-custom-field-button {
+    width: 100%;
+    margin: 10px 0 10px 0;
+}
+
+.add-custom-field-popup {
+    width: 100%;
+    border-width: 1px;
+    border-color: #5F5F5F;
+    padding: 5px 10px 5px 10px;
+}
+
+.add-custom-field-search-field {
+    width: 100%;
+}
+
+.add-custom-field-scroll-view {
+    max-height: 300px;
+    margin-top: 5px;
+}
+
+.custom-field-list-item {
+    margin: 1px 0 1px 0;
+    flex-direction: row;
+}
+
+.custom-field-list-item:hover {
+    background-color: #2F60C1;
+}
+
+.custom-field-list-item-icon {
+    width: 15px;
+}
+
+.metadata-page-entry {
+    flex-shrink: 1;
+    flex-direction: row;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom:5px;
+}
+
+.metadata-page-entry-label {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -unity-text-align: middle-left;
+    -unity-font-style: bold;
+    margin-right: 5px;
+    margin-left: 20px;
+    flex-shrink: 1;
+    flex-grow: 0;
+}
+
+.metadata-field-and-button-container {
+    flex-grow: 1;
+    flex-shrink: 0;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.metadata-page-entry-metadata-field {
+    flex-grow: 1;
+    flex-shrink: 1;
+    margin-right: 5px;
+    align-self: center;
+    min-width: 0;
+    flex-basis: 0;
+}
+
+.metadata-page-entry-label{
+    min-width: 20px;
+    flex-shrink: 0;
+    width:90px;
+    align-self: flex-start;
+}
+
+.metadata-page-entry-kebab-button {
+    background-size: 16px 16px;
+    width: 20px;
+    min-width:20px;
+    height: 20px;
+    flex-shrink: 0;
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Settings.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+    align-self: flex-start;
+}
+
+.invalid-field-label {
+    color: red;
+}
+
+.invalid-text-field .unity-base-text-field__input {
+    border-color: red;
+    border-width: 1px;
+    border-radius: 4px;
+}
+
+.metadata-text-field-label {
+    margin-left: 5px;
+    font-size: 11px;
+    overflow: hidden;
+}
+
+.metadata-timepicker-field-label {
+    overflow: hidden;
+}
+
+.no-metadata-field-label {
+    white-space: normal;
+    padding-left:5px;
+    margin-bottom: 5px;
+}
+
+/************************************************
+* Multi-selection picker
+************************************************/
+
+.multi-selection-picker-entry {
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.multi-selection-picker-text {
+    -unity-font-style: bold;
+}
+
+.multi-selection-picker-label {
+    -unity-font-style: normal;
+}
+
+/************************************************
+* Loading icons
+************************************************/
+
+.loading-icon {
+    align-self: center;
+    height: 20px;
+    width: 20px;
+    flex-shrink: 0;
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Loading.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+}
+
+.loading-bar {
+    position: absolute;
+    height: 35px;
+    padding-left: 20px;
+    padding-right: 20px;
+    bottom: 10px;
+    border-radius: 10px;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
+    align-self: center;
+}
+
+.loading-bar--high-position {
+    top: 70px;
+}
+
+.loading-bar .loading-icon {
+    margin-right: 10px;
+}
+
+.loading-bar-label {
+}
+
+/************************************************
+* User Settings
+************************************************/
+
+#titleLabel {
+    font-size: 19px;
+    -unity-font-style: bold;
+    padding-top: 0;
+    margin-bottom: 10px;
+}
+
+.settings-foldout {
+    border-width: 1px;
+    margin: 2px 6px;
+    padding: 9px;
+    min-width: 330px;
+}
+
+.settings-foldout > Toggle {
+    margin-bottom: 6px;
+    -unity-font-style: bold;
+}
+
+.settings-label {
+    width: 340px;
+    padding: 6px;
+}
+
+#cacheSizeOnDiskContainer {
+    flex-direction: row;
+    align-self: flex-start;
+    margin-top: 5px;
+}
+
+#unity-text-field {
+    max-width: 50px;
+}
+
+#cacheSizeOnDisk {
+    flex-grow: 1;
+}
+
+.settings-slider {
+    flex-grow: 1;
+    height: 20px;
+}
+
+.asset-manager-path {
+    flex-grow: 1;
+    flex-shrink: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    border-radius: 3px;
+    border-width: 1px;
+}
+
+.toolbar-menu {
+    border-width: 1px;
+    margin-right: 5px;
+    height: 24px;
+    flex-direction: row;
+}
+
+.folder-image {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Common/Folder-Opened.png');
+    width: 20px;
+}
+
+.asset-manager-dropdown {
+    border-width: 0;
+}
+
+.settings-button {
+    width: 120px;
+    height: 20px;
+}
+
+/************************************************
+* Project Settings
+************************************************/
+
+.project-settings-root {
+    padding-left: 5px;
+}
+
+.project-settings-title {
+    -unity-font-style: bold;
+    font-size: 19px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin-left: 4px;
+    margin-right: 4px;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.project-settings-help-box {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.project-settings-container {
+    padding-left: 16px;
+}
+
+.project-settings-field {
+    height: auto;
+}
+
+.project-settings-field > Label {
+    width: 220px;
+}
+
+.project-settings-button {
+    margin-left: 225px;
+}
+
+/************************************************
+* Cancellable Progress Bar
+************************************************/
+
+.cancellable-progress-bar {
+    position: absolute;
+    flex-grow: 1;
+    height: 15px;
+}
+
+.cancellable-progress-bar--foreground {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.cancellable-progress-bar--cancel-button {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 0;
+    bottom: 0;
+    right: -16px;
+    padding: 0;
+    margin: 0;
+    border-radius: 0;
+}
+
+.align-with-top {
+    left: 0;
+    right: 16px;
+    top: 0;
+}
+
+/************************************************
+* Icons
+************************************************/
+
+.default-asset-icon {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Common/Default-Asset.png');
+}
+
+.status-icon-account {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Common/Icon-Account.png');
+}
+
+.icon-all-assets {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/All-Assets.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+    width: 16px;
+    height: 16px;
+}
+
+.icon-in-project {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/In-Project.png');
+    -unity-background-image-tint-color: var(--icon-tint-color);
+    width: 16px;
+    height: 16px;
+}
+
+.icon-default-project {
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Icons/Project-Icon.png');
+    background-size: 12px 12px;
+    background-position: center;
+}
+
+/************************************************
+* Upload
+************************************************/
+.upload-page-settings-panel {
+    flex-direction: column;
+    position: absolute;
+    bottom: 40px;
+    right: 0;
+    padding: 5px;
+    margin-bottom: 5px;
+    margin-right: 10px;
+    border-radius: 8px;
+}
+
+.upload-page-settings-panel DropdownField Label.unity-text-element.unity-label.unity-base-field__label.unity-base-popup-field__label.unity-popup-field__label {
+    min-width: 0;
+    flex-shrink: 1;
+    flex-grow: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.upload-page-settings-panel DropdownField .unity-popup-field__input {
+    flex-grow: 0;
+    flex-shrink: 0;
+    min-width: 140px;
+}
+
+.upload-page-all-settings-section {
+    flex-direction: row;
+    -unity-text-align: middle-left;
+}
+
+.upload-page-settings-project-section {
+    margin-right: 20px;
+}
+
+/************************************************
+* Custom Section
+************************************************/
+
+.upload-page-custom-section,
+.in-project-page-custom-section {
+    flex-direction: row;
+    justify-content: flex-end;
+    padding: 5px;
+    border-top-width: 1px;
+}
+
+.upload-page-action-section,
+.in-project-page-action-section {
+    flex-direction: row;
+}
+
+.upload-page-all-actions-section,
+.in-project-page-all-actions-section {
+    flex-direction: row;
+    height: 30px;
+    align-self: center;
+}
+
+.upload-page-upload-button,
+.upload-page-reset-button,
+.in-project-page-update-all-button {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    flex-shrink: 1;
+}
+
+/************************************************
+* Popup
+************************************************/
+
+PopupContainer {
+    flex-direction: column;
+    position: absolute;
+    padding: 5px;
+    margin-top: 5px;
+    border-width: 1px;
+    border-radius: 8px;
+}
+
+/************************************************
+* Reimport Window
+************************************************/
+.reimport-window-content {
+    flex-grow: 1;
+    margin: 10px;
+}
+
+.reimport-window-footer {
+    height: 32px;
+    padding: 4px;
+    flex-direction: row;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}
+
+.reimport-window-conflicts-title {
+    white-space: normal;
+}
+
+.reimport-window-warning-container {
+    flex-direction: row;
+    margin-top: 10px;
+    border-width: 1px;
+    align-items: center;
+}
+
+.reimport-window-dependents-title {
+    white-space: normal;
+}
+
+.reimport-window-warning-icon {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    margin: 4px;
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Common/Warning.png');
+}
+
+.reimport-window-gap {
+    height: 16px;
+    display: none;
+}
+
+.reimport-foldout {
+    margin-top: 8px;
+}
+
+.reimport-foldout Toggle {
+    margin-left: 0;
+    margin-right: 0;
+    flex-shrink: 1;
+}
+
+.reimport-foldout Toggle .unity-toggle__input {
+    flex-shrink: 1;
+}
+
+.reimport-foldout-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.reimport-foldout-header-text {
+    margin-left: 4px;
+    flex-direction: row;
+}
+
+.reimport-foldout-header-text-name {
+    -unity-font-style: bold;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    flex-shrink: 1;
+}
+
+.reimport-foldout-header-dropdown {
+    flex-direction: column;
+    border-radius: 4px;
+    margin-right: 0;
+    flex-shrink: 0;
+    flex-grow: 0;
+    width: 85px;
+}
+
+.reimport-foldout-header-dropdown .unity-base-popup-field__text {
+    margin: 0;
+}
+
+.reimport-foldout-content {
+    margin-left: 6px;
+    border-width: 1px;
+    flex-direction: column;
+}
+
+.reimport-foldout-content-entry {
+    flex-direction: row;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    margin-left: 8px;
+    margin-right: 16px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.reimport-foldout-content-entry-name {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    flex-shrink: 1;
+}
+
+.reimport-foldout-content-entry-status--warning {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    background-image: resource('Packages/com.unity.asset-manager-for-unity/Editor/UI/EditorResources/Images/Common/Warning.png');
+}
+
+.upward-dependency-item-asset-name {
+    margin-top: 8px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    flex-shrink: 1;
+    -unity-font-style: bold;
+}
+
+/************************************************
+* Blocking Progress Panel
+************************************************/
+BlockingProgressPanel {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+BlockingProgressPanel Label {
+    font-size: 14px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    flex-shrink: 1;
+    margin-top: 10px;
+}
+
+BlockingProgressPanel ProgressBar {
+    height: 6px;
+    align-self: stretch;
+    align-items: stretch;
+}
+
+BlockingProgressPanel ProgressBar .progress-bar-container {
+    border-radius: 3px;
+    flex-grow: 1;
+}
+
+BlockingProgressPanel ProgressBar .progress-bar {
+    border-radius: 3px;
+}
+
+.blocking-progress-panel-container {
+    width: 30%;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    border-width: 1px;
+    padding: 12px;
+    margin: 32px;
+}

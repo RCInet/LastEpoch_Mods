@@ -1685,6 +1685,7 @@ namespace LastEpoch_Hud.Scripts
                                 Cheats.add_shards_button = Functions.GetChild(character_cheats_content, "Btn_Character_Cheats_AddAffixs").GetComponent<Button>();
                                 Cheats.add_ancien_bone_button = Functions.GetChild(character_cheats_content, "Btn_Character_Cheats_AddAncienBone").GetComponent<Button>();
                                 Cheats.discover_blessings_button = Functions.GetChild(character_cheats_content, "Btn_Character_Cheats_DicoverAllBlessings").GetComponent<Button>();
+                                Cheats.import_json_button = Functions.GetChild(character_cheats_content, "Btn_Character_Cheats_ImportJson").GetComponent<Button>();
                             }
                             else { Main.logger_instance.Error("Hud Manager : character_cheats_content is null"); }
 
@@ -1954,6 +1955,10 @@ namespace LastEpoch_Hud.Scripts
                     if (!Cheats.add_ancien_bone_button.IsNullOrDestroyed())
                     {
                         Events.Set_Button_Event(Cheats.add_ancien_bone_button, Cheats.AddAncienBone_OnClick_Action);
+                    }
+                    if (!Cheats.import_json_button.IsNullOrDestroyed())
+                    {
+                        Events.Set_Button_Event(Cheats.import_json_button, Cheats.ImportJson_OnClick_Action);
                     }
                     if (!Data.monolith_stability_basic_slider.IsNullOrDestroyed())
                     {
@@ -2777,6 +2782,13 @@ namespace LastEpoch_Hud.Scripts
                     public static void AddAncienBones_Click()
                     {
                         Mods.Character.Character_Materials.GetAddAncienBonesX10000();
+                    }
+
+                    public static Button import_json_button = null;
+                    public static readonly System.Action ImportJson_OnClick_Action = new System.Action(ImportJson_Click);
+                    public static void ImportJson_Click()
+                    {
+                        Mods.Character.Character_Materials.ImportJson();
                     }
                 }
                 public class Data

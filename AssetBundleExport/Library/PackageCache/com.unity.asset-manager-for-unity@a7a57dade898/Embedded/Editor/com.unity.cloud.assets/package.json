@@ -1,0 +1,48 @@
+{
+  "name": "com.unity.cloud.assets",
+  "version": "1.8.1",
+  "displayName": "Unity Cloud Assets",
+  "description": "Unity Cloud Assets makes it easy to discover, create, update, delete, and manage Unity assets through the Assets service interface.",
+  "unity": "2022.3",
+  "dependencies": {
+    "com.unity.cloud.common": "1.1.0"
+  },
+  "relatedPackages": {
+    "com.unity.cloud.assets.tests": "1.8.1"
+  },
+  "_upm": {
+    "changelog": "### Changed\n- Updated samples to use ServiceConnectorFactory API"
+  },
+  "upmCi": {
+    "footprint": "1a9c1fbffc2073a8ddfc15a65518614019349bce"
+  },
+  "documentationUrl": "https://docs.unity3d.com/Packages/com.unity.cloud.assets@1.8/manual/index.html",
+  "repository": {
+    "url": "https://github.cds.internal.unity3d.com/unity/digital-twins-sdk.git",
+    "type": "git",
+    "revision": "97a2d2e8e7e3a85646c379f1637f2fc1eaf4fdc2"
+  },
+  "samples": [
+    {
+      "displayName": "Asset Discovery",
+      "description": "Search for published assets.",
+      "path": "Samples~/AssetDiscovery"
+    },
+    {
+      "displayName": "Asset Management",
+      "description": "Sample project demonstrating how to use the Asset Manager service.",
+      "path": "Samples~/AssetManager"
+    },
+    {
+      "displayName": "Asset Collection Management",
+      "description": "Manage the asset collections in a project.",
+      "path": "Samples~/CollectionManagement"
+    },
+    {
+      "displayName": "Metadata Management",
+      "description": "Define and manage the field definitions of an organization.",
+      "path": "Samples~/MetadataManagement"
+    }
+  ],
+  "_fingerprint": "617f1766db61036e28d012f327be9f41465ab9ed"
+}

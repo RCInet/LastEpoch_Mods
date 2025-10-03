@@ -1,0 +1,32 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" ae="Unity.AssetManager.UI.Editor" editor-extension-mode="True" class="px-2">
+    <ui:VisualElement name="assetDetailsPageContainer" class="asset-details-page-container justify-space-between">
+        <ui:VisualElement name="details-page-top" class="details-page-top">
+            <ui:VisualElement name="details-page-asset-name-container" class="details-page-asset-name-container">
+                <ui:Label name="asset-name" class="asset-name text-bold flex-shrink-1 flex-grow-1" />
+                <ui:Label name="asset-version" class="asset-version" />
+                <ui:Image name="asset-dashboard-link" class="details-page-dashboard-link" />
+            </ui:VisualElement>
+            <ui:Button tabindex="-1" display-tooltip-when-elided="true" name="closeButton" class="details-page-close-button" style="margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="details-page-tabs" class="details-page-tabs" />
+        <ui:ScrollView name="details-page-scrollview" mode="Vertical" class="details-page-scrollview">
+            <ui:VisualElement name="details-page-content-container" class="details-page-content-container">
+                <ui:VisualElement name="no-files-warning-box" class="no-files-warning-box">
+                    <ui:Image name="no-files-warning-icon" />
+                    <ui:Label name="no-files-warning-label" class="text-bold" />
+                </ui:VisualElement>
+                <ui:VisualElement name="same-files-warning-box" class="same-files-warning-box">
+                    <ui:Image name="same-files-warning-icon" />
+                    <ui:Label name="same-files-warning-label" class="text-bold" />
+                </ui:VisualElement>
+                <ui:VisualElement name="outdated-warning-box" class="outdated-warning-box">
+                    <ui:Image name="outdated-warning-icon" />
+                    <ui:Label name="outdated-warning-label" class="text-bold" />
+                </ui:VisualElement>
+                <ui:VisualElement name="files-container" style="flex-grow: 1;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="upload-metadata-container" class="px-2" />
+        </ui:ScrollView>
+        <ui:VisualElement name="footer" class="details-page-footer px-2" />
+    </ui:VisualElement>
+</ui:UXML>

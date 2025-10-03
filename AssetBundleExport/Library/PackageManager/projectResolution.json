@@ -1,122 +1,52 @@
 {
   "context": {
-    "projectPath": "C:/Code/Github/LastEpoch_Mods/AssetBundleExport/Packages",
+    "projectPath": "C:/Users/13700k/code/LastEpoch_Mods/AssetBundleExport/Packages",
     "unityVersion": "6000.0.42f1"
   },
   "inputs": [
-    "C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Packages\\manifest.json",
-    "C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Packages\\packages-lock.json",
+    "C:\\Users\\13700k\\code\\LastEpoch_Mods\\AssetBundleExport\\Packages\\manifest.json",
+    "C:\\Users\\13700k\\code\\LastEpoch_Mods\\AssetBundleExport\\Packages\\packages-lock.json",
     "C:\\Program Files\\Unity\\Hub\\Editor\\6000.0.42f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\BuiltInPackagesCombined.sha1"
   ],
   "outputs": {
-    "com.unity.addressables@2.3.16": {
-      "name": "com.unity.addressables",
-      "displayName": "Addressables",
-      "resolvedPath": "C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.addressables@1d7f6a740e58",
-      "fingerprint": "1d7f6a740e5827c3a66943394e723c0110989ea9",
-      "editorCompatibility": "2023.1.0a1",
-      "version": "2.3.16",
-      "source": "registry",
-      "testable": false
-    },
-    "com.unity.ai.navigation@2.0.6": {
-      "name": "com.unity.ai.navigation",
-      "displayName": "AI Navigation",
-      "resolvedPath": "C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.ai.navigation@c74b2724ed42",
-      "fingerprint": "c74b2724ed42c1aa0380e294156d7f54a7ae2ec6",
-      "editorCompatibility": "2023.2.0a18",
-      "version": "2.0.6",
+    "com.unity.asset-manager-for-unity@1.7.0": {
+      "name": "com.unity.asset-manager-for-unity",
+      "displayName": "Asset Manager",
+      "resolvedPath": "C:\\Users\\13700k\\code\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.asset-manager-for-unity@a7a57dade898",
+      "fingerprint": "a7a57dade89883c2680042c4f84e47f23f35a887",
+      "editorCompatibility": "2022.3.0a1",
+      "version": "1.7.0",
       "source": "registry",
       "testable": false
     },
     "com.unity.assetbundlebrowser@https://github.com/Unity-Technologies/AssetBundles-Browser.git": {
       "name": "com.unity.assetbundlebrowser",
       "displayName": "Asset Bundle Browser",
-      "resolvedPath": "C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.assetbundlebrowser@ad2a81ec3068",
+      "resolvedPath": "C:\\Users\\13700k\\code\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.assetbundlebrowser@ad2a81ec3068",
       "fingerprint": "ad2a81ec3068eafd48753df1825a8dd7201ce60c",
       "editorCompatibility": "2018.1.0a1",
       "version": "1.7.0",
       "source": "git",
       "testable": false
     },
-    "com.unity.collab-proxy@2.7.1": {
-      "name": "com.unity.collab-proxy",
-      "displayName": "Version Control",
-      "resolvedPath": "C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.collab-proxy@50ac96531b63",
-      "fingerprint": "50ac96531b6358586ccfdf8cc845939bf50d9fab",
-      "editorCompatibility": "2021.3.0f1",
-      "version": "2.7.1",
-      "source": "registry",
-      "testable": false
-    },
-    "com.unity.ide.rider@3.0.31": {
-      "name": "com.unity.ide.rider",
-      "displayName": "JetBrains Rider Editor",
-      "resolvedPath": "C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.ide.rider@7921be93db40",
-      "fingerprint": "7921be93db40ec070fcb01ed82d1c3df1bbdddcd",
-      "editorCompatibility": "2019.2.6f1",
-      "version": "3.0.31",
-      "source": "registry",
-      "testable": false
-    },
-    "com.unity.ide.visualstudio@2.0.22": {
-      "name": "com.unity.ide.visualstudio",
-      "displayName": "Visual Studio Editor",
-      "resolvedPath": "C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.ide.visualstudio@8140e851d83e",
-      "fingerprint": "8140e851d83e922ca2021b04a89519de94ebe38c",
-      "editorCompatibility": "2019.4.25f1",
-      "version": "2.0.22",
-      "source": "registry",
-      "testable": false
-    },
     "com.unity.multiplayer.center@1.0.0": {
       "name": "com.unity.multiplayer.center",
       "displayName": "Multiplayer Center",
-      "resolvedPath": "C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.multiplayer.center@f3fb577b3546",
+      "resolvedPath": "C:\\Users\\13700k\\code\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.multiplayer.center@f3fb577b3546",
       "fingerprint": "f3fb577b3546594b97b8cc34307cd621f60f1c73",
       "editorCompatibility": "6000.0.0a1",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
     },
-    "com.unity.test-framework@1.4.6": {
-      "name": "com.unity.test-framework",
-      "displayName": "Test Framework",
-      "resolvedPath": "C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.test-framework@5ac417e07314",
-      "fingerprint": "5ac417e07314c8f6afba8109738c32b82d391e68",
-      "editorCompatibility": "2019.4.1f1",
-      "version": "1.4.6",
-      "source": "registry",
-      "testable": false
-    },
-    "com.unity.timeline@1.8.7": {
-      "name": "com.unity.timeline",
-      "displayName": "Timeline",
-      "resolvedPath": "C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.timeline@c58b4ee65782",
-      "fingerprint": "c58b4ee65782ad38338e29f7ee67787cb6998f04",
-      "editorCompatibility": "2019.3.0a1",
-      "version": "1.8.7",
-      "source": "registry",
-      "testable": false
-    },
     "com.unity.ugui@2.0.0": {
       "name": "com.unity.ugui",
       "displayName": "Unity UI",
-      "resolvedPath": "C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.ugui@9496653a3df6",
+      "resolvedPath": "C:\\Users\\13700k\\code\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.ugui@9496653a3df6",
       "fingerprint": "9496653a3df6648f8e3a165cac05bba08c614150",
       "editorCompatibility": "2019.2.0a1",
       "version": "2.0.0",
       "source": "builtin",
-      "testable": false
-    },
-    "com.unity.visualscripting@1.9.5": {
-      "name": "com.unity.visualscripting",
-      "displayName": "Visual Scripting",
-      "resolvedPath": "C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.visualscripting@1b53f46e931b",
-      "fingerprint": "1b53f46e931bea668e53f1feb0ac9138170c9455",
-      "editorCompatibility": "2021.3.0a1",
-      "version": "1.9.5",
-      "source": "registry",
       "testable": false
     },
     "com.unity.modules.accessibility@1.0.0": {
@@ -391,33 +321,23 @@
       "source": "builtin",
       "testable": false
     },
-    "com.unity.ext.nunit@2.0.5": {
-      "name": "com.unity.ext.nunit",
-      "displayName": "Custom NUnit",
-      "resolvedPath": "C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.ext.nunit@60ef35ffd3cd",
-      "fingerprint": "60ef35ffd3cd5e2f5c8887a4a4ca6148854cd092",
-      "editorCompatibility": "2019.4.0a1",
-      "version": "2.0.5",
+    "com.unity.settings-manager@2.0.1": {
+      "name": "com.unity.settings-manager",
+      "displayName": "Settings Manager",
+      "resolvedPath": "C:\\Users\\13700k\\code\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.settings-manager@56a930affa1e",
+      "fingerprint": "56a930affa1e4462d3595b5c19a1c2a4bf2015d2",
+      "editorCompatibility": "2018.4.0a1",
+      "version": "2.0.1",
       "source": "registry",
       "testable": false
     },
-    "com.unity.profiling.core@1.0.2": {
-      "name": "com.unity.profiling.core",
-      "displayName": "Unity Profiling Core API",
-      "resolvedPath": "C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.profiling.core@aac7b93912bc",
-      "fingerprint": "aac7b93912bc5df5fe06b04ff1b758493cdc2346",
-      "editorCompatibility": "2020.1.0a1",
-      "version": "1.0.2",
-      "source": "registry",
-      "testable": false
-    },
-    "com.unity.scriptablebuildpipeline@2.2.11": {
-      "name": "com.unity.scriptablebuildpipeline",
-      "displayName": "Scriptable Build Pipeline",
-      "resolvedPath": "C:\\Code\\Github\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.scriptablebuildpipeline@8e62a84f8b2e",
-      "fingerprint": "8e62a84f8b2ec9a3d0b4290cf948e59765d9a0ed",
-      "editorCompatibility": "2023.1.0a1",
-      "version": "2.2.11",
+    "com.unity.nuget.newtonsoft-json@3.2.1": {
+      "name": "com.unity.nuget.newtonsoft-json",
+      "displayName": "Newtonsoft Json",
+      "resolvedPath": "C:\\Users\\13700k\\code\\LastEpoch_Mods\\AssetBundleExport\\Library\\PackageCache\\com.unity.nuget.newtonsoft-json@74deb55db2a0",
+      "fingerprint": "74deb55db2a0c29ddfda576608bcb86abbd13ee6",
+      "editorCompatibility": "2018.4.0a1",
+      "version": "3.2.1",
       "source": "registry",
       "testable": false
     }

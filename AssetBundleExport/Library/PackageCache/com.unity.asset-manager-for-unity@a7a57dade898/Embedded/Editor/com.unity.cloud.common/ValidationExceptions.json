@@ -1,0 +1,10 @@
+{
+    "ErrorExceptions": [
+        {
+            "ValidationTest": "Restricted File Type Validation",
+            "ExceptionMessage": "/AppLinking/Tools/CustomUriSchemeResolver.exe cannot be included in a package.",
+            "PackageVersion": "1.2.0"
+        }
+    ],
+    "WarningExceptions": []
+}

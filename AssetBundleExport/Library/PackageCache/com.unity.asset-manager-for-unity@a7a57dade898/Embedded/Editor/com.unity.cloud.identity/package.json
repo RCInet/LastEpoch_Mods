@@ -1,0 +1,43 @@
+{
+  "name": "com.unity.cloud.identity",
+  "version": "1.4.0",
+  "displayName": "Unity Cloud Identity",
+  "description": "Unity Cloud Identity provides client support for all Identity and Access Management (IAM) service features.",
+  "unity": "2022.3",
+  "dependencies": {
+    "com.unity.cloud.common": "1.2.0"
+  },
+  "relatedPackages": {
+    "com.unity.cloud.identity.tests": "1.4.0"
+  },
+  "_upm": {
+    "changelog": "### Changed\n- Documentation to reference WebGL support\n- `PkceConfigurationProviderFactory`, `ServiceAccountAuthenticator`, `ServiceAccountAuthenticatorSettings`, `ServiceAccountAuthenticatorSettingsBuilder`, `ServiceConnector` and `ServiceConnectorFactory` classes are no longer experimental.\n- Experimental `ServiceAccountBase64EncodedCredentials` struct is no longer experimental, is renamed to `ServiceAccountCredentials` and is not `readonly` anymore.\n- `ServiceAccountAuthenticatorSettingsBuilder` ctor requires `IHttpClient`, `IServiceHostResolver`, and `IAuthenticationPlatformSupport` parameters.\n- `ServiceAccountAuthenticatorSettingsBuilder.AddAppIdProvider` renamed to `ServiceAccountAuthenticatorSettingsBuilder.SetAppIdProvider`.\n- `ServiceAccountAuthenticatorSettingsBuilder.AddServiceAccountCredentialsExchanger` renamed to `ServiceAccountAuthenticatorSettingsBuilder.SetServiceAccountCredentialsExchanger`.\n- `ServiceAccountAuthenticatorSettingsBuilder.AddDefaultServiceAccountCredentialsExchanger` renamed to `ServiceAccountAuthenticatorSettingsBuilder.SetServiceAccountCredentialsExchanger`.\n\n### Removed\n- Experimental `ServiceConnectorFactory.CreateForUnityServicesGateway` method.\n- Experimental `PkceConfigurationProviderFactory.CreateForUnityServicesGateway` method.\n- Experimental `ServiceAccountAuthenticatorSettingsBuilder.AddAuthenticationPlatformSupport` method.\n- Experimental `ServiceAccountAuthenticatorSettingsBuilder.AddHttpClient` method.\n- Experimental `ServiceAccountAuthenticatorSettingsBuilder.AddServiceHostResolver` method."
+  },
+  "upmCi": {
+    "footprint": "8524d72d208ab7d907e23834058e8b185cec97e3"
+  },
+  "documentationUrl": "https://docs.unity3d.com/Packages/com.unity.cloud.identity@1.4/manual/index.html",
+  "repository": {
+    "url": "https://github.cds.internal.unity3d.com/unity/digital-twins-sdk.git",
+    "type": "git",
+    "revision": "c3009db5a5263255e0b659965ee80e81ca0bb9fa"
+  },
+  "samples": [
+    {
+      "displayName": "Authentication",
+      "description": "Initialize an authenticator to demonstrate how to log in a user.",
+      "path": "Samples~/Authentication"
+    },
+    {
+      "displayName": "Get User Information",
+      "description": "Use an authenticator to retrieve information about the logged-in user.",
+      "path": "Samples~/GetUserInformation"
+    },
+    {
+      "displayName": "UnityEditorServiceAuthorizer",
+      "description": "An EditorWindow sample that uses the UnityEditorServiceAuthorizer to fetch user information from Unity Cloud services.",
+      "path": "Samples~/UnityEditorServiceAuthorizer"
+    }
+  ],
+  "_fingerprint": "1e92949f988a4761a88d7f3bfc8a5b099783dcc8"
+}

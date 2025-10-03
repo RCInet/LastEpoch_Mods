@@ -1,0 +1,19 @@
+{
+  "name": "Unity.Cloud.Identity.Embedded",
+  "rootNamespace": "Unity.Cloud.Identity",
+  "references": [
+    "GUID:180b84aeaa9c9da4a8ad1f35cd75a700",
+    "GUID:9004f1c3ff4c4a8459372f35881a6aef"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true
+}

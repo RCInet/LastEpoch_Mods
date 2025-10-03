@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:VisualElement name="MainWindow" class="main-container main-container-light">
+        <ui:VisualElement name="imgLogo" class="status-icon status-icon-account" />
+        <ui:Label text="Sign In" name="lblTitle" class="progress-label" />
+        <ui:Label text="You need to be signed in to use the Asset Manager" name="lblSubtitle" class="info-text" />
+    </ui:VisualElement>
+</ui:UXML>

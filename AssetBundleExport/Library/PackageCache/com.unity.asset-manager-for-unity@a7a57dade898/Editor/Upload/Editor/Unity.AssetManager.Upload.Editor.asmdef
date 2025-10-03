@@ -1,0 +1,19 @@
+{
+  "name": "Unity.AssetManager.Upload.Editor",
+  "rootNamespace": "Unity.AssetManager.Upload.Editor",
+  "references": [
+    "Unity.AssetManager.Core.Editor",
+    "Unity.Cloud.Common.Embedded"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

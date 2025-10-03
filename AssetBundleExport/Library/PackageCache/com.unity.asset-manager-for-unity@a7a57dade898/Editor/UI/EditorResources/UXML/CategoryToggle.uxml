@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Toggle name="tgl" class="menu-toggle">
+        <ui:Image name="imgToggle" />
+        <ui:Label tabindex="-1" text="Label" display-tooltip-when-elided="true" name="lblToggle" />
+    </ui:Toggle>
+</ui:UXML>

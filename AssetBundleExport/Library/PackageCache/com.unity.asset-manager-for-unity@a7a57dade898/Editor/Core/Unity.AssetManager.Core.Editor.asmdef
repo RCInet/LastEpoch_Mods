@@ -1,0 +1,27 @@
+{
+  "name": "Unity.AssetManager.Core.Editor",
+  "rootNamespace": "Unity.AssetManager.Core.Editor",
+  "references": [
+    "Unity.Settings.Editor",
+    "Unity.Cloud.Assets.Embedded",
+    "Unity.Cloud.Assets.Runtime.Embedded",
+    "Unity.Cloud.Common.Embedded",
+    "Unity.Cloud.Common.Runtime.Embedded",
+    "Unity.Cloud.Identity.Embedded",
+    "Unity.Cloud.Identity.Runtime.Embedded",
+    "Unity.Cloud.Identity.Editor.Embedded",
+    "Unity.Cloud.AppLinking.Embedded",
+    "Unity.Cloud.AppLinking.Runtime.Embedded"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

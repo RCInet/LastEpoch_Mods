@@ -1,1 +1,0 @@
-Deprecated public classes that we need to keep until we change the major version to 3.x, since removing any public API in a minor version is forbiden.

@@ -1,8 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
-    <Style src="project://database/Packages/com.unity.addressables/Editor/BuildReportVisualizer/UIToolKitAssets/StyleSheets/TreeViewNavigableItem.uss?fileID=7433441132597879392&amp;guid=b1bacf5ce9a7eee4c934611ba77ab921&amp;type=3#TreeViewNavigableItem" />
-    <ui:VisualElement class="TreeViewNavigableItem">
-        <uie:ToolbarMenu name="TreeViewNavigableItemButton" class="TreeViewNavigableItemButton" />
-        <ui:Image name="TreeViewNavigableItemStatus" class="TreeViewNavigableItemStatus" />
-        <ui:TextElement name="TreeViewNavigableItemName" />
-    </ui:VisualElement>
-</ui:UXML>
