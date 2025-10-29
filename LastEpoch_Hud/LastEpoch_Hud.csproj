@@ -169,23 +169,23 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Il2CppCSharp.OperationResult">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Il2CppAssemblies\Il2CppCSharp.OperationResult.dll</HintPath>
+      <HintPath>$(LastEpochPath)\MelonLoader\Il2CppAssemblies\Il2CppCSharp.OperationResult.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Il2CppRewired_Core">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Il2CppAssemblies\Il2CppRewired_Core.dll</HintPath>
+      <HintPath>$(LastEpochPath)\MelonLoader\Il2CppAssemblies\Il2CppRewired_Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.Addressables">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Il2CppAssemblies\Unity.Addressables.dll</HintPath>
+      <HintPath>$(LastEpochPath)\MelonLoader\Il2CppAssemblies\Unity.Addressables.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Il2CppAssemblies\UnityEngine.AIModule.dll</HintPath>
+      <HintPath>$(LastEpochPath)\MelonLoader\Il2CppAssemblies\UnityEngine.AIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Last Epoch\MelonLoader\Il2CppAssemblies\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>$(LastEpochPath)\MelonLoader\Il2CppAssemblies\UnityEngine.PhysicsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
