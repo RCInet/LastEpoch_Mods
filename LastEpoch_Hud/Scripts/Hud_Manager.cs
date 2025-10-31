@@ -6,6 +6,7 @@ using Il2CppOperationResult;
 using Il2CppRewired.Components; //Gamepad
 using Il2CppSystem.Collections.Generic;
 using Il2CppTMPro;
+using LastEpoch_Hud.Scripts.Mods.Maxroll;
 using LastEpoch_Hud.Scripts.Mods.NewItems;
 using MelonLoader;
 using Newtonsoft.Json;
@@ -184,6 +185,10 @@ namespace LastEpoch_Hud.Scripts
                         Content.NewItems.Init_Dropdowns();
                         Content.NewItems.Set_Events();
                         Content.NewItems.Set_Active(false);
+
+                        Content.Maxroll.Get_Refs();
+                        Content.Maxroll.Set_Events();
+                        Content.Maxroll.Set_Active(false);
                     }
                     else { Main.logger_instance.Error("Hud Manager : Hud Prefab not found"); }
                 }
@@ -1535,6 +1540,7 @@ namespace LastEpoch_Hud.Scripts
                         Events.Set_Base_Button_Event(menu, "Content", "Btn_Menu_TreeSkills", Skills_OnClick_Action);
                         Events.Set_Base_Button_Event(menu, "Content", "Btn_Menu_ForceDrop", OldForceDrop_OnClick_Action);
                         Events.Set_Base_Button_Event(menu, "Content", "Btn_Menu_NewItems", NewItems_OnClick_Action);
+                        Events.Set_Base_Button_Event(menu, "Content", "Btn_Menu_Maxroll", Maxroll_OnClick_Action);
                     }
                 }
             }
@@ -1547,6 +1553,7 @@ namespace LastEpoch_Hud.Scripts
                 Content.Skills.Set_Active(false);
                 Content.OdlForceDrop.Set_Active(false);
                 Content.NewItems.Set_Active(false);
+                Content.Maxroll.Set_Active(false);
                 Content.Character.Toggle_Active();          
             }
 
@@ -1558,6 +1565,7 @@ namespace LastEpoch_Hud.Scripts
                 Content.Skills.Set_Active(false);
                 Content.OdlForceDrop.Set_Active(false);
                 Content.NewItems.Set_Active(false);
+                Content.Maxroll.Set_Active(false);
                 Content.Items.Toggle_Active();
             }
 
@@ -1569,6 +1577,7 @@ namespace LastEpoch_Hud.Scripts
                 Content.Skills.Set_Active(false);
                 Content.OdlForceDrop.Set_Active(false);
                 Content.NewItems.Set_Active(false);
+                Content.Maxroll.Set_Active(false);
                 Content.Scenes.Toggle_Active();
             }
 
@@ -1580,6 +1589,7 @@ namespace LastEpoch_Hud.Scripts
                 Content.Scenes.Set_Active(false);
                 Content.OdlForceDrop.Set_Active(false);
                 Content.NewItems.Set_Active(false);
+                Content.Maxroll.Set_Active(false);
                 Content.Skills.Toggle_Active();
             }
 
@@ -1591,6 +1601,7 @@ namespace LastEpoch_Hud.Scripts
                 Content.Scenes.Set_Active(false);
                 Content.Skills.Set_Active(false);
                 Content.NewItems.Set_Active(false);
+                Content.Maxroll.Set_Active(false);
                 Content.OdlForceDrop.Toggle_Active();
             }
 
@@ -1602,7 +1613,20 @@ namespace LastEpoch_Hud.Scripts
                 Content.Scenes.Set_Active(false);
                 Content.Skills.Set_Active(false);
                 Content.OdlForceDrop.Set_Active(false);
+                Content.Maxroll.Set_Active(false);
                 Content.NewItems.Toggle_Active();
+            }
+
+            private static readonly System.Action Maxroll_OnClick_Action = new System.Action(Maxroll_Click);
+            public static void Maxroll_Click()
+            {
+                Content.Character.Set_Active(false);
+                Content.Items.Set_Active(false);
+                Content.Scenes.Set_Active(false);
+                Content.Skills.Set_Active(false);
+                Content.OdlForceDrop.Set_Active(false);
+                Content.NewItems.Set_Active(false);
+                Content.Maxroll.Toggle_Active();
             }
         }
         public class Content
@@ -1614,7 +1638,7 @@ namespace LastEpoch_Hud.Scripts
                 {
                     bool show = false;
                     if ((Character.enable) || (Items.enable) || (Scenes.enable) || (Skills.enable) ||
-                        (OdlForceDrop.enable) || (NewItems.enable)) { show = true; }
+                        (OdlForceDrop.enable) || (NewItems.enable) || (Maxroll.enable)) { show = true; }
                     if (content_obj.active != show) { content_obj.active = show; }
                 }
             }
@@ -7945,6 +7969,803 @@ namespace LastEpoch_Hud.Scripts
                     }
                     
                     return result;
+                }
+            }
+            public class Maxroll
+            {
+                public static GameObject content_obj = null;
+                public static bool enable = false;
+                public static bool show = false;
+                public static bool loading = false;
+
+                public static GameObject profile_text_obj = null; //Hide
+                public static GameObject profile_dropdown_obj = null; //Hide                
+                public static Dropdown profile_dropdown = null;
+                public static void Update_Profile()
+                {
+                    if (!loading)
+                    {
+
+                    }
+                }
+                public static TMP_InputField url_field = null;
+                public static Button clear_url_btn = null;
+                public static readonly System.Action clear_url_OnClick_Action = new System.Action(clear_url_Click);
+                public static void clear_url_Click()
+                {
+                    if (!url_field.IsNullOrDestroyed()) { url_field.text = ""; }                    
+                    Hide();
+                    Maxroll_import.root = null;
+                    Maxroll_import.data = null;
+                }
+                public static Button refresh_btn = null;
+                public static readonly System.Action refresh_OnClick_Action = new System.Action(refresh_Click);
+                public static async void refresh_Click()
+                {
+                    if (!url_field.IsNullOrDestroyed())
+                    {
+                        await Maxroll_import.Load_FromUrl(url_field.text);
+                    }
+                }
+                public static GameObject _3_obj = null; //Hide
+                public static Text build_name_text = null;
+                public static Text autor_name_text = null;
+                public static GameObject youtube_obj = null;
+                public static Image youtube_image = null;
+                public static GameObject twitch_obj = null;
+                public static Image twitch_image = null;
+                public static GameObject l_content_obj = null; //Hide
+                public static GameObject r_content_obj = null; //Hide
+                public static Text classe_text = null;
+                public static Button classe_btn = null;
+                public static readonly System.Action classe_OnClick_Action = new System.Action(classe_Click);
+                public static void classe_Click()
+                {
+
+                }
+                public static Text level_text = null;
+                public static Button level_btn = null;
+                public static readonly System.Action level_OnClick_Action = new System.Action(level_Click);
+                public static void level_Click()
+                {
+
+                }
+                public static Text items_text = null;
+                public static Button items_btn = null;
+                public static readonly System.Action items_OnClick_Action = new System.Action(items_Click);
+                public static void items_Click()
+                {
+                    Maxroll_import.Url.Load_Equipments();
+                }
+                public static Text idols_text = null;
+                public static Button idols_btn = null;
+                public static readonly System.Action idols_OnClick_Action = new System.Action(idols_Click);
+                public static void idols_Click()
+                {
+                    Maxroll_import.Url.Load_Idols();
+                }
+                public static Text blessings_text = null;
+                public static Button blessings_btn = null;
+                public static readonly System.Action blessings_OnClick_Action = new System.Action(blessings_Click);
+                public static void blessings_Click()
+                {
+                    Maxroll_import.Url.Load_Blessings();
+                }
+                public static Text passives_text = null;
+                public static Button passives_btn = null;
+                public static readonly System.Action passives_OnClick_Action = new System.Action(passives_Click);
+                public static void passives_Click()
+                {
+                    Maxroll_import.Url.Load_Passives();
+                }
+                public static Text weavertree_text = null;
+                public static Button weavertree_btn = null;
+                public static readonly System.Action weavertree_OnClick_Action = new System.Action(weavertree_Click);
+                public static void weavertree_Click()
+                {
+                    Maxroll_import.Url.Load_Weaver();
+                }
+                public static Text mainskill_text = null;
+                public static Button skilltrees_btn = null;
+                public static readonly System.Action skilltrees_OnClick_Action = new System.Action(skilltrees_Click);
+                public static void skilltrees_Click()
+                {
+
+                }
+                public static Text skill_0_text = null;
+                public static Dropdown skill_0_dropdown = null;
+                public static void Update_Skill_0_index()
+                {
+
+                }
+                public static Button skill_0_btn = null;
+                public static readonly System.Action skill_0_OnClick_Action = new System.Action(skill_0_Click);
+                public static void skill_0_Click()
+                {
+
+                }
+                public static Text skill_1_text = null;
+                public static Dropdown skill_1_dropdown = null;
+                public static void Update_Skill_1_index()
+                {
+
+                }
+                public static Button skill_1_btn = null;
+                public static readonly System.Action skill_1_OnClick_Action = new System.Action(skill_1_Click);
+                public static void skill_1_Click()
+                {
+
+                }
+                public static Text skill_2_text = null;
+                public static Dropdown skill_2_dropdown = null;
+                public static void Update_Skill_2_index()
+                {
+
+                }
+                public static Button skill_2_btn = null;
+                public static readonly System.Action skill_2_OnClick_Action = new System.Action(skill_2_Click);
+                public static void skill_2_Click()
+                {
+
+                }
+                public static Text skill_3_text = null;
+                public static Dropdown skill_3_dropdown = null;
+                public static void Update_Skill_3_index()
+                {
+
+                }
+                public static Button skill_3_btn = null;
+                public static readonly System.Action skill_3_OnClick_Action = new System.Action(skill_3_Click);
+                public static void skill_3_Click()
+                {
+
+                }
+                public static Text skill_4_text = null;
+                public static Dropdown skill_4_dropdown = null;
+                public static void Update_Skill_4_index()
+                {
+
+                }
+                public static Button skill_4_btn = null;
+                public static readonly System.Action skill_4_OnClick_Action = new System.Action(skill_4_Click);
+                public static void skill_4_Click()
+                {
+
+                }
+
+                public static void Get_Refs()
+                {
+                    content_obj = Functions.GetChild(Content.content_obj, "Maxroll_Content");
+                    if (!content_obj.IsNullOrDestroyed())
+                    {
+                        GameObject top_obj = Functions.GetChild(content_obj, "Top");
+                        if (!top_obj.IsNullOrDestroyed())
+                        {
+                            GameObject top_content_obj = Functions.GetChild(top_obj, "Content");
+                            if (!top_content_obj.IsNullOrDestroyed())
+                            {
+                                GameObject _0_obj = Functions.GetChild(top_content_obj, "0");
+                                if (!_0_obj.IsNullOrDestroyed())
+                                {
+                                    GameObject profile_obj = Functions.GetChild(_0_obj, "Profile");
+                                    if (!profile_obj.IsNullOrDestroyed())
+                                    {
+                                        profile_text_obj = Functions.GetChild(profile_obj, "Text");
+                                        if (!profile_text_obj.IsNullOrDestroyed())
+                                        {
+
+                                        }
+                                    }
+                                }
+                                GameObject _1_obj = Functions.GetChild(top_content_obj, "1");
+                                if (!_1_obj.IsNullOrDestroyed())
+                                {
+                                    GameObject url_obj = Functions.GetChild(_1_obj, "Url");
+                                    if (!url_obj.IsNullOrDestroyed())
+                                    {
+                                        GameObject inputfield_obj = Functions.GetChild(url_obj, "InputField");
+                                        if (!inputfield_obj.IsNullOrDestroyed())
+                                        {
+                                            url_field = inputfield_obj.GetComponent<TMP_InputField>();
+                                        }
+                                        GameObject btn_obj = Functions.GetChild(url_obj, "Button");
+                                        if (!btn_obj.IsNullOrDestroyed())
+                                        {
+                                            clear_url_btn = btn_obj.GetComponent<Button>();
+                                        }
+                                    }
+                                    GameObject profile_obj = Functions.GetChild(_1_obj, "Profile");
+                                    if (!profile_obj.IsNullOrDestroyed())
+                                    {                                        
+                                        profile_dropdown_obj = Functions.GetChild(profile_obj, "Dropdown");
+                                        if (!profile_dropdown_obj.IsNullOrDestroyed())
+                                        {
+                                            profile_dropdown = profile_dropdown_obj.GetComponent<Dropdown>();
+                                            profile_dropdown.onValueChanged = new Dropdown.DropdownEvent();
+                                            profile_dropdown.onValueChanged.AddListener(new System.Action<int>((_) => { Update_Profile(); }));
+                                        }
+                                    }
+                                }
+                                GameObject _2_obj = Functions.GetChild(top_content_obj, "2");
+                                if (!_2_obj.IsNullOrDestroyed())
+                                {
+                                    GameObject refresh_obj = Functions.GetChild(_2_obj, "Refresh");
+                                    if (!refresh_obj.IsNullOrDestroyed())
+                                    {
+                                        GameObject btn_obj = Functions.GetChild(refresh_obj, "Button");
+                                        if (!btn_obj.IsNullOrDestroyed())
+                                        {
+                                            refresh_btn = btn_obj.GetComponent<Button>();
+                                        }
+                                    }
+                                }
+                                _3_obj = Functions.GetChild(top_content_obj, "3");
+                                if (!_3_obj.IsNullOrDestroyed())
+                                {
+                                    GameObject buildname_obj = Functions.GetChild(_3_obj, "BuildName");
+                                    if (!buildname_obj.IsNullOrDestroyed())
+                                    {
+                                        GameObject buildname_text_obj = Functions.GetChild(buildname_obj, "Text");
+                                        if (!buildname_text_obj.IsNullOrDestroyed())
+                                        {
+                                            build_name_text = buildname_text_obj.GetComponent<Text>();
+                                        }
+                                    }
+                                    GameObject copyright_obj = Functions.GetChild(_3_obj, "Copyright");
+                                    if (!copyright_obj.IsNullOrDestroyed())
+                                    {
+                                        GameObject madeby_obj = Functions.GetChild(copyright_obj, "MadeBy");
+                                        if (!madeby_obj.IsNullOrDestroyed())
+                                        {
+                                            GameObject username_obj = Functions.GetChild(madeby_obj, "Username");
+                                            if (!username_obj.IsNullOrDestroyed())
+                                            {
+                                                GameObject autorname_text_obj = Functions.GetChild(username_obj, "Text");
+                                                if (!autorname_text_obj.IsNullOrDestroyed())
+                                                {
+                                                    autor_name_text = autorname_text_obj.GetComponent<Text>();
+                                                }
+                                            }
+                                            GameObject social_obj = Functions.GetChild(madeby_obj, "Social");
+                                            if (!social_obj.IsNullOrDestroyed())
+                                            {
+                                                youtube_obj = Functions.GetChild(social_obj, "Youtube");
+                                                if (!youtube_obj.IsNullOrDestroyed())
+                                                {
+                                                    youtube_image = youtube_obj.GetComponent<Image>();
+                                                }
+                                                twitch_obj = Functions.GetChild(social_obj, "Twitch");
+                                                if (!twitch_obj.IsNullOrDestroyed())
+                                                {
+                                                    twitch_image = twitch_obj.GetComponent<Image>();
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        GameObject center_obj = Functions.GetChild(content_obj, "Center");
+                        if (!center_obj.IsNullOrDestroyed())
+                        {
+                            GameObject l_obj = Functions.GetChild(center_obj, "L");
+                            if (!l_obj.IsNullOrDestroyed())
+                            {
+                                Main.logger_instance.Msg("Maxroll L");
+                                GameObject c_obj = Functions.GetChild(l_obj, "Content");
+                                if (!c_obj.IsNullOrDestroyed())
+                                {
+                                    GameObject v_obj = Functions.GetChild(c_obj, "Viewport");
+                                    if (!v_obj.IsNullOrDestroyed())
+                                    {
+                                        l_content_obj = Functions.GetChild(v_obj, "Content");
+                                        if (!l_content_obj.IsNullOrDestroyed())
+                                        {
+                                            GameObject classe_obj = Functions.GetChild(l_content_obj, "Classe");
+                                            if (!classe_obj.IsNullOrDestroyed())
+                                            {
+                                                GameObject value_obj = Functions.GetChild(classe_obj, "Value");
+                                                if (!value_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject text_obj = Functions.GetChild(value_obj, "Text");
+                                                    if (!text_obj.IsNullOrDestroyed())
+                                                    {
+                                                        classe_text = text_obj.GetComponent<Text>();
+                                                    }
+                                                }
+                                                GameObject btn_obj = Functions.GetChild(classe_obj, "Btn");
+                                                if (!btn_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject button_obj = Functions.GetChild(btn_obj, "Button");
+                                                    if (!button_obj.IsNullOrDestroyed())
+                                                    {
+                                                        classe_btn = button_obj.GetComponent<Button>();
+                                                    }
+                                                }
+                                            }
+                                            GameObject level_obj = Functions.GetChild(l_content_obj, "Level");
+                                            if (!level_obj.IsNullOrDestroyed())
+                                            {
+                                                GameObject value_obj = Functions.GetChild(level_obj, "Value");
+                                                if (!value_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject text_obj = Functions.GetChild(value_obj, "Text");
+                                                    if (!text_obj.IsNullOrDestroyed())
+                                                    {
+                                                        level_text = text_obj.GetComponent<Text>();
+                                                    }
+                                                }
+                                                GameObject btn_obj = Functions.GetChild(level_obj, "Btn");
+                                                if (!btn_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject button_obj = Functions.GetChild(btn_obj, "Button");
+                                                    if (!button_obj.IsNullOrDestroyed())
+                                                    {
+                                                        level_btn = button_obj.GetComponent<Button>();
+                                                    }
+                                                }
+                                            }
+                                            GameObject items_obj = Functions.GetChild(l_content_obj, "Items");
+                                            if (!items_obj.IsNullOrDestroyed())
+                                            {
+                                                GameObject value_obj = Functions.GetChild(items_obj, "Value");
+                                                if (!value_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject text_obj = Functions.GetChild(value_obj, "Text");
+                                                    if (!text_obj.IsNullOrDestroyed())
+                                                    {
+                                                        items_text = text_obj.GetComponent<Text>();
+                                                    }
+                                                }
+                                                GameObject btn_obj = Functions.GetChild(items_obj, "Btn");
+                                                if (!btn_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject button_obj = Functions.GetChild(btn_obj, "Button");
+                                                    if (!button_obj.IsNullOrDestroyed())
+                                                    {
+                                                        items_btn = button_obj.GetComponent<Button>();
+                                                    }
+                                                }
+                                            }
+                                            GameObject idols_obj = Functions.GetChild(l_content_obj, "Idols");
+                                            if (!idols_obj.IsNullOrDestroyed())
+                                            {
+                                                GameObject value_obj = Functions.GetChild(idols_obj, "Value");
+                                                if (!value_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject text_obj = Functions.GetChild(value_obj, "Text");
+                                                    if (!text_obj.IsNullOrDestroyed())
+                                                    {
+                                                        idols_text = text_obj.GetComponent<Text>();
+                                                    }
+                                                }
+                                                GameObject btn_obj = Functions.GetChild(idols_obj, "Btn");
+                                                if (!btn_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject button_obj = Functions.GetChild(btn_obj, "Button");
+                                                    if (!button_obj.IsNullOrDestroyed())
+                                                    {
+                                                        idols_btn = button_obj.GetComponent<Button>();
+                                                    }
+                                                }
+                                            }
+                                            GameObject blessings_obj = Functions.GetChild(l_content_obj, "Blessings");
+                                            if (!blessings_obj.IsNullOrDestroyed())
+                                            {
+                                                GameObject value_obj = Functions.GetChild(blessings_obj, "Value");
+                                                if (!value_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject text_obj = Functions.GetChild(value_obj, "Text");
+                                                    if (!text_obj.IsNullOrDestroyed())
+                                                    {
+                                                        blessings_text = text_obj.GetComponent<Text>();
+                                                    }
+                                                }
+                                                GameObject btn_obj = Functions.GetChild(blessings_obj, "Btn");
+                                                if (!btn_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject button_obj = Functions.GetChild(btn_obj, "Button");
+                                                    if (!button_obj.IsNullOrDestroyed())
+                                                    {
+                                                        blessings_btn = button_obj.GetComponent<Button>();
+                                                    }
+                                                }
+                                            }
+                                            GameObject passives_obj = Functions.GetChild(l_content_obj, "Passives");
+                                            if (!passives_obj.IsNullOrDestroyed())
+                                            {
+                                                GameObject value_obj = Functions.GetChild(passives_obj, "Value");
+                                                if (!value_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject text_obj = Functions.GetChild(value_obj, "Text");
+                                                    if (!text_obj.IsNullOrDestroyed())
+                                                    {
+                                                        passives_text = text_obj.GetComponent<Text>();
+                                                    }
+                                                }
+                                                GameObject btn_obj = Functions.GetChild(passives_obj, "Btn");
+                                                if (!btn_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject button_obj = Functions.GetChild(btn_obj, "Button");
+                                                    if (!button_obj.IsNullOrDestroyed())
+                                                    {
+                                                        passives_btn = button_obj.GetComponent<Button>();
+                                                    }
+                                                }
+                                            }
+                                            GameObject weavertree_obj = Functions.GetChild(l_content_obj, "WeaverTree");
+                                            if (!weavertree_obj.IsNullOrDestroyed())
+                                            {
+                                                GameObject value_obj = Functions.GetChild(weavertree_obj, "Value");
+                                                if (!value_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject text_obj = Functions.GetChild(value_obj, "Text");
+                                                    if (!text_obj.IsNullOrDestroyed())
+                                                    {
+                                                        weavertree_text = text_obj.GetComponent<Text>();
+                                                    }
+                                                }
+                                                GameObject btn_obj = Functions.GetChild(weavertree_obj, "Btn");
+                                                if (!btn_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject button_obj = Functions.GetChild(btn_obj, "Button");
+                                                    if (!button_obj.IsNullOrDestroyed())
+                                                    {
+                                                        weavertree_btn = button_obj.GetComponent<Button>();
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            GameObject r_obj = Functions.GetChild(center_obj, "R");
+                            if (!r_obj.IsNullOrDestroyed())
+                            {
+                                GameObject c_obj = Functions.GetChild(r_obj, "Content");
+                                if (!c_obj.IsNullOrDestroyed())
+                                {
+                                    GameObject v_obj = Functions.GetChild(c_obj, "Viewport");
+                                    if (!v_obj.IsNullOrDestroyed())
+                                    {
+                                        r_content_obj = Functions.GetChild(v_obj, "Content");
+                                        if (!r_content_obj.IsNullOrDestroyed())
+                                        {
+                                            GameObject mainskill_obj = Functions.GetChild(r_content_obj, "MainSkill");
+                                            if (!mainskill_obj.IsNullOrDestroyed())
+                                            {
+                                                GameObject value_obj = Functions.GetChild(mainskill_obj, "Value");
+                                                if (!value_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject text_obj = Functions.GetChild(value_obj, "Text");
+                                                    if (!text_obj.IsNullOrDestroyed())
+                                                    {
+                                                        mainskill_text = text_obj.GetComponent<Text>();
+                                                    }
+                                                }
+                                            }
+                                            GameObject skilltrees_obj = Functions.GetChild(r_content_obj, "SkillTrees");
+                                            if (!skilltrees_obj.IsNullOrDestroyed())
+                                            {
+                                                GameObject btn_obj = Functions.GetChild(skilltrees_obj, "Btn");
+                                                if (!btn_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject button_obj = Functions.GetChild(btn_obj, "Button");
+                                                    if (!button_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skilltrees_btn = button_obj.GetComponent<Button>();
+                                                    }
+                                                }
+                                            }
+                                            GameObject skill_0_obj = Functions.GetChild(r_content_obj, "Skill_0");
+                                            if (!skill_0_obj.IsNullOrDestroyed())
+                                            {
+                                                GameObject value_obj = Functions.GetChild(skill_0_obj, "Value");
+                                                if (!value_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject text_obj = Functions.GetChild(value_obj, "Text");
+                                                    if (!text_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skill_0_text = text_obj.GetComponent<Text>();
+                                                    }
+                                                }
+                                                GameObject index_obj = Functions.GetChild(skill_0_obj, "IndexValue");
+                                                if (!index_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject dropdown_obj = Functions.GetChild(index_obj, "Dropdown");
+                                                    if (!dropdown_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skill_0_dropdown = dropdown_obj.GetComponent<Dropdown>();
+                                                        skill_0_dropdown.onValueChanged = new Dropdown.DropdownEvent();
+                                                        skill_0_dropdown.onValueChanged.AddListener(new System.Action<int>((_) => { Update_Skill_0_index(); }));
+                                                    }
+                                                }
+                                                GameObject btn_obj = Functions.GetChild(skill_0_obj, "Btn");
+                                                if (!btn_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject button_obj = Functions.GetChild(btn_obj, "Button");
+                                                    if (!button_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skill_0_btn = button_obj.GetComponent<Button>();
+                                                    }
+                                                }
+                                            }
+                                            GameObject skill_1_obj = Functions.GetChild(r_content_obj, "Skill_1");
+                                            if (!skill_1_obj.IsNullOrDestroyed())
+                                            {
+                                                GameObject value_obj = Functions.GetChild(skill_1_obj, "Value");
+                                                if (!value_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject text_obj = Functions.GetChild(value_obj, "Text");
+                                                    if (!text_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skill_1_text = text_obj.GetComponent<Text>();
+                                                    }
+                                                }
+                                                GameObject index_obj = Functions.GetChild(skill_1_obj, "IndexValue");
+                                                if (!index_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject dropdown_obj = Functions.GetChild(index_obj, "Dropdown");
+                                                    if (!dropdown_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skill_1_dropdown = dropdown_obj.GetComponent<Dropdown>();
+                                                        skill_1_dropdown.onValueChanged = new Dropdown.DropdownEvent();
+                                                        skill_1_dropdown.onValueChanged.AddListener(new System.Action<int>((_) => { Update_Skill_1_index(); }));
+                                                    }
+                                                }
+                                                GameObject btn_obj = Functions.GetChild(skill_1_obj, "Btn");
+                                                if (!btn_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject button_obj = Functions.GetChild(btn_obj, "Button");
+                                                    if (!button_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skill_1_btn = button_obj.GetComponent<Button>();
+                                                    }
+                                                }
+                                            }
+                                            GameObject skill_2_obj = Functions.GetChild(r_content_obj, "Skill_2");
+                                            if (!skill_2_obj.IsNullOrDestroyed())
+                                            {
+                                                GameObject value_obj = Functions.GetChild(skill_2_obj, "Value");
+                                                if (!value_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject text_obj = Functions.GetChild(value_obj, "Text");
+                                                    if (!text_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skill_2_text = text_obj.GetComponent<Text>();
+                                                    }
+                                                }
+                                                GameObject index_obj = Functions.GetChild(skill_2_obj, "IndexValue");
+                                                if (!index_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject dropdown_obj = Functions.GetChild(index_obj, "Dropdown");
+                                                    if (!dropdown_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skill_2_dropdown = dropdown_obj.GetComponent<Dropdown>();
+                                                        skill_2_dropdown.onValueChanged = new Dropdown.DropdownEvent();
+                                                        skill_2_dropdown.onValueChanged.AddListener(new System.Action<int>((_) => { Update_Skill_2_index(); }));
+                                                    }
+                                                }
+                                                GameObject btn_obj = Functions.GetChild(skill_2_obj, "Btn");
+                                                if (!btn_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject button_obj = Functions.GetChild(btn_obj, "Button");
+                                                    if (!button_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skill_2_btn = button_obj.GetComponent<Button>();
+                                                    }
+                                                }
+                                            }
+                                            GameObject skill_3_obj = Functions.GetChild(r_content_obj, "Skill_3");
+                                            if (!skill_3_obj.IsNullOrDestroyed())
+                                            {
+                                                GameObject value_obj = Functions.GetChild(skill_3_obj, "Value");
+                                                if (!value_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject text_obj = Functions.GetChild(value_obj, "Text");
+                                                    if (!text_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skill_3_text = text_obj.GetComponent<Text>();
+                                                    }
+                                                }
+                                                GameObject index_obj = Functions.GetChild(skill_3_obj, "IndexValue");
+                                                if (!index_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject dropdown_obj = Functions.GetChild(index_obj, "Dropdown");
+                                                    if (!dropdown_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skill_3_dropdown = dropdown_obj.GetComponent<Dropdown>();
+                                                        skill_3_dropdown.onValueChanged = new Dropdown.DropdownEvent();
+                                                        skill_3_dropdown.onValueChanged.AddListener(new System.Action<int>((_) => { Update_Skill_3_index(); }));
+                                                    }
+                                                }
+                                                GameObject btn_obj = Functions.GetChild(skill_3_obj, "Btn");
+                                                if (!btn_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject button_obj = Functions.GetChild(btn_obj, "Button");
+                                                    if (!button_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skill_3_btn = button_obj.GetComponent<Button>();
+                                                    }
+                                                }
+                                            }
+                                            GameObject skill_4_obj = Functions.GetChild(r_content_obj, "Skill_4");
+                                            if (!skill_4_obj.IsNullOrDestroyed())
+                                            {
+                                                GameObject value_obj = Functions.GetChild(skill_4_obj, "Value");
+                                                if (!value_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject text_obj = Functions.GetChild(value_obj, "Text");
+                                                    if (!text_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skill_4_text = text_obj.GetComponent<Text>();
+                                                    }
+                                                }
+                                                GameObject index_obj = Functions.GetChild(skill_4_obj, "IndexValue");
+                                                if (!index_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject dropdown_obj = Functions.GetChild(index_obj, "Dropdown");
+                                                    if (!dropdown_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skill_4_dropdown = dropdown_obj.GetComponent<Dropdown>();
+                                                        skill_4_dropdown.onValueChanged = new Dropdown.DropdownEvent();
+                                                        skill_4_dropdown.onValueChanged.AddListener(new System.Action<int>((_) => { Update_Skill_4_index(); }));
+                                                    }
+                                                }
+                                                GameObject btn_obj = Functions.GetChild(skill_4_obj, "Btn");
+                                                if (!btn_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject button_obj = Functions.GetChild(btn_obj, "Button");
+                                                    if (!button_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skill_4_btn = button_obj.GetComponent<Button>();
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                public static void Set_Events()
+                {
+                    if (!clear_url_btn.IsNullOrDestroyed())
+                    {
+                        Events.Set_Button_Event(clear_url_btn, clear_url_OnClick_Action);
+                    }
+                    if (!refresh_btn.IsNullOrDestroyed())
+                    {
+                        Events.Set_Button_Event(refresh_btn, refresh_OnClick_Action);
+                    }
+                    if (!classe_btn.IsNullOrDestroyed())
+                    {
+                        Events.Set_Button_Event(classe_btn, classe_OnClick_Action);
+                    }
+                    if (!level_btn.IsNullOrDestroyed())
+                    {
+                        Events.Set_Button_Event(level_btn, level_OnClick_Action);
+                    }
+                    if (!items_btn.IsNullOrDestroyed())
+                    {
+                        Events.Set_Button_Event(items_btn, items_OnClick_Action);
+                    }
+                    if (!idols_btn.IsNullOrDestroyed())
+                    {
+                        Events.Set_Button_Event(idols_btn, idols_OnClick_Action);
+                    }
+                    if (!blessings_btn.IsNullOrDestroyed())
+                    {
+                        Events.Set_Button_Event(blessings_btn, blessings_OnClick_Action);
+                    }
+
+                    if (!passives_btn.IsNullOrDestroyed())
+                    {
+                        Events.Set_Button_Event(passives_btn, passives_OnClick_Action);
+                    }
+
+                    if (!weavertree_btn.IsNullOrDestroyed())
+                    {
+                        Events.Set_Button_Event(weavertree_btn, weavertree_OnClick_Action);
+                    }
+
+                    if (!skilltrees_btn.IsNullOrDestroyed())
+                    {
+                        Events.Set_Button_Event(skilltrees_btn, skilltrees_OnClick_Action);
+                    }
+
+                    if (!skill_0_btn.IsNullOrDestroyed())
+                    {
+                        Events.Set_Button_Event(skill_0_btn, skill_0_OnClick_Action);
+                    }
+
+                    if (!skill_1_btn.IsNullOrDestroyed())
+                    {
+                        Events.Set_Button_Event(skill_1_btn, skill_1_OnClick_Action);
+                    }
+
+                    if (!skill_2_btn.IsNullOrDestroyed())
+                    {
+                        Events.Set_Button_Event(skill_2_btn, skill_2_OnClick_Action);
+                    }
+                    if (!skill_3_btn.IsNullOrDestroyed())
+                    {
+                        Events.Set_Button_Event(skill_3_btn, skill_3_OnClick_Action);
+                    }
+                    if (!skill_4_btn.IsNullOrDestroyed())
+                    {
+                        Events.Set_Button_Event(skill_4_btn, skill_4_OnClick_Action);
+                    }
+                }
+                public static void Set_Active(bool show)
+                {
+                    if (!content_obj.IsNullOrDestroyed())
+                    {
+                        content_obj.active = show;
+                        enable = show;
+                    }
+                }
+                public static void Toggle_Active()
+                {
+                    if (!content_obj.IsNullOrDestroyed())
+                    {
+                        bool show = !content_obj.active;
+                        content_obj.active = show;
+                        enable = show;
+                    }
+                }
+                public static void Hide()
+                {
+                    if (!profile_text_obj.IsNullOrDestroyed()) { profile_text_obj.active = false; }
+                    if (!profile_dropdown_obj.IsNullOrDestroyed()) { profile_dropdown_obj.active = false; }
+                    if (!_3_obj.IsNullOrDestroyed()) { _3_obj.active = false; }
+                    if (!l_content_obj.IsNullOrDestroyed()) { l_content_obj.active = false; }
+                    if (!r_content_obj.IsNullOrDestroyed()) { r_content_obj.active = false; }
+                    show = false;
+                }
+                public static void Show(System.Collections.Generic.List<string> profile_names, int profile_value, string build_name, string autor_name, bool youtube, bool twitch, string class_name, string character_level,
+                    int nb_items, int nb_idols, int nb_blessings, int nb_passives, int nb_weavertree, string main_skill, string skill_0,
+                    string skill_1, string skill_2, string skill_3, string skill_4)
+                {
+                    show = true;
+                    loading = true;
+                    //set profile_dropdown
+                    if (!profile_text_obj.IsNullOrDestroyed()) { profile_text_obj.active = true; }
+                    if (!profile_dropdown.IsNullOrDestroyed())
+                    {
+                        profile_dropdown.options.Clear();
+                        foreach (string s in profile_names)
+                        {
+                            profile_dropdown.options.Add(new Dropdown.OptionData { text = s });
+                        }
+                        profile_dropdown.value = profile_value;
+                    }
+                    if (!profile_dropdown_obj.IsNullOrDestroyed()) { profile_dropdown_obj.active = true; }
+                    //Set Copyright
+                    if (!build_name_text.IsNullOrDestroyed()) { build_name_text.text = build_name; }
+                    if (!autor_name_text.IsNullOrDestroyed()) { autor_name_text.text = autor_name; }
+                    if (!youtube_obj.IsNullOrDestroyed()) { youtube_obj.active = youtube; }
+                    if (!twitch_obj.IsNullOrDestroyed()) { twitch_obj.active = twitch; }
+                    if (!_3_obj.IsNullOrDestroyed()) { _3_obj.active = true; }
+                    //Set l_content
+                    if (!classe_text.IsNullOrDestroyed()) { classe_text.text = class_name; }
+                    if (!level_text.IsNullOrDestroyed()) { level_text.text = character_level; }
+                    if (!items_text.IsNullOrDestroyed()) { items_text.text = "Count = " + nb_items; }
+                    if (!idols_text.IsNullOrDestroyed()) { idols_text.text = "Count = " + nb_idols; }
+                    if (!blessings_text.IsNullOrDestroyed()) { blessings_text.text = "Count = " + nb_blessings; }
+                    if (!passives_text.IsNullOrDestroyed()) { passives_text.text = "Count = " + nb_passives; }
+                    if (!weavertree_text.IsNullOrDestroyed()) { weavertree_text.text = "Count = " + nb_weavertree; }
+                    if (!l_content_obj.IsNullOrDestroyed()) { l_content_obj.active = true; }
+                    //Set r_content
+                    if (!mainskill_text.IsNullOrDestroyed()) { mainskill_text.text = main_skill; }
+                    if (!skill_0_text.IsNullOrDestroyed()) { skill_0_text.text = skill_0; }
+                    if (!skill_1_text.IsNullOrDestroyed()) { skill_1_text.text = skill_1; }
+                    if (!skill_2_text.IsNullOrDestroyed()) { skill_2_text.text = skill_2; }
+                    if (!skill_3_text.IsNullOrDestroyed()) { skill_3_text.text = skill_3; }
+                    if (!skill_4_text.IsNullOrDestroyed()) { skill_4_text.text = skill_4; }
+                    if (!r_content_obj.IsNullOrDestroyed()) { r_content_obj.active = true; }
+                    loading = false;
                 }
             }
         }

@@ -7,6 +7,7 @@
 using Il2Cpp;
 using MelonLoader;
 using Newtonsoft.Json;
+using System.Net.Http;
 using UnityEngine;
 
 namespace LastEpoch_Hud.Scripts.Mods.Maxroll
@@ -18,7 +19,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
         public static Maxroll_import instance { get; private set; }
 
         private static readonly int blessing_container = 33;
-        public static Skills SkillsData = null; //Here for debug only
+        public static Url.Root root = null; //Here for debug only
+        public static Url.Data data = null; //Here for debug only
 
         void Awake()
         {
@@ -26,156 +28,78 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
         }
         void Update()
         {
+            if ((Url.loaded) && ((root.IsNullOrDestroyed()) || (data.IsNullOrDestroyed()))) { Url.loaded = false; }
+            if ((Url.loaded) && (!Hud_Manager.Content.Maxroll.show) && (!root.IsNullOrDestroyed()) && (!data.IsNullOrDestroyed()) && (Url.selected_profile > -1))
+            {
+                System.Collections.Generic.List<string> profile_names = new System.Collections.Generic.List<string>();
+                foreach (Url.Profile profil in data.Profiles) { profile_names.Add(profil.Name); }
 
+                Url.Profile profile = data.Profiles[Url.selected_profile];
+                Hud_Manager.Content.Maxroll.Show(profile_names, Url.selected_profile,"", "", true, true, profile.Class.ToString(), profile.Level.ToString(), 0, 0, 0, 0, 0, "", profile.ActiveSkills[0], profile.ActiveSkills[1], profile.ActiveSkills[2], profile.ActiveSkills[3], profile.ActiveSkills[4]);
+            }
         }
-        public static void Load()
+
+        public static async System.Threading.Tasks.Task Load_FromUrl(string url)
+        {
+            Url.loaded = false;
+            //string url = "https://maxroll.gg/last-epoch/planner/a72xm0qj#2"; //Here for debug only
+            if (url.Contains("https://maxroll.gg/last-epoch/planner/"))
+            {
+                HttpResponseMessage response = await new HttpClient().GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                string[] p = url.Split('/');
+                string profile = p[p.Length - 1];
+                if (profile.Contains("#"))
+                {
+                    Url.selected_profile = System.Convert.ToInt32(profile.Split('#')[1]) - 1;
+                    string p2 = profile.Split('#')[0];                    
+                    profile = p2;                    
+                }
+                else { Url.selected_profile = 0; }
+                string json = "";
+                string[] r = jsonResponse.Split('>');
+                foreach (string s in r)
+                {
+                    if (s.Contains(profile))
+                    {
+                        string s2 = s.Split('<')[0];
+                        string remove = "window.__remixContext = ";
+                        json = s2.Substring(remove.Length, s2.Length - remove.Length - 1);
+                        break;
+                    }
+                }
+                if (json != "")
+                {
+                    root = JsonConvert.DeserializeObject<Url.Root>(json);
+                    data = JsonConvert.DeserializeObject<Url.Data>(root.State.LoaderData.LastEpochPlannerById.Profile.Data);
+                    Url.loaded = true;
+                }
+            }
+            else { Main.logger_instance.Error("Not a Maxroll URL"); }
+        } 
+        public static void Load_FromClipbboard()
         {
             string JsonString = GUIUtility.systemCopyBuffer;
-            if ((JsonString.Substring(2, 5) == "items") && (JsonString.Contains("idols")) && (JsonString.Contains("blessings")))
-            {
-                AllEquipments AllEquipmentsData = JsonConvert.DeserializeObject<AllEquipments>(JsonString);
-                Item[] items = { AllEquipmentsData.Items.Body, AllEquipmentsData.Items.Feet, AllEquipmentsData.Items.Finger1,
-                    AllEquipmentsData.Items.Finger2, AllEquipmentsData.Items.Hands, AllEquipmentsData.Items.Head,
-                    AllEquipmentsData.Items.Neck, AllEquipmentsData.Items.Offhand, AllEquipmentsData.Items.Relic,
-                    AllEquipmentsData.Items.Waist, AllEquipmentsData.Items.Weapon };
-                foreach (Item item in items)
-                {
-                    if (!item.IsNullOrDestroyed())
-                    {
-                        if (item.SealedAffix.IsNullOrDestroyed()) { item.SealedAffix = new Affix { Id = -1, Tier = -1, Roll = -1 }; }
-                        if (item.PrimordialAffix.IsNullOrDestroyed()) { item.PrimordialAffix = new Affix { Id = -1, Tier = -1, Roll = -1 }; }
-                        if (item.UniqueRolls.IsNullOrDestroyed()) { item.UniqueRolls = new System.Collections.Generic.List<int> { -1, -1, -1, -1, -1, -1, -1, -1 }; }
-                        DropItem(item.Affixes, item.Implicits, item.ItemType, item.SealedAffix, item.PrimordialAffix, item.SubType, item.UniqueID, item.UniqueRolls);
-                    }
-                }
-                int i = 0;
-                foreach (Blessing item in AllEquipmentsData.Blessings)
-                {
-                    if (!item.IsNullOrDestroyed()) { SetBlessings((ushort)(i + blessing_container), item.Implicits, item.ItemType, item.SubType); }
-                    i++;
-                }
-                foreach (Idol item in AllEquipmentsData.Idols)
-                {
-                    if (!item.IsNullOrDestroyed())
-                    {
-                        if (item.UniqueRolls.IsNullOrDestroyed())
-                        {
-                            item.UniqueRolls = new System.Collections.Generic.List<int> { -1, -1, -1, -1, -1, -1, -1, -1 };
-                        }
-                        DropIdol(item.Affixes, item.ItemType, item.SubType, item.UniqueID, item.UniqueRolls);
-                    }
-                }
-            }
-            else if (JsonString.Substring(2, 5) == "items")
-            {
-                Equipment EquipmentData = JsonConvert.DeserializeObject<Equipment>(JsonString);
-                Item[] items = { EquipmentData.Items.Body, EquipmentData.Items.Feet, EquipmentData.Items.Finger1,
-                    EquipmentData.Items.Finger2, EquipmentData.Items.Hands, EquipmentData.Items.Head,
-                    EquipmentData.Items.Neck, EquipmentData.Items.Offhand, EquipmentData.Items.Relic,
-                    EquipmentData.Items.Waist, EquipmentData.Items.Weapon };
-                foreach (Item item in items)
-                {
-                    if (!item.IsNullOrDestroyed())
-                    {
-                        if (item.SealedAffix.IsNullOrDestroyed()) { item.SealedAffix = new Affix { Id = -1, Tier = -1, Roll = -1 }; }
-                        if (item.PrimordialAffix.IsNullOrDestroyed()) { item.PrimordialAffix = new Affix { Id = -1, Tier = -1, Roll = -1 }; }
-                        if (item.UniqueRolls.IsNullOrDestroyed()) { item.UniqueRolls = new System.Collections.Generic.List<int> { -1, -1, -1, -1, -1, -1, -1, -1 }; }
-                        DropItem(item.Affixes, item.Implicits, item.ItemType, item.SealedAffix, item.PrimordialAffix, item.SubType, item.UniqueID, item.UniqueRolls);
-                    }
-                }
-            }
-            else if (JsonString.Substring(2, 5) == "idols")
-            {
-                AllIdols IdolsData = JsonConvert.DeserializeObject<AllIdols>(JsonString);
-                foreach (Idol item in IdolsData.Idols)
-                {
-                    if (!item.IsNullOrDestroyed())
-                    {
-                        if (item.UniqueRolls.IsNullOrDestroyed())
-                        {
-                            item.UniqueRolls = new System.Collections.Generic.List<int> { -1, -1, -1, -1, -1, -1, -1, -1 };
-                        }
-                        DropIdol(item.Affixes, item.ItemType, item.SubType, item.UniqueID, item.UniqueRolls);
-                    }
-                }
-            }
-            else if (JsonString.Substring(2, 9) == "blessings")
-            {
-                AllBlessings BlessingsData = JsonConvert.DeserializeObject<AllBlessings>(JsonString);
-                int i = 0;
-                foreach (Blessing item in BlessingsData.Blessings)
-                {
-                    if (!item.IsNullOrDestroyed()) { SetBlessings((ushort)(i + blessing_container), item.Implicits, item.ItemType, item.SubType); }
-                    i++;
-                }
-            }
-            else if (JsonString.Substring(2, 8) == "passives")
-            {
-                AllPassives PassivesData = JsonConvert.DeserializeObject<AllPassives>(JsonString);
-                if ((!Refs_Manager.player_treedata.IsNullOrDestroyed()) && (!Refs_Manager.player_data.IsNullOrDestroyed()))
-                {
-                    if (Refs_Manager.player_data.CharacterClass == PassivesData.Class)
-                    {
-                        Refs_Manager.player_data.ChosenMastery = (byte)PassivesData.Mastery;
-                        Refs_Manager.player_data.ClickedUnlockMasteriesButton = true;
-                        Refs_Manager.player_treedata.chosenMastery = (byte)PassivesData.Mastery;
-                        Refs_Manager.player_treedata.passiveTree.nodes.Clear();
-                        foreach (int node_id in PassivesData.Passives.History)
-                        {
-                            bool found = false;
-                            foreach (LocalTreeData.NodeData node_data in Refs_Manager.player_treedata.passiveTree.nodes)
-                            {
-                                if (node_data.id == node_id)
-                                {
-                                    node_data.pointsAllocated++;
-                                    found = true;
-                                    break;
-                                }
-                            }
-                            if (!found) { Refs_Manager.player_treedata.passiveTree.nodes.Add(new LocalTreeData.NodeData((byte)node_id, (byte)1)); }
-                        }
-                        Refs_Manager.player_treedata.updateMasteryTotals();
-                        Refs_Manager.player_treedata.savePassiveTreeData();
-                        Refs_Manager.player_data.SaveData();
-                    }
-                    else { Main.logger_instance.Error("Not the good class"); }
-                }
-            }
-            else if (JsonString.Substring(2, 11) == "weaverItems")
-            {
-                WeaverTree WeaverTreeData = JsonConvert.DeserializeObject<WeaverTree>(JsonString);
-                if (!Refs_Manager.player_treedata.IsNullOrDestroyed())
-                {
-                    Refs_Manager.player_treedata.weaverTree.nodes.Clear();
-                    foreach (int node_id in WeaverTreeData.Weaver.History)
-                    {
-                        bool found = false;
-                        foreach (LocalTreeData.NodeData node_data in Refs_Manager.player_treedata.weaverTree.nodes)
-                        {
-                            if (node_data.id == node_id)
-                            {
-                                node_data.pointsAllocated++;
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) { Refs_Manager.player_treedata.weaverTree.nodes.Add(new LocalTreeData.NodeData((byte)node_id, (byte)1)); }
-                    }
-                    Refs_Manager.player_treedata.SaveWeaverTreeData();
-                    Refs_Manager.player_data.SaveData();
-                }
-            }
-            else if (JsonString.Substring(2, 10) == "skillTrees")
-            {
-                /*Skills*/ SkillsData = JsonConvert.DeserializeObject<Skills>(JsonString);
-
-            }
+            if ((JsonString.Substring(2, 5) == "items") && (JsonString.Contains("idols")) && (JsonString.Contains("blessings"))) { Clipboard.Load_AllEquipments(JsonString); }
+            else if (JsonString.Substring(2, 5) == "items") { Clipboard.Load_Equipments(JsonString); }
+            else if (JsonString.Substring(2, 5) == "idols") { Clipboard.Load_Idols(JsonString); }
+            else if (JsonString.Substring(2, 9) == "blessings") { Clipboard.Load_Blessings(JsonString); }
+            else if (JsonString.Substring(2, 8) == "passives") { Clipboard.Load_Passives(JsonString); }
+            else if (JsonString.Substring(2, 11) == "weaverItems") { Clipboard.Load_Weaver(JsonString); }
+            else if (JsonString.Substring(2, 10) == "skillTrees") { Clipboard.Load_SkillTrees(JsonString); }
         }
+
         public static void DropItem(System.Collections.Generic.List<Affix> affixs, System.Collections.Generic.List<int> implicits,
                 int item_type, Affix sealed_affix, Affix primordial_affix, int sub_type, int? unique_id, System.Collections.Generic.List<int> unique_rolls)
         {
             if ((!Refs_Manager.ground_item_manager.IsNullOrDestroyed()) && (!Refs_Manager.player_actor.IsNullOrDestroyed()))
             {
+                if (sealed_affix.IsNullOrDestroyed()) { sealed_affix = new Affix { Id = -1, Tier = -1, Roll = -1 }; }
+                if (primordial_affix.IsNullOrDestroyed()) { primordial_affix = new Affix { Id = -1, Tier = -1, Roll = -1 }; }
+                if (unique_rolls.IsNullOrDestroyed()) { unique_rolls = new System.Collections.Generic.List<int> { -1, -1, -1, -1, -1, -1, -1, -1 }; }
+
+
                 Il2CppSystem.Collections.Generic.List<ItemAffix> item_affixes = new Il2CppSystem.Collections.Generic.List<ItemAffix>();
                 foreach (Affix affix in affixs)
                 {
@@ -321,6 +245,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
         {
             if ((!Refs_Manager.ground_item_manager.IsNullOrDestroyed()) && (!Refs_Manager.player_actor.IsNullOrDestroyed()))
             {
+                if (unique_rolls.IsNullOrDestroyed()) { unique_rolls = new System.Collections.Generic.List<int> { -1, -1, -1, -1, -1, -1, -1, -1 }; }
+
                 Il2CppSystem.Collections.Generic.List<ItemAffix> item_affixes = new Il2CppSystem.Collections.Generic.List<ItemAffix>();
                 foreach (Affix affix in affixs)
                 {
@@ -373,94 +299,556 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                 Refs_Manager.ground_item_manager.dropItemForPlayer(Refs_Manager.player_actor, item.TryCast<ItemData>(), Refs_Manager.player_actor.position(), false);
             }
         }
+        public static int ObjectToInt(object obj)
+        {
+            int result = -1;
+            if (!obj.IsNullOrDestroyed())
+            {
+                string s = obj.ToString();
+                try { result = System.Convert.ToInt32(s); }
+                catch { }
+            }
+
+            return result;
+
+        }
+
+        public class UI
+        {
+            public static bool Initialized = false;
+            public static void InitRefs()
+            {
+
+            }
+            public static void Set()
+            {
+
+            }
+        }
+        public class Url
+        {
+            public static int selected_profile = -1;
+            public static bool loaded = false;
+
+            public static void Load_AllEquipments()
+            {
+                if (selected_profile > -1)
+                {
+                    Profile profile = data.Profiles[selected_profile];
+                    System.Collections.Generic.List<int> items = new System.Collections.Generic.List<int>();
+                    items.Add(ObjectToInt(profile.Items.Body));
+                    items.Add(ObjectToInt(profile.Items.Feet));
+                    items.Add(ObjectToInt(profile.Items.Finger1));
+                    items.Add(ObjectToInt(profile.Items.Finger2));
+                    items.Add(ObjectToInt(profile.Items.Hands));
+                    items.Add(ObjectToInt(profile.Items.Head));
+                    items.Add(ObjectToInt(profile.Items.Neck));
+                    items.Add(ObjectToInt(profile.Items.Offhand));
+                    items.Add(ObjectToInt(profile.Items.Relic));
+                    items.Add(ObjectToInt(profile.Items.Waist));
+                    items.Add(ObjectToInt(profile.Items.Weapon));
+                    foreach (System.Collections.Generic.KeyValuePair<int, Item> item in data.Items)
+                    {
+                        if (items.Contains(item.Key))
+                        {
+                            DropItem(item.Value.Affixes, item.Value.Implicits, item.Value.ItemType, item.Value.SealedAffix, item.Value.PrimordialAffix, item.Value.SubType, item.Value.UniqueID, item.Value.UniqueRolls);
+                        }
+                    }
+                    int i = 0;
+                    foreach (Blessing item in profile.Blessings)
+                    {
+                        if (!item.IsNullOrDestroyed()) { SetBlessings((ushort)(i + blessing_container), item.Implicits, item.ItemType, item.SubType); }
+                        i++;
+                    }
+
+                    items = new System.Collections.Generic.List<int>();
+                    foreach (object item in  profile.Idols)
+                    {
+                        items.Add(ObjectToInt(item));
+                    }
+                    foreach (System.Collections.Generic.KeyValuePair<int, Item> item in data.Items)
+                    {
+                        if (items.Contains(item.Key))
+                        {
+                            DropIdol(item.Value.Affixes, item.Value.ItemType, item.Value.SubType, item.Value.UniqueID, item.Value.UniqueRolls);
+                        }
+                    }
+                }
+            }
+            public static void Load_Equipments()
+            {
+                if (selected_profile > -1)
+                {
+                    Profile profile = data.Profiles[selected_profile];
+                    System.Collections.Generic.List<int> items = new System.Collections.Generic.List<int>();
+                    items.Add(ObjectToInt(profile.Items.Body));
+                    items.Add(ObjectToInt(profile.Items.Feet));
+                    items.Add(ObjectToInt(profile.Items.Finger1));
+                    items.Add(ObjectToInt(profile.Items.Finger2));
+                    items.Add(ObjectToInt(profile.Items.Hands));
+                    items.Add(ObjectToInt(profile.Items.Head));
+                    items.Add(ObjectToInt(profile.Items.Neck));
+                    items.Add(ObjectToInt(profile.Items.Offhand));
+                    items.Add(ObjectToInt(profile.Items.Relic));
+                    items.Add(ObjectToInt(profile.Items.Waist));
+                    items.Add(ObjectToInt(profile.Items.Weapon));
+                    foreach (System.Collections.Generic.KeyValuePair<int, Item> item in data.Items)
+                    {
+                        if (items.Contains(item.Key))
+                        {
+                            DropItem(item.Value.Affixes, item.Value.Implicits, item.Value.ItemType, item.Value.SealedAffix, item.Value.PrimordialAffix, item.Value.SubType, item.Value.UniqueID, item.Value.UniqueRolls);
+                        }
+                    }
+                }
+            }
+            public static void Load_Idols()
+            {
+                if (selected_profile > -1)
+                {
+                    Profile profile = data.Profiles[selected_profile];
+                    System.Collections.Generic.List<int> items = new System.Collections.Generic.List<int>();
+                    foreach (object item in profile.Idols)
+                    {
+                        items.Add(ObjectToInt(item));
+                    }
+                    foreach (System.Collections.Generic.KeyValuePair<int, Item> item in data.Items)
+                    {
+                        if (items.Contains(item.Key))
+                        {
+                            DropIdol(item.Value.Affixes, item.Value.ItemType, item.Value.SubType, item.Value.UniqueID, item.Value.UniqueRolls);
+                        }
+                    }
+                }
+            }
+            public static void Load_Blessings()
+            {
+                if (selected_profile > -1)
+                {
+                    int i = 0;
+                    foreach (Blessing item in data.Profiles[selected_profile].Blessings)
+                    {
+                        if (!item.IsNullOrDestroyed()) { SetBlessings((ushort)(i + blessing_container), item.Implicits, item.ItemType, item.SubType); }
+                        i++;
+                    }
+                }
+            }
+            public static void Load_Passives()
+            {
+                if ((selected_profile > -1) && (!Refs_Manager.player_treedata.IsNullOrDestroyed()) && (!Refs_Manager.player_data.IsNullOrDestroyed()))
+                {
+                    Profile profile = data.Profiles[selected_profile];
+                    if (Refs_Manager.player_data.CharacterClass == profile.Class)
+                    {
+                        Refs_Manager.player_data.ChosenMastery = (byte)profile.Mastery;
+                        Refs_Manager.player_data.ClickedUnlockMasteriesButton = true;
+                        Refs_Manager.player_treedata.chosenMastery = (byte)profile.Mastery;
+                        Refs_Manager.player_treedata.passiveTree.nodes.Clear();
+                        foreach (int node_id in profile.Passives.History)
+                        {
+                            bool found = false;
+                            foreach (LocalTreeData.NodeData node_data in Refs_Manager.player_treedata.passiveTree.nodes)
+                            {
+                                if (node_data.id == node_id)
+                                {
+                                    node_data.pointsAllocated++;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found) { Refs_Manager.player_treedata.passiveTree.nodes.Add(new LocalTreeData.NodeData((byte)node_id, (byte)1)); }
+                        }
+                        Refs_Manager.player_treedata.updateMasteryTotals();
+                        Refs_Manager.player_treedata.savePassiveTreeData();
+                        Refs_Manager.player_data.SaveData();
+                    }
+                    else { Main.logger_instance.Error("Not the good class"); }
+                }
+            }
+            public static void Load_Weaver()
+            {
+                if ((selected_profile > -1) && (!Refs_Manager.player_treedata.IsNullOrDestroyed()))
+                {
+                    Profile profile = data.Profiles[selected_profile];
+                    Refs_Manager.player_treedata.weaverTree.nodes.Clear();
+                    foreach (int node_id in profile.Weaver.History)
+                    {
+                        bool found = false;
+                        foreach (LocalTreeData.NodeData node_data in Refs_Manager.player_treedata.weaverTree.nodes)
+                        {
+                            if (node_data.id == node_id)
+                            {
+                                node_data.pointsAllocated++;
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) { Refs_Manager.player_treedata.weaverTree.nodes.Add(new LocalTreeData.NodeData((byte)node_id, (byte)1)); }
+                    }
+                    Refs_Manager.player_treedata.SaveWeaverTreeData();
+                    Refs_Manager.player_data.SaveData();
+                }
+            }
+            public static void Load_SkillTrees()
+            {
+                if (selected_profile > -1)
+                {
+                    Profile profile = data.Profiles[selected_profile];
+
+                }
+            }            
+
+            public class Root
+            {
+                [JsonProperty("state")]
+                public State State;
+            }
+            public class State
+            {
+                [JsonProperty("loaderData")]
+                public LoaderData LoaderData;
+            }
+            public class LoaderData
+            {
+                [JsonProperty("last-epoch-planner-by-id")]
+                public LastEpochPlannerById LastEpochPlannerById;
+            }
+            public class LastEpochPlannerById
+            {
+                [JsonProperty("profile")]
+                public LastEpochPlannerProfile Profile;
+            }
+            public class LastEpochPlannerProfile
+            {
+                [JsonProperty("data")]
+                public string Data;
+            }
+            public class Data
+            {
+                [JsonProperty("profiles")]
+                public System.Collections.Generic.List<Profile> Profiles;
+
+                [JsonProperty("items")]
+                public System.Collections.Generic.Dictionary<int, Item> Items;
+
+                [JsonProperty("activeEmbed")]
+                public int ActiveEmbed;
+
+                [JsonProperty("activeProfile")]
+                public int ActiveProfile;
+            }
+            public class Profile
+            {
+                [JsonProperty("name")]
+                public string Name;
+
+                [JsonProperty("class")]
+                public int Class;
+
+                [JsonProperty("mastery")]
+                public int Mastery;
+
+                [JsonProperty("level")]
+                public int Level;
+
+                [JsonProperty("items")]
+                public Items Items;
+
+                [JsonProperty("idols")]
+                public System.Collections.Generic.List<object> Idols;
+
+                [JsonProperty("blessings")]
+                public System.Collections.Generic.List<Blessing> Blessings;
+
+                [JsonProperty("passives")]
+                public NodePoint Passives;
+
+                [JsonProperty("weaver")]
+                public NodePoint Weaver;
+
+                //[JsonProperty("weaverItems")]
+                //public System.Collections.Generic.List<Items> WeaverItems;
+
+                [JsonProperty("skillTrees")]
+                public System.Collections.Generic.Dictionary<string, NodePoint> Skill;
+
+                [JsonProperty("activeSkills")]
+                public System.Collections.Generic.List<string> ActiveSkills;
+
+                [JsonProperty("specializedSkills")]
+                public System.Collections.Generic.List<string> SpecializedSkills;
+
+                [JsonProperty("quests")]
+                public System.Collections.Generic.List<int> Quests;
+
+                [JsonProperty("season")]
+                public int Season;
+            }
+            public class Items
+            {
+                [JsonProperty("body")]
+                public object Body;
+
+                [JsonProperty("neck")]
+                public object Neck;
+
+                [JsonProperty("offhand")]
+                public object Offhand;
+
+                [JsonProperty("finger1")]
+                public object Finger1;
+
+                [JsonProperty("feet")]
+                public object Feet;
+
+                [JsonProperty("hands")]
+                public object Hands;
+
+                [JsonProperty("waist")]
+                public object Waist;
+
+                [JsonProperty("head")]
+                public object Head;
+
+                [JsonProperty("relic")]
+                public object Relic;
+
+                [JsonProperty("finger2")]
+                public object Finger2;
+
+                [JsonProperty("weapon")]
+                public object Weapon;
+            }
+        }
+        public class Clipboard
+        {
+            public static void Load_AllEquipments(string JsonString)
+            {
+                AllEquipments AllEquipmentsData = JsonConvert.DeserializeObject<AllEquipments>(JsonString);
+                Item[] items = { AllEquipmentsData.Items.Body, AllEquipmentsData.Items.Feet, AllEquipmentsData.Items.Finger1,
+                    AllEquipmentsData.Items.Finger2, AllEquipmentsData.Items.Hands, AllEquipmentsData.Items.Head,
+                    AllEquipmentsData.Items.Neck, AllEquipmentsData.Items.Offhand, AllEquipmentsData.Items.Relic,
+                    AllEquipmentsData.Items.Waist, AllEquipmentsData.Items.Weapon };
+                foreach (Item item in items)
+                {
+                    if (!item.IsNullOrDestroyed())
+                    {
+                        if (item.SealedAffix.IsNullOrDestroyed()) { item.SealedAffix = new Affix { Id = -1, Tier = -1, Roll = -1 }; }
+                        if (item.PrimordialAffix.IsNullOrDestroyed()) { item.PrimordialAffix = new Affix { Id = -1, Tier = -1, Roll = -1 }; }
+                        if (item.UniqueRolls.IsNullOrDestroyed()) { item.UniqueRolls = new System.Collections.Generic.List<int> { -1, -1, -1, -1, -1, -1, -1, -1 }; }
+                        DropItem(item.Affixes, item.Implicits, item.ItemType, item.SealedAffix, item.PrimordialAffix, item.SubType, item.UniqueID, item.UniqueRolls);
+                    }
+                }
+                int i = 0;
+                foreach (Blessing item in AllEquipmentsData.Blessings)
+                {
+                    if (!item.IsNullOrDestroyed()) { SetBlessings((ushort)(i + blessing_container), item.Implicits, item.ItemType, item.SubType); }
+                    i++;
+                }
+                foreach (Idol item in AllEquipmentsData.Idols)
+                {
+                    if (!item.IsNullOrDestroyed())
+                    {
+                        if (item.UniqueRolls.IsNullOrDestroyed())
+                        {
+                            item.UniqueRolls = new System.Collections.Generic.List<int> { -1, -1, -1, -1, -1, -1, -1, -1 };
+                        }
+                        DropIdol(item.Affixes, item.ItemType, item.SubType, item.UniqueID, item.UniqueRolls);
+                    }
+                }
+            }
+            public static void Load_Equipments(string JsonString)
+            {
+                Equipment EquipmentData = JsonConvert.DeserializeObject<Equipment>(JsonString);
+                Item[] items = { EquipmentData.Items.Body, EquipmentData.Items.Feet, EquipmentData.Items.Finger1,
+                    EquipmentData.Items.Finger2, EquipmentData.Items.Hands, EquipmentData.Items.Head,
+                    EquipmentData.Items.Neck, EquipmentData.Items.Offhand, EquipmentData.Items.Relic,
+                    EquipmentData.Items.Waist, EquipmentData.Items.Weapon };
+                foreach (Item item in items)
+                {
+                    if (!item.IsNullOrDestroyed())
+                    {
+                        if (item.SealedAffix.IsNullOrDestroyed()) { item.SealedAffix = new Affix { Id = -1, Tier = -1, Roll = -1 }; }
+                        if (item.PrimordialAffix.IsNullOrDestroyed()) { item.PrimordialAffix = new Affix { Id = -1, Tier = -1, Roll = -1 }; }
+                        if (item.UniqueRolls.IsNullOrDestroyed()) { item.UniqueRolls = new System.Collections.Generic.List<int> { -1, -1, -1, -1, -1, -1, -1, -1 }; }
+                        DropItem(item.Affixes, item.Implicits, item.ItemType, item.SealedAffix, item.PrimordialAffix, item.SubType, item.UniqueID, item.UniqueRolls);
+                    }
+                }
+            }
+            public static void Load_Idols(string JsonString)
+            {
+                AllIdols IdolsData = JsonConvert.DeserializeObject<AllIdols>(JsonString);
+                foreach (Idol item in IdolsData.Idols)
+                {
+                    if (!item.IsNullOrDestroyed())
+                    {
+                        if (item.UniqueRolls.IsNullOrDestroyed())
+                        {
+                            item.UniqueRolls = new System.Collections.Generic.List<int> { -1, -1, -1, -1, -1, -1, -1, -1 };
+                        }
+                        DropIdol(item.Affixes, item.ItemType, item.SubType, item.UniqueID, item.UniqueRolls);
+                    }
+                }
+            }
+            public static void Load_Blessings(string JsonString)
+            {
+                AllBlessings BlessingsData = JsonConvert.DeserializeObject<AllBlessings>(JsonString);
+                int i = 0;
+                foreach (Blessing item in BlessingsData.Blessings)
+                {
+                    if (!item.IsNullOrDestroyed()) { SetBlessings((ushort)(i + blessing_container), item.Implicits, item.ItemType, item.SubType); }
+                    i++;
+                }
+            }
+            public static void Load_Passives(string JsonString)
+            {
+                AllPassives PassivesData = JsonConvert.DeserializeObject<AllPassives>(JsonString);
+                if ((!Refs_Manager.player_treedata.IsNullOrDestroyed()) && (!Refs_Manager.player_data.IsNullOrDestroyed()))
+                {
+                    if (Refs_Manager.player_data.CharacterClass == PassivesData.Class)
+                    {
+                        Refs_Manager.player_data.ChosenMastery = (byte)PassivesData.Mastery;
+                        Refs_Manager.player_data.ClickedUnlockMasteriesButton = true;
+                        Refs_Manager.player_treedata.chosenMastery = (byte)PassivesData.Mastery;
+                        Refs_Manager.player_treedata.passiveTree.nodes.Clear();
+                        foreach (int node_id in PassivesData.Passives.History)
+                        {
+                            bool found = false;
+                            foreach (LocalTreeData.NodeData node_data in Refs_Manager.player_treedata.passiveTree.nodes)
+                            {
+                                if (node_data.id == node_id)
+                                {
+                                    node_data.pointsAllocated++;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found) { Refs_Manager.player_treedata.passiveTree.nodes.Add(new LocalTreeData.NodeData((byte)node_id, (byte)1)); }
+                        }
+                        Refs_Manager.player_treedata.updateMasteryTotals();
+                        Refs_Manager.player_treedata.savePassiveTreeData();
+                        Refs_Manager.player_data.SaveData();
+                    }
+                    else { Main.logger_instance.Error("Not the good class"); }
+                }
+            }
+            public static void Load_Weaver(string JsonString)
+            {
+                WeaverTree WeaverTreeData = JsonConvert.DeserializeObject<WeaverTree>(JsonString);
+                if (!Refs_Manager.player_treedata.IsNullOrDestroyed())
+                {
+                    Refs_Manager.player_treedata.weaverTree.nodes.Clear();
+                    foreach (int node_id in WeaverTreeData.Weaver.History)
+                    {
+                        bool found = false;
+                        foreach (LocalTreeData.NodeData node_data in Refs_Manager.player_treedata.weaverTree.nodes)
+                        {
+                            if (node_data.id == node_id)
+                            {
+                                node_data.pointsAllocated++;
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) { Refs_Manager.player_treedata.weaverTree.nodes.Add(new LocalTreeData.NodeData((byte)node_id, (byte)1)); }
+                    }
+                    Refs_Manager.player_treedata.SaveWeaverTreeData();
+                    Refs_Manager.player_data.SaveData();
+                }
+            }
+            public static void Load_SkillTrees(string JsonString)
+            {
+                Skills SkillsData = JsonConvert.DeserializeObject<Skills>(JsonString);
+
+            }
+
+            public class AllEquipments
+            {
+                [JsonProperty("items")]
+                public Items Items;
+
+                [JsonProperty("idols")]
+                public System.Collections.Generic.List<Idol> Idols;
+
+                [JsonProperty("blessings")]
+                public System.Collections.Generic.List<Blessing> Blessings;
+            }
+            public class Equipment
+            {
+                [JsonProperty("items")]
+                public Items Items;
+            }
+            public class AllIdols
+            {
+                [JsonProperty("idols")]
+                public System.Collections.Generic.List<Idol> Idols;
+            }
+            public class AllBlessings
+            {
+                [JsonProperty("blessings")]
+                public System.Collections.Generic.List<Blessing> Blessings;
+            }
+            public class AllPassives
+            {
+                [JsonProperty("passives")]
+                public NodePoint Passives;
+
+                [JsonProperty("class")]
+                public int Class;
+
+                [JsonProperty("mastery")]
+                public int Mastery;
+            }
+            public class WeaverTree
+            {
+                [JsonProperty("weaverItems")] //items placed inside the weaver tree
+                public System.Collections.Generic.List<Item> WeaverItems;
+
+                [JsonProperty("weaver")]
+                public NodePoint Weaver;
+            }
+            public class Skills
+            {
+                //https://github.com/exiledagain/LastEpoch_Mods/blob/f881533806e869b15218e5c0c29abedb8b3dface/LastEpoch_Hud/Scripts/Mods/Maxroll/Maxroll_import.cs#L242
+                [JsonProperty("skillTrees")]
+                public System.Collections.Generic.Dictionary<string, NodePoint> Skill;
+            }
+            public class Items
+            {
+                [JsonProperty("body")]
+                public Item Body;
+
+                [JsonProperty("offhand")]
+                public Item Offhand;
+
+                [JsonProperty("waist")]
+                public Item Waist;
+
+                [JsonProperty("feet")]
+                public Item Feet;
+
+                [JsonProperty("finger1")]
+                public Item Finger1;
+
+                [JsonProperty("finger2")]
+                public Item Finger2;
+
+                [JsonProperty("neck")]
+                public Item Neck;
+
+                [JsonProperty("relic")]
+                public Item Relic;
+
+                [JsonProperty("hands")]
+                public Item Hands;
+
+                [JsonProperty("head")]
+                public Item Head;
+
+                [JsonProperty("weapon")]
+                public Item Weapon;
+            }
+        }        
         
-        public class AllEquipments
-        {
-            [JsonProperty("items")]
-            public Items Items;
-
-            [JsonProperty("idols")]
-            public System.Collections.Generic.List<Idol> Idols;
-
-            [JsonProperty("blessings")]
-            public System.Collections.Generic.List<Blessing> Blessings;
-        }
-        public class Equipment
-        {
-            [JsonProperty("items")]
-            public Items Items;
-        }
-        public class AllIdols
-        {
-            [JsonProperty("idols")]
-            public System.Collections.Generic.List<Idol> Idols;
-        }
-        public class AllBlessings
-        {
-            [JsonProperty("blessings")]
-            public System.Collections.Generic.List<Blessing> Blessings;
-        }
-        public class AllPassives
-        {
-            [JsonProperty("passives")]
-            public NodePoint Passives;
-
-            [JsonProperty("class")]
-            public int Class;
-
-            [JsonProperty("mastery")]
-            public int Mastery;
-        }
-        public class WeaverTree
-        {
-            [JsonProperty("weaverItems")] //items placed inside the weaver tree
-            public System.Collections.Generic.List<Item> WeaverItems;
-
-            [JsonProperty("weaver")]
-            public NodePoint Weaver;
-        }
-        public class Skills
-        {
-            //https://github.com/exiledagain/LastEpoch_Mods/blob/f881533806e869b15218e5c0c29abedb8b3dface/LastEpoch_Hud/Scripts/Mods/Maxroll/Maxroll_import.cs#L242
-            [JsonProperty("skillTrees")]
-            public System.Collections.Generic.Dictionary<string, NodePoint> Skill;
-        }
-
-        public class Items
-        {
-            [JsonProperty("body")]
-            public Item Body;
-
-            [JsonProperty("offhand")]
-            public Item Offhand;
-
-            [JsonProperty("waist")]
-            public Item Waist;
-
-            [JsonProperty("feet")]
-            public Item Feet;
-
-            [JsonProperty("finger1")]
-            public Item Finger1;
-
-            [JsonProperty("finger2")]
-            public Item Finger2;
-
-            [JsonProperty("neck")]
-            public Item Neck;
-
-            [JsonProperty("relic")]
-            public Item Relic;
-
-            [JsonProperty("hands")]
-            public Item Hands;
-
-            [JsonProperty("head")]
-            public Item Head;
-
-            [JsonProperty("weapon")]
-            public Item Weapon;
-        }
         public class Item
         {
             [JsonProperty("itemType")]
