@@ -21,6 +21,9 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
         private static readonly int blessing_container = 33;
         public static Url.Root root = null; //Here for debug only
         public static Url.Data data = null; //Here for debug only
+        public static string[] specialized_names = { "", "", "", "", "" };
+        public static string[] specialized_ids = { "", "", "", "", "" };
+        public static Ability[] specialized_ability = { null, null, null, null, null };
 
         void Awake()
         {
@@ -28,14 +31,97 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
         }
         void Update()
         {
-            if ((Url.loaded) && ((root.IsNullOrDestroyed()) || (data.IsNullOrDestroyed()))) { Url.loaded = false; }
+            if ((Url.loaded) && ((root.IsNullOrDestroyed()) || (data.IsNullOrDestroyed())))
+            {
+                Url.loaded = false;
+                if (Hud_Manager.Content.Maxroll.show) { Hud_Manager.Content.Maxroll.Hide(); }
+            }
             if ((Url.loaded) && (!Hud_Manager.Content.Maxroll.show) && (!root.IsNullOrDestroyed()) && (!data.IsNullOrDestroyed()) && (Url.selected_profile > -1))
             {
                 System.Collections.Generic.List<string> profile_names = new System.Collections.Generic.List<string>();
                 foreach (Url.Profile profil in data.Profiles) { profile_names.Add(profil.Name); }
-
                 Url.Profile profile = data.Profiles[Url.selected_profile];
-                Hud_Manager.Content.Maxroll.Show(profile_names, Url.selected_profile,"", "", true, true, profile.Class.ToString(), profile.Level.ToString(), 0, 0, 0, 0, 0, "", profile.ActiveSkills[0], profile.ActiveSkills[1], profile.ActiveSkills[2], profile.ActiveSkills[3], profile.ActiveSkills[4]);
+                string class_name = "";
+                if (!Refs_Manager.character_class_list.IsNullOrDestroyed())
+                {
+                    int i = 0;
+                    foreach (CharacterClass char_class in Refs_Manager.character_class_list.classes)
+                    {
+                        if (i == profile.Class) { class_name = char_class.className; break; }
+                        i++;
+                    }
+                }
+                bool youtube = false;
+                string youtube_url = "";
+                if (root.State.LoaderData.LastEpochPlannerById.Metadata.AuthorYoutube != "")
+                {
+                    youtube = true;
+                    youtube_url = root.State.LoaderData.LastEpochPlannerById.Metadata.AuthorYoutube;
+                }
+                bool twitch = false;
+                string twitch_url = "";
+                if (root.State.LoaderData.LastEpochPlannerById.Metadata.AuthorTwitch != "")
+                {
+                    twitch = true;
+                    twitch_url = root.State.LoaderData.LastEpochPlannerById.Metadata.AuthorTwitch;
+                }
+                int nb_items = 0;
+                System.Collections.Generic.List<int> items = new System.Collections.Generic.List<int>();
+                items.Add(ObjectToInt(profile.Items.Body));
+                items.Add(ObjectToInt(profile.Items.Feet));
+                items.Add(ObjectToInt(profile.Items.Finger1));
+                items.Add(ObjectToInt(profile.Items.Finger2));
+                items.Add(ObjectToInt(profile.Items.Hands));
+                items.Add(ObjectToInt(profile.Items.Head));
+                items.Add(ObjectToInt(profile.Items.Neck));
+                items.Add(ObjectToInt(profile.Items.Offhand));
+                items.Add(ObjectToInt(profile.Items.Relic));
+                items.Add(ObjectToInt(profile.Items.Waist));
+                items.Add(ObjectToInt(profile.Items.Weapon));
+                foreach (int item in items) { if (item > -1) { nb_items++; } }
+                int nb_idols = 0;
+                foreach (object item in profile.Idols)
+                {
+                    if (ObjectToInt(item) > -1) { nb_idols++; }
+                }
+                int nb_blessings = 0;
+                foreach (Blessing item in profile.Blessings)
+                {
+                    if (!item.IsNullOrDestroyed()) { nb_blessings++; }                    
+                }
+                int nb_passives = profile.Passives.History.Count;
+                int nb_weavertree = profile.Weaver.History.Count;
+
+                string[] specialized_skills = { "", "", "", "", ""};
+                int j = 0;
+                foreach (string specialized_skill in profile.SpecializedSkills)
+                {
+                    if (j < specialized_skills.Length) { specialized_skills[j] = specialized_skill; }
+                    j++;
+                }
+                specialized_names = new string[5] { "", "", "", "", "" };
+                specialized_ids = new string[5] { "", "", "", "", "" };
+                specialized_ability = new Ability[5] { null, null, null, null, null };
+                j = 0;
+                foreach (string specialized_skill in specialized_skills)
+                {
+                    foreach (Ability ability in Resources.FindObjectsOfTypeAll<Ability>())
+                    {
+                        if (ability.name == specialized_skill)
+                        {
+                            specialized_names[j] = ability.abilityName;
+                            specialized_ids[j] = ability.playerAbilityID;
+                            specialized_ability[j] = ability;
+                            break;
+                        }
+                    }
+                    j++;
+                }
+
+                Hud_Manager.Content.Maxroll.Show(profile_names, Url.selected_profile, root.State.LoaderData.LastEpochPlannerById.Profile.Name,
+                    root.State.LoaderData.LastEpochPlannerById.Profile.User.Username, youtube, youtube_url, twitch, twitch_url, class_name,
+                    profile.Level, nb_items, nb_idols, nb_blessings, nb_passives, nb_weavertree, root.State.LoaderData.LastEpochPlannerById.Profile.Mainset,
+                    profile.ActiveSkills[0], profile.ActiveSkills[1], profile.ActiveSkills[2], profile.ActiveSkills[3], profile.ActiveSkills[4]);
             }
         }
 
@@ -492,10 +578,79 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
             {
                 if (selected_profile > -1)
                 {
-                    Profile profile = data.Profiles[selected_profile];
-
+                    for (int i = 0; i < 5; i++)
+                    {
+                        Load_SkillTree(i, i);
+                    }
                 }
-            }            
+            }
+            public static void Load_SkillTree(int index, int slot)
+            {
+                if (selected_profile > -1)
+                {
+                    Profile profile = data.Profiles[selected_profile];
+                    if (!Refs_Manager.player_treedata.IsNullOrDestroyed())
+                    {
+                        string skill_id = specialized_ids[index];                        
+                        if (skill_id != "")
+                        {
+                            NodePoint points = null;
+                            foreach (System.Collections.Generic.KeyValuePair<string, NodePoint> skill in profile.Skill)
+                            {
+                                if (skill.Key == skill_id)
+                                {
+                                    points = skill.Value;
+                                    break;
+                                }
+                            }
+                            Ability ability_to_remove = Refs_Manager.player_treedata.getSpecialisedAbilityInSlot((byte)slot);
+                            if (!ability_to_remove.IsNullOrDestroyed()) { Refs_Manager.player_treedata.Despecialise(ability_to_remove, true); }
+                            Refs_Manager.player_treedata.Specialise(specialized_ability[index], (byte)slot, true);
+                            //Refs_Manager.player_treedata.specialisedSkillTrees.Add(new LocalTreeData.SkillTreeData(skill_id, (byte)slot));
+                            foreach (LocalTreeData.TreeData tree_data in Refs_Manager.player_treedata.specialisedSkillTrees)
+                            {
+                                if (tree_data.treeID == skill_id)
+                                {
+                                    foreach (int node_id in points.History)
+                                    {
+                                        bool found = false;
+                                        foreach (LocalTreeData.NodeData node_data in tree_data.nodes)
+                                        {
+                                            if (node_data.id == node_id)
+                                            {
+                                                node_data.pointsAllocated++;
+                                                found = true;
+                                                break;
+                                            }
+                                        }
+                                        if (!found) { tree_data.nodes.Add(new LocalTreeData.NodeData((byte)node_id, (byte)1)); }
+                                    }                                    
+                                    LocalTreeData.SkillTreeData skill_tree_data = tree_data.TryCast<LocalTreeData.SkillTreeData>();
+                                    if (!skill_tree_data.IsNullOrDestroyed())
+                                    {
+                                        skill_tree_data.level = 20;
+                                        skill_tree_data.abilityXp = 999999999;
+                                        Refs_Manager.player_treedata.saveSpecialisedSkillData(skill_tree_data);
+                                    }                                    
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            public static void Load_ActiveSkills()
+            {
+                if (selected_profile > -1)
+                {
+                    Profile profile = data.Profiles[selected_profile];
+                    //profile.ActiveSkills[0]
+                    //profile.ActiveSkills[1]
+                    //profile.ActiveSkills[2]
+                    //profile.ActiveSkills[3]
+                    //profile.ActiveSkills[4]
+                }
+            }
 
             public class Root
             {
@@ -516,11 +671,31 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
             {
                 [JsonProperty("profile")]
                 public LastEpochPlannerProfile Profile;
+
+                [JsonProperty("metadata")]
+                public Metadata Metadata;
             }
             public class LastEpochPlannerProfile
             {
+                [JsonProperty("name")]
+                public string Name;
+
                 [JsonProperty("data")]
                 public string Data;
+
+                [JsonProperty("mainset")]
+                public string Mainset;
+
+                [JsonProperty("user")]
+                public User User;
+            }
+            public class Metadata
+            {
+                [JsonProperty("authorYoutube")]
+                public string AuthorYoutube;
+
+                [JsonProperty("authorTwitch")]
+                public string AuthorTwitch;
             }
             public class Data
             {
@@ -582,6 +757,11 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
 
                 [JsonProperty("season")]
                 public int Season;
+            }
+            public class User
+            {
+                [JsonProperty("username")]
+                public string Username;
             }
             public class Items
             {
