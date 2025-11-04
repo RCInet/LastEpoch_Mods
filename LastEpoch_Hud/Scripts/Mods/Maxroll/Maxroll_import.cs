@@ -24,6 +24,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
         public static string[] specialized_names = { "", "", "", "", "" };
         public static string[] specialized_ids = { "", "", "", "", "" };
         public static Ability[] specialized_ability = { null, null, null, null, null };
+        public static string[] active_names = { "", "", "", "", "" };
+        public static Ability[] active_ability = { null, null, null, null, null };
 
         void Awake()
         {
@@ -117,11 +119,26 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                     }
                     j++;
                 }
+                active_names = new string[5] { "", "", "", "", "" };
+                active_ability = new Ability[5] { null, null, null, null, null };
+                j = 0;
+                foreach (string active_skill in profile.ActiveSkills)
+                {
+                    foreach (Ability ability in Resources.FindObjectsOfTypeAll<Ability>())
+                    {
+                        if (ability.name == active_skill)
+                        {
+                            active_names[j] = ability.abilityName;
+                            active_ability[j] = ability;
+                            break;
+                        }
+                    }
+                    j++;
+                }
 
                 Hud_Manager.Content.Maxroll.Show(profile_names, Url.selected_profile, root.State.LoaderData.LastEpochPlannerById.Profile.Name,
                     root.State.LoaderData.LastEpochPlannerById.Profile.User.Username, youtube, youtube_url, twitch, twitch_url, class_name,
-                    profile.Level, nb_items, nb_idols, nb_blessings, nb_passives, nb_weavertree, root.State.LoaderData.LastEpochPlannerById.Profile.Mainset,
-                    profile.ActiveSkills[0], profile.ActiveSkills[1], profile.ActiveSkills[2], profile.ActiveSkills[3], profile.ActiveSkills[4]);
+                    profile.Level, nb_items, nb_idols, nb_blessings, nb_passives, nb_weavertree, root.State.LoaderData.LastEpochPlannerById.Profile.Mainset);
             }
         }
 
@@ -641,14 +658,21 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
             }
             public static void Load_ActiveSkills()
             {
-                if (selected_profile > -1)
+                if ((selected_profile > -1) && (!Refs_Manager.player_treedata.IsNullOrDestroyed()))
                 {
-                    Profile profile = data.Profiles[selected_profile];
-                    //profile.ActiveSkills[0]
-                    //profile.ActiveSkills[1]
-                    //profile.ActiveSkills[2]
-                    //profile.ActiveSkills[3]
-                    //profile.ActiveSkills[4]
+                    for (int i = 0; i < Refs_Manager.player_treedata.playerAbilityList.equippedAbilities.Count; i++)
+                    {
+                        if (i < active_ability.Length)
+                        {
+                            if (!active_ability[i].IsNullOrDestroyed())
+                            {
+                                if (active_ability[i] != Refs_Manager.player_treedata.playerAbilityList.equippedAbilities[i])
+                                {
+                                    Refs_Manager.player_treedata.playerAbilityList.setAbility(active_ability[i], i);
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
