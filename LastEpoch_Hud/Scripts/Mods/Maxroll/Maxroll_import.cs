@@ -215,6 +215,11 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
         {
             if ((!Refs_Manager.ground_item_manager.IsNullOrDestroyed()) && (!Refs_Manager.player_actor.IsNullOrDestroyed()))
             {
+                if (implicits.IsNullOrDestroyed())
+                {
+                    implicits = new System.Collections.Generic.List<int>();
+
+                }
                 if (sealed_affix.IsNullOrDestroyed()) { sealed_affix = new Affix { Id = -1, Tier = -1, Roll = -1 }; }
                 if (primordial_affix.IsNullOrDestroyed()) { primordial_affix = new Affix { Id = -1, Tier = -1, Roll = -1 }; }
                 if (unique_rolls.IsNullOrDestroyed()) { unique_rolls = new System.Collections.Generic.List<int> { -1, -1, -1, -1, -1, -1, -1, -1 }; }
@@ -223,20 +228,20 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                 Il2CppSystem.Collections.Generic.List<ItemAffix> item_affixes = new Il2CppSystem.Collections.Generic.List<ItemAffix>();
                 foreach (Affix affix in affixs)
                 {
-                    ItemAffix new_affix = new ItemAffix { affixId = (ushort)affix.Id, affixTier = (byte)(affix.Tier - 1), affixRoll = (byte)affix.Roll, sealedAffixType = SealedAffixType.None };
+                    ItemAffix new_affix = new ItemAffix { affixId = (ushort)affix.Id, affixTier = (byte)(affix.Tier - 1), affixRoll = (byte)(affix.Roll * 255), sealedAffixType = SealedAffixType.None };
                     item_affixes.Add(new_affix);
                 }
                 bool HasSeal = false;
                 if ((sealed_affix.Id > -1) && (sealed_affix.Tier > -1) && (sealed_affix.Roll > -1))
                 {
-                    ItemAffix new_affix = new ItemAffix { affixId = (ushort)sealed_affix.Id, affixTier = (byte)(sealed_affix.Tier - 1), affixRoll = (byte)sealed_affix.Roll, sealedAffixType = SealedAffixType.Regular };
+                    ItemAffix new_affix = new ItemAffix { affixId = (ushort)sealed_affix.Id, affixTier = (byte)(sealed_affix.Tier - 1), affixRoll = (byte)(sealed_affix.Roll * 255), sealedAffixType = SealedAffixType.Regular };
                     item_affixes.Add(new_affix);
                     HasSeal = true;
                 }
                 bool HasPrimo = false;
                 if ((primordial_affix.Id > -1) && (primordial_affix.Tier > -1) && (primordial_affix.Roll > -1))
                 {
-                    ItemAffix new_affix = new ItemAffix { affixId = (ushort)primordial_affix.Id, affixTier = (byte)(primordial_affix.Tier - 1), affixRoll = (byte)primordial_affix.Roll, sealedAffixType = SealedAffixType.Primordial };
+                    ItemAffix new_affix = new ItemAffix { affixId = (ushort)primordial_affix.Id, affixTier = (byte)(primordial_affix.Tier - 1), affixRoll = (byte)(primordial_affix.Roll * 255), sealedAffixType = SealedAffixType.Primordial };
                     item_affixes.Add(new_affix);
                     HasPrimo = true;
                 }
