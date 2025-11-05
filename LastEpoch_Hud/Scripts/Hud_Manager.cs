@@ -8099,6 +8099,7 @@ namespace LastEpoch_Hud.Scripts
                 {
                     Maxroll_import.Url.Load_Weaver();
                 }
+                public static Image mainskill_image = null;
                 public static Text mainskill_text = null;
                 public static Image activeskill_0_image = null;
                 public static Image activeskill_1_image = null;
@@ -8118,6 +8119,7 @@ namespace LastEpoch_Hud.Scripts
                     Maxroll_import.Url.Load_SkillTrees();
                 }
                 public static Text skill_0_text = null;
+                public static Image skill_0_image = null;
                 public static Dropdown skill_0_dropdown = null;
                 public static Button skill_0_btn = null;
                 public static readonly System.Action skill_0_OnClick_Action = new System.Action(skill_0_Click);
@@ -8126,6 +8128,7 @@ namespace LastEpoch_Hud.Scripts
                     Maxroll_import.Url.Load_SkillTree(0, skill_0_dropdown.value);
                 }
                 public static Text skill_1_text = null;
+                public static Image skill_1_image = null;
                 public static Dropdown skill_1_dropdown = null;
                 public static Button skill_1_btn = null;
                 public static readonly System.Action skill_1_OnClick_Action = new System.Action(skill_1_Click);
@@ -8134,6 +8137,7 @@ namespace LastEpoch_Hud.Scripts
                     Maxroll_import.Url.Load_SkillTree(1, skill_1_dropdown.value);
                 }
                 public static Text skill_2_text = null;
+                public static Image skill_2_image = null;
                 public static Dropdown skill_2_dropdown = null;
                 public static Button skill_2_btn = null;
                 public static readonly System.Action skill_2_OnClick_Action = new System.Action(skill_2_Click);
@@ -8142,6 +8146,7 @@ namespace LastEpoch_Hud.Scripts
                     Maxroll_import.Url.Load_SkillTree(2, skill_2_dropdown.value);
                 }
                 public static Text skill_3_text = null;
+                public static Image skill_3_image = null;
                 public static Dropdown skill_3_dropdown = null;
                 public static Button skill_3_btn = null;
                 public static readonly System.Action skill_3_OnClick_Action = new System.Action(skill_3_Click);
@@ -8150,6 +8155,7 @@ namespace LastEpoch_Hud.Scripts
                     Maxroll_import.Url.Load_SkillTree(3, skill_3_dropdown.value);
                 }
                 public static Text skill_4_text = null;
+                public static Image skill_4_image = null;
                 public static Dropdown skill_4_dropdown = null;
                 public static Button skill_4_btn = null;
                 public static readonly System.Action skill_4_OnClick_Action = new System.Action(skill_4_Click);
@@ -8157,7 +8163,7 @@ namespace LastEpoch_Hud.Scripts
                 {
                     Maxroll_import.Url.Load_SkillTree(4, skill_4_dropdown.value);
                 }
-
+                
                 public static void Get_Refs()
                 {
                     content_obj = Functions.GetChild(Content.content_obj, "Maxroll_Content");
@@ -8458,6 +8464,15 @@ namespace LastEpoch_Hud.Scripts
                                             GameObject mainskill_obj = Functions.GetChild(r_content_obj, "MainSkill");
                                             if (!mainskill_obj.IsNullOrDestroyed())
                                             {
+                                                GameObject icon_obj = Functions.GetChild(mainskill_obj, "Icon");
+                                                if (!icon_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject image_obj = Functions.GetChild(icon_obj, "Value");
+                                                    if (!image_obj.IsNullOrDestroyed())
+                                                    {
+                                                        mainskill_image = image_obj.GetComponent<Image>();
+                                                    }
+                                                }
                                                 GameObject value_obj = Functions.GetChild(mainskill_obj, "Value");
                                                 if (!value_obj.IsNullOrDestroyed())
                                                 {
@@ -8482,25 +8497,25 @@ namespace LastEpoch_Hud.Scripts
                                                         {
                                                             activeskill_0_image = _0_obj.GetComponent<Image>();
                                                         }
-                                                        GameObject _1_obj = Functions.GetChild(values_obj, "0");
+                                                        GameObject _1_obj = Functions.GetChild(values_obj, "1");
                                                         if (!_1_obj.IsNullOrDestroyed())
                                                         {
-                                                            activeskill_0_image = _1_obj.GetComponent<Image>();
+                                                            activeskill_1_image = _1_obj.GetComponent<Image>();
                                                         }
-                                                        GameObject _2_obj = Functions.GetChild(values_obj, "0");
+                                                        GameObject _2_obj = Functions.GetChild(values_obj, "2");
                                                         if (!_2_obj.IsNullOrDestroyed())
                                                         {
-                                                            activeskill_0_image = _2_obj.GetComponent<Image>();
+                                                            activeskill_2_image = _2_obj.GetComponent<Image>();
                                                         }
-                                                        GameObject _3_obj = Functions.GetChild(values_obj, "0");
+                                                        GameObject _3_obj = Functions.GetChild(values_obj, "3");
                                                         if (!_3_obj.IsNullOrDestroyed())
                                                         {
-                                                            activeskill_0_image = _3_obj.GetComponent<Image>();
+                                                            activeskill_3_image = _3_obj.GetComponent<Image>();
                                                         }
-                                                        GameObject _4_obj = Functions.GetChild(values_obj, "0");
+                                                        GameObject _4_obj = Functions.GetChild(values_obj, "4");
                                                         if (!_4_obj.IsNullOrDestroyed())
                                                         {
-                                                            activeskill_0_image = _4_obj.GetComponent<Image>();
+                                                            activeskill_4_image = _4_obj.GetComponent<Image>();
                                                         }
                                                     }
                                                 }
@@ -8531,6 +8546,15 @@ namespace LastEpoch_Hud.Scripts
                                             GameObject skill_0_obj = Functions.GetChild(r_content_obj, "Skill_0");
                                             if (!skill_0_obj.IsNullOrDestroyed())
                                             {
+                                                GameObject icon_obj = Functions.GetChild(skill_0_obj, "Icon");
+                                                if (!icon_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject image_obj = Functions.GetChild(icon_obj, "Value");
+                                                    if (!image_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skill_0_image = image_obj.GetComponent<Image>();
+                                                    }
+                                                }
                                                 GameObject value_obj = Functions.GetChild(skill_0_obj, "Value");
                                                 if (!value_obj.IsNullOrDestroyed())
                                                 {
@@ -8563,6 +8587,15 @@ namespace LastEpoch_Hud.Scripts
                                             GameObject skill_1_obj = Functions.GetChild(r_content_obj, "Skill_1");
                                             if (!skill_1_obj.IsNullOrDestroyed())
                                             {
+                                                GameObject icon_obj = Functions.GetChild(skill_1_obj, "Icon");
+                                                if (!icon_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject image_obj = Functions.GetChild(icon_obj, "Value");
+                                                    if (!image_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skill_1_image = image_obj.GetComponent<Image>();
+                                                    }
+                                                }
                                                 GameObject value_obj = Functions.GetChild(skill_1_obj, "Value");
                                                 if (!value_obj.IsNullOrDestroyed())
                                                 {
@@ -8594,6 +8627,15 @@ namespace LastEpoch_Hud.Scripts
                                             GameObject skill_2_obj = Functions.GetChild(r_content_obj, "Skill_2");
                                             if (!skill_2_obj.IsNullOrDestroyed())
                                             {
+                                                GameObject icon_obj = Functions.GetChild(skill_2_obj, "Icon");
+                                                if (!icon_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject image_obj = Functions.GetChild(icon_obj, "Value");
+                                                    if (!image_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skill_2_image = image_obj.GetComponent<Image>();
+                                                    }
+                                                }
                                                 GameObject value_obj = Functions.GetChild(skill_2_obj, "Value");
                                                 if (!value_obj.IsNullOrDestroyed())
                                                 {
@@ -8625,6 +8667,15 @@ namespace LastEpoch_Hud.Scripts
                                             GameObject skill_3_obj = Functions.GetChild(r_content_obj, "Skill_3");
                                             if (!skill_3_obj.IsNullOrDestroyed())
                                             {
+                                                GameObject icon_obj = Functions.GetChild(skill_3_obj, "Icon");
+                                                if (!icon_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject image_obj = Functions.GetChild(icon_obj, "Value");
+                                                    if (!image_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skill_3_image = image_obj.GetComponent<Image>();
+                                                    }
+                                                }
                                                 GameObject value_obj = Functions.GetChild(skill_3_obj, "Value");
                                                 if (!value_obj.IsNullOrDestroyed())
                                                 {
@@ -8656,6 +8707,15 @@ namespace LastEpoch_Hud.Scripts
                                             GameObject skill_4_obj = Functions.GetChild(r_content_obj, "Skill_4");
                                             if (!skill_4_obj.IsNullOrDestroyed())
                                             {
+                                                GameObject icon_obj = Functions.GetChild(skill_4_obj, "Icon");
+                                                if (!icon_obj.IsNullOrDestroyed())
+                                                {
+                                                    GameObject image_obj = Functions.GetChild(icon_obj, "Value");
+                                                    if (!image_obj.IsNullOrDestroyed())
+                                                    {
+                                                        skill_4_image = image_obj.GetComponent<Image>();
+                                                    }
+                                                }
                                                 GameObject value_obj = Functions.GetChild(skill_4_obj, "Value");
                                                 if (!value_obj.IsNullOrDestroyed())
                                                 {
@@ -8801,7 +8861,7 @@ namespace LastEpoch_Hud.Scripts
                 }
                 public static void Show(System.Collections.Generic.List<string> profile_names, int profile_value, string build_name,
                     string autor_name, bool youtube, string Youtube_url, bool twitch, string Twitch_url, string class_name, int character_level,
-                    int nb_items, int nb_idols, int nb_blessings, int nb_passives, int nb_weavertree, string main_skill)
+                    int nb_items, int nb_idols, int nb_blessings, int nb_passives, int nb_weavertree)
                 {
                     show = true;
                     loading = true;
@@ -8892,69 +8952,58 @@ namespace LastEpoch_Hud.Scripts
                     }
                     if (!l_content_obj.IsNullOrDestroyed()) { l_content_obj.active = true; }
                     //Set r_content
-                    if (!mainskill_text.IsNullOrDestroyed()) { mainskill_text.text = main_skill; }
+                    if (!mainskill_text.IsNullOrDestroyed()) { mainskill_text.text = Maxroll_import.mainskill_name; }
+                    if (!mainskill_image.IsNullOrDestroyed())
+                    {
+                        if (!Maxroll_import.mainskill_icon.IsNullOrDestroyed())
+                        {
+                            mainskill_image.gameObject.active = true;
+                            mainskill_image.sprite = Maxroll_import.mainskill_icon;
+                        }
+                        else { mainskill_image.gameObject.active = false; }
+                    }
                     if (!activeskill_0_image.IsNullOrDestroyed())
                     {
-                        if (!Maxroll_import.active_ability[0].IsNullOrDestroyed())
+                        if (!Maxroll_import.active_icons[0].IsNullOrDestroyed())
                         {
-                            if (!Maxroll_import.active_ability[0].abilitySprite.IsNullOrDestroyed())
-                            {
-                                activeskill_0_image.gameObject.active = true;
-                                activeskill_0_image.sprite = Maxroll_import.active_ability[0].abilitySprite;
-                            }
-                            else { activeskill_0_image.gameObject.active = false; }
+                            activeskill_0_image.gameObject.active = true;
+                            activeskill_0_image.sprite = Maxroll_import.active_icons[0];
                         }
                         else { activeskill_0_image.gameObject.active = false; }                            
                     }
                     if (!activeskill_1_image.IsNullOrDestroyed())
                     {
-                        if (!Maxroll_import.active_ability[1].IsNullOrDestroyed())
+                        if (!Maxroll_import.active_icons[1].IsNullOrDestroyed())
                         {
-                            if (!Maxroll_import.active_ability[1].abilitySprite.IsNullOrDestroyed())
-                            {
-                                activeskill_1_image.gameObject.active = true;
-                                activeskill_1_image.sprite = Maxroll_import.active_ability[1].abilitySprite;
-                            }
-                            else { activeskill_1_image.gameObject.active = false; }
+                            activeskill_1_image.gameObject.active = true;
+                            activeskill_1_image.sprite = Maxroll_import.active_icons[1];
                         }
                         else { activeskill_1_image.gameObject.active = false; }
                     }
                     if (!activeskill_2_image.IsNullOrDestroyed())
                     {
-                        if (!Maxroll_import.active_ability[2].IsNullOrDestroyed())
+                        if (!Maxroll_import.active_icons[2].IsNullOrDestroyed())
                         {
-                            if (!Maxroll_import.active_ability[2].abilitySprite.IsNullOrDestroyed())
-                            {
-                                activeskill_2_image.gameObject.active = true;
-                                activeskill_2_image.sprite = Maxroll_import.active_ability[2].abilitySprite;
-                            }
-                            else { activeskill_2_image.gameObject.active = false; }
+                            activeskill_2_image.gameObject.active = true;
+                            activeskill_2_image.sprite = Maxroll_import.active_icons[2];
                         }
                         else { activeskill_2_image.gameObject.active = false; }
                     }
                     if (!activeskill_3_image.IsNullOrDestroyed())
                     {
-                        if (!Maxroll_import.active_ability[3].IsNullOrDestroyed())
+                        if (!Maxroll_import.active_icons[3].IsNullOrDestroyed())
                         {
-                            if (!Maxroll_import.active_ability[3].abilitySprite.IsNullOrDestroyed())
-                            {
-                                activeskill_3_image.gameObject.active = true;
-                                activeskill_3_image.sprite = Maxroll_import.active_ability[3].abilitySprite;
-                            }
-                            else { activeskill_3_image.gameObject.active = false; }
+                            activeskill_3_image.gameObject.active = true;
+                            activeskill_3_image.sprite = Maxroll_import.active_icons[3];
                         }
                         else { activeskill_3_image.gameObject.active = false; }
                     }
                     if (!activeskill_4_image.IsNullOrDestroyed())
                     {
-                        if (!Maxroll_import.active_ability[4].IsNullOrDestroyed())
+                        if (!Maxroll_import.active_icons[4].IsNullOrDestroyed())
                         {
-                            if (!Maxroll_import.active_ability[4].abilitySprite.IsNullOrDestroyed())
-                            {
-                                activeskill_4_image.gameObject.active = true;
-                                activeskill_4_image.sprite = Maxroll_import.active_ability[4].abilitySprite;
-                            }
-                            else { activeskill_4_image.gameObject.active = false; }
+                            activeskill_4_image.gameObject.active = true;
+                            activeskill_4_image.sprite = Maxroll_import.active_icons[4];
                         }
                         else { activeskill_4_image.gameObject.active = false; }
                     }
@@ -8973,6 +9022,15 @@ namespace LastEpoch_Hud.Scripts
                         if (IsClass) { skill_0_btn.gameObject.active = true; }
                         else { skill_0_btn.gameObject.active = false; }
                     }
+                    if (!skill_0_image.IsNullOrDestroyed())
+                    {
+                        if (!Maxroll_import.specialized_icons[0].IsNullOrDestroyed())
+                        {
+                            skill_0_image.gameObject.active = true;
+                            skill_0_image.sprite = Maxroll_import.specialized_icons[0];
+                        }
+                        else { skill_0_image.gameObject.active = false; }
+                    }
                     if (!skill_0_text.IsNullOrDestroyed())
                     {
                         skill_0_text.text = Maxroll_import.specialized_names[0];                        
@@ -8987,6 +9045,15 @@ namespace LastEpoch_Hud.Scripts
                     {
                         if (IsClass) { skill_1_btn.gameObject.active = true; }
                         else { skill_1_btn.gameObject.active = false; }
+                    }
+                    if (!skill_1_image.IsNullOrDestroyed())
+                    {
+                        if (!Maxroll_import.specialized_icons[1].IsNullOrDestroyed())
+                        {
+                            skill_1_image.gameObject.active = true;
+                            skill_1_image.sprite = Maxroll_import.specialized_icons[1];
+                        }
+                        else { skill_1_image.gameObject.active = false; }
                     }
                     if (!skill_1_text.IsNullOrDestroyed())
                     {
@@ -9003,6 +9070,15 @@ namespace LastEpoch_Hud.Scripts
                         if (IsClass) { skill_2_btn.gameObject.active = true; }
                         else { skill_2_btn.gameObject.active = false; }
                     }
+                    if (!skill_2_image.IsNullOrDestroyed())
+                    {
+                        if (!Maxroll_import.specialized_icons[2].IsNullOrDestroyed())
+                        {
+                            skill_2_image.gameObject.active = true;
+                            skill_2_image.sprite = Maxroll_import.specialized_icons[2];
+                        }
+                        else { skill_2_image.gameObject.active = false; }
+                    }
                     if (!skill_2_text.IsNullOrDestroyed())
                     {
                         skill_2_text.text = Maxroll_import.specialized_names[2];
@@ -9018,6 +9094,15 @@ namespace LastEpoch_Hud.Scripts
                         if (IsClass) { skill_3_btn.gameObject.active = true; }
                         else { skill_3_btn.gameObject.active = false; }
                     }
+                    if (!skill_3_image.IsNullOrDestroyed())
+                    {
+                        if (!Maxroll_import.specialized_icons[3].IsNullOrDestroyed())
+                        {
+                            skill_3_image.gameObject.active = true;
+                            skill_3_image.sprite = Maxroll_import.specialized_icons[3];
+                        }
+                        else { skill_3_image.gameObject.active = false; }
+                    }
                     if (!skill_3_text.IsNullOrDestroyed())
                     {
                         skill_3_text.text = Maxroll_import.specialized_names[3];
@@ -9032,6 +9117,15 @@ namespace LastEpoch_Hud.Scripts
                     {
                         if (IsClass) { skill_4_btn.gameObject.active = true; }
                         else { skill_4_btn.gameObject.active = false; }
+                    }
+                    if (!skill_4_image.IsNullOrDestroyed())
+                    {
+                        if (!Maxroll_import.specialized_icons[4].IsNullOrDestroyed())
+                        {
+                            skill_4_image.gameObject.active = true;
+                            skill_4_image.sprite = Maxroll_import.specialized_icons[4];
+                        }
+                        else { skill_4_image.gameObject.active = false; }
                     }
                     if (!skill_4_text.IsNullOrDestroyed())
                     {

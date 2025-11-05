@@ -21,11 +21,15 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
         private static readonly int blessing_container = 33;
         public static Url.Root root = null; //Here for debug only
         public static Url.Data data = null; //Here for debug only
+        public static string mainskill_name = "";
+        public static Sprite mainskill_icon = null;
         public static string[] specialized_names = { "", "", "", "", "" };
         public static string[] specialized_ids = { "", "", "", "", "" };
         public static Ability[] specialized_ability = { null, null, null, null, null };
+        public static Sprite[] specialized_icons = { null, null, null, null, null };
         public static string[] active_names = { "", "", "", "", "" };
         public static Ability[] active_ability = { null, null, null, null, null };
+        public static Sprite[] active_icons = { null, null, null, null, null };
 
         void Awake()
         {
@@ -94,6 +98,15 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                 int nb_passives = profile.Passives.History.Count;
                 int nb_weavertree = profile.Weaver.History.Count;
 
+                mainskill_name = root.State.LoaderData.LastEpochPlannerById.Profile.Mainset;
+                foreach (Ability ability in Resources.FindObjectsOfTypeAll<Ability>())
+                {
+                    if (ability.name == mainskill_name)
+                    {
+                        mainskill_icon = ability.abilitySprite;
+                        break;
+                    }
+                }
                 string[] specialized_skills = { "", "", "", "", ""};
                 int j = 0;
                 foreach (string specialized_skill in profile.SpecializedSkills)
@@ -104,6 +117,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                 specialized_names = new string[5] { "", "", "", "", "" };
                 specialized_ids = new string[5] { "", "", "", "", "" };
                 specialized_ability = new Ability[5] { null, null, null, null, null };
+                specialized_icons = new Sprite[5] { null, null, null, null, null };
                 j = 0;
                 foreach (string specialized_skill in specialized_skills)
                 {
@@ -114,6 +128,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                             specialized_names[j] = ability.abilityName;
                             specialized_ids[j] = ability.playerAbilityID;
                             specialized_ability[j] = ability;
+                            specialized_icons[j] = ability.abilitySprite;
                             break;
                         }
                     }
@@ -121,6 +136,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                 }
                 active_names = new string[5] { "", "", "", "", "" };
                 active_ability = new Ability[5] { null, null, null, null, null };
+                active_icons = new Sprite[5] { null, null, null, null, null };
                 j = 0;
                 foreach (string active_skill in profile.ActiveSkills)
                 {
@@ -130,6 +146,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                         {
                             active_names[j] = ability.abilityName;
                             active_ability[j] = ability;
+                            active_icons[j] = ability.abilitySprite;
                             break;
                         }
                     }
@@ -138,7 +155,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
 
                 Hud_Manager.Content.Maxroll.Show(profile_names, Url.selected_profile, root.State.LoaderData.LastEpochPlannerById.Profile.Name,
                     root.State.LoaderData.LastEpochPlannerById.Profile.User.Username, youtube, youtube_url, twitch, twitch_url, class_name,
-                    profile.Level, nb_items, nb_idols, nb_blessings, nb_passives, nb_weavertree, root.State.LoaderData.LastEpochPlannerById.Profile.Mainset);
+                    profile.Level, nb_items, nb_idols, nb_blessings, nb_passives, nb_weavertree);
             }
         }
 
