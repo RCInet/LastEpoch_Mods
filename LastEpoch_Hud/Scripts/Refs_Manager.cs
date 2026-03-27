@@ -80,60 +80,38 @@ namespace LastEpoch_Hud.Scripts
             if ((quest_list.IsNullOrDestroyed()) && (!QuestList.instance.IsNullOrDestroyed())) { quest_list = QuestList.instance; }
             if ((scene_list.IsNullOrDestroyed()) && (!SceneList.instance.IsNullOrDestroyed())) { scene_list = SceneList.instance; }
             if ((character_select.IsNullOrDestroyed()) && (!CharacterSelect.instance.IsNullOrDestroyed())) { character_select = CharacterSelect.instance; }
-            //if ((!character_select.IsNullOrDestroyed()) && (character_select.OnOnlineTabChange.IsNullOrDestroyed())) { character_select.OnOnlineTabChange = Action_SetOnline; }
-            if ((craft_slot_manager.IsNullOrDestroyed())) // && (!CraftingSlotManager.instance.IsNullOrDestroyed()))
+            if ((craft_slot_manager.IsNullOrDestroyed()))
             {
                 foreach (CraftingSlotManager obj in Resources.FindObjectsOfTypeAll<CraftingSlotManager>())
                 {
-                    craft_slot_manager = obj;
-                    break;
+                    if (obj.name.Contains("Clone"))
+                    {
+                        craft_slot_manager = obj;
+                        break;
+                    }
                 }
-                //craft_slot_manager = CraftingSlotManager.instance;
             }
             if (ability_manager.IsNullOrDestroyed()) { ability_manager = AbilityManager.instance; }
             if (player_data_tracker.IsNullOrDestroyed()) { player_data_tracker = PlayerFinder.getPlayerDataTracker(); }
 
             if (Scenes.IsGameScene())
             {
-                if (!game_uibase.IsNullOrDestroyed())
-                {
-                    /*if ((InventoryPanelUI.IsNullOrDestroyed()))// && (!game_uibase.inventoryPanel.IsNullOrDestroyed()))
-                    {
-                        if (!game_uibase.inventoryPanel.instance.IsNullOrDestroyed())
-                        {
-                            InventoryPanelUI = game_uibase.inventoryPanel.instance.GetComponent<InventoryPanelUI>();
-                        }
-                    }
-                    if ((EternityCachePanelUI.IsNullOrDestroyed()))// && (!game_uibase.eternityCachePanel.IsNullOrDestroyed()))
-                    {
-                        if (game_uibase.eternityCachePanel.instance.IsNullOrDestroyed())
-                        {
-                            game_uibase.eternityCachePanel.GetInstance();
-                        }
-                        EternityCachePanelUI = game_uibase.eternityCachePanel.instance.GetComponent<EternityCachePanelUI>();
-                    }
-                    if ((crafting_panel_ui.IsNullOrDestroyed())) // && (!game_uibase.craftingPanel.IsNullOrDestroyed()))
-                    {
-                        //if (!game_uibase.craftingPanel.instance.IsNullOrDestroyed()) { crafting_panel_ui = game_uibase.craftingPanel.instance.GetComponent<CraftingPanelUI>(); }
-                    }
-                    if ((craft_materials_holder.IsNullOrDestroyed()))// && (!game_uibase.craftingMaterialsPanel.IsNullOrDestroyed()))
-                    {
-                        //craft_materials_holder = game_uibase.craftingMaterialsPanel;
-                    }*/
-                    if ((BlessingsPanel.IsNullOrDestroyed()) && (!InventoryPanelUI.IsNullOrDestroyed())) { BlessingsPanel = InventoryPanelUI.blessingPanel; }
-                }
+                //craft_materials_holder //Need to fix for LE 1.4
                 if ((InventoryPanelUI.IsNullOrDestroyed()) && (!InventoryPanelUI.instance.IsNullOrDestroyed())) { InventoryPanelUI = InventoryPanelUI.instance; }
+                if ((BlessingsPanel.IsNullOrDestroyed()) && (!InventoryPanelUI.IsNullOrDestroyed())) { BlessingsPanel = InventoryPanelUI.blessingPanel; }
                 if ((EternityCachePanelUI.IsNullOrDestroyed()) && (!EternityCachePanelUI.instance.IsNullOrDestroyed())) { EternityCachePanelUI = EternityCachePanelUI.instance; }
                 if ((crafting_panel_ui.IsNullOrDestroyed()))
                 {
                     foreach (CraftingPanelUI obj in Resources.FindObjectsOfTypeAll<CraftingPanelUI>())
                     {
-                        crafting_panel_ui = obj;
-                        break;
+                        if (obj.name.Contains("Clone"))
+                        {
+                            crafting_panel_ui = obj;
+                            break;
+                        }
                     }
                 }
                 if ((stash_panel_ui.IsNullOrDestroyed()) && (!StashPanelUI.Instance.IsNullOrDestroyed())) { stash_panel_ui = StashPanelUI.Instance; }
-
                 if ((ground_item_manager.IsNullOrDestroyed()) && (!GroundItemManager.instance.IsNullOrDestroyed())) { ground_item_manager = GroundItemManager.instance; }
                 if ((item_containers_manager.IsNullOrDestroyed()) && (!ItemContainersManager.Instance.IsNullOrDestroyed())) { item_containers_manager = ItemContainersManager.Instance; }
                 if (player_actor.IsNullOrDestroyed()) { player_actor = PlayerFinder.getPlayerActor(); }
@@ -155,18 +133,7 @@ namespace LastEpoch_Hud.Scripts
                 if (player_golbal_data_tracker.IsNullOrDestroyed()) { player_golbal_data_tracker = PlayerFinder.getGlobalDataTracker(); }
                 if ((filter_manager.IsNullOrDestroyed()) && (!ItemFilterManager.Instance.IsNullOrDestroyed())) { filter_manager = ItemFilterManager.Instance; }
                 if ((camera_manager.IsNullOrDestroyed()) && (!CameraManager.instance.IsNullOrDestroyed())) { camera_manager = CameraManager.instance; }
-                if (map_panel.IsNullOrDestroyed() && (!MapPanel.instance.IsNullOrDestroyed()))
-                {
-                    map_panel = MapPanel.instance;
-                    /*foreach (MapPanel obj in Resources.FindObjectsOfTypeAll<MapPanel>())
-                    {
-                        if (obj.name.Contains("Clone"))
-                        {
-                            map_panel = obj;
-                            break;
-                        }
-                    }*/
-                }
+                if (map_panel.IsNullOrDestroyed() && (!MapPanel.instance.IsNullOrDestroyed())) { map_panel = MapPanel.instance; }
             }
             else
             {
@@ -174,18 +141,5 @@ namespace LastEpoch_Hud.Scripts
                 if (!map_panel.IsNullOrDestroyed()) {  map_panel = null; }
             }
         }
-
-        /*private static readonly System.Action<bool> Action_SetOnline = new System.Action<bool>(SetOnline);
-        private static void SetOnline(bool result)
-        {
-            result = true;
-            if (!character_select.IsNullOrDestroyed()) { result = character_select.isOnlineTabShowing; }
-            if (online != result)
-            {
-                Main.logger_instance?.Msg("Refs Manager : Online = " + result);
-                online = result;
-                if (!Mods_Manager.instance.IsNullOrDestroyed()) { Mods_Manager.instance.SetActive(result); }
-            }
-        }*/
     }
 }
