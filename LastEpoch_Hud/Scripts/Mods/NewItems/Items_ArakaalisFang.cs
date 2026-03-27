@@ -557,7 +557,8 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                     if (multi_minion_card.ability.abilityName == "Raise Spider")
                     {
                         //multi_minion_card.image.sprite = Icon; //already in update
-                        count += multi_minion_card.number;
+                        count += multi_minion_card.currentMinionCount;
+                        //count += multi_minion_card.number;
                     }
                 }
                 if (count == 0) { spiders = new System.Collections.Generic.List<GameObject>(); }

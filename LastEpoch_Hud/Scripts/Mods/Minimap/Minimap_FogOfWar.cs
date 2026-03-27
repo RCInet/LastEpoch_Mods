@@ -17,7 +17,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Minimap
             }
             else { return false; }
         }
-        [HarmonyPatch(typeof(MinimapFogOfWar), "Initialize")]
+        /*[HarmonyPatch(typeof(MinimapFogOfWar), "Initialize")]
         public class MinimapFogOfWar_Initialize
         {
             [HarmonyPrefix]
@@ -27,6 +27,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Minimap
                 else { __instance.discoveryDistance = 20f; } //Default Value
                 return true;
             }
-        }
+        }*/
     }
 }

@@ -22,7 +22,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Bank
         public static Sprite default_grid = null;
         public static Vector2Int quad_size = new Vector2Int(24, 34);
         public static Sprite quad_grid = null;
-        public static UIPanel stash_panel = null;
+        //public static UIPanel stash_panel = null;
+        public static GameObject stash_panel = null;
         public static StashItemContainer stash_item_container = null;
         public static StashItemContainerUI stash_item_container_ui = null;
         public static Image stash_grid_image = null;
@@ -52,14 +53,15 @@ namespace LastEpoch_Hud.Scripts.Mods.Bank
                 Get.Refs();
                 UpdateUI();
             }
-            else { stash_panel = null; }
+            //else { stash_panel = null; }
         }
 
         public static void UpdateUI()
         {
             if ((!stash_panel.IsNullOrDestroyed()) && (!stash_item_container.IsNullOrDestroyed()))
             {
-                if (stash_panel.isOpen)
+                if (stash_panel.active)
+                //if (stash_panel.isOpen)
                 {
                     if (backup_active_tab != stash_item_container.CurrentlyActiveTab) //Tab Changed
                     {
@@ -105,18 +107,24 @@ namespace LastEpoch_Hud.Scripts.Mods.Bank
         {
             public static void Refs()
             {
-                if (!Refs_Manager.game_uibase.IsNullOrDestroyed())
+                if (!Refs_Manager.stash_panel_ui.IsNullOrDestroyed())
+                //if (!Refs_Manager.game_uibase.IsNullOrDestroyed())
                 {
-                    if ((!Refs_Manager.game_uibase.stashPanel.IsNullOrDestroyed()) && (stash_panel.IsNullOrDestroyed()))
+                    if (stash_panel.IsNullOrDestroyed())
+                    {
+                        stash_panel = Refs_Manager.stash_panel_ui.gameObject;
+                    }
+                    /*if ((!Refs_Manager.game_uibase.stashPanel.IsNullOrDestroyed()) && (stash_panel.IsNullOrDestroyed()))
                     {
                         stash_panel = Refs_Manager.game_uibase.stashPanel;
-                    }
+                    }*/
                     if ((!stash_panel.IsNullOrDestroyed()) && ((stash_grid_image.IsNullOrDestroyed()) || (default_grid.IsNullOrDestroyed())))
                     {
-                        if (!stash_panel.instance.IsNullOrDestroyed())
-                        {
-                            GameObject left_obj = Functions.GetChild(stash_panel.instance, "left-container");
-                            if (!left_obj.IsNullOrDestroyed())
+                        //if (!stash_panel.instance.IsNullOrDestroyed())
+                        //{
+                        GameObject left_obj = Functions.GetChild(Refs_Manager.stash_panel_ui.gameObject, "left-container");
+                        //GameObject left_obj = Functions.GetChild(stash_panel.instance, "left-container");
+                        if (!left_obj.IsNullOrDestroyed())
                             {
                                 if (stash_grid_image.IsNullOrDestroyed())
                                 {
@@ -129,7 +137,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Bank
                                     Object.DontDestroyOnLoad(default_grid);
                                 }
                             }
-                        }
+                        //}
                     }
                     if ((!Hud_Manager.asset_bundle.IsNullOrDestroyed()) && (quad_grid.IsNullOrDestroyed()))
                     {
@@ -561,11 +569,12 @@ namespace LastEpoch_Hud.Scripts.Mods.Bank
                 }
             }
 
-            [HarmonyPatch(typeof(ConfigureTabUI), "SetSelections")]
+            [HarmonyPatch(typeof(ConfigureTabUI), "OnModalOpen")]
+            //[HarmonyPatch(typeof(ConfigureTabUI), "SetSelections")]
             public class ConfigureTabUI_SetSelections
             {
                 [HarmonyPostfix]
-                static void Postfix(ref ConfigureTabUI __instance, int __0, int __1, string __2, int __3, int __4, Il2CppSystem.Collections.Generic.List<string> __5, Il2CppSystem.Collections.Generic.List<int> __6, bool __7, StashPriority __8)
+                static void Postfix(ref ConfigureTabUI __instance) //, int __0, int __1, string __2, int __3, int __4, Il2CppSystem.Collections.Generic.List<string> __5, Il2CppSystem.Collections.Generic.List<int> __6, bool __7, StashPriority __8)
                 {
                     configure_tab_ui = __instance;
                     open_configure = true;

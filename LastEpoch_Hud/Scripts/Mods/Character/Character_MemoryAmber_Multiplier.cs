@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Il2CppLE.Factions;
 using UnityEngine;
 
 namespace LastEpoch_Hud.Scripts.Mods.Character
@@ -14,7 +15,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
             else { return false; }
         }
 
-        [HarmonyPatch(typeof(Il2CppLE.Factions.PickupableObjectsManager), "CreatePickupableObjectForPlayer", new System.Type[] { typeof(Il2CppLE.Factions.PickupableObjectSet), typeof(Vector3), typeof(uint) })]
+        [HarmonyPatch(typeof(Il2CppLE.Factions.PickupableObjectsManager), "CreatePickupableObjectForPlayer", new System.Type[] { typeof(PickupableObjectType), typeof(Il2CppLE.Factions.PickupableObjectSet), typeof(Vector3), typeof(uint) })]
+        //[HarmonyPatch(typeof(Il2CppLE.Factions.PickupableObjectsManager), "CreatePickupableObjectForPlayer", new System.Type[] { typeof(Il2CppLE.Factions.PickupableObjectSet), typeof(Vector3), typeof(uint) })]
         public class PickupableObjectsManager_CreatePickupableObjectForPlayer2
         {
             [HarmonyPrefix]

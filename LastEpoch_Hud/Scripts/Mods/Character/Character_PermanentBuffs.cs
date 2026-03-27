@@ -231,7 +231,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                             float increase = 0;
                             if (permanent_buff.Type == Buff_Type.Add) { add = permanent_buff.Value; }
                             else { increase = permanent_buff.Value; }
-                            Refs_Manager.player_actor.statBuffs.addBuff(Buff_Duration, permanent_buff.Propertie, add, increase, null, AT.None, 0, permanent_buff.Name);
+                            Refs_Manager.player_actor.statBuffs.addBuff(Buff_Duration, permanent_buff.Propertie, add, increase, null, AT.None, permanent_buff.Name);
+                            //Refs_Manager.player_actor.statBuffs.addBuff(Buff_Duration, permanent_buff.Propertie, add, increase, null, AT.None, 0, permanent_buff.Name);
                         }
                     }
                     foreach (Summoned summon in Refs_Manager.summon_tracker.summons)
@@ -247,7 +248,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                                 float increase = 0;
                                 if (permanent_buff.Type == Buff_Type.Add) { add = permanent_buff.Value; }
                                 else { increase = permanent_buff.Value; }
-                                summon.actor.statBuffs.addBuff(Buff_Duration, permanent_buff.Propertie, add, increase, null, AT.None, 0, permanent_buff.Name);
+                                summon.actor.statBuffs.addBuff(Buff_Duration, permanent_buff.Propertie, add, increase, null, AT.None, permanent_buff.Name);
+                                //summon.actor.statBuffs.addBuff(Buff_Duration, permanent_buff.Propertie, add, increase, null, AT.None, 0, permanent_buff.Name);
                             }
                         }
                     }

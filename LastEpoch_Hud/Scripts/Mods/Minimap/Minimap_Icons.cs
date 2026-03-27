@@ -124,7 +124,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Minimap
 
                             GameObject base_object = Object.Instantiate(new GameObject(name: Scenes.SceneName + "_icon_" + __1), Vector3.zero, Quaternion.identity);
                             Object.DontDestroyOnLoad(base_object);
-                            base_object.transform.position = DMMap.Instance.WorldtoUI(__instance.gameObject.transform.position);
+                            //base_object.transform.position = DMMap.Instance.WorldtoUI(__instance.gameObject.transform.position);
                             base_object.transform.localPosition = __instance.gameObject.transform.localPosition;
                             base_object.AddComponent<DMMapIcon>();
                             base_object.AddComponent<Minimap_Icons_UI>();

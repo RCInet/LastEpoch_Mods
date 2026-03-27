@@ -27,9 +27,10 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
 		bool IsOpen()
 		{
 			bool result = false;
-			if (!Refs_Manager.game_uibase.IsNullOrDestroyed()) { result = Refs_Manager.game_uibase.stashPanel.instance.active; }
+			if (!Refs_Manager.stash_panel_ui.IsNullOrDestroyed()) { result = Refs_Manager.stash_panel_ui.gameObject.active; }
+            //if (!Refs_Manager.game_uibase.IsNullOrDestroyed()) { result = Refs_Manager.game_uibase.stashPanel.instance.active; }
 
-			return result;
+            return result;
         }
 	}
 }

@@ -149,11 +149,16 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                 {
                     Main.logger_instance?.Msg("Open Map");
                     Refs_Manager.game_uibase.openMap();
-                    if (!Refs_Manager.game_uibase.map.instance.IsNullOrDestroyed())
-                    {
+                    //if (!Refs_Manager.game_uibase.map.instance.IsNullOrDestroyed())
+                    //{
                         Main.logger_instance?.Msg("Open Era");
-                        MapPanel map_panel = Refs_Manager.game_uibase.map.instance.GetComponent<MapPanel>();
-                        map_panel.OpenEra(map_panel.eras[map_panel.eras.Count - 1].era, false);
+
+                        
+                        //MapPanel map_panel = Refs_Manager.game_uibase.map.instance.GetComponent<MapPanel>();
+                        if (!Refs_Manager.map_panel.IsNullOrDestroyed())
+                        {
+                            Refs_Manager.map_panel.OpenEra(Refs_Manager.map_panel.eras[Refs_Manager.map_panel.eras.Count - 1].era, false);
+                        }
 
                         Main.logger_instance?.Msg("Get Waypoint");
                         UIWaypointStandard waypoint = GetWaypoint(monolith_scene, 0);
@@ -163,8 +168,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                             Main.logger_instance?.Msg("Tp to Waypoint");
                             waypoint.LoadWaypointScene();
                         }
-                    }
-                    else { Main.logger_instance?.Error("Map instance is null"); }
+                    //}
+                    //else { Main.logger_instance?.Error("Map instance is null"); }
                 }
             }
         }

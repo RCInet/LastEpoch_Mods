@@ -17,12 +17,14 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             }
             else { return false; }
         }
-        
-        [HarmonyPatch(typeof(SkillsPanelManager), "openSkillTree")]
+
+        [HarmonyPatch(typeof(SkillsPanelManager), "OnOpenSkillTree")]
+        //[HarmonyPatch(typeof(SkillsPanelManager), "openSkillTree")]
         public class SkillsPanelManager_openSkillTree
         {
             [HarmonyPrefix]
-            static void Prefix(ref SkillsPanelManager __instance, Ability __0)
+            static void Prefix(ref SkillsPanelManager __instance, SkillTree __0)
+            //static void Prefix(ref SkillsPanelManager __instance, Ability __0)
             {
                 try
                 {
@@ -36,7 +38,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                                 {
                                     if (!skill_tree_data.ability.IsNullOrDestroyed())
                                     {
-                                        if (skill_tree_data.ability.abilityName == __0.abilityName)
+                                        if (skill_tree_data.ability.abilityName == __0.ability.abilityName)
+                                        //if (skill_tree_data.ability.abilityName == __0.abilityName)
                                         {
                                             skill_tree_data.level = (byte)Save_Manager.instance.data.Skills.SkillLevel;
                                             __instance.updateVisuals(false);

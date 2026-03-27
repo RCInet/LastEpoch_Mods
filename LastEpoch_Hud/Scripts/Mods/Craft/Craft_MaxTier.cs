@@ -314,7 +314,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Craft
                                         System.Collections.Generic.List<AffixList.SingleAffix> affix_list = new System.Collections.Generic.List<AffixList.SingleAffix>();
                                         foreach (AffixList.SingleAffix aff in AffixList.instance.singleAffixes)
                                         {
-                                            if ((aff.type == affix.affixType) && (aff.CanRollOnItemType(item.itemType, item.TryCast<ItemDataUnpacked>().classReq)))
+                                            if ((aff.type == affix.affixType) && (aff.CanRollOn(item)))
+                                            //if ((aff.type == affix.affixType) && (aff.CanRollOnItemType(item.itemType, item.TryCast<ItemDataUnpacked>().classReq)))
                                             {
                                                 affix_list.Add(aff);
                                             }

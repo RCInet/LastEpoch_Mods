@@ -41,7 +41,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Monoliths
         }
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.F10)) { RevealIslands(); } //Debug
+            //if (Input.GetKeyDown(KeyCode.F10)) { RevealIslands(); } //Debug
 
             if (monolith_zone_manager.IsNullOrDestroyed()) { initialized = false; started = false; }
             if (initialized)
@@ -390,7 +390,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Monoliths
         //Debug
         public static MonolithTimelinePanelManager monolith_timeline_panel_manager = null;
 
-        public static void RevealIslands()
+        /*public static void RevealIslands()
         {
             if (!monolith_timeline_panel_manager.IsNullOrDestroyed())
             {
@@ -399,7 +399,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Monoliths
                 monolith_timeline_panel_manager.forceRebuildLayoutAfterFrame();
                 monolith_timeline_panel_manager.webView.hasChanged = true;
             }
-        }
+        }*/
 
         [HarmonyPatch(typeof(MonolithTimelinePanelManager), "OnEnable")]
         public class MonolithTimelinePanelManager_OnEnable

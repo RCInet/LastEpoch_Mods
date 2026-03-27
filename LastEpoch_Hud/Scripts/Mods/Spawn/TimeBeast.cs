@@ -20,8 +20,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Spawn
         {
             if ((Scenes.IsGameScene()) && (!Save_Manager.instance.IsNullOrDestroyed()))
             {
-                if (Input.GetKeyDown(Save_Manager.instance.data.KeyBinds.SpawnMysteriousRift)) { SpawnMysteriousRift(); }
-                if (Input.GetKeyDown(Save_Manager.instance.data.KeyBinds.SpawnRiftBeast)) { SpawnRiftBeast(); }
+                //if (Input.GetKeyDown(Save_Manager.instance.data.KeyBinds.SpawnMysteriousRift)) { SpawnMysteriousRift(); }
+                //if (Input.GetKeyDown(Save_Manager.instance.data.KeyBinds.SpawnRiftBeast)) { SpawnRiftBeast(); }
                 if (Input.GetKeyDown(Save_Manager.instance.data.KeyBinds.SummonBeast)) { SummonBeast(); }
                 /*if (Input.GetKeyDown(KeyCode.F6)) //Debug Show all evos
                 {
@@ -62,22 +62,22 @@ namespace LastEpoch_Hud.Scripts.Mods.Spawn
 
             return result;
         }
-        public static void SpawnMysteriousRift()
+        /*public static void SpawnMysteriousRift()
         {
             if (!Refs_Manager.player_actor.IsNullOrDestroyed())
             {
                 RandomEncounterManager.DestroyAllTimeBeastRifts();
                 RandomEncounterManager.PlaceTimeBeastRift(Refs_Manager.player_actor.position(), Refs_Manager.player_actor);
             }
-        }
-        public static void SpawnRiftBeast()
+        }*/
+        /*public static void SpawnRiftBeast()
         {
             if (!Refs_Manager.player_actor.IsNullOrDestroyed())
             {
                 RandomEncounterManager.DestroyAllTimeBeastEggs();
                 RandomEncounterManager.PlaceTimeBeastEggs(Refs_Manager.player_actor.position(), Refs_Manager.player_actor, null);
             }
-        }
+        }*/
         public static void SummonBeast()
         {
             if ((!Refs_Manager.using_ability_player.IsNullOrDestroyed()) && (!Refs_Manager.player_actor.IsNullOrDestroyed()))

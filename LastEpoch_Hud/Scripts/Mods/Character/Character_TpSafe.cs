@@ -47,10 +47,11 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
             if (!Refs_Manager.game_uibase.IsNullOrDestroyed())
             {
                 Refs_Manager.game_uibase.openMap();
-                if (!Refs_Manager.game_uibase.map.instance.IsNullOrDestroyed())
+                if (!Refs_Manager.map_panel.IsNullOrDestroyed())
+                //if (!Refs_Manager.game_uibase.map.instance.IsNullOrDestroyed())
                 {
-                    MapPanel map_panel = Refs_Manager.game_uibase.map.instance.GetComponent<MapPanel>();
-                    map_panel.OpenEra(map_panel.eras[map_panel.eras.Count - 1].era, false);
+                    //MapPanel map_panel = Refs_Manager.game_uibase.map.instance.GetComponent<MapPanel>();
+                    Refs_Manager.map_panel.OpenEra(Refs_Manager.map_panel.eras[Refs_Manager.map_panel.eras.Count - 1].era, false);
                     UIWaypointStandard waypoint = GetWaypoint(tp_waypoint, tp_gate); //Monolith
                     if (waypoint != null)
                     {

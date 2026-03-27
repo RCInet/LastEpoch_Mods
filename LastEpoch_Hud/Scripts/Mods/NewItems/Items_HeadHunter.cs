@@ -682,7 +682,10 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                     if (BuffToRemove != "") { actor.statBuffs.removeBuffsWithName(BuffToRemove); }
                     actor.statBuffs.addBuff(random_buff.remainingDuration, random_buff.stat.property,
                         random_buff.stat.addedValue, random_buff.stat.increasedValue, random_buff.stat.moreValues,
-                        random_buff.stat.tags, random_buff.stat.specialTag, random_buff.name);
+                        random_buff.stat.tags, random_buff.name);
+                    //actor.statBuffs.addBuff(random_buff.remainingDuration, random_buff.stat.property,
+                    //      random_buff.stat.addedValue, random_buff.stat.increasedValue, random_buff.stat.moreValues,
+                    //      random_buff.stat.tags, random_buff.stat.specialTag, random_buff.name);
                     if (actor == PlayerFinder.getPlayerActor()) { UI.AddBuff(random_buff.name, stack, random_buff.stat.property); }
                 }
             }

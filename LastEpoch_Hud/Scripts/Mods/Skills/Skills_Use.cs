@@ -365,7 +365,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                             {
                                 if (Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_selfResurrectChance)
                                 {
-                                    ab.selfResurrectChance = Save_Manager.instance.data.Skills.Minions.BoneGolems.selfResurrectChance;
+                                    //ab.selfResurrectChance = Save_Manager.instance.data.Skills.Minions.BoneGolems.selfResurrectChance;
                                 }
                                 if (Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_increasedFireAuraArea)
                                 {
@@ -373,7 +373,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                                 }
                                 if (Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_increasedMoveSpeed)
                                 {
-                                    ab.increasedMoveSpeed = Save_Manager.instance.data.Skills.Minions.BoneGolems.increasedMoveSpeed;
+                                    //ab.increasedMoveSpeed = Save_Manager.instance.data.Skills.Minions.BoneGolems.increasedMoveSpeed;
                                 }
                                 if (Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_twins)
                                 {
@@ -381,7 +381,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                                 }
                                 if (Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_hasSlamAttack)
                                 {
-                                    ab.hasSlamAttack = true;
+                                    //ab.hasSlamAttack = true;
                                 }
                                 if (Save_Manager.instance.data.Skills.Minions.BoneGolems.Enable_undeadArmorAura)
                                 {
