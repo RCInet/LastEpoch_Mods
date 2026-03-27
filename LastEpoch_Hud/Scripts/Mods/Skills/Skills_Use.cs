@@ -62,6 +62,20 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
 
                         //Use Switch(il2cpp_type.ToString()) instead of if for better result (== is bad)
 
+                        //Fireball : Fix ManaCost
+                        if (il2cpp_type.ToString() == "FireballMutator")
+                        {
+                            var ab = __1.TryCast<FireballMutator>();
+                            if (!ab.IsNullOrDestroyed())
+                            {
+                                if (Save_Manager.instance.data.Skills.Enable_RemoveManaCost)
+                                {
+                                    ab.addedManaCost = 0f;
+                                    ab.increasedManaCost = 0f;
+                                }
+                            }
+                        }
+
                         //ErasingStrike : Fix ManaCost
                         if (il2cpp_type.ToString() == "ErasingStrikeMutator")
                         {

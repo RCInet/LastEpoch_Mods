@@ -48,10 +48,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                                 {
                                     if (!skill_tree_data.ability.IsNullOrDestroyed())
                                     {
-                                        Main.logger_instance.Msg(skill_tree_data.ability.abilityName);
                                         if (skill_tree_data.ability.abilityName == __0.abilityName)
                                         {
-                                            Main.logger_instance.Msg("Found");
                                             skill_tree_data.level = (byte)Save_Manager.instance.data.Skills.SkillLevel;
                                             if (!skills_panel_manager.IsNullOrDestroyed())
                                             {

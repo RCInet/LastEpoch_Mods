@@ -44,7 +44,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
         public class Functions
         {
             public static ItemData MakeItem(int item_type, int sub_type, System.Collections.Generic.List<double> implicits, System.Collections.Generic.List<Data.Json.Affix> affixs,
-                Data.Json.Affix sealed_affix, Data.Json.Affix primordial_affix, int? unique_id, System.Collections.Generic.List<double> unique_rolls)
+                Data.Json.Affix sealed_affix, Data.Json.Affix primordial_affix, int? unique_id, System.Collections.Generic.List<double> unique_rolls, bool corrupted, System.Collections.Generic.List<Data.Json.Affix> corruptedAffixes)
             {
                 if (implicits.IsNullOrDestroyed()) { implicits = new System.Collections.Generic.List<double>(); }
                 if (affixs.IsNullOrDestroyed()) { affixs = new System.Collections.Generic.List<Data.Json.Affix>(); }
@@ -69,6 +69,14 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                     item_affixes.Add(new ItemAffix { affixId = (ushort)primordial_affix.Id, affixTier = (byte)(primordial_affix.Tier - 1), affixRoll = (byte)(primordial_affix.Roll * 255), sealedAffixType = SealedAffixType.Primordial });
                     HasPrimo = true;
                 }
+                bool HasCorruptedAffix = false;
+                if (corruptedAffixes != null && corruptedAffixes.Count > 0 && corruptedAffixes[0].Id > -1 && corruptedAffixes[0].Tier > -1 && corruptedAffixes[0].Roll > -1) {
+                    foreach (Data.Json.Affix affix in corruptedAffixes)
+                    {
+                        item_affixes.Add(new ItemAffix { affixId = (ushort)affix.Id, affixTier = (byte)(affix.Tier - 1), affixRoll = (byte)(affix.Roll * 255), sealedAffixType = SealedAffixType.FromCorruption });
+                    }
+                    HasCorruptedAffix = true;
+                }
                 byte item_rarity = (byte)item_affixes.Count;
                 byte lp = 0; //Legendary potencial
                 byte ww = 0; //Weaver will
@@ -78,19 +86,28 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                     UniqueList.Entry unique_item = UniqueList.getUnique((ushort)unique_id);
                     if (!unique_item.IsNullOrDestroyed())
                     {
-                        if ((item_affixes.Count > 0) && (unique_item.isSetItem)) { item_rarity = (byte)(8); }
-                        else if (item_affixes.Count > 0) { item_rarity = (byte)(7); }
-                        else { item_rarity = (byte)(9); }
-
-                        if (unique_item.legendaryType == UniqueList.LegendaryType.LegendaryPotential) { lp = (byte)Random.RandomRange(0f, 4f); }
-                        else
-                        {
-                            item_legendary_type = UniqueList.LegendaryType.WeaversWill;
-                            ww = (byte)Random.RandomRange(0f, 28f);
+                        if (unique_item.isSetItem) 
+                        { 
+                            // Set Item
+                            item_rarity = (byte)(8); 
+                        }
+                        else if (item_affixes.Count > 0) {
+                            // Legendary Item
+                            item_rarity = (byte)(9); 
+                        }
+                        else {
+                            // Unique Item, roll LP or WW
+                            item_rarity = (byte)(7);
+                            if (unique_item.legendaryType == UniqueList.LegendaryType.LegendaryPotential) { lp = (byte)Random.RandomRange(0f, 4f); }
+                            else
+                            {
+                                item_legendary_type = UniqueList.LegendaryType.WeaversWill;
+                                ww = (byte)Random.RandomRange(0f, 28f);
+                            }
                         }
                     }
                 }
-                ItemDataUnpacked item = new ItemDataUnpacked { itemType = (byte)item_type, subType = (ushort)sub_type, rarity = item_rarity, affixes = item_affixes, hasSealedPrimordialAffix = HasPrimo, hasSealedRegularAffix = HasSeal };
+                ItemDataUnpacked item = new ItemDataUnpacked { itemType = (byte)item_type, subType = (ushort)sub_type, rarity = item_rarity, affixes = item_affixes, hasSealedPrimordialAffix = HasPrimo, hasSealedRegularAffix = HasSeal, corrupted = corrupted, hasSealedAffixFromCorruption = HasCorruptedAffix};
                 int i = 0;
                 foreach (double implicit_value in implicits)
                 {
@@ -433,11 +450,12 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                     items.Add(Functions.ObjectToInt(profile.Items.Relic));
                     items.Add(Functions.ObjectToInt(profile.Items.Waist));
                     items.Add(Functions.ObjectToInt(profile.Items.Weapon));
+                    items.Add(Functions.ObjectToInt(profile.Items.Altar));
                     foreach (System.Collections.Generic.KeyValuePair<int, Json.Item> item in data.Items)
                     {
                         if (items.Contains(item.Key))
                         {
-                            Functions.DropItem(Functions.MakeItem(item.Value.ItemType, item.Value.SubType, item.Value.Implicits, item.Value.Affixes, item.Value.SealedAffix, item.Value.PrimordialAffix, item.Value.UniqueID, item.Value.UniqueRolls));
+                            Functions.DropItem(Functions.MakeItem(item.Value.ItemType, item.Value.SubType, item.Value.Implicits, item.Value.Affixes, item.Value.SealedAffix, item.Value.PrimordialAffix, item.Value.UniqueID, item.Value.UniqueRolls, item.Value.Corrupted, item.Value.CorruptedAffixes));
                         }
                     }
                 }
@@ -452,7 +470,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                     {
                         if (items.Contains(item.Key))
                         {
-                            Functions.DropItem(Functions.MakeItem(item.Value.ItemType, item.Value.SubType, item.Value.Implicits, item.Value.Affixes, item.Value.SealedAffix, item.Value.PrimordialAffix, item.Value.UniqueID, item.Value.UniqueRolls));
+                            Functions.DropItem(Functions.MakeItem(item.Value.ItemType, item.Value.SubType, item.Value.Implicits, item.Value.Affixes, item.Value.SealedAffix, item.Value.PrimordialAffix, item.Value.UniqueID, item.Value.UniqueRolls, item.Value.Corrupted, item.Value.CorruptedAffixes));
                         }
                     }
                 }
@@ -478,7 +496,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                             blessings.Add(new Blessings_structure
                             {
                                 timeline = i,
-                                data = Functions.MakeItem(item.ItemType, item.SubType, item.Implicits, null, null, null, null, null)
+                                data = Functions.MakeItem(item.ItemType, item.SubType, item.Implicits, null, null, null, null, null, false, null)
                             });
                         }
                         i++;
@@ -695,6 +713,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                         items.Add(Functions.ObjectToInt(profile.Items.Relic));
                         items.Add(Functions.ObjectToInt(profile.Items.Waist));
                         items.Add(Functions.ObjectToInt(profile.Items.Weapon));
+                        items.Add(Functions.ObjectToInt(profile.Items.Altar));
                         foreach (int item in items) { if (item > -1) { result++; } }
                     }
 
@@ -888,6 +907,9 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
 
                     [JsonProperty("weapon")]
                     public object Weapon;
+
+                    [JsonProperty("altar")]
+                    public object Altar;
                 }
                 public class Item
                 {
@@ -914,6 +936,12 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
 
                     [JsonProperty("implicits")]
                     public System.Collections.Generic.List<double> Implicits;
+                    
+                    [JsonProperty("corruptedAffixes")]
+                    public System.Collections.Generic.List<Affix> CorruptedAffixes;
+
+                    [JsonProperty("corrupted")]
+                    public bool Corrupted;
                 }
                 public class Idol
                 {
