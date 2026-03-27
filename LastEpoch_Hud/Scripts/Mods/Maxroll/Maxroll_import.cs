@@ -39,7 +39,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                 (!Data.data.IsNullOrDestroyed()) && (Data.selected_profile > -1)) { Data.Update(); }
         }
 
-        
+
 
         public class Functions
         {
@@ -70,7 +70,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                     HasPrimo = true;
                 }
                 bool HasCorruptedAffix = false;
-                if (corruptedAffixes != null && corruptedAffixes.Count > 0 && corruptedAffixes[0].Id > -1 && corruptedAffixes[0].Tier > -1 && corruptedAffixes[0].Roll > -1) {
+                if (corruptedAffixes != null && corruptedAffixes.Count > 0 && corruptedAffixes[0].Id > -1 && corruptedAffixes[0].Tier > -1 && corruptedAffixes[0].Roll > -1)
+                {
                     foreach (Data.Json.Affix affix in corruptedAffixes)
                     {
                         item_affixes.Add(new ItemAffix { affixId = (ushort)affix.Id, affixTier = (byte)(affix.Tier - 1), affixRoll = (byte)(affix.Roll * 255), sealedAffixType = SealedAffixType.FromCorruption });
@@ -86,16 +87,18 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                     UniqueList.Entry unique_item = UniqueList.getUnique((ushort)unique_id);
                     if (!unique_item.IsNullOrDestroyed())
                     {
-                        if (unique_item.isSetItem) 
-                        { 
+                        if (unique_item.isSetItem)
+                        {
                             // Set Item
-                            item_rarity = (byte)(8); 
+                            item_rarity = (byte)(8);
                         }
-                        else if (item_affixes.Count > 0) {
+                        else if (item_affixes.Count > 0)
+                        {
                             // Legendary Item
-                            item_rarity = (byte)(9); 
+                            item_rarity = (byte)(9);
                         }
-                        else {
+                        else
+                        {
                             // Unique Item, roll LP or WW
                             item_rarity = (byte)(7);
                             if (unique_item.legendaryType == UniqueList.LegendaryType.LegendaryPotential) { lp = (byte)Random.RandomRange(0f, 4f); }
@@ -107,25 +110,39 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                         }
                     }
                 }
-                ItemDataUnpacked item = new ItemDataUnpacked { itemType = (byte)item_type, subType = (ushort)sub_type, rarity = item_rarity, affixes = item_affixes, hasSealedPrimordialAffix = HasPrimo, hasSealedRegularAffix = HasSeal, corrupted = corrupted, hasSealedAffixFromCorruption = HasCorruptedAffix};
-                int i = 0;
-                foreach (double implicit_value in implicits)
+                ItemDataUnpacked item = new ItemDataUnpacked { itemType = (byte)item_type, subType = (ushort)sub_type, rarity = item_rarity, affixes = item_affixes, hasSealedPrimordialAffix = HasPrimo, hasSealedRegularAffix = HasSeal, corrupted = corrupted, hasSealedAffixFromCorruption = HasCorruptedAffix };
+                for (int i = 0; i < item.implicitRolls.Count; i++)
                 {
-                    if (i < item.implicitRolls.Count) { item.implicitRolls[i] = (byte)(implicit_value * 255); }
-                    else { break; }
-                    i++;
+                    if (implicits != null && implicits.Count > i && implicits[i] > -1)
+                    {
+                        item.implicitRolls[i] = (byte)(implicits[i] * 255);
+                    }
+                    else
+                    {
+                        item.implicitRolls[i] = (byte)255;
+                    }
                 }
                 if (unique_id != null)
                 {
                     item.uniqueID = (ushort)unique_id;
-                    if (item_legendary_type == UniqueList.LegendaryType.LegendaryPotential) { item.legendaryPotential = lp; }
-                    else { item.weaversWill = ww; }
-                    i = 0;
-                    foreach (double unique_roll_value in unique_rolls)
+                    if (item_legendary_type == UniqueList.LegendaryType.LegendaryPotential)
                     {
-                        if ((i < item.uniqueRolls.Count) && (unique_roll_value > -1)) { item.uniqueRolls[i] = (byte)(unique_roll_value * 255); }
-                        else { break; }
-                        i++;
+                        item.legendaryPotential = lp;
+                    }
+                    else
+                    {
+                        item.weaversWill = ww;
+                    }
+                    for (int i = 0; i < item.uniqueRolls.Count; i++)
+                    {
+                        if (unique_rolls != null && unique_rolls.Count > i && unique_rolls[i] > -1)
+                        {
+                            item.uniqueRolls[i] = (byte)(unique_rolls[i] * 255);
+                        }
+                        else
+                        {
+                            item.uniqueRolls[i] = (byte)255;
+                        }
                     }
                 }
                 item.RefreshIDAndValues();
@@ -272,7 +289,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
 
                 return result;
             }
-        }        
+        }
         public class Data
         {
             public static bool updating = false;
@@ -426,7 +443,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                 Hud_Manager.Content.Maxroll.Show();
                 updating = false;
             }
-            
+
             public static void Load_AllEquipments()
             {
                 Load_Equipments();
@@ -477,7 +494,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
             }
             public static async void Load_Blessings()
             {
-                Main.logger_instance.Msg("Load_Blessings();" );
+                Main.logger_instance.Msg("Load_Blessings();");
                 if (selected_profile > -1)
                 {
                     //Hud_Manager.Hud_Base.Resume_Click(); //Close Hud
@@ -505,7 +522,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                 }
             }
 
-            
+
 
             public static void Load_Passives()
             {
@@ -936,7 +953,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
 
                     [JsonProperty("implicits")]
                     public System.Collections.Generic.List<double> Implicits;
-                    
+
                     [JsonProperty("corruptedAffixes")]
                     public System.Collections.Generic.List<Affix> CorruptedAffixes;
 
@@ -997,6 +1014,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                 public ItemData data;
             }
         }
-        
+
     }
 }
