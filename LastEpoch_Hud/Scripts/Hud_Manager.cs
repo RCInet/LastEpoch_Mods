@@ -6725,7 +6725,7 @@ namespace LastEpoch_Hud.Scripts
                         wanted_name = shards_filter_name.text;
                     }
                     bool item_idol = false;
-                    if ((item_type > 24) && (item_type < 34)) { item_idol = true; }
+                    if (((item_type > 24) && (item_type < 34)) || (item_type == 41)) { item_idol = true; }
                     foreach (AffixList.SingleAffix affix in AffixList.instance.singleAffixes)
                     {
                         bool affix_idol = false;
