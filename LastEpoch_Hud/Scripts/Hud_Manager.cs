@@ -633,6 +633,9 @@ namespace LastEpoch_Hud.Scripts
                     if (!Content.OdlForceDrop.weaver_will_enable) { Content.OdlForceDrop.weaver_will_roll = false; }
                     Content.OdlForceDrop.weaver_will_value.active = Content.OdlForceDrop.weaver_will_roll;
 
+                    Content.OdlForceDrop.corrupted.active = Content.OdlForceDrop.corrupted_enable;
+                    Content.OdlForceDrop.corrupted_border.active = Content.OdlForceDrop.corrupted_enable;
+
                     Content.OdlForceDrop.quantity.active = Content.OdlForceDrop.quantity_enable;
                     Content.OdlForceDrop.quantity_border.active = Content.OdlForceDrop.quantity_enable;
                     Content.OdlForceDrop.quantity_text.text = "";
@@ -5468,6 +5471,12 @@ namespace LastEpoch_Hud.Scripts
                 public static Slider weaver_will_slider = null;
                 public static readonly System.Action<float> weaver_will_Action = new System.Action<float>(SetWeaverWill);
 
+                //Corrupted
+                public static bool corrupted_enable = false;
+                public static GameObject corrupted = null;
+                public static Toggle toggle_corrupted = null;
+                public static GameObject corrupted_border = null;
+
                 //Quantity
                 public static bool quantity_enable = false;
                 public static GameObject quantity = null;
@@ -5705,6 +5714,10 @@ namespace LastEpoch_Hud.Scripts
                                     weaver_will_value = Functions.GetChild(left_base_content, "WeaverWill");
                                     weaver_will_Text = Functions.Get_TextInPanel(left_base_content, "WeaverWill", "Value");
                                     weaver_will_slider = Functions.Get_SliderInPanel(left_base_content, "WeaverWill", "Slider");
+
+                                    corrupted = Functions.GetChild(left_base_content, "Corrupted");
+                                    toggle_corrupted = Functions.GetChild(corrupted, "Toggle").GetComponent<Toggle>();
+                                    corrupted_border = Functions.GetChild(left_base_content, "CorruptedBorder");
 
                                     quantity = Functions.GetChild(left_base_content, "Quantity");
                                     quantity_border = Functions.GetChild(left_base_content, "QuantityBorder");
@@ -6712,7 +6725,7 @@ namespace LastEpoch_Hud.Scripts
                         wanted_name = shards_filter_name.text;
                     }
                     bool item_idol = false;
-                    if ((item_type > 24) && (item_type < 34)) { item_idol = true; }
+                    if (((item_type > 24) && (item_type < 34)) || (item_type == 41)) { item_idol = true; }
                     foreach (AffixList.SingleAffix affix in AffixList.instance.singleAffixes)
                     {
                         bool affix_idol = false;
@@ -6726,7 +6739,9 @@ namespace LastEpoch_Hud.Scripts
                         {
                             bool naturally = false;
                             if (affix.canRollOn.Contains(item_equipmenttype)) { naturally = true; }
-                            AddShardInView(affix.affixId, affix.affixName, affix.type, affix_idol, naturally);
+                            bool corrupted = false;
+                            if (affix.displayCategory == AffixList.AffixDisplayCategory.CORRUPTED) { corrupted = true; }
+                            AddShardInView(affix.affixId, affix.affixName, affix.type, affix_idol, naturally, corrupted);
                         }
                     }
                     foreach (AffixList.MultiAffix affix in AffixList.instance.multiAffixes)
@@ -6742,7 +6757,9 @@ namespace LastEpoch_Hud.Scripts
                         {
                             bool naturally = false;
                             if (affix.canRollOn.Contains(item_equipmenttype)) { naturally = true; }
-                            AddShardInView(affix.affixId, affix.affixName, affix.type, affix_idol, naturally);
+                            bool corrupted = false;
+                            if (affix.displayCategory == AffixList.AffixDisplayCategory.CORRUPTED) { corrupted = true; }
+                            AddShardInView(affix.affixId, affix.affixName, affix.type, affix_idol, naturally, corrupted);
                         }
                     }
                     shard_initialized = true;
@@ -6754,7 +6771,7 @@ namespace LastEpoch_Hud.Scripts
                         Destroy(go);
                     }                        
                 }
-                public static void AddShardInView(int id, string name, AffixList.AffixType affix_type, bool idol, bool naturally)
+                public static void AddShardInView(int id, string name, AffixList.AffixType affix_type, bool idol, bool naturally, bool corrupted)
                 {
                     GameObject g = Object.Instantiate(shard_prefab, Vector3.zero, Quaternion.identity);
                     g.transform.SetParent(center_content.transform);
@@ -6766,7 +6783,8 @@ namespace LastEpoch_Hud.Scripts
                     UnityEngine.Color color_name = color_blue;
                     if (!idol)
                     {
-                        if (affix_type == AffixList.AffixType.PREFIX) { color_name = color_yellow; }
+                        if (corrupted) { color_name = color_green; }
+                        else if (affix_type == AffixList.AffixType.PREFIX) { color_name = color_yellow; }
                         else if (affix_type == AffixList.AffixType.SPECIAL) { color_name = color_green; }
                     }
                     GameObject shard_id_object = Functions.GetChild(shard_btn_object, "shard_id");
@@ -6807,6 +6825,9 @@ namespace LastEpoch_Hud.Scripts
                 }
                 public static ItemAffix MakeAffix(int id, byte tier, byte roll, bool seal)
                 {
+                    //ItemAffix a = new ItemAffix();
+                    //a.IsSealedCorrupted
+
                     ItemAffix new_affix = null;
                     if (id > -1)
                     {
@@ -6823,7 +6844,7 @@ namespace LastEpoch_Hud.Scripts
                                     affixType = affix.type,
                                     //isSealedAffix = seal,
                                     affixTier = tier,
-                                    affixRoll = roll
+                                    affixRoll = roll                                    
                                 };
                                 found = true;
                                 break;
@@ -6863,6 +6884,7 @@ namespace LastEpoch_Hud.Scripts
                     unique_mods_enable = false;
                     legenday_potencial_enable = false;
                     weaver_will_enable = false;
+                    corrupted_enable = false;
                     quantity_enable = false;
                     btn_enable = false;
 
@@ -6877,6 +6899,7 @@ namespace LastEpoch_Hud.Scripts
                             if (item_legendary_type == UniqueList.LegendaryType.LegendaryPotential) { legenday_potencial_enable = true; }
                             weaver_will_enable = !legenday_potencial_enable;
                         }
+                        corrupted_enable = true;
                         quantity_enable = true;
                         btn_enable = true;
                     }
@@ -7046,7 +7069,8 @@ namespace LastEpoch_Hud.Scripts
                                 affixes = af,
                                 uniqueID = (ushort)item_unique_id,
                                 legendaryPotential = lp,
-                                weaversWill = ww
+                                weaversWill = ww,
+                                corrupted = toggle_corrupted.isOn
                             };
 
                             //Set Implicits
