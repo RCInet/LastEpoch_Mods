@@ -2,6 +2,7 @@
 //Blessing (need to unlock timeline first) Should be fixed soon
 
 using Il2Cpp;
+using Il2CppRewired.Utils;
 using MelonLoader;
 using Newtonsoft.Json;
 using System.Net.Http;
@@ -44,111 +45,176 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
         public class Functions
         {
             public static ItemData MakeItem(int item_type, int sub_type, System.Collections.Generic.List<double> implicits, System.Collections.Generic.List<Data.Json.Affix> affixs,
-                Data.Json.Affix sealed_affix, Data.Json.Affix primordial_affix, int? unique_id, System.Collections.Generic.List<double> unique_rolls, bool corrupted, System.Collections.Generic.List<Data.Json.Affix> corruptedAffixes)
+                Data.Json.Affix sealed_affix, Data.Json.Affix primordial_affix, int? unique_id, System.Collections.Generic.List<double> unique_rolls, bool corrupted, System.Collections.Generic.List<Data.Json.Affix> corrupted_affixes)
             {
-                if (implicits.IsNullOrDestroyed()) { implicits = new System.Collections.Generic.List<double>(); }
-                if (affixs.IsNullOrDestroyed()) { affixs = new System.Collections.Generic.List<Data.Json.Affix>(); }
-                if (sealed_affix.IsNullOrDestroyed()) { sealed_affix = new Data.Json.Affix { Id = -1, Tier = -1, Roll = -1 }; }
-                if (primordial_affix.IsNullOrDestroyed()) { primordial_affix = new Data.Json.Affix { Id = -1, Tier = -1, Roll = -1 }; }
-                if (unique_rolls.IsNullOrDestroyed()) { unique_rolls = new System.Collections.Generic.List<double> { -1, -1, -1, -1, -1, -1, -1, -1 }; }
+                byte[] implicitRolls = new byte[3] { 255, 255, 255 };
 
-                Il2CppSystem.Collections.Generic.List<ItemAffix> item_affixes = new Il2CppSystem.Collections.Generic.List<ItemAffix>();
-                foreach (Data.Json.Affix affix in affixs)
+                // Generate implicit rolls
+                if (!implicits.IsNullOrDestroyed())
                 {
-                    item_affixes.Add(new ItemAffix { affixId = (ushort)affix.Id, affixTier = (byte)(affix.Tier - 1), affixRoll = (byte)(affix.Roll * 255), sealedAffixType = SealedAffixType.None });
-                }
-                bool HasSeal = false;
-                if ((sealed_affix.Id > -1) && (sealed_affix.Tier > -1) && (sealed_affix.Roll > -1))
-                {
-                    item_affixes.Add(new ItemAffix { affixId = (ushort)sealed_affix.Id, affixTier = (byte)(sealed_affix.Tier - 1), affixRoll = (byte)(sealed_affix.Roll * 255), sealedAffixType = SealedAffixType.Regular });
-                    HasSeal = true;
-                }
-                bool HasPrimo = false;
-                if ((primordial_affix.Id > -1) && (primordial_affix.Tier > -1) && (primordial_affix.Roll > -1))
-                {
-                    item_affixes.Add(new ItemAffix { affixId = (ushort)primordial_affix.Id, affixTier = (byte)(primordial_affix.Tier - 1), affixRoll = (byte)(primordial_affix.Roll * 255), sealedAffixType = SealedAffixType.Primordial });
-                    HasPrimo = true;
-                }
-                bool HasCorruptedAffix = false;
-                if (corruptedAffixes != null && corruptedAffixes.Count > 0 && corruptedAffixes[0].Id > -1 && corruptedAffixes[0].Tier > -1 && corruptedAffixes[0].Roll > -1)
-                {
-                    foreach (Data.Json.Affix affix in corruptedAffixes)
+                    for (int i = 0; i < implicits.Count && i < implicitRolls.Length; i++)
                     {
-                        item_affixes.Add(new ItemAffix { affixId = (ushort)affix.Id, affixTier = (byte)(affix.Tier - 1), affixRoll = (byte)(affix.Roll * 255), sealedAffixType = SealedAffixType.FromCorruption });
+                        implicitRolls[i] = (byte)(implicits[i] * 255);
                     }
-                    HasCorruptedAffix = true;
                 }
-                byte item_rarity = (byte)item_affixes.Count;
-                byte lp = 0; //Legendary potencial
-                byte ww = 0; //Weaver will
-                UniqueList.LegendaryType item_legendary_type = UniqueList.LegendaryType.LegendaryPotential;
-                if (unique_id != null)
+
+                byte item_rarity = 0;
+                byte lp = 0;
+                byte ww = 0;
+                byte[] uniqueRolls = new byte[8] { 255, 255, 255, 255, 255, 255, 255, 255 };
+
+                // Determine type of unique item
+                if (!unique_id.IsNullOrDestroyed())
                 {
-                    UniqueList.Entry unique_item = UniqueList.getUnique((ushort)unique_id);
-                    if (!unique_item.IsNullOrDestroyed())
+                    UniqueList.Entry uniqueItem = UniqueList.getUnique((ushort)unique_id);
+                    if (!uniqueItem.IsNullOrDestroyed())
                     {
-                        if (unique_item.isSetItem)
+                        if (uniqueItem.isSetItem)
                         {
-                            // Set Item
-                            item_rarity = (byte)(8);
+                            // Set item
+                            item_rarity = 8;
                         }
-                        else if (item_affixes.Count > 0)
+                        else if (!affixs.IsNullOrDestroyed() && affixs.Count > 0
+                            || !corrupted_affixes.IsNullOrDestroyed() && corrupted_affixes.Count > 0
+                            || !sealed_affix.IsNullOrDestroyed()
+                            || !primordial_affix.IsNullOrDestroyed())
                         {
-                            // Legendary Item
-                            item_rarity = (byte)(9);
+                            // Legendary item
+                            item_rarity = 9;
                         }
                         else
                         {
-                            // Unique Item, roll LP or WW
-                            item_rarity = (byte)(7);
-                            if (unique_item.legendaryType == UniqueList.LegendaryType.LegendaryPotential) { lp = (byte)Random.RandomRange(0f, 4f); }
+                            // Unique item, generate LP or WW
+                            item_rarity = 7;
+                            if (uniqueItem.legendaryType == UniqueList.LegendaryType.LegendaryPotential)
+                            {
+                                lp = (byte)Random.RandomRange(0f, 4f);
+                            }
                             else
                             {
-                                item_legendary_type = UniqueList.LegendaryType.WeaversWill;
                                 ww = (byte)Random.RandomRange(0f, 28f);
+                            }
+                        }
+
+                        // Generate unique rolls
+                        if (!unique_rolls.IsNullOrDestroyed())
+                        {
+                            for (int i = 0; i < unique_rolls.Count && i < uniqueRolls.Length; i++)
+                            {
+                                uniqueRolls[i] = (byte)(unique_rolls[i] * 255);
                             }
                         }
                     }
                 }
-                ItemDataUnpacked item = new ItemDataUnpacked { itemType = (byte)item_type, subType = (ushort)sub_type, rarity = item_rarity, affixes = item_affixes, hasSealedPrimordialAffix = HasPrimo, hasSealedRegularAffix = HasSeal, corrupted = corrupted, hasSealedAffixFromCorruption = HasCorruptedAffix };
-                for (int i = 0; i < item.implicitRolls.Count; i++)
+
+                Il2CppSystem.Collections.Generic.List<ItemAffix> itemAffixes = new Il2CppSystem.Collections.Generic.List<ItemAffix>();
+
+                // Collect all affixes except for corrupted affixes
+                if (!affixs.IsNullOrDestroyed() && affixs.Count > 0)
                 {
-                    if (implicits != null && implicits.Count > i && implicits[i] > -1)
+                    for (int i = 0; i < affixs.Count; i++)
                     {
-                        item.implicitRolls[i] = (byte)(implicits[i] * 255);
-                    }
-                    else
-                    {
-                        item.implicitRolls[i] = (byte)255;
+                        itemAffixes.Add(new ItemAffix
+                        {
+                            affixId = (ushort)affixs[i].Id,
+                            affixTier = (byte)(affixs[i].Tier - 1),
+                            affixRoll = (byte)(affixs[i].Roll * 255),
+                            sealedAffixType = SealedAffixType.None
+                        });
                     }
                 }
-                if (unique_id != null)
+
+                ItemAffix sealedAffix = null;
+                if (!sealed_affix.IsNullOrDestroyed())
                 {
-                    item.uniqueID = (ushort)unique_id;
-                    if (item_legendary_type == UniqueList.LegendaryType.LegendaryPotential)
+                    sealedAffix = new ItemAffix
                     {
-                        item.legendaryPotential = lp;
-                    }
-                    else
-                    {
-                        item.weaversWill = ww;
-                    }
-                    for (int i = 0; i < item.uniqueRolls.Count; i++)
-                    {
-                        if (unique_rolls != null && unique_rolls.Count > i && unique_rolls[i] > -1)
-                        {
-                            item.uniqueRolls[i] = (byte)(unique_rolls[i] * 255);
-                        }
-                        else
-                        {
-                            item.uniqueRolls[i] = (byte)255;
-                        }
-                    }
+                        affixId = (ushort)sealed_affix.Id,
+                        affixTier = (byte)(sealed_affix.Tier - 1),
+                        affixRoll = (byte)(sealed_affix.Roll * 255),
+                        sealedAffixType = SealedAffixType.Regular
+                    };
+                    itemAffixes.Add(sealedAffix);
                 }
+
+                ItemAffix primordialAffix = null;
+                if (!primordial_affix.IsNullOrDestroyed())
+                {
+                    primordialAffix = new ItemAffix
+                    {
+                        affixId = (ushort)primordial_affix.Id,
+                        affixTier = (byte)(primordial_affix.Tier - 1),
+                        affixRoll = (byte)(primordial_affix.Roll * 255),
+                        sealedAffixType = SealedAffixType.Primordial
+                    };
+                    itemAffixes.Add(primordialAffix);
+                }
+
+                // Generate item data
+                ItemDataUnpacked item = new ItemDataUnpacked
+                {
+                    itemType = (byte)item_type,
+                    subType = (ushort)sub_type,
+                    implicitRolls = implicitRolls,
+                    rarity = item_rarity,
+                    uniqueID = (ushort)(unique_id.IsNullOrDestroyed() ? 0 : unique_id),
+                    legendaryPotential = lp,
+                    weaversWill = ww,
+                    uniqueRolls = uniqueRolls,
+                    affixes = itemAffixes
+                };
+
+                // Seal affix
+                if (!sealedAffix.IsNullOrDestroyed())
+                {
+                    item.SealAffix(sealedAffix);
+                }
+
+                // Seal primordial affix
+                if (!primordialAffix.IsNullOrDestroyed())
+                {
+                    item.MakeAffixSealedPrimordialAffix(primordialAffix, true);
+                }
+
+                // Recalculate data and IDs
                 item.RefreshIDAndValues();
 
-                return item.TryCast<ItemData>();
+                // Corrupt Item
+                Il2CppSystem.Collections.Generic.List<ItemAffix> corruptedAffixes = new Il2CppSystem.Collections.Generic.List<ItemAffix>();
+                if (!corrupted_affixes.IsNullOrDestroyed() && corrupted_affixes.Count > 0)
+                {
+                    // Collect all corrupted affixes
+                    for (int i = 0; i < corrupted_affixes.Count; i++)
+                    {
+                        corruptedAffixes.Add(new ItemAffix
+                        {
+                            affixId = (ushort)corrupted_affixes[i].Id,
+                            affixTier = (byte)(corrupted_affixes[i].Tier - 1),
+                            affixRoll = (byte)(corrupted_affixes[i].Roll * 255),
+                            specialAffixType = AffixList.SpecialAffixType.Corrupted,
+                            sealedAffixType = SealedAffixType.FromCorruption
+                        });
+                    }
+
+                    // Add random corrupted affix then replace it with the imported affix
+                    foreach (ItemAffix itemAffix in corruptedAffixes)
+                    {
+                        item.ApplyCorruptionOutcome(Refs_Manager.player_actor, CorruptionOutcome.AddsCorruptedAffix, out int addedAffixId, out int toRemove, out bool affixSelected);
+                        foreach (ItemAffix corruptedAffix in item.affixes)
+                        {
+                            if (corruptedAffix.affixId == (ushort)addedAffixId)
+                            {
+                                corruptedAffix.affixId = itemAffix.affixId;
+                                corruptedAffix.affixTier = itemAffix.affixTier;
+                                corruptedAffix.affixRoll = itemAffix.affixRoll;
+                            }
+                        }
+                    }
+                }
+
+                return item;
             }
+
             public static void DropItem(ItemData item)
             {
                 if ((!Refs_Manager.ground_item_manager.IsNullOrDestroyed()) && (!Refs_Manager.player_actor.IsNullOrDestroyed()) && (!item.IsNullOrDestroyed()))
