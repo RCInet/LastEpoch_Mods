@@ -1411,7 +1411,7 @@ namespace LastEpoch_Hud.Scripts
             public static GameObject ChapterInfo = null;
             public static GameObject Menu_Fade_Background = null;
             public static GameObject Chapter_Fade_Background = null;
-                        
+
             public static bool Get_DefaultPauseMenu()
             {
                 bool result = false;
@@ -1424,18 +1424,12 @@ namespace LastEpoch_Hud.Scripts
                         break;
                     }
                 }
-
-                //if (!Refs_Manager.game_uibase.IsNullOrDestroyed())
-                //{
-                //game_pause_menu = Refs_Manager.game_uibase.menu;
-                    if (!game_pause_menu.IsNullOrDestroyed())
-                    {
-                        Default_PauseMenu_Btns = Functions.GetChild(game_pause_menu, "Menu");
-                    //Default_PauseMenu_Btns = Functions.GetChild(game_pause_menu, "Menu Image");
+                if (!game_pause_menu.IsNullOrDestroyed())
+                {
+                    Default_PauseMenu_Btns = Functions.GetChild(game_pause_menu, "Menu");
                     Get_Refs();
-                        result = true;
-                    }
-                //}
+                    result = true;
+                }
 
                 return result;
             }
@@ -1473,21 +1467,14 @@ namespace LastEpoch_Hud.Scripts
             {
                 if (!Default_PauseMenu_Btns.IsNullOrDestroyed())
                 {
-                    //MainMenuPanel(Clone)
-                    //Menu
                     GameObject Btns = Functions.GetChild(Default_PauseMenu_Btns, "Buttons");
                     if (!Btns.IsNullOrDestroyed())
                     {
                         Hud_Base.Btn_Resume = Functions.GetChild(Btns, "Resume Button").GetComponent<Button>();
-                        //Hud_Base.Btn_Resume = Functions.GetChild(Btns, "ResumeButton (1)").GetComponent<Button>();
                         Hud_Base.Btn_Settings = Functions.GetChild(Btns, "Settings Button").GetComponent<Button>();
-                        //Hud_Base.Btn_Settings = Functions.GetChild(Btns, "SettingsButton").GetComponent<Button>();
                         Hud_Base.Btn_GameGuide = Functions.GetChild(Btns, "Game Guide Button").GetComponent<Button>();
-                        //Hud_Base.Btn_GameGuide = Functions.GetChild(Btns, "GameButton").GetComponent<Button>();
                         Hud_Base.Btn_LeaveGame = Functions.GetChild(Btns, "Character Select Button").GetComponent<Button>();
-                        //Hud_Base.Btn_LeaveGame = Functions.GetChild(Btns, "ExitToCharacterSelectButton").GetComponent<Button>();
                         Hud_Base.Btn_ExitDesktop = Functions.GetChild(Btns, "Exit Button").GetComponent<Button>();
-                        //Hud_Base.Btn_ExitDesktop = Functions.GetChild(Btns, "ExitGameButton").GetComponent<Button>();
                     }
                 }
             }            

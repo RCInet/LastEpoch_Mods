@@ -108,36 +108,27 @@ namespace LastEpoch_Hud.Scripts.Mods.Bank
             public static void Refs()
             {
                 if (!Refs_Manager.stash_panel_ui.IsNullOrDestroyed())
-                //if (!Refs_Manager.game_uibase.IsNullOrDestroyed())
                 {
                     if (stash_panel.IsNullOrDestroyed())
                     {
                         stash_panel = Refs_Manager.stash_panel_ui.gameObject;
                     }
-                    /*if ((!Refs_Manager.game_uibase.stashPanel.IsNullOrDestroyed()) && (stash_panel.IsNullOrDestroyed()))
-                    {
-                        stash_panel = Refs_Manager.game_uibase.stashPanel;
-                    }*/
                     if ((!stash_panel.IsNullOrDestroyed()) && ((stash_grid_image.IsNullOrDestroyed()) || (default_grid.IsNullOrDestroyed())))
                     {
-                        //if (!stash_panel.instance.IsNullOrDestroyed())
-                        //{
                         GameObject left_obj = Functions.GetChild(Refs_Manager.stash_panel_ui.gameObject, "left-container");
-                        //GameObject left_obj = Functions.GetChild(stash_panel.instance, "left-container");
                         if (!left_obj.IsNullOrDestroyed())
+                        {
+                            if (stash_grid_image.IsNullOrDestroyed())
                             {
-                                if (stash_grid_image.IsNullOrDestroyed())
-                                {
-                                    GameObject grid_obj = Functions.GetChild(left_obj, "grid-img");
-                                    if (!grid_obj.IsNullOrDestroyed()) { stash_grid_image = grid_obj.GetComponent<Image>(); }
-                                }
-                                if ((!stash_grid_image.IsNullOrDestroyed()) && (default_grid.IsNullOrDestroyed()))
-                                {
-                                    default_grid = stash_grid_image.activeSprite;
-                                    Object.DontDestroyOnLoad(default_grid);
-                                }
+                                GameObject grid_obj = Functions.GetChild(left_obj, "grid-img");
+                                if (!grid_obj.IsNullOrDestroyed()) { stash_grid_image = grid_obj.GetComponent<Image>(); }
                             }
-                        //}
+                            if ((!stash_grid_image.IsNullOrDestroyed()) && (default_grid.IsNullOrDestroyed()))
+                            {
+                                default_grid = stash_grid_image.activeSprite;
+                                Object.DontDestroyOnLoad(default_grid);
+                            }
+                        }
                     }
                     if ((!Hud_Manager.asset_bundle.IsNullOrDestroyed()) && (quad_grid.IsNullOrDestroyed()))
                     {
@@ -632,11 +623,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Bank
                                 update_containers = true;                                
                             }
                         }
-                        if (save)
-                        {
-                            Save.Data.Save();
-                            //Save.Data.Load();
-                        }
+                        if (save) { Save.Data.Save(); }
                         if ((update_containers) && (!stash_item_container.IsNullOrDestroyed()))
                         {
                             int i = 0;
