@@ -10,10 +10,10 @@ namespace LastEpoch_Hud.Scripts.Mods.Fixs
         public static Fix_LowFPS instance { get; private set; }
 
         public static bool check_fps = false;
-        public static bool init_timer = false;
+        //public static bool init_timer = false;
         public static bool need_fix = false;
         public static bool fixing = false;
-        public static System.DateTime StartTime;
+        //public static System.DateTime StartTime;
 
         void Awake()
         {
@@ -21,24 +21,29 @@ namespace LastEpoch_Hud.Scripts.Mods.Fixs
         }
         void Update()
         {
-            if (!Scenes.IsGameScene()) { Init(); }
+            if (!Scenes.IsGameScene())
+            {
+                //Init();
+                check_fps = true;
+            }
             else
             {
-                if (init_timer)
+                /*if (init_timer)
                 {
                     init_timer = false;
                     StartTime = System.DateTime.Now;
-                }
+                }*/
                 if ((check_fps) && (!Refs_Manager.game_uibase.IsNullOrDestroyed()))
                 {
                     int fps = GetFps();
                     if ((fps > -1) && (fps < 20))
                     {
-                        check_fps = false;
+                        //check_fps = false;
                         need_fix = true;
                         //Main.logger_instance.Warning("Fix : LowFPS");
                     }
-                    else if (GetElapsedTime() > 10) { check_fps = false; }
+                    //else if (GetElapsedTime() > 3) { check_fps = false; }
+                    check_fps = false;
                 }
 
                 if ((need_fix) && (!Refs_Manager.game_uibase.IsNullOrDestroyed()) && (!Hud_Manager.hud_object.IsNullOrDestroyed()))
@@ -46,7 +51,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Fixs
                     if (!Hud_Manager.IsPauseOpen())
                     {
                         fixing = true;
-                        Hud_Manager.hud_object.active = false;
+                        //Hud_Manager.hud_object.active = false;
                         Refs_Manager.game_uibase.openMenu(false);                        
                     }
                     else if (fixing)
@@ -54,24 +59,25 @@ namespace LastEpoch_Hud.Scripts.Mods.Fixs
                         fixing = false;
                         need_fix = false;                        
                         Hud_Manager.Hud_Base.Btn_Resume.onClick.Invoke();
-                        Hud_Manager.hud_object.active = true;                        
-                        Init();
+                        //Hud_Manager.hud_object.active = true;                        
+                        //Init();
+                        check_fps = true;
                     }
                 }
             }
         }
-        void Init()
+        /*void Init()
         {
-            init_timer = true;
+            //init_timer = true;
             check_fps = true;
-        }
-        double GetElapsedTime()
+        }*/
+        /*double GetElapsedTime()
         {
             System.DateTime LastTime = System.DateTime.Now;
             var elaspedTime = LastTime - StartTime;
 
             return elaspedTime.TotalSeconds;
-        }
+        }*/
         int GetFps()
         {
             int fps = -1;
