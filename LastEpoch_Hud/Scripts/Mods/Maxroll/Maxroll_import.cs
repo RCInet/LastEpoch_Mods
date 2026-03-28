@@ -205,6 +205,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                             corruptedAffix.affixId = itemAffix.affixId;
                             corruptedAffix.affixTier = itemAffix.affixTier;
                             corruptedAffix.affixRoll = itemAffix.affixRoll;
+                            item.RefreshIDAndValues();
                         }
                     }
                 }
