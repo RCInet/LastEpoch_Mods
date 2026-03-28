@@ -200,14 +200,11 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                     foreach (ItemAffix itemAffix in corruptedAffixes)
                     {
                         item.ApplyCorruptionOutcome(Refs_Manager.player_actor, CorruptionOutcome.AddsCorruptedAffix, out int addedAffixId, out int toRemove, out bool affixSelected);
-                        foreach (ItemAffix corruptedAffix in item.affixes)
+                        if (item.TryGetSealedCorruptedAffixe(out ItemAffix corruptedAffix))
                         {
-                            if (corruptedAffix.affixId == (ushort)addedAffixId)
-                            {
-                                corruptedAffix.affixId = itemAffix.affixId;
-                                corruptedAffix.affixTier = itemAffix.affixTier;
-                                corruptedAffix.affixRoll = itemAffix.affixRoll;
-                            }
+                            corruptedAffix.affixId = itemAffix.affixId;
+                            corruptedAffix.affixTier = itemAffix.affixTier;
+                            corruptedAffix.affixRoll = itemAffix.affixRoll;
                         }
                     }
                 }
