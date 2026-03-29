@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using Il2Cpp;
 using MelonLoader;
+using System.Xml;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -1419,11 +1420,17 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
             {
                 //Main.logger_instance.Warning("OnKill : " + ability.abilityName);
 
-                AbilityMutator mutator = null;
+                bool ice = true;
+                bool fire = true;
+                bool lightning = true;
+                bool poison = true;
+
                 bool force_ice = false;
                 bool force_fire = false;
                 bool force_lightning = false;
                 bool force_poison = false;
+
+                AbilityMutator mutator = null;
                 if (!Refs_Manager.player_treedata.IsNullOrDestroyed())
                 {
                     foreach (LocalTreeData.SkillTreeData skill_tree_data in Refs_Manager.player_treedata.specialisedSkillTrees)
@@ -1458,12 +1465,22 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                     }
                 }
 
+                //Aura of decay and Ash Wake (boots)
+                if ((!Refs_Manager.player_actor.IsNullOrDestroyed()) && (ability.abilityName == "Aura Of Decay"))
+                {
+                    if (Refs_Manager.player_actor.itemContainersManager.equipment.boots.content.data.uniqueID == 461)
+                    {
+                        poison = false;
+                        force_fire = true;                        
+                    }
+                }
+
                 if ((!Refs_Manager.player_actor.IsNullOrDestroyed()) && (!ability.IsNullOrDestroyed()) && (!killedActor.IsNullOrDestroyed()))
                 {
-                    if ((Uniques.Ice.Equipped()) && ((ability.tags.HasFlag(AT.Cold)) || (force_ice))) { Uniques.Ice.Launch(Refs_Manager.player_actor.gameObject, killedActor); }
-                    if ((Uniques.Fire.Equipped()) && ((ability.tags.HasFlag(AT.Fire)) || (force_fire))) { Uniques.Fire.Launch(Refs_Manager.player_actor.gameObject, killedActor); }
-                    if ((Uniques.Lightning.Equipped()) && ((ability.tags.HasFlag(AT.Lightning)) || (force_lightning))) { Uniques.Lightning.Launch(Refs_Manager.player_actor.gameObject, killedActor); }
-                    if ((Uniques.Poison.Equipped()) && ((ability.tags.HasFlag(AT.Poison)) || (force_poison))) { Uniques.Poison.Launch(Refs_Manager.player_actor.gameObject, killedActor); }
+                    if ((Uniques.Ice.Equipped()) && (ice) && ((ability.tags.HasFlag(AT.Cold)) || (force_ice))) { Uniques.Ice.Launch(Refs_Manager.player_actor.gameObject, killedActor); }
+                    if ((Uniques.Fire.Equipped()) && (fire) && ((ability.tags.HasFlag(AT.Fire)) || (force_fire))) { Uniques.Fire.Launch(Refs_Manager.player_actor.gameObject, killedActor); }
+                    if ((Uniques.Lightning.Equipped()) && (lightning) && ((ability.tags.HasFlag(AT.Lightning)) || (force_lightning))) { Uniques.Lightning.Launch(Refs_Manager.player_actor.gameObject, killedActor); }
+                    if ((Uniques.Poison.Equipped()) && (poison) && ((ability.tags.HasFlag(AT.Poison)) || (force_poison))) { Uniques.Poison.Launch(Refs_Manager.player_actor.gameObject, killedActor); }
                 }
             }
 
