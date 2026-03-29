@@ -336,6 +336,13 @@ namespace LastEpoch_Hud.Scripts
                         Enable_Radius = false,
                         Radius = 0f,
                         WeaverWill = false
+                    },
+                    HeraldOfPurity =
+                    {
+                        VFX = "RaptorScreech",
+                        Enable_Radius = false,
+                        Radius = 0f,
+                        WeaverWill = false
                     }
                 },
                 Scenes =
@@ -882,6 +889,7 @@ namespace LastEpoch_Hud.Scripts
                 public HeraldOfFire HeraldOfFire;
                 public HeraldOfThunder HeraldOfThunder;
                 public HeraldOfAgony HeraldOfAgony;
+                public HeraldOfPurity HeraldOfPurity;
             }
             public struct Headhunter
             {
@@ -927,6 +935,13 @@ namespace LastEpoch_Hud.Scripts
                 public bool WeaverWill;
             }
             public struct HeraldOfAgony
+            {
+                public string VFX;
+                public bool Enable_Radius;
+                public float Radius;
+                public bool WeaverWill;
+            }
+            public struct HeraldOfPurity
             {
                 public string VFX;
                 public bool Enable_Radius;
