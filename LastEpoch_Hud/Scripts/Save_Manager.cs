@@ -65,13 +65,15 @@ namespace LastEpoch_Hud.Scripts
                     SpawnMysteriousRift = KeyCode.F1,
                     SpawnRiftBeast = KeyCode.F2,
                     BankStashs = KeyCode.F3,
-                    SummonBeast = KeyCode.F4                    
+                    SummonBeast = KeyCode.F4
                 },
                 modsNotInHud =
                 {
                     Shrines_Unlimited = false,                      //Unlimited Shrine Click
                     Shrines_Override = false,                       //Change Shrine with another shrines
-                    Shrines_Override_id = 0                         //see Scripts.Mods.Shrines.Shrines_Override.cs
+                    Shrines_Override_id = 0,                        //see Scripts.Mods.Shrines.Shrines_Override.cs
+                    Craft_MaxTier = false,                          //Allow craft to T8
+                    //Craft_Corrupted = false                         //Allow craft corrupted item
                 },
                 Login =
                 {
@@ -156,7 +158,7 @@ namespace LastEpoch_Hud.Scripts
                         TreePoints = 0,
                         Enable_FreeRespe = false
                     }
-                },                
+                },
                 Items =
                 {
                     Drop =
@@ -281,7 +283,7 @@ namespace LastEpoch_Hud.Scripts
                         LegendaryPotencial = 4,
                         Enable_WeaverWill = false,
                         WeaverWill = 28
-                    }                    
+                    }
                 },
                 NewItems =
                 {
@@ -335,7 +337,7 @@ namespace LastEpoch_Hud.Scripts
                         Radius = 0f,
                         WeaverWill = false
                     }
-                },                
+                },
                 Scenes =
                 {
                     Camera =
@@ -619,6 +621,8 @@ namespace LastEpoch_Hud.Scripts
                 public bool Shrines_Unlimited;
                 public bool Shrines_Override;
                 public int Shrines_Override_id;
+                public bool Craft_MaxTier;
+                //public bool Craft_Corrupted;
             }
             
             //Login

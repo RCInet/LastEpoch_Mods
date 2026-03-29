@@ -158,7 +158,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Craft
             [HarmonyPostfix]
             static void Postfix(ref CraftingManager __instance, ref Il2CppSystem.Object __0, ref ItemContainerEntryHandler __1)
             {
-                if (!__0.IsNullOrDestroyed())
+                if ((!__0.IsNullOrDestroyed()) && (Save_Manager.instance.data.modsNotInHud.Craft_MaxTier))
                 {
                     item = null;
                     OneItemContainer item_container = __0.TryCast<OneItemContainer>();
@@ -191,7 +191,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Craft
             static void Postfix(ref CraftingManager __instance, ref bool __result, ref System.String __0, ref System.Boolean __1, ref System.Boolean __2, ref System.String __3)
             {
                 //Main.logger_instance.Msg("CraftingManager:CheckForgeCapability(); __0 = " + __0);
-                if ((__0 == Craft_Locales.affix_is_maxed) && (!item.IsNullOrDestroyed()))
+                if ((__0 == Craft_Locales.affix_is_maxed) && (!item.IsNullOrDestroyed()) && (Save_Manager.instance.data.modsNotInHud.Craft_MaxTier))
                 {
                     int affix_id = __instance.appliedAffixID;
                     int affix_tier = Get.Tier(item, affix_id);
@@ -218,7 +218,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Craft
             [HarmonyPrefix]
             static void Prefix(ref CraftingUpgradeButton __instance, int __0, ref bool __1)
             {
-                if ((Scenes.IsGameScene()) && (!item.IsNullOrDestroyed()) && (__0 > -1))
+                if ((Scenes.IsGameScene()) && (!item.IsNullOrDestroyed()) && (__0 > -1) && (Save_Manager.instance.data.modsNotInHud.Craft_MaxTier))
                 {
                     if (Get.IsIdol(item)) { __1 = false; }
                     else
@@ -236,7 +236,10 @@ namespace LastEpoch_Hud.Scripts.Mods.Craft
             [HarmonyPostfix]
             static void Postfix()
             {
-                UpdateAffixs();
+                if (Save_Manager.instance.data.modsNotInHud.Craft_MaxTier)
+                {
+                    UpdateAffixs();
+                }
             }
         }
 
@@ -257,7 +260,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Craft
             static bool Prefix(ref CraftingSlotManager __instance)
             {
                 bool result = true;
-                if ((Scenes.IsGameScene()) && (!item.IsNullOrDestroyed()))
+                if ((Scenes.IsGameScene()) && (!item.IsNullOrDestroyed()) && (Save_Manager.instance.data.modsNotInHud.Craft_MaxTier))
                 {
                     bool glyph_of_hope = false;                             //25% no forgin potencial cost                 
                     bool glyph_of_chaos = false;                            //Change affix

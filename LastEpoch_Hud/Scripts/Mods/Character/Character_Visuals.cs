@@ -1,11 +1,13 @@
-﻿using HarmonyLib;
-using Il2Cpp;
+﻿//using HarmonyLib;
+//using Il2Cpp;
 
 namespace LastEpoch_Hud.Scripts.Mods.Character
 {
     public class Character_Visuals
     {
-        private static int backup_class = -1;
+        //need to be patched for LE 1.4
+
+        /*private static int backup_class = -1;
         private static int wanted_class = -1;        
         private static bool loading_screen = false;
         private static readonly string[] CharacterClass = { "Primalist", "Mage", "Sentinel", "Acolyte", "Rogue" };
@@ -61,8 +63,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
             }
         }
 
-        //Set all Visuals (items and cosmetics) on LoadingScreen (need to be patched for LE 1.4)
-        /*[HarmonyPatch(typeof(Il2CppLE.UI.LoadingScreen), "OnBeforeSceneLoaded")]
+        //Set all Visuals (items and cosmetics) on LoadingScreen
+        [HarmonyPatch(typeof(Il2CppLE.UI.LoadingScreen), "OnBeforeSceneLoaded")]
         public class LoadingScreen_OnBeforeSceneLoaded
         {
             [HarmonyPostfix]
@@ -82,7 +84,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                 loading_screen = false;
                 if ((wanted_class > -1) && (backup_class > -1)) { Set_CharacterClass(backup_class); }
             }
-        }*/
+        }
 
         //Replace Items Visuals when item contain ClassReq
         [HarmonyPatch(typeof(EquipmentVisualsManager), "EquipGearAsync")]
@@ -237,6 +239,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                     if (!loading_screen) { Set_CharacterClass(backup_class); }
                 }
             }
-        }
+        }*/
     }
 }

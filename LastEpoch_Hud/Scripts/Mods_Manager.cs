@@ -51,6 +51,8 @@ namespace LastEpoch_Hud.Scripts
 
         GameObject maxroll_import_obj = null;
 
+        GameObject fix_lowfps_obj = null;
+
         bool initialized = false;
         bool enable = false;
         public bool change = false;
@@ -60,6 +62,11 @@ namespace LastEpoch_Hud.Scripts
             instance = this;
             Main.logger_instance?.Msg("Mods Manager : Initialize");
             Il2CppSystem.Collections.Generic.List<GameObject> Mods_Objects = new Il2CppSystem.Collections.Generic.List<GameObject>();
+
+            //Fix
+            fix_lowfps_obj = Object.Instantiate(new GameObject { name = "Mod_FixLowFPS" }, Vector3.zero, Quaternion.identity);
+            fix_lowfps_obj.AddComponent<Mods.Fixs.Fix_LowFPS>();
+            Mods_Objects.Add(fix_lowfps_obj);
 
             //UI
             cosmetics_obj = Object.Instantiate(new GameObject { name = "Mod_Cosmetics" }, Vector3.zero, Quaternion.identity);
