@@ -1762,28 +1762,28 @@ namespace LastEpoch_Hud.Scripts
                                 Data.soul_slider = Functions.Get_SliderInPanel(character_data_content, "Soul Embers", "Slider_Character_Data_SoulEmbers");
 
                                 Data.monolith_stability_basic_go = Functions.GetChild(character_data_content, "Monolith_Stability_Basic");
-                                Data.monolith_stability_basic_go.active = false;
+                                Data.monolith_stability_basic_go.active = true;
                                 Data.monolith_stability_basic_text = Functions.Get_TextInButton(character_data_content, "Monolith_Stability_Basic", "Value");
                                 Data.monolith_stability_basic_slider = Functions.Get_SliderInPanel(character_data_content, "Monolith_Stability_Basic", "Slider_Basic_Stability");
 
                                 Data.monolith_stability_empower_go = Functions.GetChild(character_data_content, "Monolith_Stability_Empower");
-                                Data.monolith_stability_empower_go.active = false;
+                                Data.monolith_stability_empower_go.active = true;
                                 Data.monolith_stability_empower_text = Functions.Get_TextInButton(character_data_content, "Monolith_Stability_Empower", "Value");
                                 Data.monolith_stability_empower_slider = Functions.Get_SliderInPanel(character_data_content, "Monolith_Stability_Empower", "Slider_Empower_Stability");
 
                                 Data.monolith_corruption_go = Functions.GetChild(character_data_content, "Monolith_Corruption");
-                                Data.monolith_corruption_go.active = false;
+                                Data.monolith_corruption_go.active = true;
                                 Data.monolith_corruption_text = Functions.Get_TextInButton(character_data_content, "Monolith_Corruption", "Value");
                                 Data.monolith_corruption_slider = Functions.Get_SliderInPanel(character_data_content, "Monolith_Corruption", "Slider_Empower_Corruption");
 
                                 Data.monolith_gaze_go = Functions.GetChild(character_data_content, "Monolith_Gaze");
-                                Data.monolith_gaze_go.active = false;
+                                Data.monolith_gaze_go.active = true;
                                 Data.monolith_gaze_text = Functions.Get_TextInButton(character_data_content, "Monolith_Gaze", "Value");
                                 Data.monolith_gaze_slider = Functions.Get_SliderInPanel(character_data_content, "Monolith_Gaze", "Slider");
 
                                 Data.monolith_dropdown = Functions.Get_DopboxInPanel(character_data_content, "Monoliths", "Dropdown", new System.Action<int>((_) => { Update_Monoliths_Data(); }));
                                 Data.monolith_dropdown.options = new List<Dropdown.OptionData>();
-                                Data.monolith_dropdown.options.Add(new Dropdown.OptionData { text = "Select" });
+                                Data.monolith_dropdown.options.Add(new Dropdown.OptionData { text = "All Monoliths" });
                                 Data.monolith_dropdown.options.Add(new Dropdown.OptionData { text = "Fall_Of_The_Outcast" });
                                 Data.monolith_dropdown.options.Add(new Dropdown.OptionData { text = "The_Stolen_Lance" });
                                 Data.monolith_dropdown.options.Add(new Dropdown.OptionData { text = "The_Black_Sun" });
@@ -2379,20 +2379,20 @@ namespace LastEpoch_Hud.Scripts
                         int index = Data.monolith_dropdown.value;
                         if (index < 1)
                         {
-                            int value = -1;
-                            Data.monolith_stability_basic_go.active = false;
+                            int value = 0;
+                            Data.monolith_stability_basic_go.active = true;
                             Data.monolith_stability_basic_slider.value = value;
                             Data.monolith_stability_basic_text.text = value.ToString();
 
-                            Data.monolith_stability_empower_go.active = false;
+                            Data.monolith_stability_empower_go.active = true;
                             Data.monolith_stability_empower_slider.value = value;
                             Data.monolith_stability_empower_text.text = value.ToString();
 
-                            Data.monolith_corruption_go.active = false;
+                            Data.monolith_corruption_go.active = true;
                             Data.monolith_corruption_slider.value = value;
                             Data.monolith_corruption_text.text = value.ToString();
 
-                            Data.monolith_gaze_go.active = false;
+                            Data.monolith_gaze_go.active = true;
                             Data.monolith_gaze_slider.value = value;
                             Data.monolith_gaze_text.text = value.ToString();
                         }
@@ -2861,7 +2861,12 @@ namespace LastEpoch_Hud.Scripts
                             {
                                 foreach (SavedMonolithRun run in Refs_Manager.player_data.MonolithRuns)
                                 {
-                                    if ((run.TimelineID == index) && (run.DifficultyIndex == 0))
+                                    if (index == 0 && run.DifficultyIndex == 0)
+                                    {
+                                        // Update all timelines instead
+                                        if (run.Stability != result) { run.Stability = result; }
+                                    }
+                                    else if ((run.TimelineID == index) && (run.DifficultyIndex == 0))
                                     {
                                         if (run.Stability != result) { run.Stability = result; }
                                         break;
@@ -2886,7 +2891,12 @@ namespace LastEpoch_Hud.Scripts
                             {
                                 foreach (SavedMonolithRun run in Refs_Manager.player_data.MonolithRuns)
                                 {
-                                    if ((run.TimelineID == index) && (run.DifficultyIndex == 1))
+                                    if (index == 0 && run.DifficultyIndex == 1)
+                                    {
+                                        // Update all timelines instead
+                                        if (run.Stability != result) { run.Stability = result; }
+                                    }
+                                    else if ((run.TimelineID == index) && (run.DifficultyIndex == 1))
                                     {
                                         if (run.Stability != result) { run.Stability = result; }
                                         break;
@@ -2911,7 +2921,15 @@ namespace LastEpoch_Hud.Scripts
                             {
                                 foreach (SavedMonolithRun run in Refs_Manager.player_data.MonolithRuns)
                                 {
-                                    if ((run.TimelineID == index) && (run.DifficultyIndex == 1))
+                                    if (index == 0 && run.DifficultyIndex == 1)
+                                    {
+                                        // Update all timelines instead
+                                        if (!run.SavedEchoWeb.IsNullOrDestroyed())
+                                        {
+                                            if (run.SavedEchoWeb.Corruption != result) { run.SavedEchoWeb.Corruption = result; }
+                                        }
+                                    }
+                                    else if ((run.TimelineID == index) && (run.DifficultyIndex == 1))
                                     {
                                         if (!run.SavedEchoWeb.IsNullOrDestroyed())
                                         {
@@ -2939,7 +2957,15 @@ namespace LastEpoch_Hud.Scripts
                             {
                                 foreach (SavedMonolithRun run in Refs_Manager.player_data.MonolithRuns)
                                 {
-                                    if ((run.TimelineID == index) && (run.DifficultyIndex == 1))
+                                    if (index == 0 && run.DifficultyIndex == 1)
+                                    {
+                                        // Update all timelines instead
+                                        if (!run.SavedEchoWeb.IsNullOrDestroyed())
+                                        {
+                                            if (run.SavedEchoWeb.GazeOfOrobyss != result) { run.SavedEchoWeb.GazeOfOrobyss = result; }
+                                        }
+                                    } 
+                                    else if ((run.TimelineID == index) && (run.DifficultyIndex == 1))
                                     {
                                         if (!run.SavedEchoWeb.IsNullOrDestroyed())
                                         {
