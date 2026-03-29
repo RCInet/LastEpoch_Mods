@@ -1417,12 +1417,53 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
             private static readonly System.Action<Ability, Actor> OnKillAction = new System.Action<Ability, Actor>(OnKill);
             private static void OnKill(Ability ability, Actor killedActor)
             {
+                //Main.logger_instance.Warning("OnKill : " + ability.abilityName);
+
+                AbilityMutator mutator = null;
+                bool force_ice = false;
+                bool force_fire = false;
+                bool force_lightning = false;
+                bool force_poison = false;
+                if (!Refs_Manager.player_treedata.IsNullOrDestroyed())
+                {
+                    foreach (LocalTreeData.SkillTreeData skill_tree_data in Refs_Manager.player_treedata.specialisedSkillTrees)
+                    {
+                        if (skill_tree_data.ability.abilityName == ability.abilityName)
+                        {
+                            mutator = skill_tree_data.mutator;
+                            break;
+                        }
+                    }
+                }
+                if (!mutator.IsNullOrDestroyed())
+                {
+                    Il2CppSystem.Type il2cpp_type = null;
+                    try { il2cpp_type = mutator.GetIl2CppType(); }
+                    catch { Main.logger_instance?.Error("Can't get Mutator type"); }
+
+                    if (!il2cpp_type.IsNullOrDestroyed())
+                    {
+                        //Add skills here (Fix conversion)
+                        if (il2cpp_type.ToString() == "WarpathMutator")
+                        {
+                            WarpathMutator m = mutator.TryCast<WarpathMutator>();
+                            if (!m.IsNullOrDestroyed())
+                            {
+                                if (m.fireConversion)
+                                {
+                                    force_fire = true;
+                                }
+                            }                            
+                        }
+                    }
+                }
+
                 if ((!Refs_Manager.player_actor.IsNullOrDestroyed()) && (!ability.IsNullOrDestroyed()) && (!killedActor.IsNullOrDestroyed()))
                 {
-                    if ((Uniques.Ice.Equipped()) && (ability.tags.HasFlag(AT.Cold))) { Uniques.Ice.Launch(Refs_Manager.player_actor.gameObject, killedActor); }
-                    if ((Uniques.Fire.Equipped()) && (ability.tags.HasFlag(AT.Fire))) { Uniques.Fire.Launch(Refs_Manager.player_actor.gameObject, killedActor); }
-                    if ((Uniques.Lightning.Equipped()) && (ability.tags.HasFlag(AT.Lightning))) { Uniques.Lightning.Launch(Refs_Manager.player_actor.gameObject, killedActor); }
-                    if ((Uniques.Poison.Equipped()) && (ability.tags.HasFlag(AT.Poison))) { Uniques.Poison.Launch(Refs_Manager.player_actor.gameObject, killedActor); }
+                    if ((Uniques.Ice.Equipped()) && ((ability.tags.HasFlag(AT.Cold)) || (force_ice))) { Uniques.Ice.Launch(Refs_Manager.player_actor.gameObject, killedActor); }
+                    if ((Uniques.Fire.Equipped()) && ((ability.tags.HasFlag(AT.Fire)) || (force_fire))) { Uniques.Fire.Launch(Refs_Manager.player_actor.gameObject, killedActor); }
+                    if ((Uniques.Lightning.Equipped()) && ((ability.tags.HasFlag(AT.Lightning)) || (force_lightning))) { Uniques.Lightning.Launch(Refs_Manager.player_actor.gameObject, killedActor); }
+                    if ((Uniques.Poison.Equipped()) && ((ability.tags.HasFlag(AT.Poison)) || (force_poison))) { Uniques.Poison.Launch(Refs_Manager.player_actor.gameObject, killedActor); }
                 }
             }
 
