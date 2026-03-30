@@ -109,7 +109,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
 
                 Il2CppSystem.Collections.Generic.List<ItemAffix> itemAffixes = new Il2CppSystem.Collections.Generic.List<ItemAffix>();
 
-                // Collect all affixes except for corrupted affixes
+                // Add all regular affixes 
                 if (!affixs.IsNullOrDestroyed() && affixs.Count > 0)
                 {
                     for (int i = 0; i < affixs.Count; i++)
@@ -124,6 +124,23 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                     }
                 }
 
+                // If there are multiple corrupted affixes, add all of them as regular affixes except for the first one
+                if (!corrupted_affixes.IsNullOrDestroyed() && corrupted_affixes.Count > 1)
+                {
+                    for (int i = 1; i < corrupted_affixes.Count; i++)
+                    {
+                        itemAffixes.Add(new ItemAffix
+                        {
+                            affixId = (ushort)corrupted_affixes[i].Id,
+                            affixTier = (byte)(corrupted_affixes[i].Tier - 1),
+                            affixRoll = (byte)(corrupted_affixes[i].Roll * 255),
+                            sealedAffixType = SealedAffixType.None,
+                            specialAffixType = AffixList.SpecialAffixType.Corrupted
+                        });
+                    }
+                }
+
+                // Add the sealed affix
                 ItemAffix sealedAffix = null;
                 if (!sealed_affix.IsNullOrDestroyed())
                 {
@@ -137,6 +154,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                     itemAffixes.Add(sealedAffix);
                 }
 
+                // Add the primordial sealed affix
                 ItemAffix primordialAffix = null;
                 if (!primordial_affix.IsNullOrDestroyed())
                 {
@@ -179,34 +197,25 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                 // Recalculate data and IDs
                 item.RefreshIDAndValues();
 
-                // Corrupt Item
-                Il2CppSystem.Collections.Generic.List<ItemAffix> corruptedAffixes = new Il2CppSystem.Collections.Generic.List<ItemAffix>();
+                // Add the first corrupted affix as a sealed corrupted affix if there is at least one corrupted affix
                 if (!corrupted_affixes.IsNullOrDestroyed() && corrupted_affixes.Count > 0)
                 {
-                    // Collect all corrupted affixes
-                    for (int i = 0; i < corrupted_affixes.Count; i++)
+                    ItemAffix firstCorruptedAffix = new ItemAffix
                     {
-                        corruptedAffixes.Add(new ItemAffix
-                        {
-                            affixId = (ushort)corrupted_affixes[i].Id,
-                            affixTier = (byte)(corrupted_affixes[i].Tier - 1),
-                            affixRoll = (byte)(corrupted_affixes[i].Roll * 255),
-                            specialAffixType = AffixList.SpecialAffixType.Corrupted,
-                            sealedAffixType = SealedAffixType.FromCorruption
-                        });
-                    }
+                        affixId = (ushort)corrupted_affixes[0].Id,
+                        affixTier = (byte)(corrupted_affixes[0].Tier - 1),
+                        affixRoll = (byte)(corrupted_affixes[0].Roll * 255),
+                        specialAffixType = AffixList.SpecialAffixType.Corrupted,
+                        sealedAffixType = SealedAffixType.FromCorruption
+                    };
 
-                    // Add random corrupted affix then replace it with the imported affix
-                    foreach (ItemAffix itemAffix in corruptedAffixes)
+                    item.ApplyCorruptionOutcome(Refs_Manager.player_actor, CorruptionOutcome.AddsCorruptedAffix, out int addedAffixId, out int toRemove, out bool affixSelected);
+                    if (item.TryGetSealedCorruptedAffixe(out ItemAffix sealedCorruptedAffix))
                     {
-                        item.ApplyCorruptionOutcome(Refs_Manager.player_actor, CorruptionOutcome.AddsCorruptedAffix, out int addedAffixId, out int toRemove, out bool affixSelected);
-                        if (item.TryGetSealedCorruptedAffixe(out ItemAffix corruptedAffix))
-                        {
-                            corruptedAffix.affixId = itemAffix.affixId;
-                            corruptedAffix.affixTier = itemAffix.affixTier;
-                            corruptedAffix.affixRoll = itemAffix.affixRoll;
-                            item.RefreshIDAndValues();
-                        }
+                        sealedCorruptedAffix.affixId = firstCorruptedAffix.affixId;
+                        sealedCorruptedAffix.affixTier = firstCorruptedAffix.affixTier;
+                        sealedCorruptedAffix.affixRoll = firstCorruptedAffix.affixRoll;
+                        item.RefreshIDAndValues();
                     }
                 }
 
