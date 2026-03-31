@@ -44,8 +44,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
 
         public class Functions
         {
-            public static ItemData MakeItem(int item_type, int sub_type, System.Collections.Generic.List<double> implicits, System.Collections.Generic.List<Data.Json.Affix> affixs,
-                Data.Json.Affix sealed_affix, Data.Json.Affix primordial_affix, int? unique_id, System.Collections.Generic.List<double> unique_rolls, bool corrupted, System.Collections.Generic.List<Data.Json.Affix> corrupted_affixes)
+            public static ItemData MakeItem(int item_type, int sub_type, System.Collections.Generic.List<double?> implicits, System.Collections.Generic.List<Data.Json.Affix> affixs,
+                Data.Json.Affix sealed_affix, Data.Json.Affix primordial_affix, int? unique_id, System.Collections.Generic.List<double?> unique_rolls, bool corrupted, System.Collections.Generic.List<Data.Json.Affix> corrupted_affixes)
             {
                 byte[] implicitRolls = new byte[3] { 255, 255, 255 };
 
@@ -54,7 +54,10 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                 {
                     for (int i = 0; i < implicits.Count && i < implicitRolls.Length; i++)
                     {
-                        implicitRolls[i] = (byte)(implicits[i] * 255);
+                        if (!implicitRolls[i].IsNullOrDestroyed())
+                        {
+                            implicitRolls[i] = (byte)(implicits[i] * 255);
+                        }                      
                     }
                 }
 
@@ -101,7 +104,10 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                         {
                             for (int i = 0; i < unique_rolls.Count && i < uniqueRolls.Length; i++)
                             {
-                                uniqueRolls[i] = (byte)(unique_rolls[i] * 255);
+                                if(!unique_rolls[i].IsNullOrDestroyed())
+                                {
+                                    uniqueRolls[i] = (byte)(unique_rolls[i] * 255);
+                                }                                    
                             }
                         }
                     }
@@ -1013,7 +1019,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                     public int? UniqueID;
 
                     [JsonProperty("uniqueRolls")]
-                    public System.Collections.Generic.List<double> UniqueRolls;
+                    public System.Collections.Generic.List<double?> UniqueRolls;
 
                     [JsonProperty("affixes")]
                     public System.Collections.Generic.List<Affix> Affixes;
@@ -1025,7 +1031,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                     public Affix PrimordialAffix;
 
                     [JsonProperty("implicits")]
-                    public System.Collections.Generic.List<double> Implicits;
+                    public System.Collections.Generic.List<double?> Implicits;
 
                     [JsonProperty("corruptedAffixes")]
                     public System.Collections.Generic.List<Affix> CorruptedAffixes;
@@ -1048,7 +1054,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                     public int? UniqueID;
 
                     [JsonProperty("uniqueRolls")]
-                    public System.Collections.Generic.List<double> UniqueRolls;
+                    public System.Collections.Generic.List<double?> UniqueRolls;
                 }
                 public class Blessing
                 {
@@ -1059,7 +1065,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                     public int SubType;
 
                     [JsonProperty("implicits")]
-                    public System.Collections.Generic.List<double> Implicits;
+                    public System.Collections.Generic.List<double?> Implicits;
                 }
                 public class Affix
                 {
