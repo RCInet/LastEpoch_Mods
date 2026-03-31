@@ -1,7 +1,6 @@
 ﻿using HarmonyLib;
 using Il2Cpp;
 using MelonLoader;
-using System.Xml;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -25,7 +24,8 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
             if (Uniques.Ice.Icon.IsNullOrDestroyed() ||
                 Uniques.Fire.Icon.IsNullOrDestroyed() ||
                 Uniques.Lightning.Icon.IsNullOrDestroyed() ||
-                Uniques.Poison.Icon.IsNullOrDestroyed())
+                Uniques.Poison.Icon.IsNullOrDestroyed() ||
+                Uniques.Physical.Icon.IsNullOrDestroyed())
             { Assets.Loaded = false; }
             if (!Assets.Loaded) { Assets.Load(); }
             if (Locales.current != Locales.Selected.Unknow)
@@ -46,6 +46,8 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                 if (Uniques.Lightning.ability.IsNullOrDestroyed()) { Uniques.Lightning.GetAbility(); }
                 if (Uniques.Poison.prefab_obj.IsNullOrDestroyed()) { Uniques.Poison.GetPrefab(); }
                 if (Uniques.Poison.ability.IsNullOrDestroyed()) { Uniques.Poison.GetAbility(); }
+                if (Uniques.Physical.prefab_obj.IsNullOrDestroyed()) { Uniques.Physical.GetPrefab(); }
+                if (Uniques.Physical.ability.IsNullOrDestroyed()) { Uniques.Physical.GetAbility(); }
             }
         }
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -107,10 +109,19 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                                     Uniques.Poison.Icon = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
                                 }
                             }
+                            if (name.Contains("/heraldofpurity/"))
+                            {
+                                if (Functions.Check_Texture(name) && name.Contains("icon") && Uniques.Physical.Icon.IsNullOrDestroyed())
+                                {
+                                    Texture2D texture = Hud_Manager.asset_bundle.LoadAsset(name).TryCast<Texture2D>();
+                                    Uniques.Physical.Icon = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+                                }
+                            }
                         }
                         if (!Uniques.Ice.Icon.IsNullOrDestroyed() &&
                             !Uniques.Fire.Icon.IsNullOrDestroyed() &&
                             !Uniques.Lightning.Icon.IsNullOrDestroyed() &&
+                            !Uniques.Poison.Icon.IsNullOrDestroyed() &&
                             !Uniques.Poison.Icon.IsNullOrDestroyed())
                         {
                             Loaded = true;
@@ -160,7 +171,6 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
 
                 return result;
             }
-
             private static Il2CppSystem.Collections.Generic.List<ItemList.EquipmentImplicit> implicits()
             {
                 Il2CppSystem.Collections.Generic.List<ItemList.EquipmentImplicit> implicits = new Il2CppSystem.Collections.Generic.List<ItemList.EquipmentImplicit>();
@@ -184,6 +194,7 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                         Refs_Manager.unique_list.uniques.Add(Fire.Item());
                         Refs_Manager.unique_list.uniques.Add(Lightning.Item());
                         Refs_Manager.unique_list.uniques.Add(Poison.Item());
+                        Refs_Manager.unique_list.uniques.Add(Physical.Item());
                         AddedToUniqueList = true;
                     }
                     catch { Main.logger_instance?.Error("Herald of Ice Unique List Error"); }
@@ -199,6 +210,7 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                         UniqueList.Entry fire_item = null;
                         UniqueList.Entry ligtning_item = null;
                         UniqueList.Entry poison_item = null;
+                        UniqueList.Entry physical_item = null;
                         if (Refs_Manager.unique_list.uniques.Count > 1)
                         {
                             foreach (UniqueList.Entry unique in Refs_Manager.unique_list.uniques)
@@ -207,17 +219,20 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                                 else if (unique.uniqueID == Fire.unique_id && unique.name == Fire.Get_Unique_Name()) { fire_item = unique; }
                                 else if (unique.uniqueID == Lightning.unique_id && unique.name == Lightning.Get_Unique_Name()) { ligtning_item = unique; }
                                 else if (unique.uniqueID == Poison.unique_id && unique.name == Poison.Get_Unique_Name()) { poison_item = unique; }
+                                else if (unique.uniqueID == Physical.unique_id && unique.name == Physical.Get_Unique_Name()) { physical_item = unique; }
                             }
                         }
                         if (!ice_item.IsNullOrDestroyed() &&
                             !fire_item.IsNullOrDestroyed() &&
                             !ligtning_item.IsNullOrDestroyed() &&
-                            !poison_item.IsNullOrDestroyed())
+                            !poison_item.IsNullOrDestroyed() &&
+                            !physical_item.IsNullOrDestroyed())
                         {
                             Refs_Manager.unique_list.entryDictionary.Add(Ice.unique_id, ice_item);
                             Refs_Manager.unique_list.entryDictionary.Add(Fire.unique_id, fire_item);
                             Refs_Manager.unique_list.entryDictionary.Add(Lightning.unique_id, ligtning_item);
                             Refs_Manager.unique_list.entryDictionary.Add(Poison.unique_id, poison_item);
+                            Refs_Manager.unique_list.entryDictionary.Add(Physical.unique_id, physical_item);
                             AddedToDictionary = true;
                         }
                     }
@@ -1097,6 +1112,216 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                     return result;
                 }
             }
+            public class Physical
+            {
+                public static bool Initialize_ability = false;
+                public static Ability ability = null;
+                public static bool Initialize_prefab = false;
+                public static GameObject prefab_obj = null;
+                public static Sprite Icon = null;
+                public static readonly ushort unique_id = 509;
+                public static UniqueList.Entry Item()
+                {
+                    UniqueList.Entry item = new UniqueList.Entry
+                    {
+                        name = Get_Unique_Name(),
+                        displayName = Get_Unique_Name(),
+                        uniqueID = unique_id,
+                        isSetItem = false,
+                        setID = 0,
+                        overrideLevelRequirement = true,
+                        levelRequirement = 15,
+                        legendaryType = UniqueList.LegendaryType.LegendaryPotential,
+                        overrideEffectiveLevelForLegendaryPotential = true,
+                        effectiveLevelForLegendaryPotential = 0,
+                        canDropRandomly = true,
+                        rerollChance = 1,
+                        itemModelType = UniqueList.ItemModelType.Unique,
+                        subTypeForIM = 0,
+                        baseType = Basic.base_type,
+                        subTypes = Basic.SubType(),
+                        mods = Mods(),
+                        tooltipDescriptions = TooltipDescription(),
+                        loreText = Get_Unique_Lore(),
+                        tooltipEntries = TooltipEntries(),
+                        oldSubTypeID = 0,
+                        oldUniqueID = 0
+                    };
+
+                    return item;
+                }
+
+                public static void GetAbility()
+                {
+                    if (!Initialize_ability)
+                    {
+                        Initialize_ability = true;
+                        if (!Refs_Manager.player_actor.IsNullOrDestroyed())
+                        {
+                            foreach (Ability ab in Resources.FindObjectsOfTypeAll<Ability>())
+                            {
+                                if (ab.name == Save_Manager.instance.data.NewItems.HeraldOfPurity.VFX)
+                                {
+                                    ability = new Ability
+                                    {
+                                        name = "Herald of Purity",
+                                        abilityName = "Herald of Purity",
+                                        abilitySprite = Icon,
+                                        abilityObjectRotation = Ability.AbilityObjectRotation.FacingTarget,
+                                        abilityObjectType = Ability.AbilityObjectType.Default,
+                                        animation = AbilityAnimation.Cast,
+                                        attachCastingVFXToCaster = true,
+                                        attributeScaling = new Il2CppSystem.Collections.Generic.List<Ability.AttributeScaling>(),
+                                        baseMovementAnimationLength = 1f,
+                                        castingVFXPositioning = CastingVFXPositioning.Default,
+                                        description = "",
+                                        manaCost = 0f,
+                                        moveOrAttackFallback = Ability.MoveOrAttackFallback.Wait,
+                                        speedMultiplier = 1f,
+                                        speedScaler = SP.CastSpeed,
+                                        tags = ab.tags,
+                                        useDelay = 0.4f,
+                                        useDuration = 0.75f
+                                    };
+                                    break;
+                                }
+                            }
+                        }
+                        Initialize_ability = false;
+                    }
+                }
+                public static void GetPrefab()
+                {
+                    if (!Initialize_prefab)
+                    {
+                        Initialize_prefab = true;
+                        foreach (Ability ab in Resources.FindObjectsOfTypeAll<Ability>())
+                        {
+                            if (ab.name == Save_Manager.instance.data.NewItems.HeraldOfPurity.VFX)
+                            {
+                                prefab_obj = Instantiate(ab.abilityPrefab, Vector3.zero, Quaternion.identity);
+                                prefab_obj.active = false;
+                                prefab_obj.name = "Herald of Purity prefab";
+                                SphereCollider collider = prefab_obj.GetComponent<SphereCollider>();
+                                if (!collider.IsNullOrDestroyed() && Save_Manager.instance.data.NewItems.HeraldOfPurity.Enable_Radius)
+                                { collider.radius = Save_Manager.instance.data.NewItems.HeraldOfPurity.Radius; }
+                                CreateVfxOnDeath vfx_on_death = prefab_obj.GetComponent<CreateVfxOnDeath>();
+                                if (!vfx_on_death.IsNullOrDestroyed() && Save_Manager.instance.data.NewItems.HeraldOfPurity.Enable_Radius)
+                                { vfx_on_death.increasedRadius = Save_Manager.instance.data.NewItems.HeraldOfPurity.Radius; }
+                                break;
+                            }
+                        }
+                        Initialize_prefab = false;
+                    }
+                }
+                public static string Get_Unique_Name()
+                {
+                    string result = "";
+                    switch (Locales.current)
+                    {
+                        case Locales.Selected.English: { result = Languagues.Physical.UniqueName.en; break; }
+                        case Locales.Selected.French: { result = Languagues.Physical.UniqueName.en; break; }
+                        case Locales.Selected.German: { result = Languagues.Physical.UniqueName.en; break; }
+                        case Locales.Selected.Russian: { result = Languagues.Physical.UniqueName.en; break; }
+                        case Locales.Selected.Portuguese: { result = Languagues.Physical.UniqueName.en; break; }
+                        case Locales.Selected.Korean: { result = Languagues.Physical.UniqueName.en; break; }
+                        case Locales.Selected.Polish: { result = Languagues.Physical.UniqueName.en; break; }
+                        case Locales.Selected.Chinese: { result = Languagues.Physical.UniqueName.en; break; }
+                        case Locales.Selected.Spanish: { result = Languagues.Physical.UniqueName.en; break; }
+                    }
+
+                    return result;
+                }
+                public static string Get_Unique_Description()
+                {
+                    string result = "";
+                    switch (Locales.current)
+                    {
+                        case Locales.Selected.English: { result = Languagues.Physical.UniqueDescription.en; break; }
+                        case Locales.Selected.French: { result = Languagues.Physical.UniqueDescription.en; break; }
+                        case Locales.Selected.Korean: { result = Languagues.Physical.UniqueDescription.en; break; }
+                        case Locales.Selected.German: { result = Languagues.Physical.UniqueDescription.en; break; }
+                        case Locales.Selected.Russian: { result = Languagues.Physical.UniqueDescription.en; break; }
+                        case Locales.Selected.Polish: { result = Languagues.Physical.UniqueDescription.en; break; }
+                        case Locales.Selected.Portuguese: { result = Languagues.Physical.UniqueDescription.en; break; }
+                        case Locales.Selected.Chinese: { result = Languagues.Physical.UniqueDescription.en; break; }
+                        case Locales.Selected.Spanish: { result = Languagues.Physical.UniqueDescription.en; break; }
+                    }
+
+                    return result;
+                }
+                public static string Get_Unique_Lore()
+                {
+                    string result = "";
+                    switch (Locales.current)
+                    {
+                        case Locales.Selected.English: { result = Languagues.Physical.Lore.en; break; }
+                        case Locales.Selected.French: { result = Languagues.Physical.Lore.en; break; }
+                        case Locales.Selected.German: { result = Languagues.Physical.Lore.en; break; }
+                        case Locales.Selected.Korean: { result = Languagues.Physical.Lore.en; break; }
+                        case Locales.Selected.Russian: { result = Languagues.Physical.Lore.en; break; }
+                        case Locales.Selected.Polish: { result = Languagues.Physical.Lore.en; break; }
+                        case Locales.Selected.Portuguese: { result = Languagues.Physical.Lore.en; break; }
+                        case Locales.Selected.Chinese: { result = Languagues.Physical.Lore.en; break; }
+                        case Locales.Selected.Spanish: { result = Languagues.Physical.Lore.en; break; }
+                    }
+
+                    return result;
+                }
+                public static bool Equipped()
+                {
+                    bool r = false;
+                    foreach (ItemContainerEntry entry in Refs_Manager.player_actor.itemContainersManager.idols.content)
+                    {
+                        if (entry.data.uniqueID == unique_id) { r = true; break; }
+                    }
+
+                    return r;
+                }
+                public static void Launch(GameObject actor, Actor target)
+                {
+                    if (!ability.IsNullOrDestroyed() && (!target.IsNullOrDestroyed()) && (!prefab_obj.IsNullOrDestroyed()))
+                    {
+                        SetDamage(prefab_obj, AT.Physical, target.health.maxHealth);
+                        ability.abilityPrefab = Instantiate(prefab_obj, Vector3.zero, Quaternion.identity);
+                        if (!ability.abilityPrefab.IsNullOrDestroyed())
+                        {
+                            ability.abilityPrefab.active = true;
+                            ability.CastAfterDelay(actor.GetComponent<AbilityObjectConstructor>(), target.position(), target.position(), 0f);
+                        }
+                    }
+                }
+                public static void Update_LegendaryType(bool weaverwill)
+                {
+                    UniqueList.Entry item = UniqueList.getUnique(unique_id);
+                    if (!item.IsNullOrDestroyed())
+                    {
+                        if (weaverwill) { item.legendaryType = UniqueList.LegendaryType.WeaversWill; }
+                        else { item.legendaryType = UniqueList.LegendaryType.LegendaryPotential; }
+                    }
+                }
+
+                private static Il2CppSystem.Collections.Generic.List<UniqueItemMod> Mods()
+                {
+                    Il2CppSystem.Collections.Generic.List<UniqueItemMod> result = new Il2CppSystem.Collections.Generic.List<UniqueItemMod>();
+
+                    return result;
+                }
+                private static Il2CppSystem.Collections.Generic.List<UniqueModDisplayListEntry> TooltipEntries()
+                {
+                    Il2CppSystem.Collections.Generic.List<UniqueModDisplayListEntry> result = new Il2CppSystem.Collections.Generic.List<UniqueModDisplayListEntry>();
+                    result.Add(new UniqueModDisplayListEntry(128));
+
+                    return result;
+                }
+                private static Il2CppSystem.Collections.Generic.List<ItemTooltipDescription> TooltipDescription()
+                {
+                    Il2CppSystem.Collections.Generic.List<ItemTooltipDescription> result = new Il2CppSystem.Collections.Generic.List<ItemTooltipDescription>();
+                    result.Add(new ItemTooltipDescription { description = Get_Unique_Description() });
+
+                    return result;
+                }
+            }
 
             [HarmonyPatch(typeof(InventoryItemUI), "SetImageSpritesAndColours")]
             public class InventoryItemUI_SetImageSpritesAndColours
@@ -1119,6 +1344,10 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                     else if (__instance.EntryRef.data.getAsUnpacked().FullName == Poison.Get_Unique_Name() && !Poison.Icon.IsNullOrDestroyed())
                     {
                         __instance.contentImage.sprite = Poison.Icon;
+                    }
+                    else if (__instance.EntryRef.data.getAsUnpacked().FullName == Physical.Get_Unique_Name() && !Physical.Icon.IsNullOrDestroyed())
+                    {
+                        __instance.contentImage.sprite = Physical.Icon;
                     }
                 }
             }
@@ -1144,6 +1373,10 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                     else if (__0.getAsUnpacked().FullName == Poison.Get_Unique_Name() && !Poison.Icon.IsNullOrDestroyed())
                     {
                         __result = Poison.Icon;
+                    }
+                    else if (__0.getAsUnpacked().FullName == Physical.Get_Unique_Name() && !Physical.Icon.IsNullOrDestroyed())
+                    {
+                        __result = Physical.Icon;
                     }
                 }
             }
@@ -1262,6 +1495,28 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                     //Add all languages here
                 }
             }
+            public class Physical
+            {
+                public static string unique_name_key = "Unique_Name_" + Uniques.Physical.unique_id;
+                public static string unique_description_key = "Unique_Tooltip_0_" + Uniques.Physical.unique_id;
+                public static string unique_lore_key = "Unique_Lore_" + Uniques.Physical.unique_id;
+
+                public class UniqueName
+                {
+                    public static string en = "Herald of Purity";
+                    //Add all languages here
+                }
+                public class UniqueDescription
+                {
+                    public static string en = "Grants a buff, when you or your minions Kill a monster with physical damage, this item will cause them to explode and deal 5% of their Life as physical damage to enemies near them";
+                    //Add all languages here
+                }
+                public class Lore
+                {
+                    public static readonly string en = "";
+                    //Add all languages here
+                }
+            }
 
             [HarmonyPatch(typeof(Localization), "TryGetText")]
             public class Localization_TryGetText
@@ -1274,7 +1529,8 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                         __0 == Ice.unique_name_key || __0 == Ice.unique_description_key || __0 == Ice.unique_lore_key ||
                         __0 == Fire.unique_name_key || __0 == Fire.unique_description_key || __0 == Fire.unique_lore_key ||
                         __0 == Lightning.unique_name_key || __0 == Lightning.unique_description_key || __0 == Lightning.unique_lore_key ||
-                        __0 == Poison.unique_name_key || __0 == Poison.unique_description_key || __0 == Poison.unique_lore_key)
+                        __0 == Poison.unique_name_key || __0 == Poison.unique_description_key || __0 == Poison.unique_lore_key ||
+                        __0 == Physical.unique_name_key || __0 == Physical.unique_description_key || __0 == Physical.unique_lore_key)
                     {
                         __result = true;
                         result = false;
@@ -1392,6 +1648,30 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                             result = false;
                         }
                     }
+                    //Physical
+                    else if (__0 == Physical.unique_name_key)
+                    {
+                        __result = Uniques.Physical.Get_Unique_Name();
+                        result = false;
+                    }
+                    else if (__0 == Physical.unique_description_key)
+                    {
+                        string description = Uniques.Physical.Get_Unique_Description();
+                        if (description != "")
+                        {
+                            __result = description;
+                            result = false;
+                        }
+                    }
+                    else if (__0 == Physical.unique_lore_key)
+                    {
+                        string lore = Uniques.Physical.Get_Unique_Lore();
+                        if (lore != "")
+                        {
+                            __result = lore;
+                            result = false;
+                        }
+                    }
 
                     return result;
                 }
@@ -1424,54 +1704,63 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                 bool fire = true;
                 bool lightning = true;
                 bool poison = true;
+                bool physical = true;
 
                 bool force_ice = false;
                 bool force_fire = false;
                 bool force_lightning = false;
                 bool force_poison = false;
+                bool force_physical = false;
 
-                AbilityMutator mutator = null;
+                //AbilityMutator damage convertion
                 if (!Refs_Manager.player_treedata.IsNullOrDestroyed())
                 {
                     foreach (LocalTreeData.SkillTreeData skill_tree_data in Refs_Manager.player_treedata.specialisedSkillTrees)
                     {
                         if (skill_tree_data.ability.abilityName == ability.abilityName)
                         {
-                            mutator = skill_tree_data.mutator;
+                            if (!skill_tree_data.mutator.IsNullOrDestroyed())
+                            {
+                                Il2CppSystem.Type il2cpp_type = null;
+                                try { il2cpp_type = skill_tree_data.mutator.GetIl2CppType(); }
+                                catch { Main.logger_instance?.Error("Can't get Mutator type"); }
+
+                                if (!il2cpp_type.IsNullOrDestroyed())
+                                {
+                                    //Add skills here (Fix conversion)
+                                    if (il2cpp_type.ToString() == "WarpathMutator")
+                                    {
+                                        WarpathMutator m = skill_tree_data.mutator.TryCast<WarpathMutator>();
+                                        if (!m.IsNullOrDestroyed())
+                                        {
+                                            if (m.fireConversion)
+                                            {
+                                                physical = false;
+                                                force_fire = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                             break;
                         }
                     }
                 }
-                if (!mutator.IsNullOrDestroyed())
-                {
-                    Il2CppSystem.Type il2cpp_type = null;
-                    try { il2cpp_type = mutator.GetIl2CppType(); }
-                    catch { Main.logger_instance?.Error("Can't get Mutator type"); }
 
-                    if (!il2cpp_type.IsNullOrDestroyed())
+                //Items damage convertion                
+                if (!Refs_Manager.player_actor.IsNullOrDestroyed())
+                {                    
+                    if (ability.abilityName == "Aura Of Decay")     //Aura of decay and Ash Wake (convert poison to fire)
                     {
-                        //Add skills here (Fix conversion)
-                        if (il2cpp_type.ToString() == "WarpathMutator")
+                        try //in case we don't have any boots equiped
                         {
-                            WarpathMutator m = mutator.TryCast<WarpathMutator>();
-                            if (!m.IsNullOrDestroyed())
+                            if (Refs_Manager.player_actor.itemContainersManager.equipment.boots.content.data.uniqueID == 461)
                             {
-                                if (m.fireConversion)
-                                {
-                                    force_fire = true;
-                                }
-                            }                            
+                                poison = false;
+                                force_fire = true;
+                            }
                         }
-                    }
-                }
-
-                //Aura of decay and Ash Wake (boots)
-                if ((!Refs_Manager.player_actor.IsNullOrDestroyed()) && (ability.abilityName == "Aura Of Decay"))
-                {
-                    if (Refs_Manager.player_actor.itemContainersManager.equipment.boots.content.data.uniqueID == 461)
-                    {
-                        poison = false;
-                        force_fire = true;                        
+                        catch { }
                     }
                 }
 
@@ -1481,6 +1770,7 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                     if ((Uniques.Fire.Equipped()) && (fire) && ((ability.tags.HasFlag(AT.Fire)) || (force_fire))) { Uniques.Fire.Launch(Refs_Manager.player_actor.gameObject, killedActor); }
                     if ((Uniques.Lightning.Equipped()) && (lightning) && ((ability.tags.HasFlag(AT.Lightning)) || (force_lightning))) { Uniques.Lightning.Launch(Refs_Manager.player_actor.gameObject, killedActor); }
                     if ((Uniques.Poison.Equipped()) && (poison) && ((ability.tags.HasFlag(AT.Poison)) || (force_poison))) { Uniques.Poison.Launch(Refs_Manager.player_actor.gameObject, killedActor); }
+                    if ((Uniques.Physical.Equipped()) && (physical) && ((ability.tags.HasFlag(AT.Physical)) || (force_physical))) { Uniques.Physical.Launch(Refs_Manager.player_actor.gameObject, killedActor); }
                 }
             }
 
@@ -1509,6 +1799,7 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                     if ((Uniques.Fire.Equipped()) && (ability.tags.HasFlag(AT.Fire))) { Uniques.Fire.Launch(summon.gameObject, killedActor); }
                     if ((Uniques.Lightning.Equipped()) && (ability.tags.HasFlag(AT.Lightning))) { Uniques.Lightning.Launch(summon.gameObject, killedActor); }
                     if ((Uniques.Poison.Equipped()) && (ability.tags.HasFlag(AT.Poison))) { Uniques.Poison.Launch(summon.gameObject, killedActor); }
+                    if ((Uniques.Physical.Equipped()) && (ability.tags.HasFlag(AT.Physical))) { Uniques.Physical.Launch(summon.gameObject, killedActor); }
                 }
             }
         }        
