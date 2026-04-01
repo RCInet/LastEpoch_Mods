@@ -52,6 +52,7 @@ namespace LastEpoch_Hud.Scripts
         GameObject maxroll_import_obj = null;
 
         GameObject fix_lowfps_obj = null;
+        GameObject teleport_to_scene_obj = null;
 
         bool initialized = false;
         bool enable = false;
@@ -80,6 +81,11 @@ namespace LastEpoch_Hud.Scripts
             chat_obj = Object.Instantiate(new GameObject { name = "Mod_Remove_Chat" }, Vector3.zero, Quaternion.identity);
             chat_obj.AddComponent<Mods.Chat.Chat_Remove>();
             Mods_Objects.Add(chat_obj);
+
+            //Teleport
+            teleport_to_scene_obj = Object.Instantiate(new GameObject { name = "Mod_Teleport_To_Scene" }, Vector3.zero, Quaternion.identity);
+            teleport_to_scene_obj.AddComponent<Mods.Teleport.Teleport_ToScene>();
+            Mods_Objects.Add(teleport_to_scene_obj);
 
             //Bank Il2cpp Mods
             bank_quad_obj = Object.Instantiate(new GameObject { name = "Mod_Bank_Quad" }, Vector3.zero, Quaternion.identity);
