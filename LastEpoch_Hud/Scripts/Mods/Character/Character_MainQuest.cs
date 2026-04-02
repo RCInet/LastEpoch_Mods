@@ -134,10 +134,10 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                     }
                 }*/
 
-                Main.logger_instance?.Msg("Unlock Portal");
-                UnlockPortalInteraction.unlockPortal(Refs_Manager.player_actor.gameObject);
-                bool monolith_waypoint_unlock = Refs_Manager.player_data.UnlockedWaypointScenes.Contains(monolith_scene);
-                if (!monolith_waypoint_unlock) { Refs_Manager.player_data.UnlockedWaypointScenes.Add(monolith_scene); }
+                //Main.logger_instance?.Msg("Unlock Portal");
+                //UnlockPortalInteraction.unlockPortal(Refs_Manager.player_actor.gameObject);
+                //bool monolith_waypoint_unlock = Refs_Manager.player_data.UnlockedWaypointScenes.Contains(monolith_scene);
+                //if (!monolith_waypoint_unlock) { Refs_Manager.player_data.UnlockedWaypointScenes.Add(monolith_scene); }
                 
                 Main.logger_instance?.Msg("Level Character to 58");
                 Character_Level.LevelUpToLevel(58);             
@@ -145,7 +145,10 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                 Main.logger_instance?.Msg("Save Character");
                 Refs_Manager.player_data.SaveData();
 
-                if (!Refs_Manager.game_uibase.IsNullOrDestroyed())
+                Main.logger_instance?.Msg("Tp to the End of Time");
+                Teleport.Teleport_ToScene.StartTpToScene(monolith_scene);
+
+                /*if (!Refs_Manager.game_uibase.IsNullOrDestroyed())
                 {
                     Main.logger_instance?.Msg("Open Map");
                     Refs_Manager.game_uibase.openMap();
@@ -170,7 +173,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                         }
                     //}
                     //else { Main.logger_instance?.Error("Map instance is null"); }
-                }
+                }*/
             }
         }
         private static UIWaypointStandard GetWaypoint(string name, byte gate)

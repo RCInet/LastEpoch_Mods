@@ -36,6 +36,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Teleport
                     PlayerSpawn choosen_spawn = null;
                     Refs_Manager.player_spawn_manager.TryPlacePlayerAtSpawn(Refs_Manager.player_actor, old_scene, new_scene, 0, out choosen_spawn);
                     SceneManager.UnloadSceneAsync(old_scene);
+                    Hud_Manager.Hud_Base.Resume_Click(); //Close Hud
                     old_scene = "";
                     new_scene = "";
                 }
@@ -48,10 +49,16 @@ namespace LastEpoch_Hud.Scripts.Mods.Teleport
             {
                 old_scene = SceneManager.GetActiveScene().name;
                 new_scene = scene_names[index];
-                Main.logger_instance.Warning("scene = " + new_scene);
                 SceneManager.LoadSceneAsync(new_scene, LoadSceneMode.Additive);
                 starting_tp = true;
             }
+        }
+        public static void StartTpToScene(string scene_name)
+        {
+            old_scene = SceneManager.GetActiveScene().name;
+            new_scene = scene_name;
+            SceneManager.LoadSceneAsync(new_scene, LoadSceneMode.Additive);
+            starting_tp = true;
         }
     }
 }
