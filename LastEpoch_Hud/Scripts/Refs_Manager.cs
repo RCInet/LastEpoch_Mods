@@ -21,6 +21,7 @@ namespace LastEpoch_Hud.Scripts
         public static InventoryPanelUI InventoryPanelUI = null;
         public static GameObject BlessingsPanel = null;
         public static Actor player_actor = null;
+        public static PlayerSpawnManager player_spawn_manager = null;
         //public static ActorVisuals player_visuals = null;
         public static Il2CppLE.Data.CharacterData player_data = null;
         public static CharacterDataTracker player_data_tracker = null;
@@ -72,6 +73,7 @@ namespace LastEpoch_Hud.Scripts
 
             if (Scenes.IsGameScene())
             {
+                if (player_spawn_manager.IsNullOrDestroyed()) { player_spawn_manager = PlayerSpawnManager.instance; }                                                                                             //
                 if ((quest_list.IsNullOrDestroyed()) && (!QuestList.instance.IsNullOrDestroyed())) { quest_list = QuestList.instance; }                                                             //Complete MainQuest
                 if ((scene_list.IsNullOrDestroyed()) && (!SceneList.instance.IsNullOrDestroyed())) { scene_list = SceneList.instance; }                                                             //Complete MainQuest
                 //craft_materials_holder //Need to fix for LE 1.4
