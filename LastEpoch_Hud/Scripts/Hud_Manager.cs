@@ -2,6 +2,8 @@
 using Il2Cpp;
 using Il2CppLE.Data;
 using Il2CppLE.Tools;
+using Il2CppLE.UI.Bazaar;
+using Il2CppNetworking.Multiplayer.Interactables.Portals;
 using Il2CppOperationResult;
 using Il2CppRewired.Components; //Gamepad
 using Il2CppSystem.Collections.Generic;
@@ -14,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices; //Gamepad
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace LastEpoch_Hud.Scripts
@@ -4255,6 +4258,10 @@ namespace LastEpoch_Hud.Scripts
                             if (!scene_dungeons_content.IsNullOrDestroyed())
                             {
                                 Dungeons.enter_without_key_toggle = Functions.Get_ToggleInPanel(scene_dungeons_content, "EnterWithoutKey", "Toggle_Scenes_Dungeons_EnterWithoutKey");
+
+                                Teleport.scene_dropdown = Functions.GetChild(scene_dungeons_content, "Teleport_Dropdown").GetComponent<Dropdown>();
+                                Teleport.scene_button = Functions.GetChild(scene_dungeons_content, "Teleport_Btn").GetComponent<Button>();
+                                Teleport.Init();
                             }
                             GameObject scene_minimap_content = Functions.GetViewportContent(content_obj, "Center", "Scenes_Minimap_Content");
                             if (!scene_minimap_content.IsNullOrDestroyed())
@@ -4294,6 +4301,7 @@ namespace LastEpoch_Hud.Scripts
                 {
                     Events.Set_Button_Event(Camera.reset_button, Camera.Reset_OnClick_Action);
                     Events.Set_Button_Event(Camera.set_button, Camera.Set_OnClick_Action);
+                    Events.Set_Button_Event(Teleport.scene_button, Teleport.Scene_OnClick_Action);
                 }
                 public static void Set_Active(bool show)
                 {
@@ -4459,6 +4467,55 @@ namespace LastEpoch_Hud.Scripts
                 public class Dungeons
                 {
                     public static Toggle enter_without_key_toggle = null;
+                }
+                public class Teleport
+                {
+                    public static Dropdown scene_dropdown = null;
+                    public static Button scene_button = null;
+                    public static readonly System.Action Scene_OnClick_Action = new System.Action(Scene_Teleport);
+
+                    public static void Init()
+                    {
+                        scene_dropdown.options.Clear();
+                        scene_dropdown.options.Add(new Dropdown.OptionData("Select"));
+
+                        Mods.Teleport.Teleport_ToScene.scene_names.Clear();
+                        Mods.Teleport.Teleport_ToScene.scene_names.Add("");
+                        foreach (SceneDetails scene_detail in SceneList.instance.sceneDetailsCollection)
+                        {
+                            if ((scene_detail.Name != "PersistentUI") &&
+                                (scene_detail.Name != "CharacterSelectScene") &&
+                                (scene_detail.Name != "Login") &&
+                                (scene_detail.Name != "PersistentUI") &&
+                                (scene_detail.Name != "MonolithHub") &&
+                                (scene_detail.Name != "A_Reward") &&
+                                (scene_detail.Name != "Mastery") &&
+                                (scene_detail.Name != "Neutral") &&
+                                (scene_detail.Name != "PCG_Dev") &&
+                                (!scene_detail.Name.Contains("PCG")) &&
+                                (!scene_detail.Name.Contains("Arena")) &&
+                                (scene_detail.LocalizedName != scene_detail.Name) && //New zones
+                                (!Mods.Teleport.Teleport_ToScene.scene_names.Contains(scene_detail.Name)))
+                            {
+                                string option_name = "";
+                                if (scene_detail.Name != scene_detail.LocalizedName)
+                                {
+                                    option_name = scene_detail.Name + " : " + scene_detail.LocalizedName;
+                                }
+                                else { option_name = scene_detail.Name; }
+                                if (option_name != "")
+                                {
+                                    //Main.logger_instance.Warning("add scene = " + scene_detail.Name);
+                                    Mods.Teleport.Teleport_ToScene.scene_names.Add(scene_detail.Name);
+                                    scene_dropdown.options.Add(new Dropdown.OptionData(option_name));
+                                }
+                            }
+                        }
+                    }
+                    public static void Scene_Teleport()
+                    {
+                        Mods.Teleport.Teleport_ToScene.StartTp(scene_dropdown.value);
+                    }
                 }
                 public class Monoliths
                 {
