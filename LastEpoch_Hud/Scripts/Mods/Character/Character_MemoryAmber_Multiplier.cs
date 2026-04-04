@@ -6,7 +6,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
 {
     public class Character_MemoryAmber_Multiplier
     {
-        public static bool CanRun()
+        /*public static bool CanRun()
         {
             if ((Scenes.IsGameScene()) && (!Save_Manager.instance.IsNullOrDestroyed()) && (!Refs_Manager.player_actor.IsNullOrDestroyed()))
             {
@@ -27,6 +27,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
                     __2 = Save_Manager.instance.data.Character.Cheats.MemoryAmberMultiplier * __2;
                 }
             }
-        }
+        }*/
     }
 }
