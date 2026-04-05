@@ -3,6 +3,9 @@ SET "winrar=C:\Program Files\WinRAR\WinRAR.exe"
 SET "keyboard_file=LastEpoch_Hud(Keyboard).rar"
 SET "gamepad_file=LastEpoch_Hud(WinGamepad).rar"
 SET "unwanted_file=LastEpoch_Hud.deps.json"
+SET "unwanted_file2=osx.os"
+SET "unwanted_file3=osx_arm.os"
+SET "unwanted_file4=x11.os"
 cd %~dp0
 cd ..\Build\Keyboard\net6.0\
 SET "keyboard_dir=%cd%
@@ -12,8 +15,26 @@ SET "gamepad_dir=%cd%
 IF EXIST %keyboard_dir%\%unwanted_file% (
 		del "%keyboard_dir%\%unwanted_file%"
 )
+IF EXIST %keyboard_dir%\%unwanted_file2% (
+		del "%keyboard_dir%\%unwanted_file2%"
+)
+IF EXIST %keyboard_dir%\%unwanted_file3% (
+		del "%keyboard_dir%\%unwanted_file3%"
+)
+IF EXIST %keyboard_dir%\%unwanted_file4% (
+		del "%keyboard_dir%\%unwanted_file4%"
+)
 IF EXIST %gamepad_dir%\%unwanted_file% (
 		del "%gamepad_dir%\%unwanted_file%"
+)
+IF EXIST %gamepad_dir%\%unwanted_file2% (
+		del "%gamepad_dir%\%unwanted_file2%"
+)
+IF EXIST %gamepad_dir%\%unwanted_file3% (
+		del "%gamepad_dir%\%unwanted_file3%"
+)
+IF EXIST %gamepad_dir%\%unwanted_file4% (
+		del "%gamepad_dir%\%unwanted_file4%"
 )
 cd %~dp0
 cd ..\Latest\

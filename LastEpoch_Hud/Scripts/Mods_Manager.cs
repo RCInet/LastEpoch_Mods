@@ -53,6 +53,7 @@ namespace LastEpoch_Hud.Scripts
 
         GameObject fix_lowfps_obj = null;
         GameObject teleport_to_scene_obj = null;
+        GameObject skills_autocast = null;
 
         bool initialized = false;
         bool enable = false;
@@ -154,7 +155,12 @@ namespace LastEpoch_Hud.Scripts
             items_nbsocket_obj = Object.Instantiate(new GameObject { name = "Mod_Items_NbSocket" }, Vector3.zero, Quaternion.identity);
             items_nbsocket_obj.AddComponent<Mods.Items.Items_SocketsNb>();
             Mods_Objects.Add(items_nbsocket_obj);
-            
+
+            //Skills
+            skills_autocast = Object.Instantiate(new GameObject { name = "Mod_Skills_AutoCast" }, Vector3.zero, Quaternion.identity);
+            skills_autocast.AddComponent<Mods.Skills.Skills_AutoCast>();
+            Mods_Objects.Add(skills_autocast);
+
             //Minimap Il2cpp Mods
             minimap_icons_obj = Object.Instantiate(new GameObject { name = "Mod_Minimap_Icons" }, Vector3.zero, Quaternion.identity);
             minimap_icons_obj.AddComponent<Mods.Minimap.Minimap_Icons>();
