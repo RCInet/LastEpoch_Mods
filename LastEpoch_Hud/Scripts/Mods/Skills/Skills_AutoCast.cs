@@ -151,6 +151,15 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                 {
                     for (int i = 0; i < 5; i++)
                     {
+                        if (player_skills[i].key != KeyCode.None)
+                        {
+                            Event e = Event.current;
+                            if (e.type == EventType.KeyUp && e.control && e.keyCode == player_skills[i].key)
+                            {
+                                bool enable = autocast[i];
+                                autocast[i] = !enable;
+                            }
+                        }
                         if ((autocast[i]) &&                                            //Autocast On
                             (!player_skills[i].channeled) &&                            //Not a channeled ability
                             (!GetIsOnCooldown(player_skills[i].go)) &&                  //Not on cooldown
