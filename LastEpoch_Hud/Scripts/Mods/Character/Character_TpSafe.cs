@@ -25,12 +25,12 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
         }
         void Update()
         {
-            if (CanRun())
+            /*if (CanRun())
             {
                 if ((Input.GetKey(key_0)) && (Input.GetKey(key_1))) { TpSafe(); }
-            }
+            }*/
         }
-        bool CanRun()
+        /*bool CanRun()
         {
             if ((Scenes.IsGameScene()) && (!Save_Manager.instance.IsNullOrDestroyed())  &&
                 (!Refs_Manager.game_uibase.IsNullOrDestroyed()) && (mod_enable))
@@ -75,6 +75,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
             }
 
             return result;
-        }
+        }*/
     }
 }

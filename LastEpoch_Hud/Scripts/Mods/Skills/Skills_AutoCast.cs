@@ -1,5 +1,6 @@
 ﻿using Desktop.Robot;
 using Il2Cpp;
+using Il2CppPixelCrushers.DialogueSystem;
 using MelonLoader;
 using UnityEngine;
 using UnityEngine.UI;
@@ -90,7 +91,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                             ability = GetAbility(sprite),
                             key = GetKeyBind(ability_0),
                             channeled = GetIsChanneled(name),
-                            instant = GetIsInstant(name)
+                            instant = GetIsInstant(name),
+                            channel_with_robot = false
                         };
                     }
                     if (!ability_1.IsNullOrDestroyed())
@@ -103,7 +105,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                             ability = GetAbility(sprite),
                             key = GetKeyBind(ability_1),
                             channeled = GetIsChanneled(name),
-                            instant = GetIsInstant(name)
+                            instant = GetIsInstant(name),
+                            channel_with_robot = false
                         };
                     }
                     if (!ability_2.IsNullOrDestroyed())
@@ -116,7 +119,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                             ability = GetAbility(sprite),
                             key = GetKeyBind(ability_2),
                             channeled = GetIsChanneled(name),
-                            instant = GetIsInstant(name)
+                            instant = GetIsInstant(name),
+                            channel_with_robot = false
                         };
                     }
                     if (!ability_3.IsNullOrDestroyed())
@@ -129,7 +133,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                             ability = GetAbility(sprite),
                             key = GetKeyBind(ability_3),
                             channeled = GetIsChanneled(name),
-                            instant = GetIsInstant(name)
+                            instant = GetIsInstant(name),
+                            channel_with_robot = false
                         };
                     }
                     if (!ability_4.IsNullOrDestroyed())
@@ -142,7 +147,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                             ability = GetAbility(sprite),
                             key = GetKeyBind(ability_4),
                             channeled = GetIsChanneled(name),
-                            instant = GetIsInstant(name)
+                            instant = GetIsInstant(name),
+                            channel_with_robot = false
                         };
                     }
                     updating = false;
@@ -153,23 +159,57 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                     {
                         if (player_skills[i].key != KeyCode.None)
                         {
+#if KEYBOARD
                             Event e = Event.current;
-                            if (e.type == EventType.KeyUp && e.control && e.keyCode == player_skills[i].key)
+                            if ((e.type == EventType.KeyUp) && (e.keyCode == player_skills[i].key))
                             {
-                                bool enable = autocast[i];
-                                autocast[i] = !enable;
+                                if (player_skills[i].channeled)
+                                {
+                                    bool enable = channel_on_off[i];
+                                    if (e.control) { channel_on_off[i] = !enable; }
+                                    else if (channel_on_off[i]) { channel_on_off[i] = false; }
+                                    if ((!channel_on_off[i]) && (player_skills[i].channel_with_robot)) { player_skills[i].channel_with_robot = false; }
+                                }
+                                else if (e.control)
+                                {
+                                    bool enable = autocast[i];
+                                    autocast[i] = !enable;
+                                }
                             }
-                        }
-                        if ((autocast[i]) &&                                            //Autocast On
-                            (!player_skills[i].channeled) &&                            //Not a channeled ability
+#endif
+                            if ((autocast[i]) &&                                        //Autocast On
                             (!GetIsOnCooldown(player_skills[i].go)) &&                  //Not on cooldown
                             (!GetIsOutOfMana(player_skills[i].go)) &&                   //Not out of mana
-                            (player_skills[i].key != KeyCode.None) &&                   //Has a keybind
                             (app_focus))                                                //Application is focused
-                        {
-                            Robot robot = new Robot();
-                            Key robot_key = GetRobotKey(player_skills[i].key);
-                            if (robot_key != Key.Pause) { robot.KeyPress(robot_key); }
+                            {
+                                Robot robot = new Robot();
+                                Key robot_key = GetRobotKey(player_skills[i].key);
+                                if (robot_key != Key.Pause) { robot.KeyPress(robot_key); }
+                            }
+                            if (channel_on_off[i])
+                            {
+                                if (!player_skills[i].channel_with_robot)                   //DoOnce
+                                {
+                                    Robot robot = new Robot();
+                                    Key robot_key = GetRobotKey(player_skills[i].key);
+                                    if (robot_key != Key.Pause)
+                                    {
+                                        player_skills[i].channel_with_robot = true;
+                                        robot.KeyDown(robot_key);
+                                    }
+                                }
+                                else if (!app_focus)
+                                {
+                                    Robot robot = new Robot();
+                                    Key robot_key = GetRobotKey(player_skills[i].key);
+                                    if (robot_key != Key.Pause)
+                                    {
+                                        player_skills[i].channel_with_robot = false;
+                                        robot.KeyUp(robot_key);
+                                    }
+                                }
+                            }
+                            else { player_skills[i].channel_with_robot = false; }
                         }
                     }
                 }
@@ -180,7 +220,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         {
             app_focus = hasFocus;
         }
-        
+
         public struct PlayerSkill
         {
             public GameObject go;
@@ -188,6 +228,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             public KeyCode key;
             public bool channeled;
             public bool instant;
+            public bool channel_with_robot;
         }
         Sprite GetIcon(GameObject go)
         {
@@ -475,5 +516,78 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
 
             return result;
         }
+
+        /*[HarmonyPatch(typeof(AbilityBarIcon), "Pressed")]
+        public class AbilityBarIcon_Pressed
+        {
+            [HarmonyPostfix]
+            static void Postfix(ref AbilityBarIcon __instance)
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    if (player_skills[i].channeled)
+                    {
+                        AbilityBarIcon abicon = Functions.GetChild(player_skills[i].go, "AbilityIcon1").GetComponent<AbilityBarIcon>();
+                        if (!abicon.IsNullOrDestroyed())
+                        {
+                            if (abicon == __instance)
+                            {
+                                bool enable = channel_started[i];
+                                channel_started[i] = !enable;
+                                Main.logger_instance.Msg("channel_started[" + i + "] set to " + channel_started[i]);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }*/
+
+        /*[HarmonyPatch(typeof(CharacterMutator), "OnStartedUsingAbility")]
+        public class CharacterMutator_OnStartedUsingAbility
+        {
+            [HarmonyPostfix]
+            static void Postfix(ref AbilityInfo __0, Ability __1)
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    if (player_skills[i].ability == __1)
+                    {
+                        player_skills[i].abilityInfo = __0;
+                        if (player_skills[i].channeled)
+                        {
+                            bool enable = channel_started[i];
+                            channel_started[i] = !enable;
+                            Main.logger_instance.Msg("channel_started[" + i + "] set to " + channel_started[i]);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(CharacterMutator), "OnStoppedUsingAbility")]
+        public class CharacterMutator_OnStoppedUsingAbility
+        {
+            [HarmonyPrefix]
+            static bool Prefix(ref AbilityInfo __0)
+            {
+                bool result = true;
+                for (int i = 0; i < 5; i++)
+                {
+                    if (player_skills[i].abilityInfo == __0)
+                    {
+                        if (channel_started[i])
+                        {
+                            result = false;
+                            Main.logger_instance.Msg("alter OnStoppedUsingAbility");
+                        }
+                        break;
+                    }
+                }
+
+                return result;
+            }
+        }*/
     }
 }
