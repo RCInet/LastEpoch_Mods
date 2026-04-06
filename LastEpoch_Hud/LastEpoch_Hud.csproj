@@ -7,13 +7,16 @@
     <BaseOutputPath>..\Build</BaseOutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Configurations>Keyboard;WinGamepad</Configurations>
+    <Configuration Condition="'$(Configuration)' != 'WinGamepad'">Keyboard</Configuration>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Keyboard|AnyCPU' ">
-  <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+  <PropertyGroup Condition="'$(Configuration)' != 'WinGamepad'">
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <DefineConstants>KEYBOARD</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'WinGamepad|AnyCPU' ">
-  <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+  <PropertyGroup Condition="'$(Configuration)' == 'WinGamepad'">
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <DefineConstants>WINGAMEPAD</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Keyboard|net6.0|AnyCPU'">
     <DebugType>none</DebugType>
@@ -207,7 +210,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(SkipPostBuild)' != 'true'">
     <Exec Command="call MakeLatest.bat" />
   </Target>
 </Project>
