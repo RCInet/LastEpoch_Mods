@@ -6,7 +6,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
 {
     public class Character_MemoryAmber_Multiplier
     {
-        /*public static bool CanRun()
+        public static bool CanRun()
         {
             if ((Scenes.IsGameScene()) && (!Save_Manager.instance.IsNullOrDestroyed()) && (!Refs_Manager.player_actor.IsNullOrDestroyed()))
             {
@@ -20,13 +20,13 @@ namespace LastEpoch_Hud.Scripts.Mods.Character
         public class PickupableObjectsManager_CreatePickupableObjectForPlayer2
         {
             [HarmonyPrefix]
-            static void Prefix(ref uint __2)
+            static void Prefix(PickupableObjectType __0, ref uint __3)
             {
-                if (CanRun())
+                if (CanRun() && __0 == PickupableObjectType.MemoryAmber)
                 {
-                    __2 = Save_Manager.instance.data.Character.Cheats.MemoryAmberMultiplier * __2;
+                    __3 = Save_Manager.instance.data.Character.Cheats.MemoryAmberMultiplier * __3;
                 }
             }
-        }*/
+        }
     }
 }
