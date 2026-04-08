@@ -2,23 +2,28 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <OutputType>Library</OutputType>
-	<Nullable>disable</Nullable>
+    <Nullable>disable</Nullable>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <BaseOutputPath>..\Build</BaseOutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Configurations>Keyboard;WinGamepad</Configurations>
+    <Configuration Condition="'$(Configuration)' != 'WinGamepad'">Keyboard</Configuration>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Keyboard|AnyCPU' ">
-  <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+  <PropertyGroup Condition="'$(Configuration)' != 'WinGamepad'">
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <DefineConstants>KEYBOARD</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'WinGamepad|AnyCPU' ">
-  <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+  <PropertyGroup Condition="'$(Configuration)' == 'WinGamepad'">
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <DefineConstants>WINGAMEPAD</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Keyboard|net6.0|AnyCPU'">
+  <PropertyGroup
+    Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Keyboard|net6.0|AnyCPU'">
     <DebugType>none</DebugType>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='WinGamepad|net6.0|AnyCPU'">
+  <PropertyGroup
+    Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='WinGamepad|net6.0|AnyCPU'">
     <DebugType>none</DebugType>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
@@ -55,7 +60,8 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Il2CppSystem.IO.Compression.FileSystem">
-      <HintPath>$(LastEpochPath)\MelonLoader\Il2CppAssemblies\Il2CppSystem.IO.Compression.FileSystem.dll</HintPath>
+      <HintPath>
+        $(LastEpochPath)\MelonLoader\Il2CppAssemblies\Il2CppSystem.IO.Compression.FileSystem.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Il2CppSystem.Numerics">
@@ -127,7 +133,8 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>$(LastEpochPath)\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.dll</HintPath>
+      <HintPath>
+        $(LastEpochPath)\MelonLoader\Dependencies\Il2CppAssemblyGenerator\UnityDependencies\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule">
@@ -164,7 +171,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Desktop.Robot" Version="1.5.0" />
     <PackageReference Include="Lib.Harmony" Version="2.3.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
@@ -207,7 +213,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(SkipPostBuild)' != 'true'">
     <Exec Command="call MakeLatest.bat" />
   </Target>
 </Project>
