@@ -1,5 +1,6 @@
 ﻿using Il2Cpp;
 using MelonLoader;
+using Il2CppRewired;
 using UnityEngine;
 
 namespace LastEpoch_Hud.Scripts.Mods.Skills
@@ -11,6 +12,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         public Skills_AutoCast(System.IntPtr ptr) : base(ptr) { }
 
         const int SlotCount = 5;
+        static readonly int[] AbilityActionIds = { 1, 2, 3, 6, 7 };
 
         enum InitState { NeedsUpdate, Ready }
 
@@ -20,6 +22,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         static PlayerChargeManager _chargeManager;
         static UseAbilityProcessor _useAbilityProcessor;
         static Transform _playerTransform;
+        static Player _rewiredPlayer;
 
         void Awake()
         {
@@ -79,7 +82,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         public struct PlayerSkill
         {
             public Ability ability;
-            public KeyCode key;
             public bool channeled;
             public bool autocast;
             public bool channel_on;
@@ -95,22 +97,15 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             var abilityList = Refs_Manager.player_treedata.playerAbilityList;
             if (abilityList.IsNullOrDestroyed()) { _state = InitState.Ready; return; }
 
-            var actionBarSlots = FindActionBarSlots();
-
             for (int i = 0; i < SlotCount; i++)
             {
                 Ability ability = null;
                 try { ability = abilityList.getAbility(i); } catch { }
                 if (ability.IsNullOrDestroyed()) continue;
 
-                KeyCode key = KeyCode.None;
-                if (actionBarSlots != null && !actionBarSlots[i].IsNullOrDestroyed())
-                    key = GetKeyBind(actionBarSlots[i]);
-
                 _skills[i] = new PlayerSkill
                 {
                     ability = ability,
-                    key = key,
                     channeled = ability.channelled
                 };
             }
@@ -122,7 +117,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         {
             if (!_chargeManager.IsNullOrDestroyed() &&
                 !(_useAbilityProcessor == null || _useAbilityProcessor.IsNullOrDestroyed()) &&
-                !_playerTransform.IsNullOrDestroyed())
+                !_playerTransform.IsNullOrDestroyed() &&
+                !(_rewiredPlayer == null || _rewiredPlayer.IsNullOrDestroyed()))
                 return;
 
             if (!Refs_Manager.player_actor.IsNullOrDestroyed())
@@ -139,11 +135,16 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                 }
             }
 
-            if (_useAbilityProcessor == null || _useAbilityProcessor.IsNullOrDestroyed())
+            if (!Refs_Manager.epoch_input_manager.IsNullOrDestroyed())
             {
-                if (!Refs_Manager.epoch_input_manager.IsNullOrDestroyed())
+                if (_useAbilityProcessor == null || _useAbilityProcessor.IsNullOrDestroyed())
                 {
                     try { _useAbilityProcessor = Refs_Manager.epoch_input_manager.useAbilityProcessor; }
+                    catch { }
+                }
+                if (_rewiredPlayer == null || _rewiredPlayer.IsNullOrDestroyed())
+                {
+                    try { _rewiredPlayer = Refs_Manager.epoch_input_manager.rewiredPlayer; }
                     catch { }
                 }
             }
@@ -151,15 +152,14 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
 
         void HandleInput(int i)
         {
-#if KEYBOARD
-            if (_skills[i].key == KeyCode.None) return;
-            if (!Input.GetKeyUp(_skills[i].key)) return;
+            if (_rewiredPlayer == null || _rewiredPlayer.IsNullOrDestroyed()) return;
+            if (!_rewiredPlayer.GetButtonUp(AbilityActionIds[i])) return;
 
-            bool ctrl = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+            bool modifier = IsModifierHeld();
 
             if (_skills[i].channeled)
             {
-                if (ctrl)
+                if (modifier)
                     _skills[i].channel_on = !_skills[i].channel_on;
                 else if (_skills[i].channel_on)
                     _skills[i].channel_on = false;
@@ -167,10 +167,21 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                 if (!_skills[i].channel_on && _skills[i].channeling_active)
                     _skills[i].channeling_active = false;
             }
-            else if (ctrl)
+            else if (modifier)
             {
                 _skills[i].autocast = !_skills[i].autocast;
             }
+        }
+
+        static bool IsModifierHeld()
+        {
+#if KEYBOARD
+            return EpochInputManager.CtrlPressed();
+#elif WINGAMEPAD
+            // L3 (left stick click)
+            return Input.GetKey(KeyCode.Joystick1Button8);
+#else
+            return false;
 #endif
         }
 
@@ -236,65 +247,5 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             }
         }
 
-        GameObject[] FindActionBarSlots()
-        {
-            if (Refs_Manager.game_uibase.IsNullOrDestroyed()) return null;
-
-            Canvas canvas = FindBottomCanvas();
-            if (canvas.IsNullOrDestroyed()) return null;
-
-            GameObject inputAbilities = NavigateTo(canvas.gameObject,
-                "Bottom Screen UI Holder", "Bottom Screen UI(Clone)",
-                "actionBar", "ActionBarMiddle", "Inputs_Abilities");
-            if (inputAbilities.IsNullOrDestroyed()) return null;
-
-            return new[]
-            {
-                Functions.GetChild(inputAbilities, "ActionBarAbility"),
-                Functions.GetChild(inputAbilities, "ActionBarAbility (1)"),
-                Functions.GetChild(inputAbilities, "ActionBarAbility (2)"),
-                Functions.GetChild(inputAbilities, "ActionBarAbility (3)"),
-                Functions.GetChild(inputAbilities, "ActionBarAbility (4)")
-            };
-        }
-
-        Canvas FindBottomCanvas()
-        {
-            foreach (Canvas canvas in Refs_Manager.game_uibase.canvases)
-            {
-                if (canvas.name == "Canvas (bottom screen UI)")
-                    return canvas;
-            }
-            return null;
-        }
-
-        GameObject NavigateTo(GameObject root, params string[] path)
-        {
-            GameObject current = root;
-            foreach (string name in path)
-            {
-                current = Functions.GetChild(current, name);
-                if (current.IsNullOrDestroyed()) return null;
-            }
-            return current;
-        }
-
-        KeyCode GetKeyBind(GameObject go)
-        {
-            if (go.IsNullOrDestroyed()) return KeyCode.None;
-
-            GameObject input = Functions.GetChild(go, "Ability Input Character");
-            if (input.IsNullOrDestroyed()) return KeyCode.None;
-
-            var keybindText = input.GetComponent<Il2CppTMPro.TextMeshProUGUI>();
-            if (keybindText.IsNullOrDestroyed()) return KeyCode.None;
-
-            string text = keybindText.text;
-            if (text.Length == 1 && char.IsLetter(text[0]) &&
-                System.Enum.TryParse<KeyCode>(text.ToUpper(), out var key))
-                return key;
-
-            return KeyCode.None;
-        }
     }
 }
