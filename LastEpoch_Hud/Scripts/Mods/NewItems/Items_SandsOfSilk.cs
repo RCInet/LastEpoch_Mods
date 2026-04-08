@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using System;
+using HarmonyLib;
 using Il2Cpp;
 using Il2CppLE.Services.Models.Items;
 using Il2CppLE.Services.Visuals;
@@ -390,6 +391,14 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                         __0.SubType = 0;
                         __0.UniqueID = 7; //The Krestel
                     }
+                }
+
+                [HarmonyFinalizer]
+                static Exception Finalizer(Exception __exception)
+                {
+                    if (__exception != null)
+                        MelonLogger.Warning($"GetItemVisual threw: {__exception.GetType().Name}");
+                    return null;
                 }
             }
         }
