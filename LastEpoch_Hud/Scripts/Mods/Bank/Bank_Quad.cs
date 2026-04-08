@@ -512,6 +512,15 @@ namespace LastEpoch_Hud.Scripts.Mods.Bank
             [HarmonyPatch(typeof(ConfigureTabUI), "OnEnable")]
             public class ConfigureTabUI_OnEnable
             {
+                [HarmonyPrepare]
+                static bool Prepare()
+                {
+                    bool found = AccessTools.DeclaredMethod(typeof(ConfigureTabUI), "OnEnable") != null;
+                    if (!found)
+                        MelonLogger.Warning("ConfigureTabUI.OnEnable not found, skipping Quad Stash config UI patch");
+                    return found;
+                }
+
                 [HarmonyPrefix]
                 static void Prefix(ref ConfigureTabUI __instance)
                 {
