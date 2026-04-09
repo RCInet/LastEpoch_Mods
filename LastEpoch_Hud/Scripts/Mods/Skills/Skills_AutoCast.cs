@@ -182,7 +182,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             return EpochInputManager.CtrlPressed();
 #elif WINGAMEPAD
             // LB - only buttons 0-5 (A,B,X,Y,LB,RB) work reliably as KeyCode on Xbox controllers
-            return Input.GetKey(KeyCode.Joystick1Button4);
+            return Input.GetKey(KeyCode.JoystickButton4);
 #else
             return false;
 #endif
