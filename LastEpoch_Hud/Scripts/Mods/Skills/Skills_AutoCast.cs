@@ -12,7 +12,17 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         public Skills_AutoCast(System.IntPtr ptr) : base(ptr) { }
 
         const int SlotCount = 5;
+        // Rewired action IDs for ability bar slots 1-5; IDs 4,5 are skipped in the game's mapping
         static readonly int[] AbilityActionIds = { 1, 2, 3, 6, 7 };
+
+        public struct PlayerSkill
+        {
+            public Ability ability;
+            public bool channeled;
+            public bool autocast;
+            public bool channel_on;
+            public bool channeling_active;
+        }
 
         enum InitState { NeedsUpdate, Ready }
 
@@ -28,6 +38,12 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         {
             instance = this;
             _state = InitState.NeedsUpdate;
+        }
+
+        // Sets guard to stop casting/channeling when the game loses focus
+        void OnApplicationFocus(bool hasFocus)
+        {
+            _appFocus = hasFocus;
         }
 
         void Update()
@@ -59,6 +75,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                     anyActive = true;
             }
 
+            // We skip raycasting when nothing needs it so we don't call GetTargetPosition unnecessarily
             if (!anyActive)
                 return;
 
@@ -74,28 +91,14 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             }
         }
 
-        void OnApplicationFocus(bool hasFocus)
-        {
-            _appFocus = hasFocus;
-        }
-
-        public struct PlayerSkill
-        {
-            public Ability ability;
-            public bool channeled;
-            public bool autocast;
-            public bool channel_on;
-            public bool channeling_active;
-        }
-
         void InitializeSkills()
         {
-            _skills = new PlayerSkill[SlotCount];
-
-            if (Refs_Manager.player_treedata.IsNullOrDestroyed()) { _state = InitState.Ready; return; }
+            if (Refs_Manager.player_treedata.IsNullOrDestroyed()) return;
 
             var abilityList = Refs_Manager.player_treedata.playerAbilityList;
-            if (abilityList.IsNullOrDestroyed()) { _state = InitState.Ready; return; }
+            if (abilityList.IsNullOrDestroyed()) return;
+
+            _skills = new PlayerSkill[SlotCount];
 
             for (int i = 0; i < SlotCount; i++)
             {
@@ -116,9 +119,9 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         void CacheRefs()
         {
             if (!_chargeManager.IsNullOrDestroyed() &&
-                !(_useAbilityProcessor == null || _useAbilityProcessor.IsNullOrDestroyed()) &&
+                _useAbilityProcessor != null && !_useAbilityProcessor.IsNullOrDestroyed() &&
                 !_playerTransform.IsNullOrDestroyed() &&
-                !(_rewiredPlayer == null || _rewiredPlayer.IsNullOrDestroyed()))
+                _rewiredPlayer != null && !_rewiredPlayer.IsNullOrDestroyed())
                 return;
 
             if (!Refs_Manager.player_actor.IsNullOrDestroyed())
@@ -178,8 +181,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
 #if KEYBOARD
             return EpochInputManager.CtrlPressed();
 #elif WINGAMEPAD
-            // L3 (left stick click)
-            return Input.GetKey(KeyCode.Joystick1Button8);
+            // LB - only buttons 0-5 (A,B,X,Y,LB,RB) work reliably as KeyCode on Xbox controllers
+            return Input.GetKey(KeyCode.Joystick1Button4);
 #else
             return false;
 #endif
@@ -229,6 +232,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             catch { return false; }
         }
 
+        // Works for both mouse and gamepad - gamepad uses a virtual cursor that drives the same screen position
         static Vector3 GetTargetPosition(out Transform hitTransform)
         {
             hitTransform = null;
@@ -246,6 +250,5 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                 return _playerTransform.position;
             }
         }
-
     }
 }
