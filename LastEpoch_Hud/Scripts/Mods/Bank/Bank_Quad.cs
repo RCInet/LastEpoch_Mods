@@ -509,21 +509,14 @@ namespace LastEpoch_Hud.Scripts.Mods.Bank
                 }
             }
 
-            [HarmonyPatch(typeof(ConfigureTabUI), "OnEnable")]
-            public class ConfigureTabUI_OnEnable
+            [HarmonyPatch(typeof(ConfigureTabUI), "OnModalOpen")]
+            public class ConfigureTabUI_OnModalOpen
             {
-                [HarmonyPrepare]
-                static bool Prepare()
+                [HarmonyPostfix]
+                static void Postfix(ref ConfigureTabUI __instance)
                 {
-                    bool found = AccessTools.DeclaredMethod(typeof(ConfigureTabUI), "OnEnable") != null;
-                    if (!found)
-                        MelonLogger.Warning("ConfigureTabUI.OnEnable not found, skipping Quad Stash config UI patch");
-                    return found;
-                }
-
-                [HarmonyPrefix]
-                static void Prefix(ref ConfigureTabUI __instance)
-                {
+                    configure_tab_ui = __instance;
+                    open_configure = true;
                     GameObject content = __instance.contents.gameObject;
                     if (!content.IsNullOrDestroyed())
                     {
@@ -566,18 +559,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Bank
                             }
                         }
                     }
-                }
-            }
-
-            [HarmonyPatch(typeof(ConfigureTabUI), "OnModalOpen")]
-            //[HarmonyPatch(typeof(ConfigureTabUI), "SetSelections")]
-            public class ConfigureTabUI_SetSelections
-            {
-                [HarmonyPostfix]
-                static void Postfix(ref ConfigureTabUI __instance) //, int __0, int __1, string __2, int __3, int __4, Il2CppSystem.Collections.Generic.List<string> __5, Il2CppSystem.Collections.Generic.List<int> __6, bool __7, StashPriority __8)
-                {
-                    configure_tab_ui = __instance;
-                    open_configure = true;
                 }
             }
 
