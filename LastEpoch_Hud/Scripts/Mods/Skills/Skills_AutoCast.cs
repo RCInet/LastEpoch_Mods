@@ -16,8 +16,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         const int SlotCount = 5;
         // Rewired action IDs for ability bar slots 1-5; IDs 4,5 are skipped in the game's mapping
         static readonly int[] AbilityActionIds = { 1, 2, 3, 6, 7 };
-        static readonly Color autocastTint = new Color(0.6f, 1f, 0.6f, 1f);
-
         public struct PlayerSkill
         {
             public Ability ability;
@@ -38,7 +36,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         static Player rewiredPlayer;
         static UsingAbilityPlayer abilityState;
         static bool wasTransformed;
-
         // Prevents the Harmony patch from blocking our own ability calls
         static bool fromAutocast;
 
@@ -108,7 +105,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                 HandleChanneling(i, targetPos, hitTransform);
             }
 
-            UpdateIconTints();
+            UpdateIconShine();
         }
 
         void InitializeSkills()
@@ -154,11 +151,11 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             var abilityList = Refs_Manager.player_treedata.playerAbilityList;
             if (abilityList.IsNullOrDestroyed()) return;
 
-            bool is_transformed = false;
-            try { is_transformed = abilityList.isTransformed(); } catch { }
+            bool isTransformed = false;
+            try { isTransformed = abilityList.isTransformed(); } catch { }
 
-            if (is_transformed == wasTransformed) return;
-            wasTransformed = is_transformed;
+            if (isTransformed == wasTransformed) return;
+            wasTransformed = isTransformed;
             ClearAllToggles();
             state = InitState.NeedsUpdate;
         }
@@ -210,7 +207,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         void HandleInput(int i)
         {
             if (rewiredPlayer == null || rewiredPlayer.IsNullOrDestroyed()) return;
-            if (!rewiredPlayer.GetButtonUp(AbilityActionIds[i])) return;
+            if (!rewiredPlayer.GetButtonDown(AbilityActionIds[i])) return;
 
             bool modifier = IsModifierHeld();
 
@@ -346,10 +343,16 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             }
         }
 
-        static void UpdateIconTints()
+        static void UpdateIconShine()
         {
             var icons = AbilityBarIcon.all;
             if (icons == null) return;
+
+            float t = (Mathf.Sin(Time.time * 5f) + 1f) * 0.5f;
+            float scale = Mathf.Lerp(0.92f, 1.15f, t);
+            float green = Mathf.Lerp(1f, 0.75f, t);
+            float blue = Mathf.Lerp(1f, 0.4f, t);
+            var tint = new Color(1f, green, blue, 1f);
 
             for (int i = 0; i < icons.Count; i++)
             {
@@ -360,7 +363,10 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                 bool active = slot >= 0 && slot < SlotCount &&
                     (skills[slot].autocastEnabled || skills[slot].channelEnabled);
 
-                barIcon.icon.color = active ? autocastTint : Color.white;
+                barIcon.transform.localScale = active
+                    ? new Vector3(scale, scale, 1f)
+                    : Vector3.one;
+                barIcon.icon.color = active ? tint : Color.white;
             }
         }
 
