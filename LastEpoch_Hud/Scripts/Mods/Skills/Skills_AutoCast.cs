@@ -1,4 +1,5 @@
-﻿using Il2Cpp;
+﻿using HarmonyLib;
+using Il2Cpp;
 using MelonLoader;
 using Il2CppRewired;
 using UnityEngine;
@@ -33,6 +34,10 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         static UseAbilityProcessor _useAbilityProcessor;
         static Transform _playerTransform;
         static Player _rewiredPlayer;
+        static UsingAbilityPlayer _abilityState;
+
+        // Guards our own UseBarAbilityCommand calls from being suppressed by the Harmony patch
+        static bool _fromAutocast;
 
         void Awake()
         {
@@ -50,6 +55,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         {
             if (!Scenes.IsGameScene())
             {
+                if (_state == InitState.Ready)
+                    ClearAllToggles();
                 _state = InitState.NeedsUpdate;
                 return;
             }
@@ -116,12 +123,25 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             _state = InitState.Ready;
         }
 
+        // Zone transitions (monolith exit, loading screens) should stop all active casts
+        void ClearAllToggles()
+        {
+            for (int i = 0; i < SlotCount; i++)
+            {
+                _skills[i].autocast = false;
+                _skills[i].channel_on = false;
+                _skills[i].channeling_active = false;
+            }
+        }
+
+        // IL2CPP refs can become null mid-frame when the engine destroys objects; re-acquire as needed
         void CacheRefs()
         {
             if (!_chargeManager.IsNullOrDestroyed() &&
                 _useAbilityProcessor != null && !_useAbilityProcessor.IsNullOrDestroyed() &&
                 !_playerTransform.IsNullOrDestroyed() &&
-                _rewiredPlayer != null && !_rewiredPlayer.IsNullOrDestroyed())
+                _rewiredPlayer != null && !_rewiredPlayer.IsNullOrDestroyed() &&
+                !_abilityState.IsNullOrDestroyed())
                 return;
 
             if (!Refs_Manager.player_actor.IsNullOrDestroyed())
@@ -134,6 +154,11 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                 if (_playerTransform.IsNullOrDestroyed())
                 {
                     try { _playerTransform = Refs_Manager.player_actor.transform; }
+                    catch { }
+                }
+                if (_abilityState.IsNullOrDestroyed())
+                {
+                    try { _abilityState = Refs_Manager.player_actor.GetComponent<UsingAbilityPlayer>(); }
                     catch { }
                 }
             }
@@ -166,9 +191,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                     _skills[i].channel_on = !_skills[i].channel_on;
                 else if (_skills[i].channel_on)
                     _skills[i].channel_on = false;
-
-                if (!_skills[i].channel_on && _skills[i].channeling_active)
-                    _skills[i].channeling_active = false;
             }
             else if (modifier)
             {
@@ -176,16 +198,43 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             }
         }
 
+        // Rewired GamepadTemplate element ID for d-pad left
+        const int DpadLeftElementId = 22;
+
         static bool IsModifierHeld()
         {
 #if KEYBOARD
             return EpochInputManager.CtrlPressed();
 #elif WINGAMEPAD
-            // LB - only buttons 0-5 (A,B,X,Y,LB,RB) work reliably as KeyCode on Xbox controllers
-            return Input.GetKey(KeyCode.JoystickButton4);
+            // Read d-pad left through Rewired's controller API
+            // Rewired exposes d-pad as buttons
+            if (_rewiredPlayer == null || _rewiredPlayer.IsNullOrDestroyed()) return false;
+            try
+            {
+                var joystick = _rewiredPlayer.controllers.GetLastActiveController(ControllerType.Joystick);
+                return joystick != null && joystick.GetButtonById(DpadLeftElementId);
+            }
+            catch { return false; }
 #else
             return false;
 #endif
+        }
+
+        static void StartAbility(int slot, Vector3 targetPos, Transform hitTransform)
+        {
+            _fromAutocast = true;
+            try { _useAbilityProcessor.UseBarAbilityCommand(true, slot + 1, -1, targetPos, hitTransform, false); }
+            catch { }
+            finally { _fromAutocast = false; }
+        }
+
+        // UseBarAbilityCommand(false) does NOT stop channeling - it only affects buffering.
+        // Offline path: UsingAbilityPlayer.stopUsingAbility stops the active channel.
+        static void StopChanneling()
+        {
+            if (_abilityState.IsNullOrDestroyed()) return;
+            try { _abilityState.stopUsingAbility(true); }
+            catch { }
         }
 
         void HandleAutoCast(int i, Vector3 targetPos, Transform hitTransform)
@@ -193,8 +242,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             if (!_skills[i].autocast || !_appFocus) return;
             if (IsOnCooldown(_skills[i].ability)) return;
 
-            try { _useAbilityProcessor.UseBarAbilityCommand(true, i + 1, -1, targetPos, hitTransform, false); }
-            catch { }
+            StartAbility(i, targetPos, hitTransform);
         }
 
         void HandleChanneling(int i, Vector3 targetPos, Transform hitTransform)
@@ -204,23 +252,33 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                 if (_skills[i].channeling_active)
                 {
                     _skills[i].channeling_active = false;
-                    try { _useAbilityProcessor.UseBarAbilityCommand(false, i + 1, -1, targetPos, hitTransform, false); }
-                    catch { }
+                    StopChanneling();
                 }
                 return;
             }
 
-            if (!_skills[i].channeling_active)
-            {
-                _skills[i].channeling_active = true;
-                try { _useAbilityProcessor.UseBarAbilityCommand(true, i + 1, -1, targetPos, hitTransform, false); }
-                catch { }
-            }
-            else if (!_appFocus)
+            if (!_appFocus)
             {
                 _skills[i].channeling_active = false;
                 _skills[i].channel_on = false;
-                try { _useAbilityProcessor.UseBarAbilityCommand(false, i + 1, -1, targetPos, hitTransform, false); }
+                StopChanneling();
+                return;
+            }
+
+            // Wait out cooldown without disabling - resume channeling when ready
+            if (IsOnCooldown(_skills[i].ability))
+                return;
+
+            if (!_skills[i].channeling_active)
+            {
+                // Start channeling once - the game sustains it internally
+                _skills[i].channeling_active = true;
+                StartAbility(i, targetPos, hitTransform);
+            }
+            else
+            {
+                // Update aim direction while channeling (e.g. Warpath steering)
+                try { _abilityState.TryUpdateTargetLocationIfChannelling(targetPos); }
                 catch { }
             }
         }
@@ -248,6 +306,19 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             catch
             {
                 return _playerTransform.position;
+            }
+        }
+
+        // Block the game's native ability activation when modifier is held,
+        // so CTRL+ability only toggles autocast without firing the ability
+        [HarmonyPatch(typeof(UseAbilityProcessor), nameof(UseAbilityProcessor.UseBarAbilityCommand))]
+        public class UseBarAbilityCommand_Patch
+        {
+            [HarmonyPrefix]
+            static bool Prefix()
+            {
+                if (_fromAutocast) return true;
+                return !IsModifierHeld();
             }
         }
     }
