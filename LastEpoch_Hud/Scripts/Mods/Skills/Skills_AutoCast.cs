@@ -3,6 +3,7 @@ using Il2Cpp;
 using MelonLoader;
 using Il2CppRewired;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace LastEpoch_Hud.Scripts.Mods.Skills
 {
@@ -15,87 +16,99 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         const int SlotCount = 5;
         // Rewired action IDs for ability bar slots 1-5; IDs 4,5 are skipped in the game's mapping
         static readonly int[] AbilityActionIds = { 1, 2, 3, 6, 7 };
+        static readonly Color autocastTint = new Color(0.6f, 1f, 0.6f, 1f);
 
         public struct PlayerSkill
         {
             public Ability ability;
             public bool channeled;
-            public bool autocast;
-            public bool channel_on;
-            public bool channeling_active;
+            public bool autocastEnabled;
+            public bool channelEnabled;
+            public bool channelSustaining;
         }
 
         enum InitState { NeedsUpdate, Ready }
 
-        static InitState _state = InitState.NeedsUpdate;
-        static PlayerSkill[] _skills = new PlayerSkill[SlotCount];
-        static bool _appFocus = true;
-        static PlayerChargeManager _chargeManager;
-        static UseAbilityProcessor _useAbilityProcessor;
-        static Transform _playerTransform;
-        static Player _rewiredPlayer;
-        static UsingAbilityPlayer _abilityState;
+        static InitState state = InitState.NeedsUpdate;
+        static PlayerSkill[] skills = new PlayerSkill[SlotCount];
+        static bool appFocus = true;
+        static PlayerChargeManager chargeManager;
+        static UseAbilityProcessor useAbilityProcessor;
+        static Transform playerTransform;
+        static Player rewiredPlayer;
+        static UsingAbilityPlayer abilityState;
+        static bool wasTransformed;
 
-        // Guards our own UseBarAbilityCommand calls from being suppressed by the Harmony patch
-        static bool _fromAutocast;
+        // Prevents the Harmony patch from blocking our own ability calls
+        static bool fromAutocast;
 
         void Awake()
         {
             instance = this;
-            _state = InitState.NeedsUpdate;
+            state = InitState.NeedsUpdate;
         }
 
-        // Sets guard to stop casting/channeling when the game loses focus
+        // Stops casting when alt-tabbed
         void OnApplicationFocus(bool hasFocus)
         {
-            _appFocus = hasFocus;
+            appFocus = hasFocus;
         }
 
         void Update()
         {
             if (!Scenes.IsGameScene())
             {
-                if (_state == InitState.Ready)
+                if (state == InitState.Ready)
                     ClearAllToggles();
-                _state = InitState.NeedsUpdate;
+                state = InitState.NeedsUpdate;
                 return;
             }
 
-            if (_state == InitState.NeedsUpdate)
+            if (state == InitState.NeedsUpdate)
                 InitializeSkills();
 
-            if (_state != InitState.Ready)
+            if (state != InitState.Ready)
                 return;
 
             CacheRefs();
-            if (_useAbilityProcessor == null || _useAbilityProcessor.IsNullOrDestroyed())
+            if (useAbilityProcessor == null || useAbilityProcessor.IsNullOrDestroyed())
+                return;
+
+            CheckTransformChange();
+            if (state != InitState.Ready)
                 return;
 
             bool anyActive = false;
             for (int i = 0; i < SlotCount; i++)
             {
-                if (_skills[i].ability.IsNullOrDestroyed())
+                if (skills[i].ability.IsNullOrDestroyed())
                     continue;
 
                 HandleInput(i);
-                if (_skills[i].autocast || _skills[i].channel_on || _skills[i].channeling_active)
+                if (skills[i].autocastEnabled || skills[i].channelEnabled || skills[i].channelSustaining)
                     anyActive = true;
             }
 
-            // We skip raycasting when nothing needs it so we don't call GetTargetPosition unnecessarily
+            // Skip expensive raycast when no slots need it
             if (!anyActive)
                 return;
+
+            // Manual input takes priority, defer autocast while player holds any ability key
+            bool manualInput = IsPlayerHoldingAbilityKey();
 
             Vector3 targetPos = GetTargetPosition(out Transform hitTransform);
 
             for (int i = 0; i < SlotCount; i++)
             {
-                if (_skills[i].ability.IsNullOrDestroyed())
+                if (skills[i].ability.IsNullOrDestroyed())
                     continue;
 
-                HandleAutoCast(i, targetPos, hitTransform);
+                if (!manualInput)
+                    HandleAutoCast(i, targetPos, hitTransform);
                 HandleChanneling(i, targetPos, hitTransform);
             }
+
+            UpdateIconTints();
         }
 
         void InitializeSkills()
@@ -105,7 +118,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             var abilityList = Refs_Manager.player_treedata.playerAbilityList;
             if (abilityList.IsNullOrDestroyed()) return;
 
-            _skills = new PlayerSkill[SlotCount];
+            skills = new PlayerSkill[SlotCount];
 
             for (int i = 0; i < SlotCount; i++)
             {
@@ -113,66 +126,82 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                 try { ability = abilityList.getAbility(i); } catch { }
                 if (ability.IsNullOrDestroyed()) continue;
 
-                _skills[i] = new PlayerSkill
+                skills[i] = new PlayerSkill
                 {
                     ability = ability,
                     channeled = ability.channelled
                 };
             }
 
-            _state = InitState.Ready;
+            state = InitState.Ready;
         }
 
-        // Zone transitions (monolith exit, loading screens) should stop all active casts
+        // Zone transitions clear all toggles
         void ClearAllToggles()
         {
             for (int i = 0; i < SlotCount; i++)
             {
-                _skills[i].autocast = false;
-                _skills[i].channel_on = false;
-                _skills[i].channeling_active = false;
+                skills[i].autocastEnabled = false;
+                skills[i].channelEnabled = false;
+                skills[i].channelSustaining = false;
             }
         }
 
-        // IL2CPP refs can become null mid-frame when the engine destroys objects; re-acquire as needed
+        // Transform swaps the ability bar, re-init to pick up new abilities
+        void CheckTransformChange()
+        {
+            if (Refs_Manager.player_treedata.IsNullOrDestroyed()) return;
+            var abilityList = Refs_Manager.player_treedata.playerAbilityList;
+            if (abilityList.IsNullOrDestroyed()) return;
+
+            bool is_transformed = false;
+            try { is_transformed = abilityList.isTransformed(); } catch { }
+
+            if (is_transformed == wasTransformed) return;
+            wasTransformed = is_transformed;
+            ClearAllToggles();
+            state = InitState.NeedsUpdate;
+        }
+
+        // IL2CPP refs can become null mid-frame, re-acquire as needed
         void CacheRefs()
         {
-            if (!_chargeManager.IsNullOrDestroyed() &&
-                _useAbilityProcessor != null && !_useAbilityProcessor.IsNullOrDestroyed() &&
-                !_playerTransform.IsNullOrDestroyed() &&
-                _rewiredPlayer != null && !_rewiredPlayer.IsNullOrDestroyed() &&
-                !_abilityState.IsNullOrDestroyed())
+            if (!chargeManager.IsNullOrDestroyed() &&
+                useAbilityProcessor != null && !useAbilityProcessor.IsNullOrDestroyed() &&
+                !playerTransform.IsNullOrDestroyed() &&
+                rewiredPlayer != null && !rewiredPlayer.IsNullOrDestroyed() &&
+                !abilityState.IsNullOrDestroyed())
                 return;
 
             if (!Refs_Manager.player_actor.IsNullOrDestroyed())
             {
-                if (_chargeManager.IsNullOrDestroyed())
+                if (chargeManager.IsNullOrDestroyed())
                 {
-                    try { _chargeManager = Refs_Manager.player_actor.GetComponent<PlayerChargeManager>(); }
+                    try { chargeManager = Refs_Manager.player_actor.GetComponent<PlayerChargeManager>(); }
                     catch { }
                 }
-                if (_playerTransform.IsNullOrDestroyed())
+                if (playerTransform.IsNullOrDestroyed())
                 {
-                    try { _playerTransform = Refs_Manager.player_actor.transform; }
+                    try { playerTransform = Refs_Manager.player_actor.transform; }
                     catch { }
                 }
-                if (_abilityState.IsNullOrDestroyed())
+                if (abilityState.IsNullOrDestroyed())
                 {
-                    try { _abilityState = Refs_Manager.player_actor.GetComponent<UsingAbilityPlayer>(); }
+                    try { abilityState = Refs_Manager.player_actor.GetComponent<UsingAbilityPlayer>(); }
                     catch { }
                 }
             }
 
             if (!Refs_Manager.epoch_input_manager.IsNullOrDestroyed())
             {
-                if (_useAbilityProcessor == null || _useAbilityProcessor.IsNullOrDestroyed())
+                if (useAbilityProcessor == null || useAbilityProcessor.IsNullOrDestroyed())
                 {
-                    try { _useAbilityProcessor = Refs_Manager.epoch_input_manager.useAbilityProcessor; }
+                    try { useAbilityProcessor = Refs_Manager.epoch_input_manager.useAbilityProcessor; }
                     catch { }
                 }
-                if (_rewiredPlayer == null || _rewiredPlayer.IsNullOrDestroyed())
+                if (rewiredPlayer == null || rewiredPlayer.IsNullOrDestroyed())
                 {
-                    try { _rewiredPlayer = Refs_Manager.epoch_input_manager.rewiredPlayer; }
+                    try { rewiredPlayer = Refs_Manager.epoch_input_manager.rewiredPlayer; }
                     catch { }
                 }
             }
@@ -180,21 +209,21 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
 
         void HandleInput(int i)
         {
-            if (_rewiredPlayer == null || _rewiredPlayer.IsNullOrDestroyed()) return;
-            if (!_rewiredPlayer.GetButtonUp(AbilityActionIds[i])) return;
+            if (rewiredPlayer == null || rewiredPlayer.IsNullOrDestroyed()) return;
+            if (!rewiredPlayer.GetButtonUp(AbilityActionIds[i])) return;
 
             bool modifier = IsModifierHeld();
 
-            if (_skills[i].channeled)
+            if (skills[i].channeled)
             {
                 if (modifier)
-                    _skills[i].channel_on = !_skills[i].channel_on;
-                else if (_skills[i].channel_on)
-                    _skills[i].channel_on = false;
+                    skills[i].channelEnabled = !skills[i].channelEnabled;
+                else if (skills[i].channelEnabled)
+                    skills[i].channelEnabled = false;
             }
             else if (modifier)
             {
-                _skills[i].autocast = !_skills[i].autocast;
+                skills[i].autocastEnabled = !skills[i].autocastEnabled;
             }
         }
 
@@ -206,12 +235,11 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
 #if KEYBOARD
             return EpochInputManager.CtrlPressed();
 #elif WINGAMEPAD
-            // Read d-pad left through Rewired's controller API
-            // Rewired exposes d-pad as buttons
-            if (_rewiredPlayer == null || _rewiredPlayer.IsNullOrDestroyed()) return false;
+            // D-pad left via Rewired (element ID 22)
+            if (rewiredPlayer == null || rewiredPlayer.IsNullOrDestroyed()) return false;
             try
             {
-                var joystick = _rewiredPlayer.controllers.GetLastActiveController(ControllerType.Joystick);
+                var joystick = rewiredPlayer.controllers.GetLastActiveController(ControllerType.Joystick);
                 return joystick != null && joystick.GetButtonById(DpadLeftElementId);
             }
             catch { return false; }
@@ -220,105 +248,144 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
 #endif
         }
 
-        static void StartAbility(int slot, Vector3 targetPos, Transform hitTransform)
+        static bool IsPlayerHoldingAbilityKey()
         {
-            _fromAutocast = true;
-            try { _useAbilityProcessor.UseBarAbilityCommand(true, slot + 1, -1, targetPos, hitTransform, false); }
-            catch { }
-            finally { _fromAutocast = false; }
+            if (rewiredPlayer == null || rewiredPlayer.IsNullOrDestroyed()) return false;
+            for (int i = 0; i < SlotCount; i++)
+            {
+                if (rewiredPlayer.GetButton(AbilityActionIds[i])) return true;
+            }
+            return false;
         }
 
-        // UseBarAbilityCommand(false) does NOT stop channeling - it only affects buffering.
-        // Offline path: UsingAbilityPlayer.stopUsingAbility stops the active channel.
+        static void StartAbility(int slot, Vector3 targetPos, Transform hitTransform)
+        {
+            fromAutocast = true;
+            try { useAbilityProcessor.UseBarAbilityCommand(true, slot + 1, -1, targetPos, hitTransform, false); }
+            catch { }
+            finally { fromAutocast = false; }
+        }
+
+        // UseBarAbilityCommand(false) doesn't stop channeling, need explicit stop call
         static void StopChanneling()
         {
-            if (_abilityState.IsNullOrDestroyed()) return;
-            try { _abilityState.stopUsingAbility(true); }
+            if (abilityState.IsNullOrDestroyed()) return;
+            try { abilityState.stopUsingAbility(true); }
             catch { }
         }
 
         void HandleAutoCast(int i, Vector3 targetPos, Transform hitTransform)
         {
-            if (!_skills[i].autocast || !_appFocus) return;
-            if (IsOnCooldown(_skills[i].ability)) return;
+            if (!skills[i].autocastEnabled || !appFocus) return;
+            if (IsOnCooldown(skills[i].ability)) return;
 
             StartAbility(i, targetPos, hitTransform);
         }
 
         void HandleChanneling(int i, Vector3 targetPos, Transform hitTransform)
         {
-            if (!_skills[i].channel_on)
+            if (!skills[i].channelEnabled)
             {
-                if (_skills[i].channeling_active)
+                if (skills[i].channelSustaining)
                 {
-                    _skills[i].channeling_active = false;
+                    skills[i].channelSustaining = false;
                     StopChanneling();
                 }
                 return;
             }
 
-            if (!_appFocus)
+            if (!appFocus)
             {
-                _skills[i].channeling_active = false;
-                _skills[i].channel_on = false;
+                skills[i].channelSustaining = false;
+                skills[i].channelEnabled = false;
                 StopChanneling();
                 return;
             }
 
-            // Wait out cooldown without disabling - resume channeling when ready
-            if (IsOnCooldown(_skills[i].ability))
+            // Wait out cooldown, resume when ready
+            if (IsOnCooldown(skills[i].ability))
                 return;
 
-            if (!_skills[i].channeling_active)
+            if (!skills[i].channelSustaining)
             {
-                // Start channeling once - the game sustains it internally
-                _skills[i].channeling_active = true;
+                // Start once, game sustains internally
+                skills[i].channelSustaining = true;
                 StartAbility(i, targetPos, hitTransform);
             }
             else
             {
-                // Update aim direction while channeling (e.g. Warpath steering)
-                try { _abilityState.TryUpdateTargetLocationIfChannelling(targetPos); }
+                // Update aim while channeling (Warpath steering etc.)
+                try { abilityState.TryUpdateTargetLocationIfChannelling(targetPos); }
                 catch { }
             }
         }
 
         bool IsOnCooldown(Ability ability)
         {
-            if (_chargeManager.IsNullOrDestroyed()) return false;
-            try { return _chargeManager.onCoooldown(ability); }
+            if (chargeManager.IsNullOrDestroyed()) return false;
+            try { return chargeManager.onCoooldown(ability); }
             catch { return false; }
         }
 
-        // Works for both mouse and gamepad - gamepad uses a virtual cursor that drives the same screen position
+        // Works for both mouse and gamepad (virtual cursor drives same screen position)
         static Vector3 GetTargetPosition(out Transform hitTransform)
         {
             hitTransform = null;
-            if (_playerTransform.IsNullOrDestroyed())
+            if (playerTransform.IsNullOrDestroyed())
                 return Vector3.zero;
 
             try
             {
                 Vector3 pos = MouseManager.AbilityUseMousePoint(
-                    out hitTransform, out _, false, _playerTransform);
+                    out hitTransform, out _, false, playerTransform);
                 return pos;
             }
             catch
             {
-                return _playerTransform.position;
+                return playerTransform.position;
             }
         }
 
-        // Block the game's native ability activation when modifier is held,
-        // so CTRL+ability only toggles autocast without firing the ability
+        static void UpdateIconTints()
+        {
+            var icons = AbilityBarIcon.all;
+            if (icons == null) return;
+
+            for (int i = 0; i < icons.Count; i++)
+            {
+                var barIcon = icons[i];
+                if (barIcon.IsNullOrDestroyed()) continue;
+
+                int slot = barIcon.abilityNumber - 1;
+                bool active = slot >= 0 && slot < SlotCount &&
+                    (skills[slot].autocastEnabled || skills[slot].channelEnabled);
+
+                barIcon.icon.color = active ? autocastTint : Color.white;
+            }
+        }
+
+        // Suppress native ability fire when modifier held, so it only toggles autocast
         [HarmonyPatch(typeof(UseAbilityProcessor), nameof(UseAbilityProcessor.UseBarAbilityCommand))]
         public class UseBarAbilityCommand_Patch
         {
             [HarmonyPrefix]
             static bool Prefix()
             {
-                if (_fromAutocast) return true;
+                if (fromAutocast) return true;
                 return !IsModifierHeld();
+            }
+        }
+
+        // External interruption (stun, manual cast) resets sustaining so channel can restart
+        [HarmonyPatch(typeof(UsingAbilityPlayer), nameof(UsingAbilityPlayer.stopUsingAbility))]
+        public class StopUsingAbility_Patch
+        {
+            [HarmonyPostfix]
+            static void Postfix()
+            {
+                if (fromAutocast) return;
+                for (int i = 0; i < SlotCount; i++)
+                    skills[i].channelSustaining = false;
             }
         }
     }
