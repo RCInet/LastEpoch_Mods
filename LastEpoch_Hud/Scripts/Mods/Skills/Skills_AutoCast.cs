@@ -219,25 +219,27 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                     skills[i].channelEnabled = false;
             }
             else if (modifier)
-            {
                 skills[i].autocastEnabled = !skills[i].autocastEnabled;
-            }
         }
-
-        // Rewired GamepadTemplate element ID for d-pad left
-        const int DpadLeftElementId = 22;
 
         static bool IsModifierHeld()
         {
 #if KEYBOARD
             return EpochInputManager.CtrlPressed();
 #elif WINGAMEPAD
-            // D-pad left via Rewired (element ID 22)
             if (rewiredPlayer == null || rewiredPlayer.IsNullOrDestroyed()) return false;
             try
             {
                 var joystick = rewiredPlayer.controllers.GetLastActiveController(ControllerType.Joystick);
-                return joystick != null && joystick.GetButtonById(DpadLeftElementId);
+                if (joystick == null) return false;
+
+                var template = joystick.GetTemplate<GamepadTemplate>();
+                if (template == null) return false;
+
+                var dpad = template.Cast<IGamepadTemplate>().dPad;
+                if (dpad == null) return false;
+
+                return dpad.left.value;
             }
             catch { return false; }
 #else
