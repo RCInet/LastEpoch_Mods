@@ -27,6 +27,10 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
         public static Sprite On_sprite = null;
         public static Sprite Off_sprite = null;
 
+        public static GameObject Settings_panel = null;
+        public static GameObject Settings_obj = null;
+        public static Button Settings_btn = null;
+
         public static GameObject Skill_prefab = null;
         public static System.Collections.Generic.List<Ability> Abilities = new System.Collections.Generic.List<Ability>();
         public static System.Collections.Generic.List<Skill> Skills = new System.Collections.Generic.List<Skill>();
@@ -190,8 +194,20 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                                     Reset_btn = Reset_obj.GetComponent<Button>();
                                     if (!Reset_btn.IsNullOrDestroyed()) { Events.Set(Reset_btn, Events.Reset_OnClick_Action); }
                                 }
+
+                                Settings_obj = Functions.GetChild(title, "Settings");
+                                if (!Settings_obj.IsNullOrDestroyed())
+                                {
+                                    Settings_btn = Settings_obj.GetComponent<Button>();
+                                    if (!Settings_btn.IsNullOrDestroyed()) { Events.Set(Settings_btn, Events.Settings_OnClick_Action); }
+                                }
                             }
-                        }                        
+                        }
+                        Settings_panel = Functions.GetChild(DamageMeter_obj, "SettingsPanel");
+                        if (!Settings_panel.IsNullOrDestroyed())
+                        {
+
+                        }
                     }
                     //menu
                     if (!Refs_Manager.game_uibase.IsNullOrDestroyed())
@@ -437,6 +453,12 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
             public static void Reset_Click()
             {
                 UI.Reset();                
+            }
+
+            public static readonly System.Action Settings_OnClick_Action = new System.Action(Settings_Click);
+            public static void Settings_Click()
+            {
+                Settings_panel.active = !Settings_panel.active;
             }
         }
         public class DamageDeal
