@@ -6,7 +6,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
 {
     public class Items_AutoPickup_MemoryAmber
     {
-        public static bool CanRun()
+        /*public static bool CanRun()
         {
             if ((Scenes.IsGameScene()) && (!Save_Manager.instance.IsNullOrDestroyed()) && (!Refs_Manager.player_actor.IsNullOrDestroyed()))
             {
@@ -44,6 +44,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                     }
                 }
             }
-        }
+        }*/
     }
 }

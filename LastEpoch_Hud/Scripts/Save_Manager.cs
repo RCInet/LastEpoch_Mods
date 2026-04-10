@@ -73,7 +73,12 @@ namespace LastEpoch_Hud.Scripts
                     Shrines_Override = false,                       //Change Shrine with another shrines
                     Shrines_Override_id = 0,                        //see Scripts.Mods.Shrines.Shrines_Override.cs
                     Craft_MaxTier = false,                          //Allow craft to T8
-                    //Craft_Corrupted = false                         //Allow craft corrupted item
+                    //Craft_Corrupted = false                       //Allow craft corrupted item
+                },
+                DamageMeter =
+                {
+                    DamageType = 0,                                 //0 = Percent, 1 = Flat
+                    SeparateHitAndDot = false
                 },
                 Login =
                 {
@@ -611,6 +616,7 @@ namespace LastEpoch_Hud.Scripts
                 public Scenes Scenes;
                 public Skills Skills;
                 public Summon Summon;
+                public DamageMeter DamageMeter;
             }
             
             //KeyBinds
@@ -632,6 +638,13 @@ namespace LastEpoch_Hud.Scripts
                 //public bool Craft_Corrupted;
             }
             
+            //DamageMeter
+            public struct DamageMeter
+            {
+                public int DamageType;
+                public bool SeparateHitAndDot;
+            }
+
             //Login
             public struct Login
             {

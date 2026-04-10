@@ -36,9 +36,8 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
         public static System.Collections.Generic.List<Skill> Skills = new System.Collections.Generic.List<Skill>();
         public static float TotalDamageDeal = 0f;
 
-        //Should be added into UI
-        public static bool Show_Percent = true; //set to false to show flat damage
-        public static bool Separate_Dot = true; //set to false to not separate DoT and hit damage
+        public static Dropdown DamageType_Dropdown = null;
+        public static Toggle SeparateDot_Toggle = null;
 
         public static int Frames = 30; //Update append every x frames (to avoid too much performance cost)
         public static int Current_Frame = 0;
@@ -206,7 +205,35 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                         Settings_panel = Functions.GetChild(DamageMeter_obj, "SettingsPanel");
                         if (!Settings_panel.IsNullOrDestroyed())
                         {
-
+                            GameObject content = Functions.GetChild(Settings_panel, "Content");
+                            if (!content.IsNullOrDestroyed())
+                            {
+                                GameObject dropdown = Functions.GetChild(content, "DamageType");
+                                if (!dropdown.IsNullOrDestroyed())
+                                {
+                                    DamageType_Dropdown = dropdown.GetComponent<Dropdown>();
+                                    if (!DamageType_Dropdown.IsNullOrDestroyed())
+                                    {
+                                        if ((Save_Manager.instance.data.DamageMeter.DamageType > 0) &&
+                                            (Save_Manager.instance.data.DamageMeter.DamageType < 2))
+                                        {
+                                            DamageType_Dropdown.value = Save_Manager.instance.data.DamageMeter.DamageType;
+                                        }
+                                        else { DamageType_Dropdown.value = 0; }                                            
+                                        Events.Set_DropDown_Event(DamageType_Dropdown, Events.DamageType_Dropdown_Action);
+                                    }                                    
+                                }
+                                GameObject toggle = Functions.GetChild(content, "SeparateDot");
+                                if (!dropdown.IsNullOrDestroyed())
+                                {
+                                    SeparateDot_Toggle = toggle.GetComponent<Toggle>();
+                                    if (!SeparateDot_Toggle.IsNullOrDestroyed())
+                                    {
+                                        SeparateDot_Toggle.isOn = Save_Manager.instance.data.DamageMeter.SeparateHitAndDot;
+                                        Events.Set_Toggle_Event(SeparateDot_Toggle, Events.SeparateDot_Toggle_Action);
+                                    }                                    
+                                }
+                            }
                         }
                     }
                     //menu
@@ -286,6 +313,11 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                 if (Current_Frame >= Frames)
                 {
                     Current_Frame = 0;
+                    bool Separate_Dot = false;
+                    if (!SeparateDot_Toggle.IsNullOrDestroyed())
+                    {
+                        if (SeparateDot_Toggle.isOn) { Separate_Dot = true; }
+                    }
                     foreach (Skill skill in Skills)
                     {
                         if (!skill.Obj.IsNullOrDestroyed())
@@ -346,6 +378,12 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                                             Text text = text_obj.GetComponent<Text>();
                                             if (!text.IsNullOrDestroyed())
                                             {
+                                                bool Show_Percent = true;
+                                                if (!DamageType_Dropdown.IsNullOrDestroyed())
+                                                {
+                                                    if (DamageType_Dropdown.value == 1) { Show_Percent = false; }
+                                                }
+
                                                 if (Show_Percent)
                                                 {
                                                     float damage_percent = ((damage * 100) / TotalDamageDeal);
@@ -436,6 +474,16 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                     btn.onClick.AddListener(action);
                 }
             }
+            public static void Set_Toggle_Event(Toggle toggle, UnityEngine.Events.UnityAction<bool> action)
+            {
+                toggle.onValueChanged = new Toggle.ToggleEvent();
+                toggle.onValueChanged.AddListener(action);
+            }
+            public static void Set_DropDown_Event(Dropdown dropdown, UnityEngine.Events.UnityAction<int> action)
+            {
+                dropdown.onValueChanged = new Dropdown.DropdownEvent();
+                dropdown.onValueChanged.AddListener(action);
+            }
 
             public static readonly System.Action ToggleVisibility_OnClick_Action = new System.Action(ToggleVisibility_Click);
             public static void ToggleVisibility_Click()
@@ -459,6 +507,25 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
             public static void Settings_Click()
             {
                 Settings_panel.active = !Settings_panel.active;
+                DamageMeter_content.active = !Settings_panel.active;
+            }
+
+            public static readonly System.Action<int> DamageType_Dropdown_Action = new System.Action<int>(Set_DamageType);
+            private static void Set_DamageType(int value)
+            {
+                if ((!Save_Manager.instance.IsNullOrDestroyed()) && (!DamageType_Dropdown.IsNullOrDestroyed()))
+                {
+                    Save_Manager.instance.data.DamageMeter.DamageType = DamageType_Dropdown.value;
+                }
+            }
+
+            public static readonly System.Action<bool> SeparateDot_Toggle_Action = new System.Action<bool>(Set_SeparateDot_Enable);
+            private static void Set_SeparateDot_Enable(bool enable)
+            {
+                if ((!Save_Manager.instance.IsNullOrDestroyed()) && (!SeparateDot_Toggle.IsNullOrDestroyed()))
+                {
+                    Save_Manager.instance.data.DamageMeter.SeparateHitAndDot = SeparateDot_Toggle.isOn;
+                }
             }
         }
         public class DamageDeal
