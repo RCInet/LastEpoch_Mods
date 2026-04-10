@@ -36,6 +36,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         static Player rewiredPlayer;
         static UsingAbilityPlayer abilityState;
         static bool wasTransformed;
+        static string lastSceneName = "";
         // Prevents the Harmony patch from blocking our own ability calls
         static bool fromAutocast;
 
@@ -58,7 +59,15 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                 if (state == InitState.Ready)
                     ClearAllToggles();
                 state = InitState.NeedsUpdate;
+                lastSceneName = "";
                 return;
+            }
+
+            if (Scenes.SceneName != lastSceneName)
+            {
+                lastSceneName = Scenes.SceneName;
+                ClearAllToggles();
+                state = InitState.NeedsUpdate;
             }
 
             if (state == InitState.NeedsUpdate)
@@ -90,9 +99,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             if (!anyActive)
                 return;
 
-            // Manual input takes priority, defer autocast while player holds any ability key
-            bool manualInput = IsPlayerHoldingAbilityKey();
-
             Vector3 targetPos = GetTargetPosition(out Transform hitTransform);
 
             for (int i = 0; i < SlotCount; i++)
@@ -100,7 +106,9 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                 if (skills[i].ability.IsNullOrDestroyed())
                     continue;
 
-                if (!manualInput)
+                // Skip autocast only for the slot the player is manually holding
+                // game's queue (AbilityUseCanInterruptExistingAbility) sequences the rest
+                if (!rewiredPlayer.GetButton(AbilityActionIds[i]))
                     HandleAutoCast(i, targetPos, hitTransform);
                 HandleChanneling(i, targetPos, hitTransform);
             }
@@ -134,7 +142,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         }
 
         // Zone transitions clear all toggles
-        void ClearAllToggles()
+        static void ClearAllToggles()
         {
             for (int i = 0; i < SlotCount; i++)
             {
@@ -245,16 +253,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
 #else
             return false;
 #endif
-        }
-
-        static bool IsPlayerHoldingAbilityKey()
-        {
-            if (rewiredPlayer == null || rewiredPlayer.IsNullOrDestroyed()) return false;
-            for (int i = 0; i < SlotCount; i++)
-            {
-                if (rewiredPlayer.GetButton(AbilityActionIds[i])) return true;
-            }
-            return false;
         }
 
         static void StartAbility(int slot, Vector3 targetPos, Transform hitTransform)
@@ -394,6 +392,32 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                 if (fromAutocast) return;
                 for (int i = 0; i < SlotCount; i++)
                     skills[i].channelSustaining = false;
+            }
+        }
+
+        // Monolith echo entry
+        // clears toggles when loading into a new echo zone
+        [HarmonyPatch(typeof(MonolithZoneManager), "initialise")]
+        public class MonolithZoneInit_Patch
+        {
+            [HarmonyPostfix]
+            static void Postfix()
+            {
+                ClearAllToggles();
+                state = InitState.NeedsUpdate;
+            }
+        }
+
+        // Monolith echo exit
+        // clears toggles when player returns to End of Time after an echo
+        [HarmonyPatch(typeof(MonolithRunsManager), nameof(MonolithRunsManager.onRestZoneEnteredAfterEchoCompleted))]
+        public class MonolithRestEnter_Patch
+        {
+            [HarmonyPostfix]
+            static void Postfix()
+            {
+                ClearAllToggles();
+                state = InitState.NeedsUpdate;
             }
         }
     }
