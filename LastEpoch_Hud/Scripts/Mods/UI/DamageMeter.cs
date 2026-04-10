@@ -36,6 +36,9 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
         public static bool Show_Percent = true; //set to false to show flat damage
         public static bool Separate_Dot = true; //set to false to not separate DoT and hit damage
 
+        public static int Frames = 30; //Update append every x frames (to avoid too much performance cost)
+        public static int Current_Frame = 0;
+
         void Awake()
         {
             instance = this;
@@ -263,85 +266,90 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
             }
             public static void Update()
             {
-                foreach (Skill skill in Skills)
+                Current_Frame++;
+                if (Current_Frame >= Frames)
                 {
-                    if (!skill.Obj.IsNullOrDestroyed())
+                    Current_Frame = 0;
+                    foreach (Skill skill in Skills)
                     {
-                        if (((!Separate_Dot) && (!skill.Dot)) || (Separate_Dot))
+                        if (!skill.Obj.IsNullOrDestroyed())
                         {
-                            GameObject infos = Functions.GetChild(skill.Obj, "Infos");
-                            //Set icon and SkillName                         
-                            if ((!infos.IsNullOrDestroyed()))
+                            if (((!Separate_Dot) && (!skill.Dot)) || (Separate_Dot))
                             {
-                                GameObject icon_obj = Functions.GetChild(infos, "Icon");
-                                if ((!icon_obj.IsNullOrDestroyed()))
+                                GameObject infos = Functions.GetChild(skill.Obj, "Infos");
+                                //Set icon and SkillName                         
+                                if ((!infos.IsNullOrDestroyed()))
                                 {
-                                    GameObject image_obj = Functions.GetChild(icon_obj, "Image");
-                                    if ((!image_obj.IsNullOrDestroyed()))
+                                    GameObject icon_obj = Functions.GetChild(infos, "Icon");
+                                    if ((!icon_obj.IsNullOrDestroyed()))
                                     {
-                                        Image icon = image_obj.GetComponent<Image>();
-                                        if (!icon.IsNullOrDestroyed()) { icon.sprite = skill.Icon; }
-                                    }
-                                }
-                                GameObject skill_name_obj = Functions.GetChild(infos, "SkillName");
-                                if ((!skill_name_obj.IsNullOrDestroyed()))
-                                {
-                                    GameObject text_obj = Functions.GetChild(skill_name_obj, "Text");
-                                    if ((!text_obj.IsNullOrDestroyed()))
-                                    {
-                                        Text text = text_obj.GetComponent<Text>();
-                                        if (!text.IsNullOrDestroyed())
+                                        GameObject image_obj = Functions.GetChild(icon_obj, "Image");
+                                        if ((!image_obj.IsNullOrDestroyed()))
                                         {
-                                            text.text = skill.AbilityName;
-                                            if (skill.Dot) { text.text += " (DoT)"; }
+                                            Image icon = image_obj.GetComponent<Image>();
+                                            if (!icon.IsNullOrDestroyed()) { icon.sprite = skill.Icon; }
                                         }
                                     }
-                                }
-                            }
-                            //Set damage and slider
-                            float damage = 0f;
-                            foreach (float f in skill.Damages) { damage += f; }
-                            if (!Separate_Dot)
-                            {
-                                foreach (Skill s in Skills)
-                                {
-                                    if ((s.AbilityName == skill.AbilityName) && (s.Dot))
+                                    GameObject skill_name_obj = Functions.GetChild(infos, "SkillName");
+                                    if ((!skill_name_obj.IsNullOrDestroyed()))
                                     {
-                                        foreach (float f in s.Damages) { damage += f; }
-                                        break;
-                                    }
-                                }
-                            }
-                            if ((!infos.IsNullOrDestroyed()))
-                            {
-                                GameObject percent_obj = Functions.GetChild(infos, "Percent");
-                                if ((!percent_obj.IsNullOrDestroyed()))
-                                {
-                                    GameObject text_obj = Functions.GetChild(percent_obj, "Text");
-                                    if ((!text_obj.IsNullOrDestroyed()))
-                                    {
-                                        Text text = text_obj.GetComponent<Text>();
-                                        if (!text.IsNullOrDestroyed())
+                                        GameObject text_obj = Functions.GetChild(skill_name_obj, "Text");
+                                        if ((!text_obj.IsNullOrDestroyed()))
                                         {
-                                            if (Show_Percent)
+                                            Text text = text_obj.GetComponent<Text>();
+                                            if (!text.IsNullOrDestroyed())
                                             {
-                                                float damage_percent = ((damage * 100) / TotalDamageDeal);
-                                                text.text = damage_percent.ToString("0.0") + " %";
+                                                text.text = skill.AbilityName;
+                                                if (skill.Dot) { text.text += " (DoT)"; }
                                             }
-                                            else { text.text = System.Convert.ToInt32(damage).ToString(); }
                                         }
                                     }
                                 }
+                                //Set damage and slider
+                                float damage = 0f;
+                                foreach (float f in skill.Damages) { damage += f; }
+                                if (!Separate_Dot)
+                                {
+                                    foreach (Skill s in Skills)
+                                    {
+                                        if ((s.AbilityName == skill.AbilityName) && (s.Dot))
+                                        {
+                                            foreach (float f in s.Damages) { damage += f; }
+                                            break;
+                                        }
+                                    }
+                                }
+                                if ((!infos.IsNullOrDestroyed()))
+                                {
+                                    GameObject percent_obj = Functions.GetChild(infos, "Percent");
+                                    if ((!percent_obj.IsNullOrDestroyed()))
+                                    {
+                                        GameObject text_obj = Functions.GetChild(percent_obj, "Text");
+                                        if ((!text_obj.IsNullOrDestroyed()))
+                                        {
+                                            Text text = text_obj.GetComponent<Text>();
+                                            if (!text.IsNullOrDestroyed())
+                                            {
+                                                if (Show_Percent)
+                                                {
+                                                    float damage_percent = ((damage * 100) / TotalDamageDeal);
+                                                    text.text = damage_percent.ToString("0.0") + " %";
+                                                }
+                                                else { text.text = System.Convert.ToInt32(damage).ToString(); }
+                                            }
+                                        }
+                                    }
+                                }
+                                GameObject skill_bar_obj = Functions.GetChild(skill.Obj, "SkillBar");
+                                if (!skill_bar_obj.IsNullOrDestroyed())
+                                {
+                                    Slider slider = skill_bar_obj.GetComponent<Slider>();
+                                    if (!slider.IsNullOrDestroyed()) { slider.value = damage * 100 / TotalDamageDeal; }
+                                }
+                                if (!skill.Obj.active) { skill.Obj.active = true; }
                             }
-                            GameObject skill_bar_obj = Functions.GetChild(skill.Obj, "SkillBar");
-                            if (!skill_bar_obj.IsNullOrDestroyed())
-                            {
-                                Slider slider = skill_bar_obj.GetComponent<Slider>();
-                                if (!slider.IsNullOrDestroyed()) { slider.value = damage * 100 / TotalDamageDeal; }
-                            }
-                            if (!skill.Obj.active) { skill.Obj.active = true; }
+                            else if (skill.Obj.active) { skill.Obj.active = false; }
                         }
-                        else if (skill.Obj.active) { skill.Obj.active = false; }
                     }
                 }
             }
