@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using System.Collections.Generic;
+using HarmonyLib;
 using Il2Cpp;
 using MelonLoader;
 using Il2CppRewired;
@@ -14,15 +15,17 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         public Skills_AutoCast(System.IntPtr ptr) : base(ptr) { }
 
         const int SlotCount = 5;
+        const int HumanFormKey = -1;
         // Rewired action IDs for ability bar slots 1-5; IDs 4,5 are skipped in the game's mapping
         static readonly int[] AbilityActionIds = { 1, 2, 3, 6, 7 };
+        const float PressThrottleSeconds = 0.1f;
         public struct PlayerSkill
         {
             public Ability ability;
             public bool channeled;
-            public bool autocastEnabled;
-            public bool channelEnabled;
-            public bool channelSustaining;
+            public bool autocastOn;
+            public bool held;
+            public float nextPressTime;
         }
 
         enum InitState { NeedsUpdate, Ready }
@@ -35,9 +38,9 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         static Transform playerTransform;
         static Player rewiredPlayer;
         static UsingAbilityPlayer abilityState;
-        static bool wasTransformed;
+        static int lastFormKey = HumanFormKey;
+        static readonly Dictionary<int, bool[]> formStates = new Dictionary<int, bool[]>();
         static string lastSceneName = "";
-        // Prevents the Harmony patch from blocking our own ability calls
         static bool fromAutocast;
 
         void Awake()
@@ -46,7 +49,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             state = InitState.NeedsUpdate;
         }
 
-        // Stops casting when alt-tabbed
         void OnApplicationFocus(bool hasFocus)
         {
             appFocus = hasFocus;
@@ -58,6 +60,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             {
                 if (state == InitState.Ready)
                     ClearAllToggles();
+                ResetCachedRefs();
                 state = InitState.NeedsUpdate;
                 lastSceneName = "";
                 return;
@@ -80,37 +83,44 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             if (useAbilityProcessor == null || useAbilityProcessor.IsNullOrDestroyed())
                 return;
 
-            CheckTransformChange();
+            CheckFormChange();
             if (state != InitState.Ready)
                 return;
 
             bool anyActive = false;
+            bool anyHeld = false;
             for (int i = 0; i < SlotCount; i++)
             {
                 if (skills[i].ability.IsNullOrDestroyed())
                     continue;
 
                 HandleInput(i);
-                if (skills[i].autocastEnabled || skills[i].channelEnabled || skills[i].channelSustaining)
-                    anyActive = true;
+                if (skills[i].autocastOn) anyActive = true;
+                if (skills[i].held) anyHeld = true;
             }
 
-            // Skip expensive raycast when no slots need it
-            if (!anyActive)
+            if (!anyActive && !anyHeld)
                 return;
 
             Vector3 targetPos = GetTargetPosition(out Transform hitTransform);
 
+            int manualHoldIndex = SlotCount;
+            if (rewiredPlayer != null && !rewiredPlayer.IsNullOrDestroyed())
+            {
+                for (int i = 0; i < SlotCount; i++)
+                {
+                    if (skills[i].ability.IsNullOrDestroyed()) continue;
+                    if (rewiredPlayer.GetButton(AbilityActionIds[i])) { manualHoldIndex = i; break; }
+                }
+            }
+
+            bool firedRisingEdge = false;
             for (int i = 0; i < SlotCount; i++)
             {
                 if (skills[i].ability.IsNullOrDestroyed())
                     continue;
 
-                // Skip autocast only for the slot the player is manually holding
-                // game's queue (AbilityUseCanInterruptExistingAbility) sequences the rest
-                if (!rewiredPlayer.GetButton(AbilityActionIds[i]))
-                    HandleAutoCast(i, targetPos, hitTransform);
-                HandleChanneling(i, targetPos, hitTransform);
+                HandleAutocastSlot(i, manualHoldIndex, targetPos, hitTransform, ref firedRisingEdge);
             }
 
             UpdateIconShine();
@@ -138,37 +148,83 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                 };
             }
 
+            RestoreFormState(lastFormKey);
             state = InitState.Ready;
         }
 
-        // Zone transitions clear all toggles
         static void ClearAllToggles()
         {
+            formStates.Clear();
+            lastFormKey = HumanFormKey;
             for (int i = 0; i < SlotCount; i++)
             {
-                skills[i].autocastEnabled = false;
-                skills[i].channelEnabled = false;
-                skills[i].channelSustaining = false;
+                skills[i].autocastOn = false;
+                skills[i].held = false;
+                skills[i].nextPressTime = 0f;
             }
         }
 
-        // Transform swaps the ability bar, re-init to pick up new abilities
-        void CheckTransformChange()
+        // Form swaps the ability bar (Werebear/Spriggan/Swarmblade/Reaper).
+        // Saves the old form's toggles, re-inits, and restores the new form's saved toggles.
+        void CheckFormChange()
         {
             if (Refs_Manager.player_treedata.IsNullOrDestroyed()) return;
             var abilityList = Refs_Manager.player_treedata.playerAbilityList;
             if (abilityList.IsNullOrDestroyed()) return;
 
-            bool isTransformed = false;
-            try { isTransformed = abilityList.isTransformed(); } catch { }
+            int currentKey = GetCurrentFormKey(abilityList);
+            if (currentKey == lastFormKey) return;
 
-            if (isTransformed == wasTransformed) return;
-            wasTransformed = isTransformed;
-            ClearAllToggles();
+            for (int i = 0; i < SlotCount; i++)
+            {
+                if (skills[i].held && skills[i].channeled)
+                    StopChannel(i);
+            }
+
+            SaveFormState(lastFormKey);
+            lastFormKey = currentKey;
             state = InitState.NeedsUpdate;
+            InitializeSkills();
         }
 
-        // IL2CPP refs can become null mid-frame, re-acquire as needed
+        static int GetCurrentFormKey(PlayerAbilityList abilityList)
+        {
+            try
+            {
+                var id = abilityList.TransformAbilityId;
+                if (id.HasValue) return id.Value;
+            }
+            catch { }
+            return HumanFormKey;
+        }
+
+        static void SaveFormState(int key)
+        {
+            if (!formStates.TryGetValue(key, out var saved))
+            {
+                saved = new bool[SlotCount];
+                formStates[key] = saved;
+            }
+            for (int i = 0; i < SlotCount; i++)
+                saved[i] = skills[i].autocastOn;
+        }
+
+        static void RestoreFormState(int key)
+        {
+            if (!formStates.TryGetValue(key, out var saved)) return;
+            for (int i = 0; i < SlotCount; i++)
+                skills[i].autocastOn = saved[i];
+        }
+
+        static void ResetCachedRefs()
+        {
+            chargeManager = null;
+            useAbilityProcessor = null;
+            playerTransform = null;
+            rewiredPlayer = null;
+            abilityState = null;
+        }
+
         void CacheRefs()
         {
             if (!chargeManager.IsNullOrDestroyed() &&
@@ -216,18 +272,9 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         {
             if (rewiredPlayer == null || rewiredPlayer.IsNullOrDestroyed()) return;
             if (!rewiredPlayer.GetButtonDown(AbilityActionIds[i])) return;
+            if (!IsModifierHeld()) return;
 
-            bool modifier = IsModifierHeld();
-
-            if (skills[i].channeled)
-            {
-                if (modifier)
-                    skills[i].channelEnabled = !skills[i].channelEnabled;
-                else if (skills[i].channelEnabled)
-                    skills[i].channelEnabled = false;
-            }
-            else if (modifier)
-                skills[i].autocastEnabled = !skills[i].autocastEnabled;
+            skills[i].autocastOn = !skills[i].autocastOn;
         }
 
         static bool IsModifierHeld()
@@ -255,66 +302,37 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
 #endif
         }
 
-        static void StartAbility(int slot, Vector3 targetPos, Transform hitTransform)
+        static void SendBarCommand(int slot, bool keyDown, Vector3 targetPos, Transform hitTransform)
         {
             fromAutocast = true;
-            try { useAbilityProcessor.UseBarAbilityCommand(true, slot + 1, -1, targetPos, hitTransform, false); }
+            try { useAbilityProcessor.UseBarAbilityCommand(keyDown, slot + 1, -1, targetPos, hitTransform, false); }
             catch { }
             finally { fromAutocast = false; }
         }
 
-        // UseBarAbilityCommand(false) doesn't stop channeling, need explicit stop call
-        static void StopChanneling()
+
+        static void StopChannel(int slot)
         {
+            try
+            {
+                if (useAbilityProcessor != null && !useAbilityProcessor.IsNullOrDestroyed())
+                {
+                    var state = useAbilityProcessor.PlayerAbilityState;
+                    if (state != null)
+                    {
+                        var clientState = state.TryCast<ClientUsingAbilityState>();
+                        if (clientState != null)
+                        {
+                            clientState.AttemptToStopAbility(slot + 1, true);
+                            return;
+                        }
+                    }
+                }
+            }
+            catch { }
             if (abilityState.IsNullOrDestroyed()) return;
             try { abilityState.stopUsingAbility(true); }
             catch { }
-        }
-
-        void HandleAutoCast(int i, Vector3 targetPos, Transform hitTransform)
-        {
-            if (!skills[i].autocastEnabled || !appFocus) return;
-            if (IsOnCooldown(skills[i].ability)) return;
-
-            StartAbility(i, targetPos, hitTransform);
-        }
-
-        void HandleChanneling(int i, Vector3 targetPos, Transform hitTransform)
-        {
-            if (!skills[i].channelEnabled)
-            {
-                if (skills[i].channelSustaining)
-                {
-                    skills[i].channelSustaining = false;
-                    StopChanneling();
-                }
-                return;
-            }
-
-            if (!appFocus)
-            {
-                skills[i].channelSustaining = false;
-                skills[i].channelEnabled = false;
-                StopChanneling();
-                return;
-            }
-
-            // Wait out cooldown, resume when ready
-            if (IsOnCooldown(skills[i].ability))
-                return;
-
-            if (!skills[i].channelSustaining)
-            {
-                // Start once, game sustains internally
-                skills[i].channelSustaining = true;
-                StartAbility(i, targetPos, hitTransform);
-            }
-            else
-            {
-                // Update aim while channeling (Warpath steering etc.)
-                try { abilityState.TryUpdateTargetLocationIfChannelling(targetPos); }
-                catch { }
-            }
         }
 
         bool IsOnCooldown(Ability ability)
@@ -322,6 +340,52 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             if (chargeManager.IsNullOrDestroyed()) return false;
             try { return chargeManager.onCoooldown(ability); }
             catch { return false; }
+        }
+
+        void HandleAutocastSlot(int i, int manualHoldIndex, Vector3 targetPos, Transform hitTransform, ref bool firedRisingEdge)
+        {
+            ref var s = ref skills[i];
+
+            if (!s.autocastOn)
+            {
+                if (s.held)
+                {
+                    s.held = false;
+                    if (s.channeled)
+                        StopChannel(i);
+                }
+                return;
+            }
+
+            if (!appFocus) return;
+
+            if (i >= manualHoldIndex) return;
+
+            bool channelling = s.channeled && !abilityState.IsNullOrDestroyed() && abilityState.channelling;
+            bool onCd = IsOnCooldown(s.ability);
+            bool throttled = Time.time < s.nextPressTime;
+            bool readyToPress = !channelling && !onCd && !throttled;
+
+            if (readyToPress)
+            {
+                if (firedRisingEdge)
+                    return;
+
+                SendBarCommand(i, true, targetPos, hitTransform);
+                firedRisingEdge = true;
+                s.held = true;
+                s.nextPressTime = Time.time + PressThrottleSeconds;
+            }
+            else
+            {
+                SendBarCommand(i, false, targetPos, hitTransform);
+            }
+
+            if (channelling)
+            {
+                try { abilityState.TryUpdateTargetLocationIfChannelling(targetPos); }
+                catch { }
+            }
         }
 
         // Works for both mouse and gamepad (virtual cursor drives same screen position)
@@ -349,7 +413,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             if (icons == null) return;
 
             float t = (Mathf.Sin(Time.time * 5f) + 1f) * 0.5f;
-            float scale = Mathf.Lerp(0.92f, 1.15f, t);
+            float scale = Mathf.Lerp(0.92f, 1.07f, t);
             float green = Mathf.Lerp(1f, 0.75f, t);
             float blue = Mathf.Lerp(1f, 0.4f, t);
             var tint = new Color(1f, green, blue, 1f);
@@ -360,8 +424,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                 if (barIcon.IsNullOrDestroyed()) continue;
 
                 int slot = barIcon.abilityNumber - 1;
-                bool active = slot >= 0 && slot < SlotCount &&
-                    (skills[slot].autocastEnabled || skills[slot].channelEnabled);
+                bool active = slot >= 0 && slot < SlotCount && skills[slot].autocastOn;
 
                 barIcon.transform.localScale = active
                     ? new Vector3(scale, scale, 1f)
@@ -370,7 +433,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             }
         }
 
-        // Suppress native ability fire when modifier held, so it only toggles autocast
         [HarmonyPatch(typeof(UseAbilityProcessor), nameof(UseAbilityProcessor.UseBarAbilityCommand))]
         public class UseBarAbilityCommand_Patch
         {
@@ -382,21 +444,17 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             }
         }
 
-        // External interruption (stun, manual cast) resets sustaining so channel can restart
-        [HarmonyPatch(typeof(UsingAbilityPlayer), nameof(UsingAbilityPlayer.stopUsingAbility))]
-        public class StopUsingAbility_Patch
+        [HarmonyPatch(typeof(PlayerVoiceEventManager), nameof(PlayerVoiceEventManager.playVoiceLine))]
+        public class PlayVoiceLine_Patch
         {
-            [HarmonyPostfix]
-            static void Postfix()
+            [HarmonyPrefix]
+            static bool Prefix(PlayerVoiceEventManager.VoiceLineEvent voiceLineEvent)
             {
-                if (fromAutocast) return;
-                for (int i = 0; i < SlotCount; i++)
-                    skills[i].channelSustaining = false;
+                if (!fromAutocast) return true;
+                return voiceLineEvent != PlayerVoiceEventManager.VoiceLineEvent.CannotUseSkill;
             }
         }
 
-        // Monolith echo entry
-        // clears toggles when loading into a new echo zone
         [HarmonyPatch(typeof(MonolithZoneManager), "initialise")]
         public class MonolithZoneInit_Patch
         {
@@ -408,8 +466,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             }
         }
 
-        // Monolith echo exit
-        // clears toggles when player returns to End of Time after an echo
         [HarmonyPatch(typeof(MonolithRunsManager), nameof(MonolithRunsManager.onRestZoneEnteredAfterEchoCompleted))]
         public class MonolithRestEnter_Patch
         {
