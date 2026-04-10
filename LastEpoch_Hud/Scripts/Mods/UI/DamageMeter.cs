@@ -30,7 +30,11 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
         public static GameObject Skill_prefab = null;
         public static System.Collections.Generic.List<Ability> Abilities = new System.Collections.Generic.List<Ability>();
         public static System.Collections.Generic.List<Skill> Skills = new System.Collections.Generic.List<Skill>();
-        public static int TotalDamageDeal = 0;
+        public static float TotalDamageDeal = 0f;
+
+        //Should be added into UI
+        public static bool Show_Percent = true; //set to false to show flat damage
+        public static bool Separate_Dot = true; //set to false to not separate DoT and hit damage
 
         void Awake()
         {
@@ -225,7 +229,7 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                     Initializing = false;
                 }
             }                        
-            public static void AddSkill(string ability_name, int damage, bool hit, bool crit, bool kill, int overkill, string target_name)
+            public static void AddSkill(string ability_name, float damage, bool hit, bool crit, bool kill, float overkill, string target_name)
             {
                 if (!Skill_prefab.IsNullOrDestroyed())
                 {
@@ -233,15 +237,13 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                     skill_obj.active = false;
                     skill_obj.transform.SetParent(DamageMeter_content.transform);
                     Sprite icon = GetIcon(ability_name);
-                    System.Collections.Generic.List<int> damages = new System.Collections.Generic.List<int>();
+                    System.Collections.Generic.List<float> damages = new System.Collections.Generic.List<float>();
                     damages.Add(damage);
-                    System.Collections.Generic.List<bool> hits = new System.Collections.Generic.List<bool>();
-                    hits.Add(hit);
                     System.Collections.Generic.List<bool> crits = new System.Collections.Generic.List<bool>();
                     crits.Add(crit);
                     System.Collections.Generic.List<bool> kills = new System.Collections.Generic.List<bool>();
                     kills.Add(kill);
-                    System.Collections.Generic.List<int> overkills = new System.Collections.Generic.List<int>();
+                    System.Collections.Generic.List<float> overkills = new System.Collections.Generic.List<float>();
                     overkills.Add(overkill);
                     System.Collections.Generic.List<string> target_names = new System.Collections.Generic.List<string>();
                     target_names.Add(target_name);
@@ -251,25 +253,24 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                         Icon = icon,
                         AbilityName = ability_name,                        
                         Damages = damages,
-                        Hits = hits,
+                        Dot = !hit,
                         Crits = crits,
                         Kills = kills,
                         Overkills = overkills,
                         TargetName = target_names
-                        
                     });
                 }
             }
             public static void Update()
             {
-                int i = 0;
                 foreach (Skill skill in Skills)
                 {
                     if (!skill.Obj.IsNullOrDestroyed())
                     {
-                        GameObject infos = Functions.GetChild(skill.Obj, "Infos");
-                        if (!skill.Obj.active) //Set icon and SkillName
+                        if (((!Separate_Dot) && (!skill.Dot)) || (Separate_Dot))
                         {
+                            GameObject infos = Functions.GetChild(skill.Obj, "Infos");
+                            //Set icon and SkillName                         
                             if ((!infos.IsNullOrDestroyed()))
                             {
                                 GameObject icon_obj = Functions.GetChild(infos, "Icon");
@@ -279,7 +280,7 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                                     if ((!image_obj.IsNullOrDestroyed()))
                                     {
                                         Image icon = image_obj.GetComponent<Image>();
-                                        if (!icon.IsNullOrDestroyed()) { icon.sprite = skill.Icon; }                                        
+                                        if (!icon.IsNullOrDestroyed()) { icon.sprite = skill.Icon; }
                                     }
                                 }
                                 GameObject skill_name_obj = Functions.GetChild(infos, "SkillName");
@@ -289,16 +290,28 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                                     if ((!text_obj.IsNullOrDestroyed()))
                                     {
                                         Text text = text_obj.GetComponent<Text>();
-                                        if (!text.IsNullOrDestroyed()) { text.text = skill.AbilityName; }
+                                        if (!text.IsNullOrDestroyed())
+                                        {
+                                            text.text = skill.AbilityName;
+                                            if (skill.Dot) { text.text += " (DoT)"; }
+                                        }
                                     }
                                 }
                             }
-                            skill.Obj.active = true;
-                        }
-                        if (skill.Obj.active) //Set damage and slider
-                        {
-                            int damage = 0;
-                            foreach (int f in skill.Damages) { damage += f; }
+                            //Set damage and slider
+                            float damage = 0f;
+                            foreach (float f in skill.Damages) { damage += f; }
+                            if (!Separate_Dot)
+                            {
+                                foreach (Skill s in Skills)
+                                {
+                                    if ((s.AbilityName == skill.AbilityName) && (s.Dot))
+                                    {
+                                        foreach (float f in s.Damages) { damage += f; }
+                                        break;
+                                    }
+                                }
+                            }
                             if ((!infos.IsNullOrDestroyed()))
                             {
                                 GameObject percent_obj = Functions.GetChild(infos, "Percent");
@@ -308,10 +321,15 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                                     if ((!text_obj.IsNullOrDestroyed()))
                                     {
                                         Text text = text_obj.GetComponent<Text>();
-                                        int damage_percent_decimal = ((damage * 100) / TotalDamageDeal);
-                                        if (!text.IsNullOrDestroyed()) { text.text = damage_percent_decimal.ToString("0.0") + " %"; }
-                                        //decimal damage_percent_decimal = (decimal)((damage * 100) / TotalDamageDeal);
-                                        //if (!text.IsNullOrDestroyed()) { text.text = damage_percent_decimal.ToString("0.0") + " %"; }
+                                        if (!text.IsNullOrDestroyed())
+                                        {
+                                            if (Show_Percent)
+                                            {
+                                                float damage_percent = ((damage * 100) / TotalDamageDeal);
+                                                text.text = damage_percent.ToString("0.0") + " %";
+                                            }
+                                            else { text.text = System.Convert.ToInt32(damage).ToString(); }
+                                        }
                                     }
                                 }
                             }
@@ -321,9 +339,10 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                                 Slider slider = skill_bar_obj.GetComponent<Slider>();
                                 if (!slider.IsNullOrDestroyed()) { slider.value = damage * 100 / TotalDamageDeal; }
                             }
+                            if (!skill.Obj.active) { skill.Obj.active = true; }
                         }
+                        else if (skill.Obj.active) { skill.Obj.active = false; }
                     }
-                    i++;
                 }
             }
             public static Sprite GetIcon(string ability_name)
@@ -376,7 +395,7 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
             public static void Reset()
             {
                 Skills = new System.Collections.Generic.List<Skill>();
-                TotalDamageDeal = 0;
+                TotalDamageDeal = 0f;
                 if (!DamageMeter_content.IsNullOrDestroyed())
                 {
                     foreach (GameObject go in Functions.GetAllChild(DamageMeter_content)) { Object.Destroy(go); }
@@ -431,32 +450,22 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                         }
                         if ((!target_is_player) && (!target_is_summon))
                         {
-                            Main.logger_instance.Warning("----------------------------------------");
-                            Main.logger_instance.Warning("AbilityName = " + __0.ability.abilityName);
-                            Main.logger_instance.Warning("DamageDealt = " + (int)__0.damageDealt);
-                            Main.logger_instance.Warning("Hit = " + __0.hit);
-                            Main.logger_instance.Warning("Critical = " + __0.crit);
-                            Main.logger_instance.Warning("Kill = " + __0.kill);
-                            Main.logger_instance.Warning("Overkill = " + (int)__0.overkill);                            
-                            Main.logger_instance.Warning("TargetName = " + __0.target.name);
-                            
-                            TotalDamageDeal += (int)__0.damageDealt;
+                            TotalDamageDeal += __0.damageDealt;
                             bool found = false;
                             foreach (Skill skill in Skills)
                             {
-                                if (skill.AbilityName == __0.ability.abilityName)
+                                if ((skill.AbilityName == __0.ability.abilityName) && (skill.Dot == !__0.hit))
                                 {
                                     found = true;
-                                    skill.Damages.Add((int)__0.damageDealt);
-                                    skill.Hits.Add(__0.hit);
+                                    skill.Damages.Add(__0.damageDealt);
                                     skill.Crits.Add(__0.crit);
                                     skill.Kills.Add(__0.kill);
-                                    skill.Overkills.Add((int)__0.overkill);
+                                    skill.Overkills.Add(__0.overkill);
                                     skill.TargetName.Add(__0.target.name);
                                     break;
                                 }
                             }
-                            if (!found) { UI.AddSkill(__0.ability.abilityName, (int)__0.damageDealt, __0.hit, __0.crit, __0.kill, (int)__0.overkill, __0.target.name); }
+                            if (!found) { UI.AddSkill(__0.ability.abilityName, __0.damageDealt, __0.hit, __0.crit, __0.kill, __0.overkill, __0.target.name); }
                         }
                     }
                 }
@@ -466,12 +475,12 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
         {
             public GameObject Obj;
             public Sprite Icon;
-            public string AbilityName;            
-            public System.Collections.Generic.List<int> Damages;
-            public System.Collections.Generic.List<bool> Hits;
+            public string AbilityName;
+            public bool Dot;
+            public System.Collections.Generic.List<float> Damages;            
             public System.Collections.Generic.List<bool> Crits;
             public System.Collections.Generic.List<bool> Kills;
-            public System.Collections.Generic.List<int> Overkills;
+            public System.Collections.Generic.List<float> Overkills;
             public System.Collections.Generic.List<string> TargetName;
         }
     }
