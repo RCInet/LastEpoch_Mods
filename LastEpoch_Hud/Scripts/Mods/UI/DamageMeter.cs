@@ -28,10 +28,9 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
         public static Sprite Off_sprite = null;
 
         public static GameObject Skill_prefab = null;
+        public static System.Collections.Generic.List<Ability> Abilities = new System.Collections.Generic.List<Ability>();
         public static System.Collections.Generic.List<Skill> Skills = new System.Collections.Generic.List<Skill>();
-        public static System.Collections.Generic.List<float> Damages = new System.Collections.Generic.List<float>();
-        public static System.Collections.Generic.List<bool> Errors = new System.Collections.Generic.List<bool>();
-        public static float TotalDamageDeal = 0f;
+        public static int TotalDamageDeal = 0;
 
         void Awake()
         {
@@ -45,6 +44,17 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
             {
                 if (Scenes.IsGameScene())
                 {
+                    if ((Abilities.Count == 0) && (On))
+                    {
+                        foreach (Ability ab in Resources.FindObjectsOfTypeAll<Ability>())
+                        {
+                            if (!Abilities.Contains(ab)) { Abilities.Add(ab); }
+                        }
+                        foreach (Ability ab in NewItems.Items_Mjolner.Trigger.Abilities)
+                        {
+                            if (!Abilities.Contains(ab)) { Abilities.Add(ab); }
+                        }
+                    }
                     if (!UI.Initialized) { UI.Init(); }
                     else
                     {
@@ -70,6 +80,7 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                 else
                 {
                     On = false;
+                    Abilities = new System.Collections.Generic.List<Ability>();
                     if (!DamageMeter_obj.IsNullOrDestroyed())
                     {
                         if (DamageMeter_obj.active) { DamageMeter_obj.active = false; }
@@ -214,16 +225,39 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                     Initializing = false;
                 }
             }                        
-            public static void AddSkill(string obj_name, string ability_name, float damage)
+            public static void AddSkill(string ability_name, int damage, bool hit, bool crit, bool kill, int overkill, string target_name)
             {
                 if (!Skill_prefab.IsNullOrDestroyed())
                 {
                     GameObject skill_obj = Instantiate(Skill_prefab, Vector3.zero, Quaternion.identity);
                     skill_obj.active = false;
                     skill_obj.transform.SetParent(DamageMeter_content.transform);
-                    Skills.Add(new Skill { ObjName = obj_name, AbilityName = ability_name, Obj = skill_obj });
-                    Damages.Add(damage);
-                    Errors.Add(false);
+                    Sprite icon = GetIcon(ability_name);
+                    System.Collections.Generic.List<int> damages = new System.Collections.Generic.List<int>();
+                    damages.Add(damage);
+                    System.Collections.Generic.List<bool> hits = new System.Collections.Generic.List<bool>();
+                    hits.Add(hit);
+                    System.Collections.Generic.List<bool> crits = new System.Collections.Generic.List<bool>();
+                    crits.Add(crit);
+                    System.Collections.Generic.List<bool> kills = new System.Collections.Generic.List<bool>();
+                    kills.Add(kill);
+                    System.Collections.Generic.List<int> overkills = new System.Collections.Generic.List<int>();
+                    overkills.Add(overkill);
+                    System.Collections.Generic.List<string> target_names = new System.Collections.Generic.List<string>();
+                    target_names.Add(target_name);
+                    Skills.Add(new Skill
+                    {
+                        Obj = skill_obj,
+                        Icon = icon,
+                        AbilityName = ability_name,                        
+                        Damages = damages,
+                        Hits = hits,
+                        Crits = crits,
+                        Kills = kills,
+                        Overkills = overkills,
+                        TargetName = target_names
+                        
+                    });
                 }
             }
             public static void Update()
@@ -234,7 +268,7 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                     if (!skill.Obj.IsNullOrDestroyed())
                     {
                         GameObject infos = Functions.GetChild(skill.Obj, "Infos");
-                        if ((!skill.Obj.active) && (!Errors[i]))
+                        if (!skill.Obj.active) //Set icon and SkillName
                         {
                             if ((!infos.IsNullOrDestroyed()))
                             {
@@ -245,11 +279,7 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                                     if ((!image_obj.IsNullOrDestroyed()))
                                     {
                                         Image icon = image_obj.GetComponent<Image>();
-                                        if (!icon.IsNullOrDestroyed())
-                                        {
-                                            icon.sprite = GetIcon(skill.ObjName, skill.AbilityName);
-                                            if (icon.sprite.IsNullOrDestroyed()) { Errors[i] = true; }
-                                        }                                        
+                                        if (!icon.IsNullOrDestroyed()) { icon.sprite = skill.Icon; }                                        
                                     }
                                 }
                                 GameObject skill_name_obj = Functions.GetChild(infos, "SkillName");
@@ -263,16 +293,12 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                                     }
                                 }
                             }
-                            if (!Errors[i]) { skill.Obj.active = true; }
-                            else
-                            {
-                                TotalDamageDeal -= Damages[i];
-                                Damages[i] = 0f;
-                            }
+                            skill.Obj.active = true;
                         }
-                        if (skill.Obj.active)
+                        if (skill.Obj.active) //Set damage and slider
                         {
-                            float damage = Damages[i];
+                            int damage = 0;
+                            foreach (int f in skill.Damages) { damage += f; }
                             if ((!infos.IsNullOrDestroyed()))
                             {
                                 GameObject percent_obj = Functions.GetChild(infos, "Percent");
@@ -282,8 +308,10 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                                     if ((!text_obj.IsNullOrDestroyed()))
                                     {
                                         Text text = text_obj.GetComponent<Text>();
-                                        decimal damage_percent_decimal = (decimal)((damage * 100) / TotalDamageDeal);
+                                        int damage_percent_decimal = ((damage * 100) / TotalDamageDeal);
                                         if (!text.IsNullOrDestroyed()) { text.text = damage_percent_decimal.ToString("0.0") + " %"; }
+                                        //decimal damage_percent_decimal = (decimal)((damage * 100) / TotalDamageDeal);
+                                        //if (!text.IsNullOrDestroyed()) { text.text = damage_percent_decimal.ToString("0.0") + " %"; }
                                     }
                                 }
                             }
@@ -298,37 +326,18 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                     i++;
                 }
             }
-            public static Sprite GetIcon(string obj_name, string ability_name)
+            public static Sprite GetIcon(string ability_name)
             {
                 Sprite result = null;
                 try
                 {
-                    foreach (Ability ab in Resources.FindObjectsOfTypeAll<Ability>())
+                    foreach (Ability ab in Abilities)
                     {
-                        if (ability_name.Contains("Herald")) //Herald
+                        if (ab.abilityName == ability_name)
                         {
-                            if (ab.abilityName == ability_name)
+                            if (!ab.abilitySprite.IsNullOrDestroyed())
                             {
-                                if (!ab.abilitySprite.IsNullOrDestroyed()) { result = ab.abilitySprite; }
-                                break;
-                            }
-                        }
-                        else //Abilities
-                        {
-                            if ((ab.name == obj_name) && (ab.abilityName == ability_name))
-                            {
-                                if (!ab.abilitySprite.IsNullOrDestroyed()) { result = ab.abilitySprite; }
-                                break;
-                            }
-                        }
-                    }
-                    if (result == null) 
-                    {
-                        foreach (Ability ab in NewItems.Items_Mjolner.Trigger.Abilities) //Mjolner
-                        {
-                            if (ab.abilityName == ability_name)
-                            {
-                                result = NewItems.Items_Mjolner.Icon.sprite;
+                                result = ab.abilitySprite;
                                 break;
                             }
                         }
@@ -342,7 +351,8 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                             {
                                 foreach (Ability ability in abilitylist.abilities)
                                 {
-                                    if (ability.name == obj_name)
+                                    //if (ability.name == obj_name)
+                                    if (ability.abilityName == ability_name)
                                     {
                                         CreationReferences creationReferences = summoned.gameObject.GetComponent<CreationReferences>();
                                         if (!creationReferences.IsNullOrDestroyed())
@@ -366,9 +376,7 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
             public static void Reset()
             {
                 Skills = new System.Collections.Generic.List<Skill>();
-                Damages = new System.Collections.Generic.List<float>();
-                Errors = new System.Collections.Generic.List<bool>();
-                TotalDamageDeal = 0f;
+                TotalDamageDeal = 0;
                 if (!DamageMeter_content.IsNullOrDestroyed())
                 {
                     foreach (GameObject go in Functions.GetAllChild(DamageMeter_content)) { Object.Destroy(go); }
@@ -406,88 +414,49 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
         }
         public class DamageDeal
         {
-            public static Actor current_target = null;
-            public static float current_health = 0;
-            public static string current_obj_name = "";
-            public static string current_ability_name = "";
-
-            [HarmonyPatch(typeof(DamageStatsHolder), "applyDamage", new System.Type[] { typeof(Actor) })]
-            public class DamageStatsHolder_applyDamage
+            [HarmonyPatch(typeof(AbilityEventListener), "DetailedAbilityEvent")]
+            public class AbilityEventListener_DetailedAbilityEvent
             {
-                [HarmonyPrefix]
-                static void Prefix(ref DamageStatsHolder __instance, ref Actor __0)
+                [HarmonyPostfix]
+                static void Postfix(DetailedAbilityEvent __0)
                 {
                     if ((Scenes.IsGameScene()) && (On))
                     {
-                        current_target = null;
-                        current_obj_name = "";
-                        current_ability_name = "";
-                        current_health = 0;
-
                         bool target_is_player = false;
-                        if (__0 == Refs_Manager.player_actor) { target_is_player = true; }
+                        if (__0.target == Refs_Manager.player_actor) { target_is_player = true; }
                         bool target_is_summon = false;
                         foreach (Summoned summoned in Refs_Manager.summon_tracker.summons)
                         {
-                            if (summoned.actor.name == __0.name) { target_is_summon = true; break; }
+                            if (summoned.actor == __0.target) { target_is_summon = true; break; }
                         }
                         if ((!target_is_player) && (!target_is_summon))
                         {
-                            if (!__0.gameObject.GetComponent<UnitHealth>().IsNullOrDestroyed())
+                            Main.logger_instance.Warning("----------------------------------------");
+                            Main.logger_instance.Warning("AbilityName = " + __0.ability.abilityName);
+                            Main.logger_instance.Warning("DamageDealt = " + (int)__0.damageDealt);
+                            Main.logger_instance.Warning("Hit = " + __0.hit);
+                            Main.logger_instance.Warning("Critical = " + __0.crit);
+                            Main.logger_instance.Warning("Kill = " + __0.kill);
+                            Main.logger_instance.Warning("Overkill = " + (int)__0.overkill);                            
+                            Main.logger_instance.Warning("TargetName = " + __0.target.name);
+                            
+                            TotalDamageDeal += (int)__0.damageDealt;
+                            bool found = false;
+                            foreach (Skill skill in Skills)
                             {
-                                float health = __0.gameObject.GetComponent<UnitHealth>().currentHealth;
-                                if (health > 0)
-                                {                                    
-                                    current_target = __0;
-                                    current_obj_name = __instance.name.Substring(0, __instance.name.Length - 7);
-                                    current_ability_name = __instance.getAbilityName();
-                                    current_health = health;
+                                if (skill.AbilityName == __0.ability.abilityName)
+                                {
+                                    found = true;
+                                    skill.Damages.Add((int)__0.damageDealt);
+                                    skill.Hits.Add(__0.hit);
+                                    skill.Crits.Add(__0.crit);
+                                    skill.Kills.Add(__0.kill);
+                                    skill.Overkills.Add((int)__0.overkill);
+                                    skill.TargetName.Add(__0.target.name);
+                                    break;
                                 }
                             }
-                        }
-                    }
-                }
-
-                [HarmonyPostfix]
-                static void Postfix(ref DamageStatsHolder __instance, ref Actor __0)
-                {
-                    if ((Scenes.IsGameScene()) && (On))
-                    {
-                        string obj_name = __instance.name.Substring(0, __instance.name.Length - 7);
-                        string ability_name = __instance.getAbilityName();
-                        if ((current_target == __0) && (current_obj_name == obj_name) && (current_ability_name == ability_name))
-                        {
-                            if (!__0.gameObject.GetComponent<UnitHealth>().IsNullOrDestroyed())
-                            {
-                                float health = __0.gameObject.GetComponent<UnitHealth>().currentHealth;
-                                float health_diff = (current_health - health);
-                                
-                                bool found = false;
-                                int index = 0;
-                                foreach (Skill skill in Skills)
-                                {
-                                    if ((skill.ObjName == obj_name) && (skill.AbilityName == ability_name))
-                                    {
-                                        found = true;
-                                        break;
-                                    }
-                                    index++;
-                                }
-                                if (found)
-                                {
-                                    if (!Errors[index])
-                                    {
-                                        TotalDamageDeal += health_diff;
-                                        float old_damage = Damages[index];
-                                        Damages[index] = old_damage + health_diff;
-                                    }
-                                }
-                                else if (health_diff > 0f)
-                                {
-                                    TotalDamageDeal += health_diff;
-                                    UI.AddSkill(obj_name, ability_name, health_diff);
-                                }
-                            }
+                            if (!found) { UI.AddSkill(__0.ability.abilityName, (int)__0.damageDealt, __0.hit, __0.crit, __0.kill, (int)__0.overkill, __0.target.name); }
                         }
                     }
                 }
@@ -495,9 +464,15 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
         }
         public struct Skill
         {
-            public string ObjName;
-            public string AbilityName;
             public GameObject Obj;
+            public Sprite Icon;
+            public string AbilityName;            
+            public System.Collections.Generic.List<int> Damages;
+            public System.Collections.Generic.List<bool> Hits;
+            public System.Collections.Generic.List<bool> Crits;
+            public System.Collections.Generic.List<bool> Kills;
+            public System.Collections.Generic.List<int> Overkills;
+            public System.Collections.Generic.List<string> TargetName;
         }
     }
 }
