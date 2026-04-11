@@ -1,9 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
-    <Style src="project://database/Packages/com.unity.addressables/Editor/BuildReportVisualizer/UIToolKitAssets/StyleSheets/DetailsPanelSummary.uss?fileID=7433441132597879392&amp;guid=be9205585983c334fb0c7f3b8993de35&amp;type=3#DetailsPanelSummary" />
-    <ui:VisualElement class="DetailsPanelSummaryRow">
-        <ui:VisualElement class="DetailsPanelSummaryNavigableItem">
-            <ui:TextElement name="DetailsPanelSummaryNavigableItemName" text="------" class="DetailsPanelSummaryNavigableItemText"/>
-          <uie:ToolbarMenu name="DetailsPanelSummaryNavigableItemButton" class="DetailsPanelNavigableItemGoToButton" text=">"/>
-        </ui:VisualElement>
-    </ui:VisualElement>
-</ui:UXML>

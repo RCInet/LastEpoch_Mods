@@ -1,5 +1,0 @@
-system: jira
-server: jira.unity3d.com
-issuetype: Bug
-package: Timeline
-project: TB

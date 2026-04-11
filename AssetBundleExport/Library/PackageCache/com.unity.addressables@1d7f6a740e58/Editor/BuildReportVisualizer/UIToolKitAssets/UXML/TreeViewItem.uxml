@@ -1,7 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
-    <Style src="/Packages/com.unity.addressables/Editor/BuildReportVisualizer/UIToolKitAssets/StyleSheets/TreeViewItem.uss" />
-    <ui:VisualElement class="TreeViewItem">
-        <ui:Image name="TreeViewItemIcon" class="TreeViewItemIcon"/>>
-        <ui:TextElement name="TreeViewItemName" text="-----" />
-    </ui:VisualElement>
-</ui:UXML>
