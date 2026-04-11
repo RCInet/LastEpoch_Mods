@@ -192,6 +192,9 @@ namespace LastEpoch_Hud.Scripts
                         Content.Maxroll.Get_Refs();
                         Content.Maxroll.Set_Events();
                         Content.Maxroll.Set_Active(false);
+
+                        try { ModUI.SaveManager.BindHud(hud_object); }
+                        catch (System.Exception ex) { Main.logger_instance?.Error("ModUI BindHud failed: " + ex.Message); }
                     }
                     else { Main.logger_instance.Error("Hud Manager : Hud Prefab not found"); }
                 }
@@ -1556,9 +1559,21 @@ namespace LastEpoch_Hud.Scripts
                 }
             }
             
+            public static void DeactivateOriginalTabs()
+            {
+                Content.Character.Set_Active(false);
+                Content.Items.Set_Active(false);
+                Content.Scenes.Set_Active(false);
+                Content.Skills.Set_Active(false);
+                Content.OdlForceDrop.Set_Active(false);
+                Content.NewItems.Set_Active(false);
+                Content.Maxroll.Set_Active(false);
+            }
+
             private static readonly System.Action Character_OnClick_Action = new System.Action(Character_Click);
             public static void Character_Click()
             {
+                ModUI.TabManager.DeactivateAll();
                 Content.Items.Set_Active(false);
                 Content.Scenes.Set_Active(false);
                 Content.Skills.Set_Active(false);
@@ -1571,6 +1586,7 @@ namespace LastEpoch_Hud.Scripts
             private static readonly System.Action Items_OnClick_Action = new System.Action(Items_Click);
             public static void Items_Click()
             {
+                ModUI.TabManager.DeactivateAll();
                 Content.Character.Set_Active(false);
                 Content.Scenes.Set_Active(false);
                 Content.Skills.Set_Active(false);
@@ -1583,6 +1599,7 @@ namespace LastEpoch_Hud.Scripts
             private static readonly System.Action Scenes_OnClick_Action = new System.Action(Scenes_Click);
             public static void Scenes_Click()
             {
+                ModUI.TabManager.DeactivateAll();
                 Content.Character.Set_Active(false);
                 Content.Items.Set_Active(false);
                 Content.Skills.Set_Active(false);
@@ -1595,6 +1612,7 @@ namespace LastEpoch_Hud.Scripts
             private static readonly System.Action Skills_OnClick_Action = new System.Action(Skills_Click);
             public static void Skills_Click()
             {
+                ModUI.TabManager.DeactivateAll();
                 Content.Character.Set_Active(false);
                 Content.Items.Set_Active(false);
                 Content.Scenes.Set_Active(false);
@@ -1607,6 +1625,7 @@ namespace LastEpoch_Hud.Scripts
             private static readonly System.Action OldForceDrop_OnClick_Action = new System.Action(OldForceDrop_Click);
             public static void OldForceDrop_Click()
             {
+                ModUI.TabManager.DeactivateAll();
                 Content.Character.Set_Active(false);
                 Content.Items.Set_Active(false);
                 Content.Scenes.Set_Active(false);
@@ -1619,6 +1638,7 @@ namespace LastEpoch_Hud.Scripts
             private static readonly System.Action NewItems_OnClick_Action = new System.Action(NewItems_Click);
             public static void NewItems_Click()
             {
+                ModUI.TabManager.DeactivateAll();
                 Content.Character.Set_Active(false);
                 Content.Items.Set_Active(false);
                 Content.Scenes.Set_Active(false);
@@ -1631,6 +1651,7 @@ namespace LastEpoch_Hud.Scripts
             private static readonly System.Action Maxroll_OnClick_Action = new System.Action(Maxroll_Click);
             public static void Maxroll_Click()
             {
+                ModUI.TabManager.DeactivateAll();
                 Content.Character.Set_Active(false);
                 Content.Items.Set_Active(false);
                 Content.Scenes.Set_Active(false);

@@ -360,7 +360,12 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/AssetBundleExport/Temp
+/AssetBundleExport/Temp/
+/AssetBundleExport/Library/
+/AssetBundleExport/LibraryBack/
+/AssetBundleExport/Build/
+/AssetBundleExport/UserSettings/
+/AssetBundleExport/ProjectSettings/boot.config
 
 # Unity
 #
