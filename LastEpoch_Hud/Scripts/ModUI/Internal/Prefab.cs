@@ -82,6 +82,7 @@ namespace LastEpoch_Hud.Scripts.ModUI
         public static void ApplyLabel(Text text, string englishLabel)
         {
             if (text == null || string.IsNullOrEmpty(englishLabel)) return;
+            LocaleRegistry.Register(text, englishLabel);
             var dict = Locales.current_dictionary;
             if (dict != null && dict.TryGetValue(englishLabel, out var translated) && !string.IsNullOrEmpty(translated))
                 text.text = translated;

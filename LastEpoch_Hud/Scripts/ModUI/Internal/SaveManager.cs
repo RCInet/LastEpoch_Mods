@@ -32,6 +32,7 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
         void Update()
         {
+            LocaleRegistry.TickIfLocaleChanged();
             if (KeybindCapture.Active) KeybindCapture.Tick();
             if (!initialized) return;
             if (!ModSettings.Dirty) return;
