@@ -24,7 +24,15 @@ namespace LastEpoch_Hud.Scripts.ModUI
             var toggle = Prefab.Component<Toggle>(panel, panelName, "Toggle_" + prefix + panelName);
             if (toggle == null) return;
             toggle.isOn = setting.Value;
-            Prefab.BindToggle(toggle, new Action<bool>(v => setting.Set(v)));
+            string name = "Toggle_" + prefix + panelName;
+            int toggleId = toggle.GetInstanceID();
+            Prefab.BindToggle(toggle, new Action<bool>(v =>
+            {
+                bool actual = toggle.isOn;
+                ModSettings.Trace("Toggle listener fired: name=" + name + " v=" + v + " toggle.isOn=" + actual + " setting.Value=" + setting.Value + " id=" + toggleId);
+                setting.Set(actual);
+            }));
+            ModSettings.Trace("Bind(Bool) " + name + " subscribed, isOn=" + toggle.isOn + " id=" + toggleId);
             BindCount++;
         }
 
@@ -93,8 +101,15 @@ namespace LastEpoch_Hud.Scripts.ModUI
                 var toggle = Prefab.Component<Toggle>(group, name, "Toggle_" + prefix + name);
                 if (toggle == null) continue;
                 toggle.isOn = setting.IsSelected(idx);
-                Prefab.BindToggle(toggle, new Action<bool>(v => setting.Select(idx, v)));
+                string wname = "Toggle_" + prefix + name;
+                Prefab.BindToggle(toggle, new Action<bool>(v =>
+                {
+                    bool actual = toggle.isOn;
+                    ModSettings.Trace("Radio listener fired: name=" + wname + " idx=" + idx + " v=" + v + " toggle.isOn=" + actual);
+                    setting.Select(idx, actual);
+                }));
             }
+            ModSettings.Trace("BindRadio " + groupPanel + " subscribed " + setting.OptionNames.Length + " options");
             BindCount++;
         }
 
@@ -107,8 +122,14 @@ namespace LastEpoch_Hud.Scripts.ModUI
                 ApplyDropdownOptions(dropdown, setting.Options);
 
             dropdown.value = setting.Value;
-            Prefab.BindDropdown(dropdown, new Action<int>(v => setting.Set(v)));
+            string name = "Dropdown_" + prefix + panelName;
+            Prefab.BindDropdown(dropdown, new Action<int>(v =>
+            {
+                ModSettings.Trace("Dropdown listener fired: name=" + name + " v=" + v);
+                setting.Set(v);
+            }));
             setting.applyOptions = opts => ApplyDropdownOptions(dropdown, opts);
+            ModSettings.Trace("BindDropdown " + name + " subscribed, value=" + dropdown.value + " options=" + setting.Options.Length);
             BindCount++;
         }
 
@@ -118,7 +139,13 @@ namespace LastEpoch_Hud.Scripts.ModUI
             if (btnObj == null) return;
             var btn = btnObj.GetComponent<Button>();
             if (btn == null) return;
-            Prefab.BindButton(btn, new Action(() => binding.Invoke()));
+            string name = "Btn_" + prefix + key;
+            Prefab.BindButton(btn, new Action(() =>
+            {
+                ModSettings.Trace("Button listener fired: name=" + name);
+                binding.Invoke();
+            }));
+            ModSettings.Trace("BindButton " + name + " subscribed");
             BindCount++;
         }
 
@@ -129,7 +156,15 @@ namespace LastEpoch_Hud.Scripts.ModUI
             var toggle = Prefab.Component<Toggle>(panel, panelName, "Toggle_" + prefix + panelName);
             if (toggle == null) return;
             toggle.isOn = initialValue;
-            Prefab.BindToggle(toggle, new Action<bool>(v => setter(v)));
+            string name = "Toggle_" + prefix + panelName;
+            int toggleId = toggle.GetInstanceID();
+            Prefab.BindToggle(toggle, new Action<bool>(v =>
+            {
+                bool actual = toggle.isOn;
+                ModSettings.Trace("Toggle listener fired: name=" + name + " v=" + v + " toggle.isOn=" + actual + " id=" + toggleId);
+                setter(actual);
+            }));
+            ModSettings.Trace("BindToggle " + name + " subscribed, isOn=" + toggle.isOn + " id=" + toggleId);
         }
 
         private static void ConfigureSlider(Slider slider, float min, float max, float value)

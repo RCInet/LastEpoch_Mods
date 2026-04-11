@@ -45,6 +45,7 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
         public void Set(bool val)
         {
+            ModSettings.Trace("BoolSetting.Set: before=" + Value + " requested=" + val);
             if (Value == val) return;
             Value = val;
             ModSettings.MarkDirty();
@@ -70,6 +71,7 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
         public void SetEnabled(bool val)
         {
+            ModSettings.Trace("FloatSetting.SetEnabled: before=" + Enabled + " requested=" + val);
             if (Enabled == val) return;
             Enabled = val;
             ModSettings.MarkDirty();
@@ -78,6 +80,7 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
         public void SetValue(float val)
         {
+            ModSettings.Trace("FloatSetting.SetValue: before=" + Value + " requested=" + val);
             if (Value == val) return;
             Value = val;
             ModSettings.MarkDirty();
@@ -115,6 +118,7 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
         public void SetEnabled(bool val)
         {
+            ModSettings.Trace("RangeSetting.SetEnabled: before=" + Enabled + " requested=" + val);
             if (Enabled == val) return;
             Enabled = val;
             ModSettings.MarkDirty();
@@ -123,6 +127,8 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
         public void SetMin(float val)
         {
+            ModSettings.Trace("RangeSetting.SetMin: before=" + Min + " requested=" + val);
+            if (Min == val) return;
             Min = val;
             if (Min > Max) Max = Min;
             ModSettings.MarkDirty();
@@ -131,6 +137,8 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
         public void SetMax(float val)
         {
+            ModSettings.Trace("RangeSetting.SetMax: before=" + Max + " requested=" + val);
+            if (Max == val) return;
             Max = val;
             if (Max < Min) Min = Max;
             ModSettings.MarkDirty();
@@ -162,6 +170,7 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
         public void Set(int val)
         {
+            ModSettings.Trace("DropdownSetting.Set: before=" + Value + " requested=" + val);
             if (Value == val) return;
             Value = val;
             ModSettings.MarkDirty();
@@ -170,6 +179,7 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
         public void SetOptions(string[] options, int selectedIndex = 0)
         {
+            ModSettings.Trace("DropdownSetting.SetOptions: count=" + (options?.Length ?? 0) + " selectedIndex=" + selectedIndex);
             Options = options ?? Array.Empty<string>();
             Value = selectedIndex;
             applyOptions?.Invoke(Options);
@@ -194,6 +204,7 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
         public void Select(int index, bool value)
         {
+            ModSettings.Trace("RadioSetting.Select: index=" + index + " name=" + OptionNames[index] + " value=" + value);
             if (value)
             {
                 for (int i = 0; i < values.Length; i++)
@@ -216,6 +227,10 @@ namespace LastEpoch_Hud.Scripts.ModUI
     {
         public event Action Clicked;
 
-        internal void Invoke() => Clicked?.Invoke();
+        internal void Invoke()
+        {
+            ModSettings.Trace("ActionBinding.Invoke");
+            Clicked?.Invoke();
+        }
     }
 }

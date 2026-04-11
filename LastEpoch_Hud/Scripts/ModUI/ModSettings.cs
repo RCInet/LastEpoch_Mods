@@ -9,12 +9,22 @@ namespace LastEpoch_Hud.Scripts.ModUI
     {
         public static bool Dirty { get; private set; }
 
-        public static void MarkDirty() => Dirty = true;
+        public static void MarkDirty()
+        {
+            Trace("MarkDirty called");
+            Dirty = true;
+        }
         public static void ClearDirty() => Dirty = false;
 
         private static readonly List<SettingsGroup> allGroups = new();
         public static IReadOnlyList<SettingsGroup> AllGroups => allGroups;
         public static void RegisterGroup(SettingsGroup group) => allGroups.Add(group);
+
+        // Tracing helper. No-op when Debug.Enabled is false
+        internal static void Trace(string msg)
+        {
+            if (Debug.Enabled.Value) Main.logger_instance?.Msg("[ModUI] " + msg);
+        }
 
         // Auto-initialize all nested section classes so their SettingsGroups register.
         // Without this, C# defers static nested class init until first access.
@@ -22,6 +32,19 @@ namespace LastEpoch_Hud.Scripts.ModUI
         {
             foreach (var type in typeof(ModSettings).GetNestedTypes())
                 System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(type.TypeHandle);
+        }
+
+        //
+        // META / DIAGNOSTICS (no GUI -- edit SaveModUI.json manually to toggle)
+        //
+
+        public static class Debug
+        {
+            // No .Content() call -- this group persists to JSON but has no widgets to bind.
+            public static readonly SettingsGroup Group = new SettingsGroup("Debug");
+
+            // Gates all ModSettings.Trace(...) output. Default false = silent for players.
+            public static readonly BoolSetting Enabled = Group.Bool("Enabled");
         }
 
         //
