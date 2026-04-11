@@ -32,6 +32,7 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
         void Update()
         {
+            if (KeybindCapture.Active) KeybindCapture.Tick();
             if (!initialized) return;
             if (!ModSettings.Dirty) return;
             // Time.unscaledDeltaTime: advances even when the game is paused (HUD open = timeScale=0)

@@ -137,6 +137,79 @@ namespace LastEpoch_Hud.Scripts.ModUI
             BindCount++;
         }
 
+        public void BindHeader(string panelName, HeaderSetting setting, string label)
+        {
+            var obj = Prefab.Child(panel, panelName);
+            if (obj == null) return;
+            var text = obj.GetComponent<Text>();
+            if (text == null) text = obj.GetComponentInChildren<Text>();
+            if (text == null) return;
+            Prefab.ApplyLabel(text, label ?? setting.Text);
+            ModSettings.Trace("BindHeader " + panelName + " label=" + (label ?? setting.Text));
+            BindCount++;
+        }
+
+        public void BindKeybind(string panelName, KeybindSetting setting, string label, string resetLabel)
+        {
+            // Sub-panel layout (created in prefab):
+            //   panelName/
+            //     Label                              (Text -- setting label, e.g. "Modifier Key")
+            //     Btn_{prefix}{panelName}            (capture button, child Text shows current binding)
+            //     Btn_{prefix}{panelName}_Reset      (reset button, child Text "Reset")
+            var subPanel = Prefab.Child(panel, panelName);
+            if (subPanel == null) return;
+
+            var captureBtnObj = Prefab.Child(subPanel, "Btn_" + prefix + panelName);
+            var resetBtnObj   = Prefab.Child(subPanel, "Btn_" + prefix + panelName + "_Reset");
+            if (captureBtnObj == null || resetBtnObj == null) return;
+
+            var captureBtn = captureBtnObj.GetComponent<Button>();
+            var resetBtn   = resetBtnObj.GetComponent<Button>();
+            if (captureBtn == null || resetBtn == null) return;
+
+            // Row label (left side)
+            var labelObj = Prefab.Child(subPanel, "Label");
+            if (labelObj != null && !string.IsNullOrEmpty(label))
+            {
+                var labelText = labelObj.GetComponent<Text>();
+                if (labelText != null) Prefab.ApplyLabel(labelText, label);
+            }
+
+            // Reset button label -- centralized "Reset" string by default, overridable per setting
+            var resetText = resetBtnObj.GetComponentInChildren<Text>();
+            if (resetText != null) Prefab.ApplyLabel(resetText, resetLabel ?? KeybindStrings.ResetLabel);
+
+            // Display text inside the capture button. Show default in parentheses when unbound
+            // so the player can see what Reset would restore.
+            var displayText = captureBtnObj.GetComponentInChildren<Text>();
+            if (displayText != null) displayText.text = KeybindFormat.FriendlyWithDefault(setting.Value, setting.DefaultValue);
+
+            setting.Changed += newVal =>
+            {
+                if (displayText != null) displayText.text = KeybindFormat.FriendlyWithDefault(newVal, setting.DefaultValue);
+            };
+
+            string captureBtnName = "Btn_" + prefix + panelName;
+            string resetBtnName = captureBtnName + "_Reset";
+
+            Prefab.BindButton(captureBtn, new Action(() =>
+            {
+                ModSettings.Trace("Keybind capture started: " + captureBtnName);
+                if (displayText != null) displayText.text = KeybindStrings.CapturePrompt;
+                KeybindCapture.Begin(setting, displayText);
+            }));
+
+            Prefab.BindButton(resetBtn, new Action(() =>
+            {
+                ModSettings.Trace("Keybind reset: " + resetBtnName + " -> " + setting.DefaultValue);
+                KeybindCapture.Cancel();
+                setting.ResetToDefault();
+            }));
+
+            ModSettings.Trace("BindKeybind " + captureBtnName + " subscribed, value=" + setting.Value);
+            BindCount++;
+        }
+
         public void BindButton(string key, ActionBinding binding, string label = null)
         {
             var btnObj = Prefab.Child(panel, "Btn_" + prefix + key);
@@ -181,7 +254,7 @@ namespace LastEpoch_Hud.Scripts.ModUI
         }
 
         // Locates the toggle's Label Text child and applies an English label with locale translation.
-        // Quiet no-op when label is null (library caller didn't provide one — use prefab's serialized text).
+        // Quiet no-op when label is null (library caller didn't provide one - use prefab's serialized text).
         private void ApplyLabel(string panelName, string toggleName, string label)
         {
             if (string.IsNullOrEmpty(label)) return;

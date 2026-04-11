@@ -26,6 +26,8 @@ Group.Dropdown("Type")                                              // Dropdown 
 Group.Dropdown("Monolith", options: new[] { "Select", "Outcast" })  // Dropdown with static options
 Group.Radio("ForceRarity", "Force", "ForceUnique", "ForceSet", "ForceLegendary") // Exclusive toggles
 Group.Button("Reset")                                               // Clickable action (not saved)
+Group.Header("Header", label: "AutoCast")                           // Static localized section header
+Group.Keybind("ModifierKey", defaultBinding: "kb:LeftControl", label: "Modifier Key")  // Rebindable input
 ```
 
 When the prefab panel name differs from the setting key, use `panel:`:
@@ -37,7 +39,7 @@ Range defaults min/max to `minLimit`/`maxLimit`. Override with `defaultMin:` / `
 
 ## Labels & localization
 
-Every factory method (`Bool` / `Float` / `Range` / `Dropdown` / `Button`) accepts an optional `label:` parameter — the English display text that will appear in the HUD. The library applies it to the widget's `Label` Text child at bind time, **translated through the mod's active locale dictionary**:
+Every factory method (`Bool` / `Float` / `Range` / `Dropdown` / `Button`) accepts an optional `label:` parameter - the English display text that will appear in the HUD. The library applies it to the widget's `Label` Text child at bind time, **translated through the mod's active locale dictionary**:
 
 ```csharp
 public static readonly FloatSetting TreePoints =
@@ -56,9 +58,9 @@ public static readonly BoolSetting FreeRespec =
 **Workflow for adding a localized setting:**
 
 1. Declare the setting in `ModSettings.cs` with `label: "English Label"`
-2. Add the key to `LastEpoch_Hud/Locales/base.json` (empty value — translator template)
+2. Add the key to `LastEpoch_Hud/Locales/base.json` (empty value - translator template)
 3. Add translations to `en.json`, `fr.json`, `zh.json` (use English string as the JSON key, translated text as the value)
-4. Rebuild the DLL (no AssetBundle rebuild needed — labels live in code, not the prefab)
+4. Rebuild the DLL (no AssetBundle rebuild needed - labels live in code, not the prefab)
 
 **If you DON'T pass `label:`** the library does nothing to the Text component, and whatever text is serialized in the prefab stays.
 
@@ -199,8 +201,48 @@ Text labels: searched as `Value` or `Label` child inside the toggle, then as dir
 | `DropdownSetting` | int + labels | Dropdown | `.Value`, `.SelectedText` | `.Set(int)`, `.SetOptions(string[])` |
 | `RadioSetting` | N bools | N Toggles | `.IsSelected(i)` | `.Select(i, bool)` |
 | `ActionBinding` | nothing | Button | -- | subscribe to `.Clicked` |
+| `HeaderSetting` | nothing | Static text row | `.Text` | `.SetText(string)` |
+| `KeybindSetting` | tagged string | Capture Button + Reset Button | `.Value`, `.DefaultValue` | `.Set(string)`, `.ResetToDefault()` |
 
-All setting types (except `ActionBinding`) expose a `Changed` event for reactive updates.
+All setting types (except `ActionBinding` and `HeaderSetting`) expose a `Changed` event for reactive updates.
+
+## Keybind settings
+
+`KeybindSetting` captures a single keyboard key OR gamepad button. Click the capture button, then press any key - the first input wins. The reset button reverts to the declared default.
+
+```csharp
+public static readonly KeybindSetting ModifierKey =
+    Group.Keybind("ModifierKey", defaultBinding: "kb:LeftControl", label: "Modifier Key");
+```
+
+Read it from feature code via the public `KeybindMatcher`:
+
+```csharp
+using LastEpoch_Hud.Scripts.ModUI;
+
+if (KeybindMatcher.IsHeld(ModSettings.SkillsAutoCast.ModifierKey.Value))
+{
+    // ...
+}
+```
+
+**Binding format**: tagged strings - `"kb:LeftControl"` for keyboard (UnityEngine.KeyCode names) or `"gp:A"` for gamepad (Rewired IGamepadTemplate names: `A`, `B`, `X`, `Y`, `LB`, `RB`, `Back`, `Start`, `Guide`, `LStick`, `RStick`, `DPadUp/Down/Left/Right`).
+
+**Capture cancels**: pressing `Escape` aborts capture without rebinding.
+
+**Reset label is centralized**: every reset button reads the same `"Reset"` translation key. Override per-setting only when one button needs different wording:
+
+```csharp
+Group.Keybind("Bind", defaultBinding: "kb:F1", label: "Quick-cast", resetLabel: "Default")
+```
+
+**Prefab layout** required for each `Keybind` setting:
+```
+{panelName}/                                  -- sub-panel
+  Label                                       -- setting label Text
+  Btn_{prefix}{panelName}                     -- capture button (child Text shows current binding)
+  Btn_{prefix}{panelName}_Reset               -- reset button (child Text "Reset")
+```
 
 ### Display formats
 
@@ -235,6 +277,12 @@ ModUI/
     Prefab.cs               Null-safe prefab lookups and event binding
     SliderHook.cs           Harmony patch for IL2CPP slider events
     SaveManager.cs          SaveModUI.json persistence (dirty flag, 1s debounce) + static BindHud hook called from Hud_Manager.Init_Hud
+  Keybind/               Keybind setting helpers (rebindable inputs)
+    KeybindStrings.cs       Centralized localized strings (Reset, Press any key, etc.)
+    KeybindFormat.cs        Friendly display formatting for tagged bindings
+    KeybindRewired.cs       Rewired IGamepadTemplate walking + button table
+    KeybindCapture.cs       Capture state machine ticked from SaveManager.Update
+    KeybindMatcher.cs       Public IsHeld API consumed by feature code
 ```
 
 ### Cheatsheet
@@ -254,3 +302,6 @@ ModUI/
 | Override prefab panel name | `panel:` parameter on factory method |
 | Add a new display format | `Internal/SettingTypes.cs` |
 | Add a new setting type | `Internal/SettingTypes.cs` + `SettingsGroup.cs` + `SettingsBuilder.cs` |
+| Add a section header | `ModSettings.cs` -- `Group.Header("Header", label: "Section Name")` |
+| Add a rebindable input | `ModSettings.cs` -- `Group.Keybind("Key", defaultBinding: "kb:LeftControl", label: "Modifier")` |
+| Read a keybind | `KeybindMatcher.IsHeld(ModSettings.X.Y.Value)` |

@@ -63,6 +63,35 @@ namespace LastEpoch_Hud.Scripts.ModUI
         }
 
         //
+        // SKILLS TAB
+        //
+
+        public static class SkillsAutoCast
+        {
+            public static readonly SettingsGroup Group = new SettingsGroup("SkillsAutoCast")
+                .Content("Skill_Tree_Content")
+                .Viewport("Left", "Skills_Content")
+                .Prefix("Skills_AutoCast_");
+
+            public static readonly HeaderSetting Header =
+                Group.Header("AutoCastHeader", label: "AutoCast");
+
+            public static readonly HeaderSetting Description =
+                Group.Header("AutoCastDescription", label: "Hold the modifier key and click an ability slot to toggle autocast on/off for that skill.");
+
+            // Default per build config so a fresh install on either control scheme has a working modifier.
+            // Player can rebind freely afterwards (capture mode listens to both KB and gamepad regardless).
+#if WINGAMEPAD
+            private const string DefaultModifier = "gp:DPadLeft";
+#else
+            private const string DefaultModifier = "kb:LeftControl";
+#endif
+
+            public static readonly KeybindSetting ModifierKey =
+                Group.Keybind("ModifierKey", defaultBinding: DefaultModifier, label: "Modifier Key");
+        }
+
+        //
         // ITEMS TAB
         //
 

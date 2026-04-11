@@ -233,4 +233,44 @@ namespace LastEpoch_Hud.Scripts.ModUI
             Clicked?.Invoke();
         }
     }
+
+    // Static localized text row (section header). No persisted value, no events.
+    // Lets ModSettings.cs declare a header without an OnBind escape hatch.
+    public class HeaderSetting
+    {
+        public string Text { get; internal set; }
+
+        public HeaderSetting(string text) { Text = text ?? ""; }
+        public void SetText(string text) { Text = text ?? ""; }
+    }
+
+    // Single rebindable input (keyboard key OR gamepad button). Value is a tagged string:
+    //   "kb:LeftControl"  -- UnityEngine.KeyCode.ToString()
+    //   "gp:A"            -- IGamepadTemplate accessor name from KeybindRewired
+    //   ""                -- unbound
+    public class KeybindSetting
+    {
+        public string Value { get; internal set; }
+        public string DefaultValue { get; }
+
+        public event Action<string> Changed;
+
+        public KeybindSetting(string defaultValue = "")
+        {
+            DefaultValue = defaultValue ?? "";
+            Value = DefaultValue;
+        }
+
+        public void Set(string newBinding)
+        {
+            ModSettings.Trace("KeybindSetting.Set: before=" + Value + " requested=" + newBinding);
+            string val = newBinding ?? "";
+            if (Value == val) return;
+            Value = val;
+            ModSettings.MarkDirty();
+            Changed?.Invoke(val);
+        }
+
+        public void ResetToDefault() => Set(DefaultValue);
+    }
 }

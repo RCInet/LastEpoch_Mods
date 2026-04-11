@@ -122,7 +122,6 @@
   "Angle Minimum": "Angle Minimum",
   "Angle Maximum": "Angle Maximum",
   "Load OnStart": "Load OnStart",
-  "Reset": "Reset",
   "Dungeons": "Dungeons",
   "Enter Without Key": "Enter Without Key",
   "Minimap": "Minimap",
@@ -215,6 +214,12 @@
   "Weaver": "Weaver",
   "Weaver Tree Points": "Weaver Tree Points",
   "Free Weaver Respec": "Free Weaver Respec",
+  "AutoCast": "AutoCast",
+  "Hold the modifier key and click an ability slot to toggle autocast on/off for that skill.": "Maintenez la touche modificatrice et cliquez sur une compétence pour activer/désactiver l'autocast.",
+  "Modifier Key": "Touche modificatrice",
+  "Reset": "Réinitialiser",
+  "Press any key…": "Appuyez sur une touche…",
+  "(none)": "(aucune)",
   "Shards": "Shards",
   "Title": "Title"
 }

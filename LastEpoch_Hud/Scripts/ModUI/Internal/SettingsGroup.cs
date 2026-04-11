@@ -113,6 +113,22 @@ namespace LastEpoch_Hud.Scripts.ModUI
             return b;
         }
 
+        public HeaderSetting Header(string key, string label, string panel = null)
+        {
+            var s = new HeaderSetting(label);
+            entries.Add(new Entry(key, panel ?? key, EntryType.Header, label: label, headerSetting: s));
+            return s;
+        }
+
+        // Rebindable input setting (one keyboard key OR gamepad button).
+        // resetLabel: null = use centralized "Reset" string (translated via Locales).
+        public KeybindSetting Keybind(string key, string defaultBinding = "", string panel = null, string label = null, string resetLabel = null)
+        {
+            var s = new KeybindSetting(defaultBinding);
+            entries.Add(new Entry(key, panel ?? key, EntryType.Keybind, label: label, keybindSetting: s, resetLabel: resetLabel));
+            return s;
+        }
+
         // Resolves the viewport hierarchy and binds all settings to their prefab UI elements.
         // Handles both viewport-based and flat content layouts.
 
@@ -143,6 +159,8 @@ namespace LastEpoch_Hud.Scripts.ModUI
                         case EntryType.Dropdown: builder.BindDropdown(e.Panel, e.DropdownSetting, e.Label); break;
                         case EntryType.Radio: builder.BindRadio(e.Panel, e.RadioSetting); break;
                         case EntryType.Button: builder.BindButton(e.Key, e.ActionBinding, e.Label); break;
+                        case EntryType.Header: builder.BindHeader(e.Panel, e.HeaderSetting, e.Label); break;
+                        case EntryType.Keybind: builder.BindKeybind(e.Panel, e.KeybindSetting, e.Label, e.ResetLabel); break;
                     }
                     if (builder.BindCount > before) { bound++; continue; }
                 }
@@ -201,6 +219,9 @@ namespace LastEpoch_Hud.Scripts.ModUI
                         radio[e.RadioSetting.OptionNames[i]] = e.RadioSetting.GetValue(i);
                     section[e.Key] = radio;
                     break;
+                case EntryType.Keybind:
+                    section[e.Key] = e.KeybindSetting.Value;
+                    break;
             }
         }
 
@@ -231,16 +252,20 @@ namespace LastEpoch_Hud.Scripts.ModUI
                         if (val != null) e.RadioSetting.SetValue(i, val.Value<bool>());
                     }
                     break;
+                case EntryType.Keybind:
+                    e.KeybindSetting.Value = token.Value<string>() ?? "";
+                    break;
             }
         }
 
-        private enum EntryType { Bool, Float, Range, Dropdown, Radio, Button }
+        private enum EntryType { Bool, Float, Range, Dropdown, Radio, Button, Header, Keybind }
 
         private readonly struct Entry
         {
             public readonly string Key;
             public readonly string Panel;
             public readonly string Label;
+            public readonly string ResetLabel;
             public readonly EntryType Type;
             public readonly BoolSetting BoolSetting;
             public readonly FloatSetting FloatSetting;
@@ -248,12 +273,15 @@ namespace LastEpoch_Hud.Scripts.ModUI
             public readonly DropdownSetting DropdownSetting;
             public readonly RadioSetting RadioSetting;
             public readonly ActionBinding ActionBinding;
+            public readonly HeaderSetting HeaderSetting;
+            public readonly KeybindSetting KeybindSetting;
 
-            public Entry(string key, string panel, EntryType type, string label = null, BoolSetting boolSetting = null, FloatSetting floatSetting = null, RangeSetting rangeSetting = null, DropdownSetting dropdownSetting = null, RadioSetting radioSetting = null, ActionBinding actionBinding = null)
+            public Entry(string key, string panel, EntryType type, string label = null, BoolSetting boolSetting = null, FloatSetting floatSetting = null, RangeSetting rangeSetting = null, DropdownSetting dropdownSetting = null, RadioSetting radioSetting = null, ActionBinding actionBinding = null, HeaderSetting headerSetting = null, KeybindSetting keybindSetting = null, string resetLabel = null)
             {
                 Key = key;
                 Panel = panel;
                 Label = label;
+                ResetLabel = resetLabel;
                 Type = type;
                 BoolSetting = boolSetting;
                 FloatSetting = floatSetting;
@@ -261,6 +289,8 @@ namespace LastEpoch_Hud.Scripts.ModUI
                 DropdownSetting = dropdownSetting;
                 RadioSetting = radioSetting;
                 ActionBinding = actionBinding;
+                HeaderSetting = headerSetting;
+                KeybindSetting = keybindSetting;
             }
         }
     }
