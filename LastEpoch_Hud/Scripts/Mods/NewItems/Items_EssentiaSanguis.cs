@@ -382,6 +382,14 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                         __0.UniqueID = 22; //Keeper's Gloves
                     }
                 }
+
+                [HarmonyFinalizer]
+                static System.Exception Finalizer(System.Exception __exception)
+                {
+                    if (__exception != null)
+                        MelonLogger.Warning($"GetItemVisual threw: {__exception.GetType().Name}");
+                    return null;
+                }
             }
         }
         public class Hooks

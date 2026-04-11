@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using Il2Cpp;
+using LastEpoch_Hud.Scripts.ModUI;
 
 namespace LastEpoch_Hud.Scripts.Mods.Factions.TheWoven
 {
@@ -7,11 +8,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Factions.TheWoven
     {
         public static bool CanRun()
         {
-            if ((Scenes.IsGameScene()) && (!Save_Manager.instance.IsNullOrDestroyed()))
-            {
-                return Save_Manager.instance.data.Factions.TheWoven.Enable_TreePoints;
-            }
-            else { return false; }
+            return Scenes.IsGameScene() && ModSettings.Weaver.TreePoints.Enabled;
         }
 
         [HarmonyPatch(typeof(LocalTreeData.WeaverTreeData), "getUnspentPoints")]
@@ -22,7 +19,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Factions.TheWoven
             {
                 if (CanRun())
                 {
-                    __instance.EarnedWeaverPoints = (ushort)Save_Manager.instance.data.Factions.TheWoven.TreePoints;
+                    __instance.EarnedWeaverPoints = (ushort)ModSettings.Weaver.TreePoints.Value;
                 }
             }
         }

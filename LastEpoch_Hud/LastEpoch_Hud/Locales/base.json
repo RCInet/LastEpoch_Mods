@@ -122,7 +122,6 @@
   "Angle Minimum": "",
   "Angle Maximum": "",
   "Load OnStart": "",
-  "Reset": "",
   "Dungeons": "",
   "Enter Without Key": "",
   "Minimap": "",
@@ -213,6 +212,14 @@
   "Nb": "",
   "Select Affix": "",
   "Weaver": "",
+  "Weaver Tree Points": "",
+  "Free Weaver Respec": "",
+  "AutoCast": "",
+  "Hold the modifier key and click an ability slot to toggle autocast on/off for that skill.": "",
+  "Modifier Key": "",
+  "Reset": "",
+  "Press any key…": "",
+  "(none)": "",
   "Shards": "",
   "Title": ""
 }

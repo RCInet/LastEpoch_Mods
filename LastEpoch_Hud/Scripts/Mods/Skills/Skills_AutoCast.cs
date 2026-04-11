@@ -3,6 +3,7 @@ using HarmonyLib;
 using Il2Cpp;
 using MelonLoader;
 using Il2CppRewired;
+using LastEpoch_Hud.Scripts.ModUI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -279,27 +280,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
 
         static bool IsModifierHeld()
         {
-#if KEYBOARD
-            return EpochInputManager.CtrlPressed();
-#elif WINGAMEPAD
-            if (rewiredPlayer == null || rewiredPlayer.IsNullOrDestroyed()) return false;
-            try
-            {
-                var joystick = rewiredPlayer.controllers.GetLastActiveController(ControllerType.Joystick);
-                if (joystick == null) return false;
-
-                var template = joystick.GetTemplate<GamepadTemplate>();
-                if (template == null) return false;
-
-                var dpad = template.Cast<IGamepadTemplate>().dPad;
-                if (dpad == null) return false;
-
-                return dpad.left.value;
-            }
-            catch { return false; }
-#else
-            return false;
-#endif
+            return KeybindMatcher.IsHeld(ModSettings.SkillsAutoCast.ModifierKey.Value);
         }
 
         static void SendBarCommand(int slot, bool keyDown, Vector3 targetPos, Transform hitTransform)
