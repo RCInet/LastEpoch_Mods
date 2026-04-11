@@ -19,13 +19,14 @@ namespace LastEpoch_Hud.Scripts.ModUI
             this.prefix = prefix;
         }
 
-        public void Bind(string panelName, BoolSetting setting)
+        public void Bind(string panelName, BoolSetting setting, string label = null)
         {
             var toggle = Prefab.Component<Toggle>(panel, panelName, "Toggle_" + prefix + panelName);
             if (toggle == null) return;
             toggle.isOn = setting.Value;
             string name = "Toggle_" + prefix + panelName;
             int toggleId = toggle.GetInstanceID();
+            ApplyLabel(panelName, name, label);
             Prefab.BindToggle(toggle, new Action<bool>(v =>
             {
                 bool actual = toggle.isOn;
@@ -36,9 +37,9 @@ namespace LastEpoch_Hud.Scripts.ModUI
             BindCount++;
         }
 
-        public void Bind(string panelName, RangeSetting setting)
+        public void Bind(string panelName, RangeSetting setting, string label = null)
         {
-            BindToggle(panelName, v => setting.SetEnabled(v), setting.Enabled);
+            BindToggle(panelName, v => setting.SetEnabled(v), setting.Enabled, label);
 
             var text = Prefab.FindText(panel, panelName, "Toggle_" + prefix + panelName);
             var sMin = Prefab.Component<Slider>(panel, panelName, "Slider_" + prefix + panelName + "_Min");
@@ -70,9 +71,9 @@ namespace LastEpoch_Hud.Scripts.ModUI
             BindCount++;
         }
 
-        public void Bind(string panelName, FloatSetting setting)
+        public void Bind(string panelName, FloatSetting setting, string label = null)
         {
-            BindToggle(panelName, v => setting.SetEnabled(v), setting.Enabled);
+            BindToggle(panelName, v => setting.SetEnabled(v), setting.Enabled, label);
 
             var text = Prefab.FindText(panel, panelName, "Toggle_" + prefix + panelName);
             var slider = Prefab.Component<Slider>(panel, panelName, "Slider_" + prefix + panelName);
@@ -113,7 +114,7 @@ namespace LastEpoch_Hud.Scripts.ModUI
             BindCount++;
         }
 
-        public void BindDropdown(string panelName, DropdownSetting setting)
+        public void BindDropdown(string panelName, DropdownSetting setting, string label = null)
         {
             var dropdown = Prefab.Component<Dropdown>(panel, panelName, "Dropdown_" + prefix + panelName);
             if (dropdown == null) return;
@@ -123,6 +124,9 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
             dropdown.value = setting.Value;
             string name = "Dropdown_" + prefix + panelName;
+
+            ApplyLabel(panelName, name, label);
+
             Prefab.BindDropdown(dropdown, new Action<int>(v =>
             {
                 ModSettings.Trace("Dropdown listener fired: name=" + name + " v=" + v);
@@ -133,13 +137,21 @@ namespace LastEpoch_Hud.Scripts.ModUI
             BindCount++;
         }
 
-        public void BindButton(string key, ActionBinding binding)
+        public void BindButton(string key, ActionBinding binding, string label = null)
         {
             var btnObj = Prefab.Child(panel, "Btn_" + prefix + key);
             if (btnObj == null) return;
             var btn = btnObj.GetComponent<Button>();
             if (btn == null) return;
             string name = "Btn_" + prefix + key;
+
+            // Buttons may have a child Text component. Try to find and update it with label.
+            if (!string.IsNullOrEmpty(label))
+            {
+                var textChild = btnObj.GetComponentInChildren<Text>();
+                if (textChild != null) Prefab.ApplyLabel(textChild, label);
+            }
+
             Prefab.BindButton(btn, new Action(() =>
             {
                 ModSettings.Trace("Button listener fired: name=" + name);
@@ -151,13 +163,14 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
         // Helpers
 
-        private void BindToggle(string panelName, Action<bool> setter, bool initialValue)
+        private void BindToggle(string panelName, Action<bool> setter, bool initialValue, string label = null)
         {
             var toggle = Prefab.Component<Toggle>(panel, panelName, "Toggle_" + prefix + panelName);
             if (toggle == null) return;
             toggle.isOn = initialValue;
             string name = "Toggle_" + prefix + panelName;
             int toggleId = toggle.GetInstanceID();
+            ApplyLabel(panelName, name, label);
             Prefab.BindToggle(toggle, new Action<bool>(v =>
             {
                 bool actual = toggle.isOn;
@@ -165,6 +178,16 @@ namespace LastEpoch_Hud.Scripts.ModUI
                 setter(actual);
             }));
             ModSettings.Trace("BindToggle " + name + " subscribed, isOn=" + toggle.isOn + " id=" + toggleId);
+        }
+
+        // Locates the toggle's Label Text child and applies an English label with locale translation.
+        // Quiet no-op when label is null (library caller didn't provide one — use prefab's serialized text).
+        private void ApplyLabel(string panelName, string toggleName, string label)
+        {
+            if (string.IsNullOrEmpty(label)) return;
+            var text = Prefab.FindLabel(panel, panelName, toggleName);
+            if (text == null) return;
+            Prefab.ApplyLabel(text, label);
         }
 
         private static void ConfigureSlider(Slider slider, float min, float max, float value)

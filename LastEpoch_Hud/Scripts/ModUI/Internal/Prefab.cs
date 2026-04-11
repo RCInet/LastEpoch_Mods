@@ -64,6 +64,34 @@ namespace LastEpoch_Hud.Scripts.ModUI
             return directText != null ? directText.GetComponent<Text>() : null;
         }
 
+        // Finds the user-visible "Label" Text child of a toggle (NOT the "Value" numeric display).
+        // Used by the setting label application path -- we want to update the setting's name label,
+        // not the displayed numeric value of a slider.
+        public static Text FindLabel(GameObject parent, string panelName, string toggleName)
+        {
+            var panel = Child(parent, panelName);
+            if (panel == null) return null;
+            var toggle = Child(panel, toggleName);
+            if (toggle == null) return null;
+            var label = Child(toggle, "Label");
+            return label != null ? label.GetComponent<Text>() : null;
+        }
+
+        // Applies a label string to a Text component, translating via the mod's active locale
+        // dictionary when an entry exists. Falls back to the English input when the dictionary
+        // is unloaded or the key is missing -- same behavior as Hud_Manager.Update_Locale's
+        // per-Text replacement pass, but self-contained at bind time so we don't have to wait
+        // for the next Update_Locale cycle.
+        public static void ApplyLabel(Text text, string englishLabel)
+        {
+            if (text == null || string.IsNullOrEmpty(englishLabel)) return;
+            var dict = Locales.current_dictionary;
+            if (dict != null && dict.TryGetValue(englishLabel, out var translated) && !string.IsNullOrEmpty(translated))
+                text.text = translated;
+            else
+                text.text = englishLabel;
+        }
+
         // Navigate: parent → panel → "Title" → toggleName (for master toggles)
         public static Toggle ToggleInTitle(GameObject parent, string panelName, string toggleName, bool activate = false)
         {

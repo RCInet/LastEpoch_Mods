@@ -67,32 +67,35 @@ namespace LastEpoch_Hud.Scripts.ModUI
         }
 
         // Factory methods -- optional 'panel' overrides prefab panel name (defaults to key).
+        // Optional 'label' is the English display text -- applied to the widget's Label Text
+        // at bind time, translated via Locales.current_dictionary. Leave null to keep whatever
+        // label was serialized into the prefab.
 
-        public BoolSetting Bool(string key, bool defaultValue = false, string panel = null)
+        public BoolSetting Bool(string key, bool defaultValue = false, string panel = null, string label = null)
         {
             var s = new BoolSetting(defaultValue);
-            entries.Add(new Entry(key, panel ?? key, EntryType.Bool, boolSetting: s));
+            entries.Add(new Entry(key, panel ?? key, EntryType.Bool, label: label, boolSetting: s));
             return s;
         }
 
-        public FloatSetting Float(string key, float defaultValue = 0f, bool defaultEnabled = false, DisplayFormat format = DisplayFormat.Raw, string panel = null)
+        public FloatSetting Float(string key, float defaultValue = 0f, bool defaultEnabled = false, DisplayFormat format = DisplayFormat.Raw, string panel = null, string label = null)
         {
             var s = new FloatSetting(defaultValue, defaultEnabled, format);
-            entries.Add(new Entry(key, panel ?? key, EntryType.Float, floatSetting: s));
+            entries.Add(new Entry(key, panel ?? key, EntryType.Float, label: label, floatSetting: s));
             return s;
         }
 
-        public RangeSetting Range(string key, float minLimit = 0, float maxLimit = 255, float? defaultMin = null, float? defaultMax = null, bool defaultEnabled = false, DisplayFormat format = DisplayFormat.Raw, string panel = null)
+        public RangeSetting Range(string key, float minLimit = 0, float maxLimit = 255, float? defaultMin = null, float? defaultMax = null, bool defaultEnabled = false, DisplayFormat format = DisplayFormat.Raw, string panel = null, string label = null)
         {
             var s = new RangeSetting(minLimit, maxLimit, defaultMin, defaultMax, defaultEnabled, format);
-            entries.Add(new Entry(key, panel ?? key, EntryType.Range, rangeSetting: s));
+            entries.Add(new Entry(key, panel ?? key, EntryType.Range, label: label, rangeSetting: s));
             return s;
         }
 
-        public DropdownSetting Dropdown(string key, int defaultValue = 0, string[] options = null, string panel = null)
+        public DropdownSetting Dropdown(string key, int defaultValue = 0, string[] options = null, string panel = null, string label = null)
         {
             var s = new DropdownSetting(defaultValue, options);
-            entries.Add(new Entry(key, panel ?? key, EntryType.Dropdown, dropdownSetting: s));
+            entries.Add(new Entry(key, panel ?? key, EntryType.Dropdown, label: label, dropdownSetting: s));
             return s;
         }
 
@@ -103,10 +106,10 @@ namespace LastEpoch_Hud.Scripts.ModUI
             return s;
         }
 
-        public ActionBinding Button(string key)
+        public ActionBinding Button(string key, string label = null)
         {
             var b = new ActionBinding();
-            entries.Add(new Entry(key, key, EntryType.Button, actionBinding: b));
+            entries.Add(new Entry(key, key, EntryType.Button, label: label, actionBinding: b));
             return b;
         }
 
@@ -134,12 +137,12 @@ namespace LastEpoch_Hud.Scripts.ModUI
                     int before = builder.BindCount;
                     switch (e.Type)
                     {
-                        case EntryType.Bool: builder.Bind(e.Panel, e.BoolSetting); break;
-                        case EntryType.Float: builder.Bind(e.Panel, e.FloatSetting); break;
-                        case EntryType.Range: builder.Bind(e.Panel, e.RangeSetting); break;
-                        case EntryType.Dropdown: builder.BindDropdown(e.Panel, e.DropdownSetting); break;
+                        case EntryType.Bool: builder.Bind(e.Panel, e.BoolSetting, e.Label); break;
+                        case EntryType.Float: builder.Bind(e.Panel, e.FloatSetting, e.Label); break;
+                        case EntryType.Range: builder.Bind(e.Panel, e.RangeSetting, e.Label); break;
+                        case EntryType.Dropdown: builder.BindDropdown(e.Panel, e.DropdownSetting, e.Label); break;
                         case EntryType.Radio: builder.BindRadio(e.Panel, e.RadioSetting); break;
-                        case EntryType.Button: builder.BindButton(e.Key, e.ActionBinding); break;
+                        case EntryType.Button: builder.BindButton(e.Key, e.ActionBinding, e.Label); break;
                     }
                     if (builder.BindCount > before) { bound++; continue; }
                 }
@@ -237,6 +240,7 @@ namespace LastEpoch_Hud.Scripts.ModUI
         {
             public readonly string Key;
             public readonly string Panel;
+            public readonly string Label;
             public readonly EntryType Type;
             public readonly BoolSetting BoolSetting;
             public readonly FloatSetting FloatSetting;
@@ -245,10 +249,11 @@ namespace LastEpoch_Hud.Scripts.ModUI
             public readonly RadioSetting RadioSetting;
             public readonly ActionBinding ActionBinding;
 
-            public Entry(string key, string panel, EntryType type, BoolSetting boolSetting = null, FloatSetting floatSetting = null, RangeSetting rangeSetting = null, DropdownSetting dropdownSetting = null, RadioSetting radioSetting = null, ActionBinding actionBinding = null)
+            public Entry(string key, string panel, EntryType type, string label = null, BoolSetting boolSetting = null, FloatSetting floatSetting = null, RangeSetting rangeSetting = null, DropdownSetting dropdownSetting = null, RadioSetting radioSetting = null, ActionBinding actionBinding = null)
             {
                 Key = key;
                 Panel = panel;
+                Label = label;
                 Type = type;
                 BoolSetting = boolSetting;
                 FloatSetting = floatSetting;

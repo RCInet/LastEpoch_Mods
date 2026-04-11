@@ -2,8 +2,6 @@
 
 Declarative settings framework for the Last Epoch mod HUD.
 
-Gradually replacing legacy SaveManager + HudManager.
-
 ## Adding a setting
 
 One line in `ModSettings.cs`:
@@ -37,7 +35,33 @@ public static readonly RangeSetting AffixCount = Group.Range("AffixCount", 0, 6,
 
 Range defaults min/max to `minLimit`/`maxLimit`. Override with `defaultMin:` / `defaultMax:`.
 
----
+## Labels & localization
+
+Every factory method (`Bool` / `Float` / `Range` / `Dropdown` / `Button`) accepts an optional `label:` parameter — the English display text that will appear in the HUD. The library applies it to the widget's `Label` Text child at bind time, **translated through the mod's active locale dictionary**:
+
+```csharp
+public static readonly FloatSetting TreePoints =
+    Group.Float("TreePoints", defaultValue: 50f, label: "Weaver Tree Points");
+
+public static readonly BoolSetting FreeRespec =
+    Group.Bool("FreeRespec", label: "Free Weaver Respec");
+```
+
+**How it resolves:**
+
+1. The `label:` string you pass is the **English source** AND the dictionary key.
+2. At bind time, [`SettingsBuilder.ApplyLabel`](Internal/SettingsBuilder.cs) looks up the key in `Locales.current_dictionary`. If a translation exists, that's written to the widget's `Label` Text. If not, the English string is used as is.
+3. If the player switches languages mid-session, the existing [`Hud_Manager.Update_Locale`](../Hud_Manager.cs) re-walks the HUD tree and re-translates all labels.
+
+**Workflow for adding a localized setting:**
+
+1. Declare the setting in `ModSettings.cs` with `label: "English Label"`
+2. Add the key to `LastEpoch_Hud/Locales/base.json` (empty value — translator template)
+3. Add translations to `en.json`, `fr.json`, `zh.json` (use English string as the JSON key, translated text as the value)
+4. Rebuild the DLL (no AssetBundle rebuild needed — labels live in code, not the prefab)
+
+**If you DON'T pass `label:`** the library does nothing to the Text component, and whatever text is serialized in the prefab stays.
+
 
 ## Reading settings from feature code
 
@@ -61,7 +85,6 @@ ModSettings.ScenesCamera.Reset.Clicked += () => ResetCameraValues();
 
 Settings have `{ get; internal set; }` -- feature code reads directly but must use `.Set()`, `.SetMin()`, `.SetMax()`, `.SetEnabled()` to write (triggers dirty flag + Changed events).
 
----
 
 ## Creating a new section
 
@@ -97,7 +120,6 @@ public static class ItemsPickup
 
 Groups with `.Tab()` get a menu button and own their content panel. Groups without `.Tab()` are sub-panels bound during HUD init.
 
----
 
 ## OnBind -- escape hatch for non-standard UI
 
@@ -115,7 +137,6 @@ When a UI element doesn't follow the naming convention (master toggles in title 
 
 Runs after all automatic bindings. Use sparingly -- if you're using it for standard toggles or buttons, the naming convention is probably wrong.
 
----
 
 ## Dropdown options
 
@@ -149,7 +170,6 @@ ModSettings.ItemsForceDrop.Type.Changed += _ =>
 
 `.SelectedText` returns the label of the current selection, or null if no options are set.
 
----
 
 ## Naming convention
 
@@ -166,7 +186,6 @@ UI elements live inside a sub-panel named after the setting key (or `panel:` ove
 
 Text labels: searched as `Value` or `Label` child inside the toggle, then as direct panel child.
 
----
 
 ## Reference
 

@@ -58,8 +58,8 @@ namespace LastEpoch_Hud.Scripts.ModUI
                 .Viewport("Character_Factions", "Character_Factions_Content")
                 .Prefix("Weaver_");
 
-            public static readonly FloatSetting TreePoints = Group.Float("TreePoints", defaultValue: 50f);
-            public static readonly BoolSetting  FreeRespec = Group.Bool("FreeRespec");
+            public static readonly FloatSetting TreePoints = Group.Float("TreePoints", defaultValue: 50f, label: "Weaver Tree Points");
+            public static readonly BoolSetting  FreeRespec = Group.Bool("FreeRespec", label: "Free Weaver Respec");
         }
 
         //
