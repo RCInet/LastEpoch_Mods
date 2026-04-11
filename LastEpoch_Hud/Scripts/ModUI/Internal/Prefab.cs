@@ -6,11 +6,8 @@ using UnityEngine.UI;
 namespace LastEpoch_Hud.Scripts.ModUI
 {
     // Prefab interaction: element lookups, event binding, and hierarchy traversal.
-    // Null-safe -- returns null on failure, never throws.
-    //
     // IL2CPP: Never replace event objects (slider.onValueChanged = new SliderEvent()).
     // Native code holds a pointer to the event. Replacing it disconnects the callback chain.
-    // https://deepwiki.com/BepInEx/Il2CppInterop/5-runtime-interoperability
     public static class Prefab
     {
         public static GameObject Child(GameObject parent, string name)
@@ -33,7 +30,7 @@ namespace LastEpoch_Hud.Scripts.ModUI
             return obj.GetComponent<T>();
         }
 
-        // Navigate: parent → panel → content → "Viewport" → "Content"
+        // Navigate: parent -> panel -> content -> "Viewport" -> "Content"
         public static GameObject ViewportContent(GameObject parent, string panelName, string contentName)
         {
             var panel = Child(parent, panelName);
@@ -92,7 +89,7 @@ namespace LastEpoch_Hud.Scripts.ModUI
                 text.text = englishLabel;
         }
 
-        // Navigate: parent → panel → "Title" → toggleName (for master toggles)
+        // Navigate: parent -> panel -> "Title" -> toggleName (for master toggles)
         public static Toggle ToggleInTitle(GameObject parent, string panelName, string toggleName, bool activate = false)
         {
             var panel = Child(parent, panelName);
