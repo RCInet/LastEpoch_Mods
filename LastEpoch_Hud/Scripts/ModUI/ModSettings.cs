@@ -55,7 +55,7 @@ namespace LastEpoch_Hud.Scripts.ModUI
         {
             public static readonly SettingsGroup Group = new SettingsGroup("Weaver")
                 .Content("Character_Content")
-                .Viewport("Character_Factions", "Character_Factions_Content")
+                .Viewport("Character_Data", "Character_Data_Content")
                 .Prefix("Weaver_");
 
             public static readonly FloatSetting TreePoints = Group.Float("TreePoints", defaultValue: 50f, label: "Weaver Tree Points");
