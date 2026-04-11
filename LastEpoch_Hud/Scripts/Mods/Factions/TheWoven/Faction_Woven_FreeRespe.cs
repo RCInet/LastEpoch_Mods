@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using LastEpoch_Hud.Scripts.ModUI;
 
 namespace LastEpoch_Hud.Scripts.Mods.Factions.TheWoven
 {
@@ -6,11 +7,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Factions.TheWoven
     {
         public static bool CanRun()
         {
-            if ((Scenes.IsGameScene()) && (!Save_Manager.instance.IsNullOrDestroyed()))
-            {
-                return Save_Manager.instance.data.Factions.TheWoven.Enable_FreeRespe;
-            }
-            else { return false; }
+            return Scenes.IsGameScene() && ModSettings.Weaver.FreeRespec.Value;
         }
 
         [HarmonyPatch(typeof(Il2CppLE.Factions.TheWeaver), "GetMemoryAmberRespecCostForWeaverTree")]

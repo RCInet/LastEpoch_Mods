@@ -1,9 +1,0 @@
-ManifestFileVersion: 0
-UnityVersion: 6000.0.42f1
-CRC: 564450953
-HashAppended: 0
-AssetBundleManifest:
-  AssetBundleInfos:
-    Info_0:
-      Name: lastepochmods
-      Dependencies: {}

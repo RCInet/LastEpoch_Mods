@@ -25,6 +25,21 @@ namespace LastEpoch_Hud.Scripts.ModUI
         }
 
         //
+        // CHARACTER TAB
+        //
+
+        public static class Weaver
+        {
+            public static readonly SettingsGroup Group = new SettingsGroup("Weaver")
+                .Content("Character_Content")
+                .Viewport("Character_Factions", "Character_Factions_Content")
+                .Prefix("Weaver_");
+
+            public static readonly FloatSetting TreePoints = Group.Float("TreePoints", defaultValue: 50f);
+            public static readonly BoolSetting  FreeRespec = Group.Bool("FreeRespec");
+        }
+
+        //
         // ITEMS TAB
         //
 
