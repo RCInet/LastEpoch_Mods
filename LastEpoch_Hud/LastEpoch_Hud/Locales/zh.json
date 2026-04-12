@@ -228,6 +228,8 @@
   "AutoCast": "自动施放",
   "Hold the modifier key and click an ability slot to toggle autocast on/off for that skill.": "按住修饰键并点击技能槽，即可切换该技能的自动施放。",
   "Modifier Key": "修饰键",
+  "Pause autocast on zone change (press any skill to resume)": "切换区域时暂停自动施放（按任意技能恢复）",
+  "Pause autocast in non-combat zones": "在非战斗区域暂停自动施放",
   "Reset": "重置",
   "Press any key…": "按任意键…",
   "(none)": "（无）",

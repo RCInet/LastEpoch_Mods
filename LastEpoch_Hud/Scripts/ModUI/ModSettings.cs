@@ -89,6 +89,12 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
             public static readonly KeybindSetting ModifierKey =
                 Group.Keybind("ModifierKey", defaultBinding: DefaultModifier, label: "Modifier Key");
+
+            public static readonly BoolSetting PauseOnZoneChange =
+                Group.Bool("PauseOnZoneChange", label: "Pause autocast on zone change (press any skill to resume)");
+
+            public static readonly BoolSetting DisableInNonCombatZone =
+                Group.Bool("DisableInNonCombatZone", label: "Pause autocast in non-combat zones");
         }
 
         //
