@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices; //Gamepad
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -104,9 +105,14 @@ namespace LastEpoch_Hud.Scripts
                         {
                             VirtualKeyboard.instance.MoveTo(Content.OdlForceDrop.center_content_1, Content.OdlForceDrop.shards_filter_name);
                         }
-                        if ((Input.GetKeyDown(KeyCode.Joystick1Button0)) && (!virtual_mouse.IsNullOrDestroyed())) //A
+                        if (Input.GetKeyDown(KeyCode.Joystick1Button0)) //A
                         {
-                            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                            GameObject selected = EventSystem.current?.currentSelectedGameObject;
+                            if (!selected.IsNullOrDestroyed())
+                            {
+                                ExecuteEvents.Execute(selected, new BaseEventData(EventSystem.current), ExecuteEvents.submitHandler);
+                            }
+                            else if (!virtual_mouse.IsNullOrDestroyed() && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                             {
                                 mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, (uint)virtual_mouse.screenPosition.x, (uint)virtual_mouse.screenPosition.y, 0, 0);
                             }

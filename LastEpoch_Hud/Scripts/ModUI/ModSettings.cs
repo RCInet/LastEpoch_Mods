@@ -63,7 +63,6 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
             public static readonly FloatSetting TreePoints = Group.Float(
                 "TreePoints",
-                defaultValue: 50f,
                 label: "Weaver Tree Points"
             );
             public static readonly BoolSetting FreeRespec = Group.Bool(
