@@ -447,3 +447,6 @@ crashlytics-build.properties
 AssetBundleExport/Assets/Scripts/Editor/DevBuildHelper.cs
 AssetBundleExport/Assets/Scripts/Editor/DevBuildHelper.cs.meta
 dotnet-tools.json
+AssetBundleExport/Assets/Hud/Prefab/Hud.prefab.back.meta
+AssetBundleExport/Assets/DamageMeter/Prefab/Details_BottomCircle.prefab.meta
+AssetBundleExport/Assets/DamageMeter/Prefab/Details_TopCircle.prefab.meta
