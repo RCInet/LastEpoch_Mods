@@ -5,7 +5,7 @@ SET "SCRIPT_DIR=%~dp0"
 SET "BUILD_DIR=%SCRIPT_DIR%..\Build"
 SET "LATEST_DIR=%SCRIPT_DIR%..\Latest"
 
-REM --- Find WinRAR (only tool that can create .rar archives) ---
+REM Find WinRAR (only tool that can create .rar archives)
 SET "RAR="
 
 REM Try registry (64-bit and 32-bit keys)
@@ -37,10 +37,10 @@ IF "!RAR!"=="" (
 
 echo Using: !RAR!
 
-REM --- Prepare Latest directory ---
+REM Prepare Latest directory
 IF NOT EXIST "%LATEST_DIR%" mkdir "%LATEST_DIR%"
 
-REM --- Package each config that has a build ---
+REM Package each config that has a build
 FOR %%C IN (Keyboard WinGamepad) DO (
     SET "SRC=%BUILD_DIR%\%%C\net6.0"
     IF EXIST "!SRC!\LastEpoch_Hud.dll" (
@@ -56,7 +56,7 @@ FOR %%C IN (Keyboard WinGamepad) DO (
         "!RAR!" a -r "!OUT!"
         echo Created: !OUT!
     ) ELSE (
-        echo Skipped %%C - no build found
+        echo [MakeLatest] Skipped %%C - no build found
     )
 )
 
