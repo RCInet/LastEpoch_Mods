@@ -9,7 +9,10 @@ namespace LastEpoch_Hud.Scripts.ModUI
     {
         public string Name { get; }
 
-        // Tab metadata -- set via fluent API, used by TabManager to auto-create HUD tabs
+        // Defaults to the Hud; custom prefabs opt in via .Root("name").
+        public string RootName { get; private set; } = BindingRoots.HudRootName;
+
+        // Tab metadata -- set via fluent API, consumed by TabManager when the Hud binds
         public string TabId { get; private set; }
         public string ContentObjectName { get; private set; }
         public string MenuButtonName { get; private set; }
@@ -28,6 +31,12 @@ namespace LastEpoch_Hud.Scripts.ModUI
         public bool HasTab => TabId != null;
 
         // Fluent configuration
+
+        public SettingsGroup Root(string rootName)
+        {
+            RootName = rootName ?? BindingRoots.HudRootName;
+            return this;
+        }
 
         public SettingsGroup Tab(string tabId, string menuButton)
         {
@@ -57,7 +66,7 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
         // Custom bind callback. Runs after automatic bindings with access to both
         // the content panel (e.g., Items_Content) and viewport content.
-        // Use for non-standard elements that don't fit the auto-binding pattern.
+        // Escape hatch for elements that don't fit the convention or path-mode patterns.
         private System.Action<UnityEngine.GameObject, UnityEngine.GameObject> customBind;
 
         public SettingsGroup OnBind(System.Action<UnityEngine.GameObject, UnityEngine.GameObject> callback)
@@ -71,31 +80,31 @@ namespace LastEpoch_Hud.Scripts.ModUI
         // at bind time, translated via Locales.current_dictionary. Leave null to keep whatever
         // label was serialized into the prefab.
 
-        public BoolSetting Bool(string key, bool defaultValue = false, string panel = null, string label = null)
+        public BoolSetting Bool(string key, bool defaultValue = false, string panel = null, string label = null, string path = null)
         {
             var s = new BoolSetting(defaultValue);
-            entries.Add(new Entry(key, panel ?? key, EntryType.Bool, label: label, boolSetting: s));
+            entries.Add(new Entry(key, panel ?? key, EntryType.Bool, label: label, boolSetting: s, widgetPath: path));
             return s;
         }
 
-        public FloatSetting Float(string key, float defaultValue = 0f, bool defaultEnabled = false, DisplayFormat format = DisplayFormat.Raw, string panel = null, string label = null)
+        public FloatSetting Float(string key, float defaultValue = 0f, bool defaultEnabled = false, DisplayFormat format = DisplayFormat.Raw, string panel = null, string label = null, FloatPaths? paths = null)
         {
             var s = new FloatSetting(defaultValue, defaultEnabled, format);
-            entries.Add(new Entry(key, panel ?? key, EntryType.Float, label: label, floatSetting: s));
+            entries.Add(new Entry(key, panel ?? key, EntryType.Float, label: label, floatSetting: s, floatPaths: paths));
             return s;
         }
 
-        public RangeSetting Range(string key, float minLimit = 0, float maxLimit = 255, float? defaultMin = null, float? defaultMax = null, bool defaultEnabled = false, DisplayFormat format = DisplayFormat.Raw, string panel = null, string label = null)
+        public RangeSetting Range(string key, float minLimit = 0, float maxLimit = 255, float? defaultMin = null, float? defaultMax = null, bool defaultEnabled = false, DisplayFormat format = DisplayFormat.Raw, string panel = null, string label = null, RangePaths? paths = null)
         {
             var s = new RangeSetting(minLimit, maxLimit, defaultMin, defaultMax, defaultEnabled, format);
-            entries.Add(new Entry(key, panel ?? key, EntryType.Range, label: label, rangeSetting: s));
+            entries.Add(new Entry(key, panel ?? key, EntryType.Range, label: label, rangeSetting: s, rangePaths: paths));
             return s;
         }
 
-        public DropdownSetting Dropdown(string key, int defaultValue = 0, string[] options = null, string panel = null, string label = null)
+        public DropdownSetting Dropdown(string key, int defaultValue = 0, string[] options = null, string panel = null, string label = null, string path = null)
         {
             var s = new DropdownSetting(defaultValue, options);
-            entries.Add(new Entry(key, panel ?? key, EntryType.Dropdown, label: label, dropdownSetting: s));
+            entries.Add(new Entry(key, panel ?? key, EntryType.Dropdown, label: label, dropdownSetting: s, widgetPath: path));
             return s;
         }
 
@@ -106,26 +115,33 @@ namespace LastEpoch_Hud.Scripts.ModUI
             return s;
         }
 
-        public ActionBinding Button(string key, string label = null)
+        // Separate method because params arrays can't follow optional parameters cleanly.
+        public RadioSetting RadioWithPaths(string key, RadioPaths paths, params string[] optionNames)
         {
-            var b = new ActionBinding();
-            entries.Add(new Entry(key, key, EntryType.Button, label: label, actionBinding: b));
-            return b;
-        }
-
-        public HeaderSetting Header(string key, string label, string panel = null)
-        {
-            var s = new HeaderSetting(label);
-            entries.Add(new Entry(key, panel ?? key, EntryType.Header, label: label, headerSetting: s));
+            var s = new RadioSetting(optionNames);
+            entries.Add(new Entry(key, key, EntryType.Radio, radioSetting: s, radioPaths: paths));
             return s;
         }
 
-        // Rebindable input setting (one keyboard key OR gamepad button).
-        // resetLabel: null = use centralized "Reset" string (translated via Locales).
-        public KeybindSetting Keybind(string key, string defaultBinding = "", string panel = null, string label = null, string resetLabel = null)
+        public ActionBinding Button(string key, string label = null, string path = null)
+        {
+            var b = new ActionBinding();
+            entries.Add(new Entry(key, key, EntryType.Button, label: label, actionBinding: b, widgetPath: path));
+            return b;
+        }
+
+        public HeaderSetting Header(string key, string label, string panel = null, string path = null)
+        {
+            var s = new HeaderSetting(label);
+            entries.Add(new Entry(key, panel ?? key, EntryType.Header, label: label, headerSetting: s, widgetPath: path));
+            return s;
+        }
+
+        // resetLabel null = centralized "Reset" string.
+        public KeybindSetting Keybind(string key, string defaultBinding = "", string panel = null, string label = null, string resetLabel = null, KeybindPaths? paths = null)
         {
             var s = new KeybindSetting(defaultBinding);
-            entries.Add(new Entry(key, panel ?? key, EntryType.Keybind, label: label, keybindSetting: s, resetLabel: resetLabel));
+            entries.Add(new Entry(key, panel ?? key, EntryType.Keybind, label: label, keybindSetting: s, resetLabel: resetLabel, keybindPaths: paths));
             return s;
         }
 
@@ -153,14 +169,14 @@ namespace LastEpoch_Hud.Scripts.ModUI
                     int before = builder.BindCount;
                     switch (e.Type)
                     {
-                        case EntryType.Bool: builder.Bind(e.Panel, e.BoolSetting, e.Label); break;
-                        case EntryType.Float: builder.Bind(e.Panel, e.FloatSetting, e.Label); break;
-                        case EntryType.Range: builder.Bind(e.Panel, e.RangeSetting, e.Label); break;
-                        case EntryType.Dropdown: builder.BindDropdown(e.Panel, e.DropdownSetting, e.Label); break;
-                        case EntryType.Radio: builder.BindRadio(e.Panel, e.RadioSetting); break;
-                        case EntryType.Button: builder.BindButton(e.Key, e.ActionBinding, e.Label); break;
-                        case EntryType.Header: builder.BindHeader(e.Panel, e.HeaderSetting, e.Label); break;
-                        case EntryType.Keybind: builder.BindKeybind(e.Panel, e.KeybindSetting, e.Label, e.ResetLabel); break;
+                        case EntryType.Bool: builder.Bind(e.Panel, e.BoolSetting, e.Label, e.WidgetPath); break;
+                        case EntryType.Float: builder.Bind(e.Panel, e.FloatSetting, e.Label, e.FloatPaths); break;
+                        case EntryType.Range: builder.Bind(e.Panel, e.RangeSetting, e.Label, e.RangePaths); break;
+                        case EntryType.Dropdown: builder.BindDropdown(e.Panel, e.DropdownSetting, e.Label, e.WidgetPath); break;
+                        case EntryType.Radio: builder.BindRadio(e.Panel, e.RadioSetting, e.RadioPaths); break;
+                        case EntryType.Button: builder.BindButton(e.Key, e.ActionBinding, e.Label, e.WidgetPath); break;
+                        case EntryType.Header: builder.BindHeader(e.Panel, e.HeaderSetting, e.Label, e.WidgetPath); break;
+                        case EntryType.Keybind: builder.BindKeybind(e.Panel, e.KeybindSetting, e.Label, e.ResetLabel, e.KeybindPaths); break;
                     }
                     if (builder.BindCount > before) { bound++; continue; }
                 }
@@ -266,6 +282,7 @@ namespace LastEpoch_Hud.Scripts.ModUI
             public readonly string Panel;
             public readonly string Label;
             public readonly string ResetLabel;
+            public readonly string WidgetPath;
             public readonly EntryType Type;
             public readonly BoolSetting BoolSetting;
             public readonly FloatSetting FloatSetting;
@@ -275,13 +292,18 @@ namespace LastEpoch_Hud.Scripts.ModUI
             public readonly ActionBinding ActionBinding;
             public readonly HeaderSetting HeaderSetting;
             public readonly KeybindSetting KeybindSetting;
+            public readonly FloatPaths? FloatPaths;
+            public readonly RangePaths? RangePaths;
+            public readonly KeybindPaths? KeybindPaths;
+            public readonly RadioPaths? RadioPaths;
 
-            public Entry(string key, string panel, EntryType type, string label = null, BoolSetting boolSetting = null, FloatSetting floatSetting = null, RangeSetting rangeSetting = null, DropdownSetting dropdownSetting = null, RadioSetting radioSetting = null, ActionBinding actionBinding = null, HeaderSetting headerSetting = null, KeybindSetting keybindSetting = null, string resetLabel = null)
+            public Entry(string key, string panel, EntryType type, string label = null, BoolSetting boolSetting = null, FloatSetting floatSetting = null, RangeSetting rangeSetting = null, DropdownSetting dropdownSetting = null, RadioSetting radioSetting = null, ActionBinding actionBinding = null, HeaderSetting headerSetting = null, KeybindSetting keybindSetting = null, string resetLabel = null, string widgetPath = null, FloatPaths? floatPaths = null, RangePaths? rangePaths = null, KeybindPaths? keybindPaths = null, RadioPaths? radioPaths = null)
             {
                 Key = key;
                 Panel = panel;
                 Label = label;
                 ResetLabel = resetLabel;
+                WidgetPath = widgetPath;
                 Type = type;
                 BoolSetting = boolSetting;
                 FloatSetting = floatSetting;
@@ -291,6 +313,10 @@ namespace LastEpoch_Hud.Scripts.ModUI
                 ActionBinding = actionBinding;
                 HeaderSetting = headerSetting;
                 KeybindSetting = keybindSetting;
+                FloatPaths = floatPaths;
+                RangePaths = rangePaths;
+                KeybindPaths = keybindPaths;
+                RadioPaths = radioPaths;
             }
         }
     }

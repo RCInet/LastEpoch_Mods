@@ -446,3 +446,4 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 AssetBundleExport/Assets/Scripts/Editor/DevBuildHelper.cs
 AssetBundleExport/Assets/Scripts/Editor/DevBuildHelper.cs.meta
+dotnet-tools.json

@@ -26,8 +26,8 @@ namespace LastEpoch_Hud.Scripts.ModUI
             if (Debug.Enabled.Value) Main.logger_instance?.Msg("[ModUI] " + msg);
         }
 
-        // Auto-initialize all nested section classes so their SettingsGroups register.
-        // Without this, C# defers static nested class init until first access.
+        // Force every nested section class to run its static init so each SettingsGroup
+        // registers itself. C# defers static nested class init until first access otherwise.
         static ModSettings()
         {
             foreach (var type in typeof(ModSettings).GetNestedTypes())
@@ -89,6 +89,12 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
             public static readonly KeybindSetting ModifierKey =
                 Group.Keybind("ModifierKey", defaultBinding: DefaultModifier, label: "Modifier Key");
+
+            public static readonly BoolSetting PauseOnZoneChange =
+                Group.Bool("PauseOnZoneChange", label: "Pause autocast on zone change (press any skill to resume)");
+
+            public static readonly BoolSetting DisableInNonCombatZone =
+                Group.Bool("DisableInNonCombatZone", label: "Pause autocast in non-combat zones");
         }
 
         //

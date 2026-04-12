@@ -217,6 +217,8 @@
   "AutoCast": "AutoCast",
   "Hold the modifier key and click an ability slot to toggle autocast on/off for that skill.": "Hold the modifier key and click an ability slot to toggle autocast on/off for that skill.",
   "Modifier Key": "Modifier Key",
+  "Pause autocast on zone change (press any skill to resume)": "Pause autocast on zone change (press any skill to resume)",
+  "Pause autocast in non-combat zones": "Pause autocast in non-combat zones",
   "Reset": "Reset",
   "Press any key…": "Press any key…",
   "(none)": "(none)",

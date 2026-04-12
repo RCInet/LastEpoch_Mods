@@ -59,9 +59,9 @@ namespace LastEpoch_Hud.Scripts.ModUI
                     foreach (var group in ModSettings.AllGroups)
                         group.Load(root);
 
-                    // If any registered group is missing from the on-disk file,
-                    // schedule a rewrite so newly-declared sections (e.g. Debug)
-                    // auto-appear without requiring a user interaction.
+                    // If any registered group is missing from the on-disk file, rewrite
+                    // so a new section (e.g. Debug) shows up on disk without waiting for
+                    // the player to interact with one of its settings.
                     foreach (var group in ModSettings.AllGroups)
                     {
                         if (root[group.Name] == null) { needsRewrite = true; break; }
@@ -100,30 +100,53 @@ namespace LastEpoch_Hud.Scripts.ModUI
             ModSettings.Trace("SaveManager.Save wrote " + filename);
         }
 
-        // Called once from Hud_Manager.Init_Hud after the legacy prefab is instantiated.
-        // Binds every registered SettingsGroup to the shared hud_object.
         public static void BindHud(GameObject hud_object)
         {
-            if (instance == null || hud_object.IsNullOrDestroyed()) return;
+            BindRoot(BindingRoots.HudRootName, hud_object, RootKind.HudWithTabs);
+        }
 
+        public static void BindRoot(string name, GameObject root, RootKind kind = RootKind.Generic)
+        {
+            if (instance == null || root.IsNullOrDestroyed()) return;
+            if (string.IsNullOrEmpty(name)) return;
+
+            if (BindingRoots.IsSameRoot(name, root))
+            {
+                Main.logger_instance?.Msg("ModUI SaveManager: BindRoot " + name + " skipped (same root already bound)");
+                return;
+            }
+
+            LocaleRegistry.SweepDead();
+            BindingRoots.Register(name, root, kind);
+
+            if (kind == RootKind.HudWithTabs)
+                BindHudInternal(root);
+            else
+                BindGenericRoot(name, root);
+
+            Main.logger_instance?.Msg("ModUI SaveManager: BindRoot " + name + " (kind=" + kind + ", groups=" + ModSettings.AllGroups.Count + ")");
+        }
+
+        private static void BindHudInternal(GameObject hud_object)
+        {
             var contentRoot = Functions.GetChild(hud_object, "Content");
             var menu = Functions.GetChild(hud_object, "Menu");
             var menuContent = menu.IsNullOrDestroyed() ? null : Functions.GetChild(menu, "Content");
             if (contentRoot.IsNullOrDestroyed() || menuContent.IsNullOrDestroyed())
             {
-                Main.logger_instance?.Warning("ModUI SaveManager: BindHud couldn't resolve Content or Menu/Content");
+                Main.logger_instance?.Warning("ModUI SaveManager: BindHudInternal couldn't resolve Content or Menu/Content");
                 return;
             }
 
             TabManager.Init(contentRoot, menuContent);
             BindNonTabGroups(contentRoot);
-            Main.logger_instance?.Msg("ModUI SaveManager: BindHud complete (groups=" + ModSettings.AllGroups.Count + ")");
         }
 
         private static void BindNonTabGroups(GameObject contentRoot)
         {
             foreach (var group in ModSettings.AllGroups)
             {
+                if (group.RootName != BindingRoots.HudRootName) continue;
                 if (group.HasTab || group.ContentObjectName == null) continue;
                 try
                 {
@@ -133,6 +156,26 @@ namespace LastEpoch_Hud.Scripts.ModUI
                 catch (System.Exception ex)
                 {
                     Main.logger_instance?.Error("ModUI SaveManager: Failed to bind group '" + group.Name + "': " + ex.Message);
+                }
+            }
+        }
+
+        private static void BindGenericRoot(string rootName, GameObject root)
+        {
+            foreach (var group in ModSettings.AllGroups)
+            {
+                if (group.RootName != rootName) continue;
+                try
+                {
+                    var contentObj = group.ContentObjectName != null
+                        ? Prefab.Child(root, group.ContentObjectName)
+                        : root;
+                    if (contentObj != null) group.ResolveAndBind(contentObj);
+                    else Main.logger_instance?.Warning("ModUI SaveManager: BindGenericRoot '" + rootName + "' missing content '" + group.ContentObjectName + "' for group '" + group.Name + "'");
+                }
+                catch (System.Exception ex)
+                {
+                    Main.logger_instance?.Error("ModUI SaveManager: Failed to bind group '" + group.Name + "' to root '" + rootName + "': " + ex.Message);
                 }
             }
         }

@@ -217,6 +217,8 @@
   "AutoCast": "AutoCast",
   "Hold the modifier key and click an ability slot to toggle autocast on/off for that skill.": "Maintenez la touche modificatrice et cliquez sur une compétence pour activer/désactiver l'autocast.",
   "Modifier Key": "Touche modificatrice",
+  "Pause autocast on zone change (press any skill to resume)": "Mettre en pause au changement de zone (appuyez sur une compétence pour reprendre)",
+  "Pause autocast in non-combat zones": "Mettre l'autocast en pause hors combat",
   "Reset": "Réinitialiser",
   "Press any key…": "Appuyez sur une touche…",
   "(none)": "(aucune)",
