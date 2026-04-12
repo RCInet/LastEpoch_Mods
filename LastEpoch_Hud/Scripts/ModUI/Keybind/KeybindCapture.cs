@@ -61,8 +61,8 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
             int n = KeybindRewired.ButtonCount;
 
-            // First Tick after Begin: snapshot current state. Don't fire on already-held buttons
-            // so the user can hold a face button while clicking the capture mouse and not capture it.
+            // First Tick after Begin: snapshot current state. Buttons the player was already
+            // holding when capture began won't fire until they release and press again.
             if (gamepadSnapshot == null)
             {
                 gamepadSnapshot = new bool[n];

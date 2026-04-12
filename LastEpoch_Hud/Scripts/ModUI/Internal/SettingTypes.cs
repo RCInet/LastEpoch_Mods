@@ -234,14 +234,50 @@ namespace LastEpoch_Hud.Scripts.ModUI
         }
     }
 
-    // Static localized text row (section header). No persisted value, no events.
-    // Lets ModSettings.cs declare a header without an OnBind escape hatch.
+    // Static localized text row. No persisted value, no events.
     public class HeaderSetting
     {
         public string Text { get; internal set; }
 
         public HeaderSetting(string text) { Text = text ?? ""; }
         public void SetText(string text) { Text = text ?? ""; }
+    }
+
+    // Required sub-paths are constructor parameters; optional ones default to null.
+
+    public readonly struct FloatPaths
+    {
+        public readonly string Slider;
+        public readonly string Toggle;
+        public FloatPaths(string slider, string toggle = null) { Slider = slider; Toggle = toggle; }
+    }
+
+    public readonly struct RangePaths
+    {
+        public readonly string MinSlider;
+        public readonly string MaxSlider;
+        public readonly string Toggle;
+        public RangePaths(string minSlider, string maxSlider, string toggle = null)
+        {
+            MinSlider = minSlider; MaxSlider = maxSlider; Toggle = toggle;
+        }
+    }
+
+    public readonly struct KeybindPaths
+    {
+        public readonly string CaptureButton;
+        public readonly string ResetButton;
+        public readonly string Label;
+        public KeybindPaths(string captureButton, string resetButton = null, string label = null)
+        {
+            CaptureButton = captureButton; ResetButton = resetButton; Label = label;
+        }
+    }
+
+    public readonly struct RadioPaths
+    {
+        public readonly string[] Toggles;
+        public RadioPaths(params string[] toggles) { Toggles = toggles; }
     }
 
     // Single rebindable input (keyboard key OR gamepad button). Value is a tagged string:

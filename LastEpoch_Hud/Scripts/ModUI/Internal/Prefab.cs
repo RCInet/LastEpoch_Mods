@@ -30,6 +30,26 @@ namespace LastEpoch_Hud.Scripts.ModUI
             return obj.GetComponent<T>();
         }
 
+        // Walk a slash-separated child path: "Panel/Title/OnOff" -> root.Panel.Title.OnOff
+        public static GameObject ChildPath(GameObject parent, string path)
+        {
+            if (parent == null || string.IsNullOrEmpty(path)) return null;
+            var current = parent;
+            foreach (var segment in path.Split('/'))
+            {
+                if (string.IsNullOrEmpty(segment)) continue;
+                current = Child(current, segment);
+                if (current == null) return null;
+            }
+            return current;
+        }
+
+        public static T ComponentAtPath<T>(GameObject parent, string path) where T : Component
+        {
+            var go = ChildPath(parent, path);
+            return go == null ? null : go.GetComponent<T>();
+        }
+
         // Navigate: parent -> panel -> content -> "Viewport" -> "Content"
         public static GameObject ViewportContent(GameObject parent, string panelName, string contentName)
         {
@@ -76,9 +96,7 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
         // Applies a label string to a Text component, translating via the mod's active locale
         // dictionary when an entry exists. Falls back to the English input when the dictionary
-        // is unloaded or the key is missing -- same behavior as Hud_Manager.Update_Locale's
-        // per-Text replacement pass, but self-contained at bind time so we don't have to wait
-        // for the next Update_Locale cycle.
+        // is unloaded or the key is missing.
         public static void ApplyLabel(Text text, string englishLabel)
         {
             if (text == null || string.IsNullOrEmpty(englishLabel)) return;

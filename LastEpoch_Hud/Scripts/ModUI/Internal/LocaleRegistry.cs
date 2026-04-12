@@ -3,9 +3,9 @@ using UnityEngine.UI;
 
 namespace LastEpoch_Hud.Scripts.ModUI
 {
-    // Tracks every (Text, canonical English label) pair that ModUI has set, so language
-    // changes can re-translate from the original key instead of from the current displayed
-    // text.
+    // Tracks (Text, canonical English label) pairs. On language change we re-translate
+    // from the canonical key instead of the current Text content (which has already been
+    // translated once and so is no longer a key in any locale dictionary).
     internal static class LocaleRegistry
     {
         private static readonly List<(Text Text, string EnglishLabel)> entries = new();
@@ -25,13 +25,22 @@ namespace LastEpoch_Hud.Scripts.ModUI
             entries.Add((text, englishLabel));
         }
 
-        // Polled from SaveManager.Update each frame.
         public static void TickIfLocaleChanged()
         {
             var current = Locales.current_dictionary;
             if (ReferenceEquals(current, lastDict)) return;
             lastDict = current;
             ReapplyAll();
+        }
+
+        public static void SweepDead()
+        {
+            for (int i = entries.Count - 1; i >= 0; i--)
+            {
+                var t = entries[i].Text;
+                if (t == null || t.IsNullOrDestroyed())
+                    entries.RemoveAt(i);
+            }
         }
 
         private static void ReapplyAll()

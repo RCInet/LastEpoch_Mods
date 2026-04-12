@@ -39,30 +39,20 @@ Range defaults min/max to `minLimit`/`maxLimit`. Override with `defaultMin:` / `
 
 ## Labels & localization
 
-Every factory method (`Bool` / `Float` / `Range` / `Dropdown` / `Button`) accepts an optional `label:` parameter - the English display text that will appear in the HUD. The library applies it to the widget's `Label` Text child at bind time, **translated through the mod's active locale dictionary**:
+Every factory method takes an optional `label:` (English display text). At bind time it's looked up in `Locales.current_dictionary` and the translated value is written to the widget's `Label` Text. If no translation exists, the English string is used as-is. If `label:` is null, the prefab's serialized Text is left alone.
 
 ```csharp
 public static readonly FloatSetting TreePoints =
     Group.Float("TreePoints", defaultValue: 50f, label: "Weaver Tree Points");
-
-public static readonly BoolSetting FreeRespec =
-    Group.Bool("FreeRespec", label: "Free Weaver Respec");
 ```
 
-**How it resolves:**
+`LocaleRegistry` tracks every `(Text, English label)` pair the library applies. Language switches re-translate from the canonical English key, so labels round trip cleanly across en→fr→en even though `Locales.current_dictionary` is one-way.
 
-1. The `label:` string you pass is the **English source** AND the dictionary key.
-2. At bind time, [`SettingsBuilder.ApplyLabel`](Internal/SettingsBuilder.cs) looks up the key in `Locales.current_dictionary`. If a translation exists, that's written to the widget's `Label` Text. If not, the English string is used as is.
-3. If the player switches languages mid-session, the existing [`Hud_Manager.Update_Locale`](../Hud_Manager.cs) re-walks the HUD tree and re-translates all labels.
-
-**Workflow for adding a localized setting:**
-
-1. Declare the setting in `ModSettings.cs` with `label: "English Label"`
-2. Add the key to `LastEpoch_Hud/Locales/base.json` (empty value - translator template)
-3. Add translations to `en.json`, `fr.json`, `zh.json` (use English string as the JSON key, translated text as the value)
-4. Rebuild the DLL (no AssetBundle rebuild needed - labels live in code, not the prefab)
-
-**If you DON'T pass `label:`** the library does nothing to the Text component, and whatever text is serialized in the prefab stays.
+**Adding a localized label:**
+1. Declare the setting with `label: "English Label"`
+2. Add the key to `LastEpoch_Hud/Locales/base.json` (empty value)
+3. Add translations to `en.json` / `fr.json` / `zh.json`
+4. Rebuild the DLL. Labels live in code, not the prefab, so no AssetBundle rebuild needed
 
 
 ## Reading settings from feature code
@@ -105,6 +95,49 @@ public static class ScenesCamera
     public static readonly ActionBinding Reset      = Group.Button("Reset");
 }
 ```
+
+### Binding to a custom prefab (not the Hud)
+
+Register the prefab as a named root, then declare a group with `.Root("name")` and address widgets by absolute transform path.
+
+```csharp
+// Feature code, after instantiating the prefab:
+SaveManager.BindRoot("PortalPrompt", portalPromptObj);
+
+// ModSettings.cs:
+public static class PortalPromptUI
+{
+    public static readonly SettingsGroup Group = new SettingsGroup("PortalPrompt").Root("PortalPrompt");
+
+    public static readonly HeaderSetting   Header      = Group.Header("Header", label: "Quick Portal", path: "Title/Header");
+    public static readonly DropdownSetting Destination = Group.Dropdown("Destination", path: "Panel/DestinationDropdown", label: "Destination");
+    public static readonly BoolSetting     Include     = Group.Bool("Include", path: "Panel/IncludeUncompleted", label: "Include Uncompleted");
+    public static readonly ActionBinding   Portal      = Group.Button("Portal", path: "Panel/PortalButton", label: "Portal");
+}
+
+// Feature code reads/writes the same as any other setting:
+PortalPromptUI.Portal.Clicked += () => TeleportTo(PortalPromptUI.Destination.SelectedText);
+```
+
+`path:` is absolute from the registered root, so one group can span multiple sibling sub-trees. Settings persist to `SaveModUI.json` under the group name. `BindRoot` upserts on a new GameObject instance - call it again after re-instantiating. Works on Canvas roots too.
+
+**Compound settings** (`Float`, `Range`, `Keybind`, `Radio`) bind multiple controls per setting and use a typed `paths:` struct:
+
+```csharp
+Group.Float("Damage", paths: new FloatPaths(slider: "Settings/Damage/Slider"))
+Group.Float("Damage", paths: new FloatPaths(slider: "Settings/Damage/Slider", toggle: "Settings/Damage/Enable"))
+
+Group.Range("Tier", paths: new RangePaths(minSlider: "Tier/Min", maxSlider: "Tier/Max", toggle: "Tier/Enable"))
+
+Group.Keybind("Modifier", paths: new KeybindPaths(captureButton: "Mod/Capture", resetButton: "Mod/Reset", label: "Mod/Label"))
+Group.Keybind("Modifier", paths: new KeybindPaths(captureButton: "Mod/Capture"))
+
+Group.RadioWithPaths("Rarity",
+    new RadioPaths("Rarity/Common", "Rarity/Magic", "Rarity/Rare", "Rarity/Unique"),
+    "Common", "Magic", "Rare", "Unique")
+```
+
+Required sub-paths are constructor arguments; optional ones default to `null`. Omit the Float/Range toggle for a slider with no on/off control. Omit the Keybind reset button for a binding the player can rebind but not reset to default. Radio toggle count must match option count (positional pairing).
 
 ### Without a tab (sub-panel sharing another group's content)
 
@@ -208,41 +241,27 @@ All setting types (except `ActionBinding` and `HeaderSetting`) expose a `Changed
 
 ## Keybind settings
 
-`KeybindSetting` captures a single keyboard key OR gamepad button. Click the capture button, then press any key - the first input wins. The reset button reverts to the declared default.
+`KeybindSetting` captures one keyboard key OR gamepad button. Click capture, press any key, first input wins. `Escape` aborts. Reset reverts to default.
 
 ```csharp
 public static readonly KeybindSetting ModifierKey =
     Group.Keybind("ModifierKey", defaultBinding: "kb:LeftControl", label: "Modifier Key");
+
+if (KeybindMatcher.IsHeld(ModSettings.SkillsAutoCast.ModifierKey.Value)) { ... }
 ```
 
-Read it from feature code via the public `KeybindMatcher`:
+**Binding format**: tagged strings. `"kb:LeftControl"` is a KeyCode name. `"gp:A"` is an IGamepadTemplate name: `A`, `B`, `X`, `Y`, `LB`, `RB`, `Back`, `Start`, `Guide`, `LStick`, `RStick`, `DPadUp/Down/Left/Right`.
 
-```csharp
-using LastEpoch_Hud.Scripts.ModUI;
+`resetLabel:` overrides the centralized "Reset" string per setting when one button needs different wording.
 
-if (KeybindMatcher.IsHeld(ModSettings.SkillsAutoCast.ModifierKey.Value))
-{
-    // ...
-}
+**Convention prefab layout** (one Keybind setting):
 ```
-
-**Binding format**: tagged strings - `"kb:LeftControl"` for keyboard (UnityEngine.KeyCode names) or `"gp:A"` for gamepad (Rewired IGamepadTemplate names: `A`, `B`, `X`, `Y`, `LB`, `RB`, `Back`, `Start`, `Guide`, `LStick`, `RStick`, `DPadUp/Down/Left/Right`).
-
-**Capture cancels**: pressing `Escape` aborts capture without rebinding.
-
-**Reset label is centralized**: every reset button reads the same `"Reset"` translation key. Override per-setting only when one button needs different wording:
-
-```csharp
-Group.Keybind("Bind", defaultBinding: "kb:F1", label: "Quick-cast", resetLabel: "Default")
+{panelName}/
+  Label                            -- setting label Text
+  Btn_{prefix}{panelName}          -- capture button (child Text shows current binding)
+  Btn_{prefix}{panelName}_Reset    -- reset button (child Text "Reset")
 ```
-
-**Prefab layout** required for each `Keybind` setting:
-```
-{panelName}/                                  -- sub-panel
-  Label                                       -- setting label Text
-  Btn_{prefix}{panelName}                     -- capture button (child Text shows current binding)
-  Btn_{prefix}{panelName}_Reset               -- reset button (child Text "Reset")
-```
+For arbitrary prefabs use `paths: new KeybindPaths(...)` instead of the convention layout.
 
 ### Display formats
 
@@ -257,12 +276,21 @@ Group.Keybind("Bind", defaultBinding: "kb:F1", label: "Quick-cast", resetLabel: 
 
 ```csharp
 new SettingsGroup("Name")           // JSON key, auto-registers for save/load
-    .Tab("TabId", "Btn_Menu_Name")  // Creates HUD tab (omit for sub-panels)
-    .Content("Panel_Name")          // Prefab content panel
+    .Root("Hud")                    // Binding root name (default "Hud" for backward compat)
+    .Tab("TabId", "Btn_Menu_Name")  // Creates HUD tab (omit for sub-panels and non-Hud roots)
+    .Content("Panel_Name")          // Prefab content panel (optional for non-Hud roots)
     .Viewport("Panel", "Content")   // Scrollable viewport (omit for flat layouts)
-    .Prefix("Ui_Prefix_")          // Prepended to element names for lookups
+    .Prefix("Ui_Prefix_")          // Prepended to element names for lookups (convention mode)
     .OnBind((content, viewport) => { }) // Escape hatch for non-standard elements
 ```
+
+### Binding modes
+
+| Mode | When to use | How |
+|---|---|---|
+| **Convention** | Hud rows that follow `Toggle_{prefix}{key}` / `Slider_{prefix}{key}` / `Btn_{prefix}{key}` naming | `Group.Bool("MyToggle")` |
+| **Path** | Custom prefabs with arbitrary hierarchy (DamageMeter, etc.) | `Group.Bool("MyToggle", path: "Panel/Settings/MyToggle")` |
+| **OnBind** | One-off non-standard elements (master toggles in title bars, etc.) | `.OnBind((content, vp) => { ... })` |
 
 ### File layout
 
@@ -272,11 +300,13 @@ ModUI/
   Internal/              Framework internals
     SettingTypes.cs         Setting types + ActionBinding + display formatting
     SettingsGroup.cs        Fluent API, factory methods, serialization, UI binding
-    SettingsBuilder.cs      Naming-convention-based prefab binding
-    TabManager.cs           Tab switching and menu button wiring
-    Prefab.cs               Null-safe prefab lookups and event binding
+    SettingsBuilder.cs      Convention-based + path-based prefab binding
+    TabManager.cs           Tab switching and menu button wiring (Hud root only)
+    Prefab.cs               Null-safe child + path lookups, ChildPath / ComponentAtPath
     SliderHook.cs           Harmony patch for IL2CPP slider events
-    SaveManager.cs          SaveModUI.json persistence (dirty flag, 1s debounce) + static BindHud hook called from Hud_Manager.Init_Hud
+    SaveManager.cs          SaveModUI.json persistence + BindHud / BindRoot entry points
+    BindingRoots.cs         Name-keyed registry of prefab roots ("Hud", custom, ...)
+    LocaleRegistry.cs       Tracks (Text, English label) pairs for clean language round-trip
   Keybind/               Keybind setting helpers (rebindable inputs)
     KeybindStrings.cs       Centralized localized strings (Reset, Press any key, etc.)
     KeybindFormat.cs        Friendly display formatting for tagged bindings
@@ -305,3 +335,5 @@ ModUI/
 | Add a section header | `ModSettings.cs` -- `Group.Header("Header", label: "Section Name")` |
 | Add a rebindable input | `ModSettings.cs` -- `Group.Keybind("Key", defaultBinding: "kb:LeftControl", label: "Modifier")` |
 | Read a keybind | `KeybindMatcher.IsHeld(ModSettings.X.Y.Value)` |
+| Bind a custom prefab | `SaveManager.BindRoot("MyPrefab", obj)` then `Group.Root("MyPrefab")` in ModSettings |
+| Bind a widget by path | `Group.Bool("Key", path: "Panel/Settings/Toggle")` (skips naming convention) |
