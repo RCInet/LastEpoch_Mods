@@ -214,6 +214,6 @@
     </None>
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(SkipPostBuild)' != 'true'">
-    <Exec Command="call MakeLatest.bat" />
+    <Exec Command="call &quot;$(ProjectDir)MakeLatest.bat&quot;" />
   </Target>
 </Project>
