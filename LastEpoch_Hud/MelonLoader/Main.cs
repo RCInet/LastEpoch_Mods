@@ -125,6 +125,7 @@ namespace LastEpoch_Hud
             base_object.AddComponent<Scripts.Refs_Manager>();
             base_object.AddComponent<Scripts.Save_Manager>();
             base_object.AddComponent<Scripts.Hud_Manager>();
+            base_object.AddComponent<Scripts.ModUI.SaveManager>();
             base_object.AddComponent<Scripts.Mods_Manager>();
             base_object.AddComponent<Scripts.VirtualKeyboard>();
             Initialized = true;

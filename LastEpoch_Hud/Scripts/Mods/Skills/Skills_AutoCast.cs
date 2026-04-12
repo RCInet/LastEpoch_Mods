@@ -3,6 +3,7 @@ using HarmonyLib;
 using Il2Cpp;
 using MelonLoader;
 using Il2CppRewired;
+using LastEpoch_Hud.Scripts.ModUI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -39,7 +40,10 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         static Player rewiredPlayer;
         static UsingAbilityPlayer abilityState;
         static int lastFormKey = HumanFormKey;
-        static readonly Dictionary<int, bool[]> formStates = new Dictionary<int, bool[]>();
+        // Per-form autocast intent. Survives scene changes and form swaps, so the
+        // player's setup for every form they've visited comes back on resume.
+        static readonly Dictionary<int, bool[]> autocastByForm = new Dictionary<int, bool[]>();
+        static bool isSuspended;
         static string lastSceneName = "";
         static bool fromAutocast;
 
@@ -58,8 +62,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
         {
             if (!Scenes.IsGameScene())
             {
-                if (state == InitState.Ready)
-                    ClearAllToggles();
+                ClearAllToggles();
                 ResetCachedRefs();
                 state = InitState.NeedsUpdate;
                 lastSceneName = "";
@@ -69,7 +72,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             if (Scenes.SceneName != lastSceneName)
             {
                 lastSceneName = Scenes.SceneName;
-                ClearAllToggles();
+                if (PauseOnZoneChangeOn)
+                    SuspendAllToggles();
                 state = InitState.NeedsUpdate;
             }
 
@@ -87,6 +91,13 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             if (state != InitState.Ready)
                 return;
 
+            // Flipping the gate on while already in a non-combat zone (or any state
+            // where live firing shouldn't happen under the current gate) suspends now.
+            if (!isSuspended && GateOn && InNonCombatZone())
+                SuspendAllToggles();
+
+            TryResume();
+
             bool anyActive = false;
             bool anyHeld = false;
             for (int i = 0; i < SlotCount; i++)
@@ -98,6 +109,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                 if (skills[i].autocastOn) anyActive = true;
                 if (skills[i].held) anyHeld = true;
             }
+
+            UpdateIconShine();
 
             if (!anyActive && !anyHeld)
                 return;
@@ -122,8 +135,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
 
                 HandleAutocastSlot(i, manualHoldIndex, targetPos, hitTransform, ref firedRisingEdge);
             }
-
-            UpdateIconShine();
         }
 
         void InitializeSkills()
@@ -148,13 +159,14 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                 };
             }
 
-            RestoreFormState(lastFormKey);
+            ApplyFormStateToSkills(lastFormKey);
             state = InitState.Ready;
         }
 
         static void ClearAllToggles()
         {
-            formStates.Clear();
+            autocastByForm.Clear();
+            isSuspended = false;
             lastFormKey = HumanFormKey;
             for (int i = 0; i < SlotCount; i++)
             {
@@ -164,8 +176,84 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             }
         }
 
-        // Form swaps the ability bar (Werebear/Spriggan/Swarmblade/Reaper).
-        // Saves the old form's toggles, re-inits, and restores the new form's saved toggles.
+        // Stops firing and flips the mod into suspended mode. autocastByForm is untouched
+        // so per-form intent survives until a clean press resumes it.
+        static void SuspendAllToggles()
+        {
+            isSuspended = true;
+            for (int i = 0; i < SlotCount; i++)
+            {
+                if (skills[i].held && skills[i].channeled)
+                    StopChannel(i);
+
+                skills[i].autocastOn = false;
+                skills[i].held = false;
+                skills[i].nextPressTime = 0f;
+            }
+        }
+
+        static void ResumeNow()
+        {
+            isSuspended = false;
+            ApplyFormStateToSkills(lastFormKey);
+        }
+
+        static bool[] GetOrCreateFormState(int formKey)
+        {
+            if (!autocastByForm.TryGetValue(formKey, out var arr))
+            {
+                arr = new bool[SlotCount];
+                autocastByForm[formKey] = arr;
+            }
+            return arr;
+        }
+
+        static void ApplyFormStateToSkills(int formKey)
+        {
+            if (isSuspended) return;
+            if (!autocastByForm.TryGetValue(formKey, out var stored)) return;
+            for (int i = 0; i < SlotCount; i++)
+                if (!skills[i].ability.IsNullOrDestroyed())
+                    skills[i].autocastOn = stored[i];
+        }
+
+        static bool GateOn => ModSettings.SkillsAutoCast.DisableInNonCombatZone.Value;
+        static bool PauseOnZoneChangeOn => ModSettings.SkillsAutoCast.PauseOnZoneChange.Value;
+
+        static bool InNonCombatZone()
+        {
+            if (string.IsNullOrEmpty(Scenes.SceneName)) return false;
+            try { return SceneList.IsNonCombatZone(Scenes.SceneName); }
+            catch { return false; }
+        }
+
+        // PauseOnZoneChange on: wait for a clean (no modifier) press before resuming.
+        // PauseOnZoneChange off: auto-resume as soon as the non-combat gate clears.
+        // Either way, stay suspended while the non-combat gate is blocking us.
+        static void TryResume()
+        {
+            if (!isSuspended) return;
+            if (GateOn && InNonCombatZone()) return;
+
+            if (!PauseOnZoneChangeOn)
+            {
+                ResumeNow();
+                return;
+            }
+
+            if (rewiredPlayer == null || rewiredPlayer.IsNullOrDestroyed()) return;
+            if (IsModifierHeld()) return;
+
+            for (int i = 0; i < SlotCount; i++)
+            {
+                if (!rewiredPlayer.GetButtonDown(AbilityActionIds[i])) continue;
+                ResumeNow();
+                return;
+            }
+        }
+
+        // Form swap rebuilds the ability bar (Werebear/Spriggan/Swarmblade/Reaper). The new
+        // form's stored intent is mirrored back into skills[] by InitializeSkills.
         void CheckFormChange()
         {
             if (Refs_Manager.player_treedata.IsNullOrDestroyed()) return;
@@ -181,7 +269,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                     StopChannel(i);
             }
 
-            SaveFormState(lastFormKey);
             lastFormKey = currentKey;
             state = InitState.NeedsUpdate;
             InitializeSkills();
@@ -196,24 +283,6 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             }
             catch { }
             return HumanFormKey;
-        }
-
-        static void SaveFormState(int key)
-        {
-            if (!formStates.TryGetValue(key, out var saved))
-            {
-                saved = new bool[SlotCount];
-                formStates[key] = saved;
-            }
-            for (int i = 0; i < SlotCount; i++)
-                saved[i] = skills[i].autocastOn;
-        }
-
-        static void RestoreFormState(int key)
-        {
-            if (!formStates.TryGetValue(key, out var saved)) return;
-            for (int i = 0; i < SlotCount; i++)
-                skills[i].autocastOn = saved[i];
         }
 
         static void ResetCachedRefs()
@@ -274,32 +343,18 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             if (!rewiredPlayer.GetButtonDown(AbilityActionIds[i])) return;
             if (!IsModifierHeld()) return;
 
-            skills[i].autocastOn = !skills[i].autocastOn;
+            var arr = GetOrCreateFormState(lastFormKey);
+            arr[i] = !arr[i];
+
+            // Suspended clicks only stage intent into autocastByForm; UpdateIconShine still
+            // paints the slot via its armed check so the player sees the pending state.
+            if (!isSuspended && !skills[i].ability.IsNullOrDestroyed())
+                skills[i].autocastOn = arr[i];
         }
 
         static bool IsModifierHeld()
         {
-#if KEYBOARD
-            return EpochInputManager.CtrlPressed();
-#elif WINGAMEPAD
-            if (rewiredPlayer == null || rewiredPlayer.IsNullOrDestroyed()) return false;
-            try
-            {
-                var joystick = rewiredPlayer.controllers.GetLastActiveController(ControllerType.Joystick);
-                if (joystick == null) return false;
-
-                var template = joystick.GetTemplate<GamepadTemplate>();
-                if (template == null) return false;
-
-                var dpad = template.Cast<IGamepadTemplate>().dPad;
-                if (dpad == null) return false;
-
-                return dpad.left.value;
-            }
-            catch { return false; }
-#else
-            return false;
-#endif
+            return KeybindMatcher.IsHeld(ModSettings.SkillsAutoCast.ModifierKey.Value);
         }
 
         static void SendBarCommand(int slot, bool keyDown, Vector3 targetPos, Transform hitTransform)
@@ -413,10 +468,13 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             if (icons == null) return;
 
             float t = (Mathf.Sin(Time.time * 5f) + 1f) * 0.5f;
-            float scale = Mathf.Lerp(0.92f, 1.07f, t);
-            float green = Mathf.Lerp(1f, 0.75f, t);
-            float blue = Mathf.Lerp(1f, 0.4f, t);
-            var tint = new Color(1f, green, blue, 1f);
+            float liveScale = Mathf.Lerp(0.92f, 1.07f, t);
+            var liveTint = new Color(1f, Mathf.Lerp(1f, 0.75f, t), Mathf.Lerp(1f, 0.4f, t), 1f);
+            var armedTint = new Color(0.55f, 0.75f, 1f, Mathf.Lerp(0.55f, 0.85f, t));
+
+            bool[] armedArr = null;
+            if (isSuspended)
+                autocastByForm.TryGetValue(lastFormKey, out armedArr);
 
             for (int i = 0; i < icons.Count; i++)
             {
@@ -424,12 +482,31 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
                 if (barIcon.IsNullOrDestroyed()) continue;
 
                 int slot = barIcon.abilityNumber - 1;
-                bool active = slot >= 0 && slot < SlotCount && skills[slot].autocastOn;
+                if (slot < 0 || slot >= SlotCount)
+                {
+                    barIcon.transform.localScale = Vector3.one;
+                    barIcon.icon.color = Color.white;
+                    continue;
+                }
 
-                barIcon.transform.localScale = active
-                    ? new Vector3(scale, scale, 1f)
-                    : Vector3.one;
-                barIcon.icon.color = active ? tint : Color.white;
+                bool live = skills[slot].autocastOn;
+                bool armed = !live && armedArr != null && armedArr[slot];
+
+                if (live)
+                {
+                    barIcon.transform.localScale = new Vector3(liveScale, liveScale, 1f);
+                    barIcon.icon.color = liveTint;
+                }
+                else if (armed)
+                {
+                    barIcon.transform.localScale = Vector3.one;
+                    barIcon.icon.color = armedTint;
+                }
+                else
+                {
+                    barIcon.transform.localScale = Vector3.one;
+                    barIcon.icon.color = Color.white;
+                }
             }
         }
 
@@ -461,7 +538,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             [HarmonyPostfix]
             static void Postfix()
             {
-                ClearAllToggles();
+                if (PauseOnZoneChangeOn)
+                    SuspendAllToggles();
                 state = InitState.NeedsUpdate;
             }
         }
@@ -472,7 +550,8 @@ namespace LastEpoch_Hud.Scripts.Mods.Skills
             [HarmonyPostfix]
             static void Postfix()
             {
-                ClearAllToggles();
+                if (PauseOnZoneChangeOn)
+                    SuspendAllToggles();
                 state = InitState.NeedsUpdate;
             }
         }

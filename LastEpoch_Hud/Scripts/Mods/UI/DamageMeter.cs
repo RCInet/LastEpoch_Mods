@@ -4,6 +4,7 @@ using Il2CppTMPro;
 using MelonLoader;
 using UnityEngine;
 using UnityEngine.UI;
+using static LastEpoch_Hud.Scripts.Mods.UI.DamageMeter;
 
 namespace LastEpoch_Hud.Scripts.Mods.UI
 {
@@ -13,31 +14,43 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
         public static DamageMeter instance { get; private set; }
         public DamageMeter(System.IntPtr ptr) : base(ptr) { }
 
+        //Main
         public static GameObject DamageMeter_prefab = null;
         public static GameObject DamageMeter_obj = null;
         public static GameObject DamageMeter_content = null;
         public static TextMeshProUGUI MenuText = null;
-
         public static Button OnOff_btn = null;
         public static bool On = false;
         public static GameObject Reset_obj = null;
         public static Button Reset_btn = null;
-
         public static Image OnOff_Image = null;
         public static Sprite On_sprite = null;
         public static Sprite Off_sprite = null;
 
-        public static GameObject Settings_panel = null;
-        public static GameObject Settings_obj = null;
-        public static Button Settings_btn = null;
-
+        //Skills
         public static GameObject Skill_prefab = null;
         public static System.Collections.Generic.List<Ability> Abilities = new System.Collections.Generic.List<Ability>();
         public static System.Collections.Generic.List<Skill> Skills = new System.Collections.Generic.List<Skill>();
         public static float TotalDamageDeal = 0f;
 
+        //Settings
+        public static GameObject Settings_panel = null;
+        public static GameObject Settings_obj = null;
+        public static Button Settings_btn = null;
         public static Dropdown DamageType_Dropdown = null;
         public static Toggle SeparateDot_Toggle = null;
+
+        //Details
+        public static GameObject Details_TopContent_prefab = null;
+        public static GameObject Details_BottomContent_prefab = null;
+        public static GameObject Details_panel = null;
+        public static GameObject Details_TopCircleContent = null;
+        public static GameObject Details_TopContent = null;
+        public static GameObject Details_BottomCircleContent = null;
+        public static GameObject Details_BottomContent = null;
+        public static System.Collections.Generic.List<GameObject> details_skills = new System.Collections.Generic.List<GameObject>();
+        public static string Details_TopSkillsName = "TopSkill_";
+        public static Color[] colors = { Color.green, Color.blue, Color.gray, Color.cyan, Color.green, Color.white, Color.grey, Color.magenta, Color.black, Color.yellow };
 
         public static int Frames = 30; //Update append every x frames (to avoid too much performance cost)
         public static int Current_Frame = 0;
@@ -99,7 +112,7 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                 }
             }
         }
-
+        
         public class Assets
         {
             private static bool loading = false;
@@ -127,6 +140,14 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                             else if (Functions.Check_Prefab(name) && name.Contains("skill.prefab"))
                             {
                                 Skill_prefab = Hud_Manager.asset_bundle.LoadAsset(name).TryCast<GameObject>();
+                            }
+                            else if (Functions.Check_Prefab(name) && name.Contains("topcontent.prefab"))
+                            {
+                                Details_TopContent_prefab = Hud_Manager.asset_bundle.LoadAsset(name).TryCast<GameObject>();
+                            }
+                            else if (Functions.Check_Prefab(name) && name.Contains("bottomcontent.prefab"))
+                            {
+                                Details_BottomContent_prefab = Hud_Manager.asset_bundle.LoadAsset(name).TryCast<GameObject>();
                             }
                         }
                     }
@@ -235,6 +256,59 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                                 }
                             }
                         }
+                        Details_panel = Functions.GetChild(DamageMeter_obj, "DetailsPanel");
+                        if (!Details_panel.IsNullOrDestroyed())
+                        {
+                            GameObject title = Functions.GetChild(Details_panel, "Title");
+                            if (!title.IsNullOrDestroyed())
+                            {
+                                GameObject button = Functions.GetChild(title, "CloseButton");
+                                if (!button.IsNullOrDestroyed())
+                                {
+                                    Button btn = button.GetComponent<Button>();
+                                    if (!btn.IsNullOrDestroyed())
+                                    {
+                                        Events.Set(btn, Events.CloseDetails_OnClick_Action);
+                                    }
+                                }
+                            }
+                            GameObject top_content = Functions.GetChild(Details_panel, "TopContent");
+                            if (!top_content.IsNullOrDestroyed())
+                            {
+                                Details_TopCircleContent = Functions.GetChild(top_content, "L");
+                                GameObject r_content = Functions.GetChild(top_content, "R");
+                                if (!r_content.IsNullOrDestroyed())
+                                {
+                                    GameObject r_content2 = Functions.GetChild(r_content, "Content");
+                                    if (!r_content2.IsNullOrDestroyed())
+                                    {
+                                        GameObject viewport = Functions.GetChild(r_content2, "Viewport");
+                                        if (!viewport.IsNullOrDestroyed())
+                                        {
+                                            Details_TopContent = Functions.GetChild(viewport, "Content");
+                                        }
+                                    }
+                                }
+                            }
+                            GameObject bottom_content = Functions.GetChild(Details_panel, "BottomContent");
+                            if (!bottom_content.IsNullOrDestroyed())
+                            {
+                                Details_BottomCircleContent = Functions.GetChild(bottom_content, "L");
+                                GameObject r_content = Functions.GetChild(bottom_content, "R");
+                                if (!r_content.IsNullOrDestroyed())
+                                {
+                                    GameObject r_content2 = Functions.GetChild(r_content, "Content");
+                                    if (!r_content2.IsNullOrDestroyed())
+                                    {
+                                        GameObject viewport = Functions.GetChild(r_content2, "Viewport");
+                                        if (!viewport.IsNullOrDestroyed())
+                                        {
+                                            Details_BottomContent = Functions.GetChild(viewport, "Content");
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                     //menu
                     if (!Refs_Manager.game_uibase.IsNullOrDestroyed())
@@ -285,6 +359,8 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                     Sprite icon = GetIcon(ability_name);
                     System.Collections.Generic.List<float> damages = new System.Collections.Generic.List<float>();
                     damages.Add(damage);
+                    System.Collections.Generic.List<bool> hits = new System.Collections.Generic.List<bool>();
+                    hits.Add(hit);
                     System.Collections.Generic.List<bool> crits = new System.Collections.Generic.List<bool>();
                     crits.Add(crit);
                     System.Collections.Generic.List<bool> kills = new System.Collections.Generic.List<bool>();
@@ -299,7 +375,7 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                         Icon = icon,
                         AbilityName = ability_name,                        
                         Damages = damages,
-                        Dot = !hit,
+                        Hits = hits,
                         Crits = crits,
                         Kills = kills,
                         Overkills = overkills,
@@ -313,17 +389,22 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                 if (Current_Frame >= Frames)
                 {
                     Current_Frame = 0;
-                    bool Separate_Dot = false;
+                    /*bool Separate_Dot = false;
                     if (!SeparateDot_Toggle.IsNullOrDestroyed())
                     {
                         if (SeparateDot_Toggle.isOn) { Separate_Dot = true; }
-                    }
+                    }*/
                     foreach (Skill skill in Skills)
                     {
                         if (!skill.Obj.IsNullOrDestroyed())
                         {
-                            if (((!Separate_Dot) && (!skill.Dot)) || (Separate_Dot))
-                            {
+                            //if (((!Separate_Dot) && (!skill.Dot)) || (Separate_Dot))
+                            //{
+                                Button btn = skill.Obj.GetComponent<Button>();
+                                if (!btn.IsNullOrDestroyed())
+                                {
+                                    Events.Set(btn, Events.OpenDetails_OnClick_Action);
+                                }
                                 GameObject infos = Functions.GetChild(skill.Obj, "Infos");
                                 //Set icon and SkillName                         
                                 if ((!infos.IsNullOrDestroyed()))
@@ -348,7 +429,7 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                                             if (!text.IsNullOrDestroyed())
                                             {
                                                 text.text = skill.AbilityName;
-                                                if (skill.Dot) { text.text += " (DoT)"; }
+                                                //if (skill.Dot) { text.text += " (DoT)"; }
                                             }
                                         }
                                     }
@@ -356,7 +437,7 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                                 //Set damage and slider
                                 float damage = 0f;
                                 foreach (float f in skill.Damages) { damage += f; }
-                                if (!Separate_Dot)
+                                /*if (!Separate_Dot)
                                 {
                                     foreach (Skill s in Skills)
                                     {
@@ -366,7 +447,7 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                                             break;
                                         }
                                     }
-                                }
+                                }*/
                                 if ((!infos.IsNullOrDestroyed()))
                                 {
                                     GameObject percent_obj = Functions.GetChild(infos, "Percent");
@@ -401,8 +482,8 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                                     if (!slider.IsNullOrDestroyed()) { slider.value = damage * 100 / TotalDamageDeal; }
                                 }
                                 if (!skill.Obj.active) { skill.Obj.active = true; }
-                            }
-                            else if (skill.Obj.active) { skill.Obj.active = false; }
+                            //}
+                            //else if (skill.Obj.active) { skill.Obj.active = false; }
                         }
                     }
                 }
@@ -463,6 +544,334 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                     foreach (GameObject go in Functions.GetAllChild(DamageMeter_content)) { Object.Destroy(go); }
                 }
             }
+            public static void OpenDetails()
+            {
+                if (!Details_panel.IsNullOrDestroyed())
+                {
+                    if (!Details_panel.active)
+                    {
+                        GameObject TopCircle = null;
+                        RectTransform TopCircleRectTransform = null;
+                        if (!Details_TopCircleContent.IsNullOrDestroyed())
+                        {
+                            TopCircle = Functions.GetChild(Details_TopCircleContent, "TopCircle");
+                            if (!TopCircle.IsNullOrDestroyed())
+                            {
+                                TopCircleRectTransform = TopCircle.GetComponent<RectTransform>();
+                            }
+                        }
+                        int i = 0;
+                        float rotation = 0f;
+                        details_skills = new System.Collections.Generic.List<GameObject>();
+                        foreach (Skill skill in Skills)
+                        {
+                            float damage = 0f;
+                            foreach (float f in skill.Damages) { damage += f; }
+                            float damage_percent = ((damage * 100) / TotalDamageDeal); //0 to 100%
+
+                            if (!skill.Obj.IsNullOrDestroyed())
+                            {
+                                int color_index = i;
+                                if (i > colors.Length)
+                                {
+                                    int multiplier = i / colors.Length;
+                                    color_index = i - (multiplier * colors.Length);
+                                }
+                                //Pie charts                            
+                                if (!Details_TopCircleContent.IsNullOrDestroyed())
+                                {
+                                    GameObject details_topcircle = Instantiate(TopCircle, Vector3.zero, Quaternion.identity);
+                                    DontDestroyOnLoad(details_topcircle);
+                                    details_topcircle.transform.SetParent(Details_TopCircleContent.transform);
+                                    RectTransform rect_transform = details_topcircle.GetComponent<RectTransform>();
+                                    if ((!rect_transform.IsNullOrDestroyed()) && (!TopCircleRectTransform.IsNullOrDestroyed()))
+                                    {
+                                        rect_transform.offsetMax = TopCircleRectTransform.offsetMax;
+                                        rect_transform.offsetMin = TopCircleRectTransform.offsetMin;
+                                    }
+                                    Image details_topcircle_image = details_topcircle.GetComponent<Image>();
+                                    if (!details_topcircle_image.IsNullOrDestroyed())
+                                    {
+                                        details_topcircle_image.color = colors[color_index];
+                                        details_topcircle_image.fillAmount = damage_percent / 100;
+                                    }
+                                    details_topcircle.transform.Rotate(new Vector3(0, 0, (rotation * -1)));
+                                    rotation += (damage_percent / 100) * 360;
+                                    details_topcircle.active = true;
+                                }
+                                if ((!Details_TopContent.IsNullOrDestroyed()) && (!Details_TopContent_prefab.IsNullOrDestroyed()))
+                                {                                    
+                                    GameObject details_topskill = Instantiate(Details_TopContent_prefab, Vector3.zero, Quaternion.identity);
+                                    DontDestroyOnLoad(details_topskill);
+                                    details_skills.Add(details_topskill);
+                                    details_topskill.transform.SetParent(Details_TopContent.transform);
+                                    Button btn = details_topskill.GetComponent<Button>();
+                                    if (!btn.IsNullOrDestroyed()) { btn.name = Details_TopSkillsName + i; }
+                                    GameObject color = Functions.GetChild(details_topskill, "Color");
+                                    if (!color.IsNullOrDestroyed())
+                                    {
+                                        GameObject image_obj = Functions.GetChild(color, "Image");
+                                        {
+                                            Image image = image_obj.GetComponent<Image>();
+                                            if (!image.IsNullOrDestroyed())
+                                            {
+                                                image.color = colors[color_index];
+                                            }
+                                        }
+                                    }
+                                    GameObject ability_name = Functions.GetChild(details_topskill, "AbilityName");
+                                    if (!ability_name.IsNullOrDestroyed())
+                                    {
+                                        Text text = ability_name.GetComponent<Text>();
+                                        if (!text.IsNullOrDestroyed())
+                                        {
+                                            text.text = skill.AbilityName;
+                                            //if (skill.Dot) { text.text += " (Dot)"; }
+                                        }
+                                    }
+                                    GameObject flat_damage = Functions.GetChild(details_topskill, "FlatDamage");
+                                    if (!flat_damage.IsNullOrDestroyed())
+                                    {
+                                        Text text = flat_damage.GetComponent<Text>();
+                                        if (!text.IsNullOrDestroyed())
+                                        {
+                                            text.text = System.Convert.ToString((int)damage);
+                                        }
+                                    }
+                                    GameObject percent_damage = Functions.GetChild(details_topskill, "PercentageDamage");
+                                    if (!percent_damage.IsNullOrDestroyed())
+                                    {
+                                        Text text = percent_damage.GetComponent<Text>();
+                                        if (!text.IsNullOrDestroyed())
+                                        {
+                                            text.text = System.Convert.ToInt32(damage_percent) + " %";
+                                        }
+                                    }
+                                    details_topskill.active = true;
+                                }
+                            }
+                            i++;
+                        }
+                        if (i > 0) { ShowDetails_Bottom(0); }
+                        Details_panel.active = true;
+                    }
+                }
+            }
+            public static void CloseDetails()
+            {
+                if (!Details_panel.IsNullOrDestroyed())
+                {
+                    if (Details_panel.active)
+                    {
+                        Details_panel.active = false;
+                        if (!Details_TopCircleContent.IsNullOrDestroyed())
+                        {
+                            foreach (GameObject obj in Functions.GetAllChild(Details_TopCircleContent))
+                            {
+                                if (obj.name != "TopCircle")
+                                {
+                                    Object.Destroy(obj);
+                                }
+                            }
+                        }
+                        if (!Details_TopContent.IsNullOrDestroyed())
+                        {
+                            foreach (GameObject obj in Functions.GetAllChild(Details_TopContent))
+                            {
+                                Object.Destroy(obj);
+                            }
+                        }
+                        if (!Details_BottomCircleContent.IsNullOrDestroyed())
+                        {
+                            foreach (GameObject obj in Functions.GetAllChild(Details_BottomCircleContent))
+                            {
+                                if ((obj.name != "Title") && (obj.name != "BottomCircle"))
+                                {
+                                    Object.Destroy(obj);
+                                }
+                            }
+                        }
+                        if (!Details_BottomContent.IsNullOrDestroyed())
+                        {
+                            foreach (GameObject obj in Functions.GetAllChild(Details_BottomContent))
+                            {
+                                Object.Destroy(obj);
+                            }
+                        }
+                    }
+                }
+            }
+            public static void ShowDetails_Bottom(int i)
+            {
+                if (i < Skills.Count)
+                {
+                    if ((!Details_BottomCircleContent.IsNullOrDestroyed()) && (!Details_BottomContent.IsNullOrDestroyed()))
+                    {
+                        foreach (GameObject go in details_skills) //Show selected
+                        {
+                            bool selected = false;
+                            GameObject ability_name = Functions.GetChild(go, "AbilityName");
+                            if (!ability_name.IsNullOrDestroyed())
+                            {
+                                Text text = ability_name.GetComponent<Text>();
+                                if (!text.IsNullOrDestroyed())
+                                {
+                                    if (text.text == Skills[i].AbilityName) { selected = true; }
+                                }
+                            }
+
+                            Image img = go.GetComponent<Image>();
+                            if (!img.IsNullOrDestroyed())
+                            {
+                                if (selected) { img.enabled = true; }
+                                else { img.enabled = false; }
+                            }
+                        }
+                        foreach (GameObject obj in Functions.GetAllChild(Details_BottomCircleContent))
+                        {
+                            if ((obj.name != "Title") && (obj.name != "BottomCircle")) { Object.Destroy(obj); }
+                        }
+                        foreach (GameObject obj in Functions.GetAllChild(Details_BottomContent)) { Object.Destroy(obj); }
+                        GameObject text_obj = Functions.GetChild(Details_BottomCircleContent, "Title");
+                        if (!text_obj.IsNullOrDestroyed())
+                        {
+                            Text text = text_obj.GetComponent<Text>();
+                            if (!text.IsNullOrDestroyed()) { text.text = Skills[i].AbilityName; }
+                        }
+                        GameObject Circle = Functions.GetChild(Details_BottomCircleContent, "BottomCircle");
+                        RectTransform CircleRectTransform = null;
+                        if (!Circle.IsNullOrDestroyed()) { CircleRectTransform = Circle.GetComponent<RectTransform>(); }
+                        float total_damage = 0f;                        
+                        float dot_damage = 0f;
+                        float dot_damage_percent = 0f;
+                        int dot_count = 0;
+                        int dot_miss_count = 0;
+                        float hit_damage = 0f;
+                        float hit_damage_percent = 0f;
+                        int hit_count = 0;
+                        int hit_miss_count = 0;
+                        float crit_damage = 0f;
+                        float crit_damage_percent = 0f;
+                        int crit_count = 0;
+                        int crit_miss_count = 0;
+                        foreach (float f in Skills[i].Damages) { total_damage += f; }   //Total damage
+                        for (int j = 0; j < Skills[i].Damages.Count; j++)
+                        {                            
+                            if ((!Skills[i].Hits[j]) && (!Skills[i].Crits[j]))      //dot
+                            {
+                                dot_damage += Skills[i].Damages[j];
+                                dot_count++;
+                                if (Skills[i].Damages[j] == 0f) { dot_miss_count++; }
+                            }
+                            else if (!Skills[i].Crits[j])                           //hit
+                            {
+                                hit_damage += Skills[i].Damages[j];
+                                hit_count++;
+                                if (Skills[i].Damages[j] == 0f) { hit_miss_count++; }
+                            }
+                            else                                                    //crit
+                            {
+                                crit_damage += Skills[i].Damages[j];
+                                crit_count++;
+                                if (Skills[i].Damages[j] == 0f) { crit_miss_count++; }
+                            }
+                        }
+                        dot_damage_percent = ((dot_damage * 100) / total_damage);
+                        hit_damage_percent = ((hit_damage * 100) / total_damage);
+                        crit_damage_percent = ((crit_damage * 100) / total_damage);
+
+                        float rotation = 0f;
+                        int color_index = 0;
+                        if (dot_damage > 0f)
+                        {
+                            CreateCircle(Details_BottomCircleContent, Circle, CircleRectTransform, dot_damage_percent, rotation, color_index);
+                            rotation += (dot_damage_percent / 100) * 360;
+                            if (!Details_BottomContent_prefab.IsNullOrDestroyed())
+                            {
+                                CreateDetailsBottom(color_index, "Dot", dot_count, dot_damage_percent);
+                            }
+                            color_index++;
+                        }
+                        if (hit_damage > 0f)
+                        {
+                            CreateCircle(Details_BottomCircleContent, Circle, CircleRectTransform, hit_damage_percent, rotation, color_index);
+                            rotation += (hit_damage_percent / 100) * 360;
+                            if (!Details_BottomContent_prefab.IsNullOrDestroyed())
+                            {
+                                CreateDetailsBottom(color_index, "Hit", hit_count, hit_damage_percent);
+                            }
+                            color_index++;
+                        }
+                        if (crit_damage > 0f)
+                        {
+                            CreateCircle(Details_BottomCircleContent, Circle, CircleRectTransform, crit_damage_percent, rotation, color_index);
+                            rotation += (crit_damage_percent / 100) * 360;
+                            if (!Details_BottomContent_prefab.IsNullOrDestroyed())
+                            {
+                                CreateDetailsBottom(color_index, "Crit", crit_count, crit_damage_percent);
+                            }
+                            color_index++;
+                        }
+                    }
+                }
+            }
+            public static void CreateCircle(GameObject parent, GameObject Circle, RectTransform CircleRectTransform, float percent, float rotation, int color_index)
+            {
+                GameObject circle = Instantiate(Circle, Vector3.zero, Quaternion.identity);
+                DontDestroyOnLoad(circle);
+                circle.transform.SetParent(parent.transform);
+                RectTransform rect_transform = circle.GetComponent<RectTransform>();
+                if ((!rect_transform.IsNullOrDestroyed()) && (!CircleRectTransform.IsNullOrDestroyed()))
+                {
+                    rect_transform.offsetMax = CircleRectTransform.offsetMax;
+                    rect_transform.offsetMin = CircleRectTransform.offsetMin;
+                }
+                Image details_topcircle_image = circle.GetComponent<Image>();
+                if (!details_topcircle_image.IsNullOrDestroyed())
+                {
+                    details_topcircle_image.color = colors[color_index];
+                    details_topcircle_image.fillAmount = percent / 100;
+                }
+                circle.transform.Rotate(new Vector3(0, 0, (rotation * -1)));
+                circle.active = true;
+            }
+            public static void CreateDetailsBottom(int color_index, string type, int count, float percent)
+            {
+                GameObject details_bottom = Instantiate(Details_BottomContent_prefab, Vector3.zero, Quaternion.identity);
+                DontDestroyOnLoad(details_bottom);
+                details_bottom.transform.SetParent(Details_BottomContent.transform);
+                GameObject color = Functions.GetChild(details_bottom, "Color");
+                if (!color.IsNullOrDestroyed())
+                {
+                    GameObject image_obj = Functions.GetChild(color, "Image");
+                    {
+                        Image image = image_obj.GetComponent<Image>();
+                        if (!image.IsNullOrDestroyed())
+                        {
+                            image.color = colors[color_index];
+                        }
+                    }
+                }
+                GameObject damage_type = Functions.GetChild(details_bottom, "Type");
+                if (!damage_type.IsNullOrDestroyed())
+                {
+                    Text text = damage_type.GetComponent<Text>();
+                    if (!text.IsNullOrDestroyed()) { text.text = type; }
+                }
+                GameObject damage_count = Functions.GetChild(details_bottom, "Count");
+                if (!damage_count.IsNullOrDestroyed())
+                {
+                    Text text = damage_count.GetComponent<Text>();
+                    if (!text.IsNullOrDestroyed()) { text.text = System.Convert.ToString(count); }
+                }
+                GameObject damage_percent = Functions.GetChild(details_bottom, "Percent");
+                if (!damage_percent.IsNullOrDestroyed())
+                {
+                    Text text = damage_percent.GetComponent<Text>();
+                    if (!text.IsNullOrDestroyed()) { text.text = System.Convert.ToInt32(percent) + " %"; }
+                }
+                details_bottom.active = true;
+            }
         }
         public class Events
         {
@@ -510,6 +919,18 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                 DamageMeter_content.active = !Settings_panel.active;
             }
 
+            public static readonly System.Action OpenDetails_OnClick_Action = new System.Action(OpenDetails);
+            public static void OpenDetails()
+            {
+                UI.OpenDetails();
+            }
+
+            public static readonly System.Action CloseDetails_OnClick_Action = new System.Action(CloseDetails);
+            public static void CloseDetails()
+            {
+                UI.CloseDetails();
+            }
+
             public static readonly System.Action<int> DamageType_Dropdown_Action = new System.Action<int>(Set_DamageType);
             private static void Set_DamageType(int value)
             {
@@ -525,6 +946,28 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                 if ((!Save_Manager.instance.IsNullOrDestroyed()) && (!SeparateDot_Toggle.IsNullOrDestroyed()))
                 {
                     Save_Manager.instance.data.DamageMeter.SeparateHitAndDot = SeparateDot_Toggle.isOn;
+                }
+            }
+
+            //Select Top Skill
+            [HarmonyPatch(typeof(Button), "Press")]
+            public class Button_Press
+            {
+                [HarmonyPostfix]
+                static void Postfix(ref Button __instance)
+                {
+                    try
+                    {
+                        if (Details_panel.active)
+                        {
+                            if (__instance.name.Contains(Details_TopSkillsName))
+                            {
+                                int i = System.Convert.ToInt32(__instance.name.Split('_')[1]);
+                                UI.ShowDetails_Bottom(i);
+                            }
+                        }
+                    }
+                    catch { }
                 }
             }
         }
@@ -551,10 +994,11 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                             bool found = false;
                             foreach (Skill skill in Skills)
                             {
-                                if ((skill.AbilityName == __0.ability.abilityName) && (skill.Dot == !__0.hit))
+                                if ((skill.AbilityName == __0.ability.abilityName)) // && (skill.Dot == !__0.hit))
                                 {
                                     found = true;
                                     skill.Damages.Add(__0.damageDealt);
+                                    skill.Hits.Add(__0.hit);
                                     skill.Crits.Add(__0.crit);
                                     skill.Kills.Add(__0.kill);
                                     skill.Overkills.Add(__0.overkill);
@@ -573,8 +1017,8 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
             public GameObject Obj;
             public Sprite Icon;
             public string AbilityName;
-            public bool Dot;
-            public System.Collections.Generic.List<float> Damages;            
+            public System.Collections.Generic.List<float> Damages;
+            public System.Collections.Generic.List<bool> Hits;
             public System.Collections.Generic.List<bool> Crits;
             public System.Collections.Generic.List<bool> Kills;
             public System.Collections.Generic.List<float> Overkills;

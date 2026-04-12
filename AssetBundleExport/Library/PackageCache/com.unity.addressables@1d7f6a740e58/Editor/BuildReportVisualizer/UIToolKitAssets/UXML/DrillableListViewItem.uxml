@@ -1,8 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
-    <Style src="/Packages/com.unity.addressables/Editor/BuildReportVisualizer/UIToolKitAssets/StyleSheets/DrillableListItemStyle.uss" />
-    <ui:VisualElement class="DrillableListViewItem">
-        <ui:Image name="DrillableListViewItemIcon" class="TreeViewItemIcon"/>>
-        <ui:Label name="DrillableListViewItemName" text="-----" class="DrillableListViewItemText"/>
-          <ui:Button name="DrillableListViewButton" class="DrillableListViewItemButton" text="References To"/>
-    </ui:VisualElement>
-</ui:UXML>

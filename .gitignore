@@ -199,6 +199,7 @@ PublishScripts/
 **/[Pp]ackages/*
 # except build/, which is used as an MSBuild target.
 !**/[Pp]ackages/build/
+!AssetBundleExport/Packages/manifest.json
 # Uncomment if necessary however generally it will be regenerated when needed
 #!**/[Pp]ackages/repositories.config
 # NuGet v3's project.json files produces more ignorable files
@@ -360,7 +361,13 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/AssetBundleExport/Temp
+/AssetBundleExport/Temp/
+/AssetBundleExport/Library/
+/AssetBundleExport/LibraryBack/
+/AssetBundleExport/Build/
+/AssetBundleExport/UserSettings/
+/AssetBundleExport/ProjectSettings/boot.config
+/AssetBundleExport/Assets/AssetBundles/
 
 # Unity
 #
@@ -437,3 +444,6 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+AssetBundleExport/Assets/Scripts/Editor/DevBuildHelper.cs
+AssetBundleExport/Assets/Scripts/Editor/DevBuildHelper.cs.meta
+dotnet-tools.json
