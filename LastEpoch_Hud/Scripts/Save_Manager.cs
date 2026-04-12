@@ -113,7 +113,6 @@ namespace LastEpoch_Hud.Scripts
                         Enable_MemoryAmberMultiplier = false,
                         MemoryAmberMultiplier = 1,
                         Enable_WaypointsUnlock = false,
-                        Enable_TwoHandedWithShield = false,
                         Enable_PotionResplenishment = false,
                     },
                     PermanentBuffs =
@@ -685,7 +684,6 @@ namespace LastEpoch_Hud.Scripts
                 public bool Enable_MemoryAmberMultiplier;
                 public uint MemoryAmberMultiplier;
                 public bool Enable_WaypointsUnlock;
-                public bool Enable_TwoHandedWithShield;
                 public bool Enable_PotionResplenishment;
             }
             public struct PermanentBuffs

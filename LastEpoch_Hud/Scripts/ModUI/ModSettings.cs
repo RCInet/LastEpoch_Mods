@@ -72,6 +72,19 @@ namespace LastEpoch_Hud.Scripts.ModUI
             );
         }
 
+        public static class Cheats
+        {
+            public static readonly SettingsGroup Group = new SettingsGroup("Cheats")
+                .Content("Character_Content")
+                .Viewport("Character_Cheats", "Character_Cheats_Content")
+                .Prefix("Character_Cheats_");
+
+            public static readonly BoolSetting TwoHandeWithShield = Group.Bool(
+                "TwoHandeWithShield",
+                label: "Allow Shields With Two-Handed Weapons"
+            );
+        }
+
         //
         // SCENES TAB
         //
