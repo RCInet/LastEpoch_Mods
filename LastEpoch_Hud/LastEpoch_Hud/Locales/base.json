@@ -223,5 +223,17 @@
   "Press any key…": "",
   "(none)": "",
   "Shards": "",
-  "Title": ""
+  "Title": "",
+  "Difficulty": "",
+  "Enemy Health Multiplier": "",
+  "Enemy Damage Multiplier": "",
+  "Enemy Speed Multiplier": "",
+  "Raise Zone Level to Match Player": "",
+  "Cap Player Level Gain to Zone Level": "",
+  "Force Monster Rarity": "",
+  "Force Monster Rarity Header": "",
+  "Off": "",
+  "Magic": "",
+  "Rare": "",
+  "Reset Difficulty": ""
 }

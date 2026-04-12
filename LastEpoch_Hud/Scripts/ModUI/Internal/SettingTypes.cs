@@ -4,10 +4,11 @@ namespace LastEpoch_Hud.Scripts.ModUI
 {
     public enum DisplayFormat
     {
-        Raw,        // "50 to 100"
-        Tier,       // "(min+1) to (max+1)" -- game uses 0-indexed, display is 1-indexed
-        Percent,    // "75 %" -- displayed as percentage relative to the setting's max limit
-        Seconds     // "5 sec"
+        Raw, // "50 to 100"
+        Tier, // "(min+1) to (max+1)" -- game uses 0-indexed, display is 1-indexed
+        Percent, // "75 %" -- displayed as percentage relative to the setting's max limit
+        Seconds, // "5 sec"
+        Multiplier, // "1.0" / "2.5" -- one decimal place for float multipliers
     }
 
     public static class DisplayFormatHelper
@@ -19,7 +20,8 @@ namespace LastEpoch_Hud.Scripts.ModUI
                 DisplayFormat.Tier => ((int)val + 1).ToString(),
                 DisplayFormat.Percent => FormatPercent(val, maxLimit),
                 DisplayFormat.Seconds => (int)val + " sec",
-                _ => ((int)val).ToString()
+                DisplayFormat.Multiplier => val.ToString("F1"),
+                _ => ((int)val).ToString(),
             };
         }
 
@@ -46,7 +48,8 @@ namespace LastEpoch_Hud.Scripts.ModUI
         public void Set(bool val)
         {
             ModSettings.Trace("BoolSetting.Set: before=" + Value + " requested=" + val);
-            if (Value == val) return;
+            if (Value == val)
+                return;
             Value = val;
             ModSettings.MarkDirty();
             Changed?.Invoke(val);
@@ -58,21 +61,34 @@ namespace LastEpoch_Hud.Scripts.ModUI
     {
         public bool Enabled { get; internal set; }
         public float Value { get; internal set; }
+        public float MinLimit { get; }
+        public float MaxLimit { get; }
+        public bool HasLimits { get; }
         public DisplayFormat Format { get; }
 
         public event Action Changed;
 
-        public FloatSetting(float defaultValue = 0f, bool defaultEnabled = false, DisplayFormat format = DisplayFormat.Raw)
+        public FloatSetting(
+            float defaultValue = 0f,
+            bool defaultEnabled = false,
+            DisplayFormat format = DisplayFormat.Raw,
+            float minLimit = 0f,
+            float maxLimit = 0f
+        )
         {
             Value = defaultValue;
             Enabled = defaultEnabled;
             Format = format;
+            MinLimit = minLimit;
+            MaxLimit = maxLimit;
+            HasLimits = (minLimit != 0f || maxLimit != 0f) && maxLimit > minLimit;
         }
 
         public void SetEnabled(bool val)
         {
             ModSettings.Trace("FloatSetting.SetEnabled: before=" + Enabled + " requested=" + val);
-            if (Enabled == val) return;
+            if (Enabled == val)
+                return;
             Enabled = val;
             ModSettings.MarkDirty();
             Changed?.Invoke();
@@ -81,13 +97,15 @@ namespace LastEpoch_Hud.Scripts.ModUI
         public void SetValue(float val)
         {
             ModSettings.Trace("FloatSetting.SetValue: before=" + Value + " requested=" + val);
-            if (Value == val) return;
+            if (Value == val)
+                return;
             Value = val;
             ModSettings.MarkDirty();
             Changed?.Invoke();
         }
 
-        public string FormatValue(float maxLimit = 0) => DisplayFormatHelper.Format(Value, Format, maxLimit);
+        public string FormatValue(float maxLimit = 0) =>
+            DisplayFormatHelper.Format(Value, Format, maxLimit);
     }
 
     // Toggle + min/max range (e.g., "Implicits: 20% to 80%").
@@ -103,10 +121,13 @@ namespace LastEpoch_Hud.Scripts.ModUI
         public event Action Changed;
 
         public RangeSetting(
-            float minLimit = 0, float maxLimit = 255,
-            float? defaultMin = null, float? defaultMax = null,
+            float minLimit = 0,
+            float maxLimit = 255,
+            float? defaultMin = null,
+            float? defaultMax = null,
             bool defaultEnabled = false,
-            DisplayFormat format = DisplayFormat.Raw)
+            DisplayFormat format = DisplayFormat.Raw
+        )
         {
             MinLimit = minLimit;
             MaxLimit = maxLimit;
@@ -119,7 +140,8 @@ namespace LastEpoch_Hud.Scripts.ModUI
         public void SetEnabled(bool val)
         {
             ModSettings.Trace("RangeSetting.SetEnabled: before=" + Enabled + " requested=" + val);
-            if (Enabled == val) return;
+            if (Enabled == val)
+                return;
             Enabled = val;
             ModSettings.MarkDirty();
             Changed?.Invoke();
@@ -128,9 +150,11 @@ namespace LastEpoch_Hud.Scripts.ModUI
         public void SetMin(float val)
         {
             ModSettings.Trace("RangeSetting.SetMin: before=" + Min + " requested=" + val);
-            if (Min == val) return;
+            if (Min == val)
+                return;
             Min = val;
-            if (Min > Max) Max = Min;
+            if (Min > Max)
+                Max = Min;
             ModSettings.MarkDirty();
             Changed?.Invoke();
         }
@@ -138,16 +162,20 @@ namespace LastEpoch_Hud.Scripts.ModUI
         public void SetMax(float val)
         {
             ModSettings.Trace("RangeSetting.SetMax: before=" + Max + " requested=" + val);
-            if (Max == val) return;
+            if (Max == val)
+                return;
             Max = val;
-            if (Max < Min) Min = Max;
+            if (Max < Min)
+                Min = Max;
             ModSettings.MarkDirty();
             Changed?.Invoke();
         }
 
         public string FormatRange()
         {
-            return DisplayFormatHelper.Format(Min, Format, MaxLimit) + " to " + DisplayFormatHelper.Format(Max, Format, MaxLimit);
+            return DisplayFormatHelper.Format(Min, Format, MaxLimit)
+                + " to "
+                + DisplayFormatHelper.Format(Max, Format, MaxLimit);
         }
     }
 
@@ -166,12 +194,14 @@ namespace LastEpoch_Hud.Scripts.ModUI
             Options = options ?? Array.Empty<string>();
         }
 
-        public string SelectedText => (Value >= 0 && Value < Options.Length) ? Options[Value] : null;
+        public string SelectedText =>
+            (Value >= 0 && Value < Options.Length) ? Options[Value] : null;
 
         public void Set(int val)
         {
             ModSettings.Trace("DropdownSetting.Set: before=" + Value + " requested=" + val);
-            if (Value == val) return;
+            if (Value == val)
+                return;
             Value = val;
             ModSettings.MarkDirty();
             Changed?.Invoke(val);
@@ -179,7 +209,12 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
         public void SetOptions(string[] options, int selectedIndex = 0)
         {
-            ModSettings.Trace("DropdownSetting.SetOptions: count=" + (options?.Length ?? 0) + " selectedIndex=" + selectedIndex);
+            ModSettings.Trace(
+                "DropdownSetting.SetOptions: count="
+                    + (options?.Length ?? 0)
+                    + " selectedIndex="
+                    + selectedIndex
+            );
             Options = options ?? Array.Empty<string>();
             Value = selectedIndex;
             applyOptions?.Invoke(Options);
@@ -191,6 +226,7 @@ namespace LastEpoch_Hud.Scripts.ModUI
     {
         public readonly string[] OptionNames;
         private readonly bool[] values;
+        public int DefaultIndex { get; private set; } = -1;
 
         public event Action Changed;
 
@@ -200,11 +236,26 @@ namespace LastEpoch_Hud.Scripts.ModUI
             values = new bool[names.Length];
         }
 
+        public RadioSetting WithDefault(int index)
+        {
+            DefaultIndex = index;
+            if (index >= 0 && index < values.Length)
+                values[index] = true;
+            return this;
+        }
+
         public bool IsSelected(int index) => values[index];
 
         public void Select(int index, bool value)
         {
-            ModSettings.Trace("RadioSetting.Select: index=" + index + " name=" + OptionNames[index] + " value=" + value);
+            ModSettings.Trace(
+                "RadioSetting.Select: index="
+                    + index
+                    + " name="
+                    + OptionNames[index]
+                    + " value="
+                    + value
+            );
             if (value)
             {
                 for (int i = 0; i < values.Length; i++)
@@ -219,7 +270,11 @@ namespace LastEpoch_Hud.Scripts.ModUI
         }
 
         internal bool GetValue(int index) => values[index];
-        internal void SetValue(int index, bool value) { values[index] = value; }
+
+        internal void SetValue(int index, bool value)
+        {
+            values[index] = value;
+        }
     }
 
     // Button action (e.g., "Drop Item", "Reset Camera"). No persisted value.
@@ -239,8 +294,15 @@ namespace LastEpoch_Hud.Scripts.ModUI
     {
         public string Text { get; internal set; }
 
-        public HeaderSetting(string text) { Text = text ?? ""; }
-        public void SetText(string text) { Text = text ?? ""; }
+        public HeaderSetting(string text)
+        {
+            Text = text ?? "";
+        }
+
+        public void SetText(string text)
+        {
+            Text = text ?? "";
+        }
     }
 
     // Required sub-paths are constructor parameters; optional ones default to null.
@@ -249,7 +311,12 @@ namespace LastEpoch_Hud.Scripts.ModUI
     {
         public readonly string Slider;
         public readonly string Toggle;
-        public FloatPaths(string slider, string toggle = null) { Slider = slider; Toggle = toggle; }
+
+        public FloatPaths(string slider, string toggle = null)
+        {
+            Slider = slider;
+            Toggle = toggle;
+        }
     }
 
     public readonly struct RangePaths
@@ -257,9 +324,12 @@ namespace LastEpoch_Hud.Scripts.ModUI
         public readonly string MinSlider;
         public readonly string MaxSlider;
         public readonly string Toggle;
+
         public RangePaths(string minSlider, string maxSlider, string toggle = null)
         {
-            MinSlider = minSlider; MaxSlider = maxSlider; Toggle = toggle;
+            MinSlider = minSlider;
+            MaxSlider = maxSlider;
+            Toggle = toggle;
         }
     }
 
@@ -268,16 +338,23 @@ namespace LastEpoch_Hud.Scripts.ModUI
         public readonly string CaptureButton;
         public readonly string ResetButton;
         public readonly string Label;
+
         public KeybindPaths(string captureButton, string resetButton = null, string label = null)
         {
-            CaptureButton = captureButton; ResetButton = resetButton; Label = label;
+            CaptureButton = captureButton;
+            ResetButton = resetButton;
+            Label = label;
         }
     }
 
     public readonly struct RadioPaths
     {
         public readonly string[] Toggles;
-        public RadioPaths(params string[] toggles) { Toggles = toggles; }
+
+        public RadioPaths(params string[] toggles)
+        {
+            Toggles = toggles;
+        }
     }
 
     // Single rebindable input (keyboard key OR gamepad button). Value is a tagged string:
@@ -301,7 +378,8 @@ namespace LastEpoch_Hud.Scripts.ModUI
         {
             ModSettings.Trace("KeybindSetting.Set: before=" + Value + " requested=" + newBinding);
             string val = newBinding ?? "";
-            if (Value == val) return;
+            if (Value == val)
+                return;
             Value = val;
             ModSettings.MarkDirty();
             Changed?.Invoke(val);

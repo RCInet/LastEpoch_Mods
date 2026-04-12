@@ -53,7 +53,7 @@ FOR %%C IN (Keyboard WinGamepad) DO (
         IF EXIST "!OUT!" del "!OUT!"
 
         cd /d "!SRC!"
-        "!RAR!" a -r "!OUT!"
+        "!RAR!" a -r -ibck "!OUT!"
         echo Created: !OUT!
     ) ELSE (
         echo [MakeLatest] Skipped %%C - no build found

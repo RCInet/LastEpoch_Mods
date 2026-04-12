@@ -223,5 +223,17 @@
   "Press any key…": "Appuyez sur une touche…",
   "(none)": "(aucune)",
   "Shards": "Shards",
-  "Title": "Title"
+  "Title": "Title",
+  "Difficulty": "Difficulté",
+  "Enemy Health Multiplier": "Multiplicateur de vie des ennemis",
+  "Enemy Damage Multiplier": "Multiplicateur de dégâts des ennemis",
+  "Enemy Speed Multiplier": "Multiplicateur de vitesse des ennemis",
+  "Raise Zone Level to Match Player": "Hausser le niveau de zone au niveau du joueur",
+  "Cap Player Level Gain to Zone Level": "Limiter le gain de niveau au niveau de zone",
+  "Force Monster Rarity": "Forcer la rareté des monstres",
+  "Force Monster Rarity Header": "Force tous les monstres normaux à apparaître avec une rareté spécifique.",
+  "Off": "Désactivé",
+  "Magic": "Magique",
+  "Rare": "Rare",
+  "Reset Difficulty": "Réinitialiser la difficulté"
 }
