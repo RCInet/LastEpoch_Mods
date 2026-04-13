@@ -79,6 +79,7 @@ namespace LastEpoch_Hud.Scripts
                     {
                         updating = true;
                         Update_Hud_Content();
+                        if (!hud_object.active) { Mods.Fixs.Fix_HudFpsCap.SetHudCapActive(true); }
                         hud_object.active = true;
                         Content.Set_Active();
 
@@ -123,7 +124,7 @@ namespace LastEpoch_Hud.Scripts
                     else if (!updating)
                     {
                         updating = true;
-                        if (hud_object.active) { hud_object.active = false; }
+                        if (hud_object.active) { hud_object.active = false; Mods.Fixs.Fix_HudFpsCap.SetHudCapActive(false); }
                         if (!Refs_Manager.epoch_input_manager.IsNullOrDestroyed())
                         {
                             if (Refs_Manager.epoch_input_manager.forceDisableInput) { Refs_Manager.epoch_input_manager.forceDisableInput = false; }

@@ -66,7 +66,7 @@ namespace LastEpoch_Hud.Scripts
             Il2CppSystem.Collections.Generic.List<GameObject> Mods_Objects = new Il2CppSystem.Collections.Generic.List<GameObject>();
 
             //Fix
-            const bool enable_fix_lowfps = false;
+            bool enable_fix_lowfps = false;
             if (enable_fix_lowfps)
             {
                 fix_lowfps_obj = Object.Instantiate(new GameObject { name = "Mod_FixLowFPS" }, Vector3.zero, Quaternion.identity);
