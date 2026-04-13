@@ -9,12 +9,20 @@ namespace LastEpoch_Hud.Scripts.Mods.Fixs
         public class Il2CppCysharp_Threading_Tasks_PlayerLoopHelper_AddAction
         {
             [HarmonyPrefix]
-            static bool Prefix(Il2CppCysharp.Threading.Tasks.PlayerLoopTiming __0, Il2CppCysharp.Threading.Tasks.IPlayerLoopItem __1)
+            static bool Prefix(
+                Il2CppCysharp.Threading.Tasks.PlayerLoopTiming __0,
+                Il2CppCysharp.Threading.Tasks.IPlayerLoopItem __1
+            )
             {
-                if (Hud_Manager.instance?.enabled ?? false) { return true; }
+                if (!Hud_Manager.instance.IsNullOrDestroyed() && Hud_Manager.instance.enabled)
+                {
+                    return true;
+                }
                 else
                 {
-                    Main.logger_instance?.Warning("Fix : PlayerLoopHelper.AddAction(); Wait all Initialize");
+                    Main.logger_instance?.Warning(
+                        "Fix : PlayerLoopHelper.AddAction(); Wait all Initialize"
+                    );
                     return false;
                 }
             }
