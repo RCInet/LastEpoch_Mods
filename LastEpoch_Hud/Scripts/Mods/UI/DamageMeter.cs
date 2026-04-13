@@ -12,7 +12,7 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
     {
         public static DamageMeter instance { get; private set; }
         public DamageMeter(System.IntPtr ptr) : base(ptr) { }
-
+        
         //Main
         public static GameObject DamageMeter_prefab = null;
         public static GameObject DamageMeter_obj = null;
