@@ -4,7 +4,6 @@ using Il2CppTMPro;
 using MelonLoader;
 using UnityEngine;
 using UnityEngine.UI;
-using static LastEpoch_Hud.Scripts.Mods.UI.DamageMeter;
 
 namespace LastEpoch_Hud.Scripts.Mods.UI
 {
