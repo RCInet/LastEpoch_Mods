@@ -17,9 +17,12 @@ namespace LastEpoch_Hud.Scripts
         public Data.Mods_Structure data_duplicate = new Data.Mods_Structure();
         public bool initialized = false;
 
+        const int CheckEveryNFrames = 60;
+        int check_counter = 0;
+
         void Awake()
         {
-            instance = this;  
+            instance = this;
         }
         async void Start()
         {
@@ -27,7 +30,10 @@ namespace LastEpoch_Hud.Scripts
         }
         void Update()
         {
-            if (initialized) { Check_DataChanged(); }
+            if (!initialized) { return; }
+            if (++check_counter < CheckEveryNFrames) { return; }
+            check_counter = 0;
+            Check_DataChanged();
         }
         
         void Load()
