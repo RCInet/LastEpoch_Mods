@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using Il2Cpp;
+using LastEpoch_Hud.Scripts.Mods.Localization;
 using MelonLoader;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -1518,164 +1519,31 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                 }
             }
 
-            [HarmonyPatch(typeof(Localization), "TryGetText")]
-            public class Localization_TryGetText
+            public static void RegisterLocales()
             {
-                [HarmonyPrefix]
-                static bool Prefix(ref bool __result, string __0) //, Il2CppSystem.String __1)
-                {
-                    bool result = true;
-                    if (__0 == basic_subtype_name_key ||
-                        __0 == Ice.unique_name_key || __0 == Ice.unique_description_key || __0 == Ice.unique_lore_key ||
-                        __0 == Fire.unique_name_key || __0 == Fire.unique_description_key || __0 == Fire.unique_lore_key ||
-                        __0 == Lightning.unique_name_key || __0 == Lightning.unique_description_key || __0 == Lightning.unique_lore_key ||
-                        __0 == Poison.unique_name_key || __0 == Poison.unique_description_key || __0 == Poison.unique_lore_key ||
-                        __0 == Physical.unique_name_key || __0 == Physical.unique_description_key || __0 == Physical.unique_lore_key)
-                    {
-                        __result = true;
-                        result = false;
-                    }
+                LocalizationOverride.Register(basic_subtype_name_key, Get_Subtype_Name);
 
-                    return result;
-                }
+                LocalizationOverride.Register(Ice.unique_name_key, Uniques.Ice.Get_Unique_Name);
+                LocalizationOverride.Register(Ice.unique_description_key, Uniques.Ice.Get_Unique_Description);
+                LocalizationOverride.Register(Ice.unique_lore_key, Uniques.Ice.Get_Unique_Lore);
+
+                LocalizationOverride.Register(Fire.unique_name_key, Uniques.Fire.Get_Unique_Name);
+                LocalizationOverride.Register(Fire.unique_description_key, Uniques.Fire.Get_Unique_Description);
+                LocalizationOverride.Register(Fire.unique_lore_key, Uniques.Fire.Get_Unique_Lore);
+
+                LocalizationOverride.Register(Lightning.unique_name_key, Uniques.Lightning.Get_Unique_Name);
+                LocalizationOverride.Register(Lightning.unique_description_key, Uniques.Lightning.Get_Unique_Description);
+                LocalizationOverride.Register(Lightning.unique_lore_key, Uniques.Lightning.Get_Unique_Lore);
+
+                LocalizationOverride.Register(Poison.unique_name_key, Uniques.Poison.Get_Unique_Name);
+                LocalizationOverride.Register(Poison.unique_description_key, Uniques.Poison.Get_Unique_Description);
+                LocalizationOverride.Register(Poison.unique_lore_key, Uniques.Poison.Get_Unique_Lore);
+
+                LocalizationOverride.Register(Physical.unique_name_key, Uniques.Physical.Get_Unique_Name);
+                LocalizationOverride.Register(Physical.unique_description_key, Uniques.Physical.Get_Unique_Description);
+                LocalizationOverride.Register(Physical.unique_lore_key, Uniques.Physical.Get_Unique_Lore);
             }
 
-            [HarmonyPatch(typeof(Localization), "GetText")]
-            public class Localization_GetText
-            {
-                [HarmonyPrefix]
-                static bool Prefix(ref string __result, string __0)
-                {
-                    bool result = true;
-                    if (__0 == basic_subtype_name_key)
-                    {
-                        __result = Get_Subtype_Name();
-                        result = false;
-                    }
-                    //Ice
-                    else if (__0 == Ice.unique_name_key)
-                    {
-                        __result = Uniques.Ice.Get_Unique_Name();
-                        result = false;
-                    }
-                    else if (__0 == Ice.unique_description_key)
-                    {
-                        string description = Uniques.Ice.Get_Unique_Description();
-                        if (description != "")
-                        {
-                            __result = description;
-                            result = false;
-                        }
-                    }
-                    else if (__0 == Ice.unique_lore_key)
-                    {
-                        string lore = Uniques.Ice.Get_Unique_Lore();
-                        if (lore != "")
-                        {
-                            __result = lore;
-                            result = false;
-                        }
-                    }
-                    //Fire
-                    else if (__0 == Fire.unique_name_key)
-                    {
-                        __result = Uniques.Fire.Get_Unique_Name();
-                        result = false;
-                    }
-                    else if (__0 == Fire.unique_description_key)
-                    {
-                        string description = Uniques.Fire.Get_Unique_Description();
-                        if (description != "")
-                        {
-                            __result = description;
-                            result = false;
-                        }
-                    }
-                    else if (__0 == Fire.unique_lore_key)
-                    {
-                        string lore = Uniques.Fire.Get_Unique_Lore();
-                        if (lore != "")
-                        {
-                            __result = lore;
-                            result = false;
-                        }
-                    }
-                    //Lightning
-                    else if (__0 == Lightning.unique_name_key)
-                    {
-                        __result = Uniques.Lightning.Get_Unique_Name();
-                        result = false;
-                    }
-                    else if (__0 == Lightning.unique_description_key)
-                    {
-                        string description = Uniques.Lightning.Get_Unique_Description();
-                        if (description != "")
-                        {
-                            __result = description;
-                            result = false;
-                        }
-                    }
-                    else if (__0 == Fire.unique_lore_key)
-                    {
-                        string lore = Uniques.Lightning.Get_Unique_Lore();
-                        if (lore != "")
-                        {
-                            __result = lore;
-                            result = false;
-                        }
-                    }
-                    //Poison
-                    else if (__0 == Poison.unique_name_key)
-                    {
-                        __result = Uniques.Poison.Get_Unique_Name();
-                        result = false;
-                    }
-                    else if (__0 == Poison.unique_description_key)
-                    {
-                        string description = Uniques.Poison.Get_Unique_Description();
-                        if (description != "")
-                        {
-                            __result = description;
-                            result = false;
-                        }
-                    }
-                    else if (__0 == Poison.unique_lore_key)
-                    {
-                        string lore = Uniques.Poison.Get_Unique_Lore();
-                        if (lore != "")
-                        {
-                            __result = lore;
-                            result = false;
-                        }
-                    }
-                    //Physical
-                    else if (__0 == Physical.unique_name_key)
-                    {
-                        __result = Uniques.Physical.Get_Unique_Name();
-                        result = false;
-                    }
-                    else if (__0 == Physical.unique_description_key)
-                    {
-                        string description = Uniques.Physical.Get_Unique_Description();
-                        if (description != "")
-                        {
-                            __result = description;
-                            result = false;
-                        }
-                    }
-                    else if (__0 == Physical.unique_lore_key)
-                    {
-                        string lore = Uniques.Physical.Get_Unique_Lore();
-                        if (lore != "")
-                        {
-                            __result = lore;
-                            result = false;
-                        }
-                    }
-
-                    return result;
-                }
-            }
         }
         public class Events
         {

@@ -23,6 +23,7 @@ namespace LastEpoch_Hud
         public override void OnInitializeMelon()
         {
             logger_instance = LoggerInstance;
+            Scripts.Mods.Localization.LocalizationOverride.RegisterAll();
         }
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
