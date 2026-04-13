@@ -740,41 +740,105 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                         GameObject Circle = Functions.GetChild(Details_BottomCircleContent, "BottomCircle");
                         RectTransform CircleRectTransform = null;
                         if (!Circle.IsNullOrDestroyed()) { CircleRectTransform = Circle.GetComponent<RectTransform>(); }
-                        float total_damage = 0f;                        
+                        float total_damage = 0f;
+                        
                         float dot_damage = 0f;
                         float dot_damage_percent = 0f;
                         int dot_count = 0;
                         int dot_miss_count = 0;
+                        float dot_min = 0f;
+                        float dot_avg = 0f;
+                        float dot_max = 0f;
+
                         float hit_damage = 0f;
                         float hit_damage_percent = 0f;
                         int hit_count = 0;
                         int hit_miss_count = 0;
+                        float hit_min = 0f;
+                        float hit_avg = 0f;
+                        float hit_max = 0f;
+
                         float crit_damage = 0f;
                         float crit_damage_percent = 0f;
                         int crit_count = 0;
                         int crit_miss_count = 0;
+                        float crit_min = 0f;
+                        float crit_avg = 0f;
+                        float crit_max = 0f;
+
                         foreach (float f in Skills[i].Damages) { total_damage += f; }   //Total damage
                         for (int j = 0; j < Skills[i].Damages.Count; j++)
                         {                            
                             if ((!Skills[i].Hits[j]) && (!Skills[i].Crits[j]))      //dot
                             {
+                                if (dot_damage == 0f)
+                                {
+                                    dot_min = Skills[i].Damages[j];
+                                    dot_max = Skills[i].Damages[j];
+                                }
+                                else
+                                {
+                                    if (Skills[i].Damages[j] < dot_min)
+                                    {
+                                        dot_min = Skills[i].Damages[j];
+                                    }
+                                    if (Skills[i].Damages[j] > dot_max)
+                                    {
+                                        dot_max = Skills[i].Damages[j];
+                                    }
+                                }
                                 dot_damage += Skills[i].Damages[j];
                                 dot_count++;
                                 if (Skills[i].Damages[j] == 0f) { dot_miss_count++; }
                             }
                             else if (!Skills[i].Crits[j])                           //hit
                             {
+                                if (hit_damage == 0f)
+                                {
+                                    hit_min = Skills[i].Damages[j];
+                                    hit_max = Skills[i].Damages[j];
+                                }
+                                else
+                                {
+                                    if (Skills[i].Damages[j] < hit_min)
+                                    {
+                                        hit_min = Skills[i].Damages[j];
+                                    }
+                                    if (Skills[i].Damages[j] > hit_max)
+                                    {
+                                        hit_max = Skills[i].Damages[j];
+                                    }
+                                }
                                 hit_damage += Skills[i].Damages[j];
                                 hit_count++;
                                 if (Skills[i].Damages[j] == 0f) { hit_miss_count++; }
                             }
                             else                                                    //crit
                             {
+                                if (crit_damage == 0f)
+                                {
+                                    crit_min = Skills[i].Damages[j];
+                                    crit_max = Skills[i].Damages[j];
+                                }
+                                else
+                                {
+                                    if (Skills[i].Damages[j] < crit_min)
+                                    {
+                                        crit_min = Skills[i].Damages[j];
+                                    }
+                                    if (Skills[i].Damages[j] > crit_max)
+                                    {
+                                        crit_max = Skills[i].Damages[j];
+                                    }
+                                }
                                 crit_damage += Skills[i].Damages[j];
                                 crit_count++;
                                 if (Skills[i].Damages[j] == 0f) { crit_miss_count++; }
                             }
                         }
+                        dot_avg = dot_damage / dot_count;
+                        hit_avg = hit_damage / hit_count;
+                        crit_avg = crit_damage / crit_count;
                         dot_damage_percent = ((dot_damage * 100) / total_damage);
                         hit_damage_percent = ((hit_damage * 100) / total_damage);
                         crit_damage_percent = ((crit_damage * 100) / total_damage);
@@ -787,7 +851,7 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                             rotation += (dot_damage_percent / 100) * 360;
                             if (!Details_BottomContent_prefab.IsNullOrDestroyed())
                             {
-                                CreateDetailsBottom(color_index, "Dot", dot_count, dot_damage_percent);
+                                CreateDetailsBottom(color_index, "Dot", System.Convert.ToInt32(dot_min), System.Convert.ToInt32(dot_avg), System.Convert.ToInt32(dot_max), dot_count, dot_damage_percent);
                             }
                             color_index++;
                         }
@@ -797,7 +861,7 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                             rotation += (hit_damage_percent / 100) * 360;
                             if (!Details_BottomContent_prefab.IsNullOrDestroyed())
                             {
-                                CreateDetailsBottom(color_index, "Hit", hit_count, hit_damage_percent);
+                                CreateDetailsBottom(color_index, "Hit", System.Convert.ToInt32(hit_min), System.Convert.ToInt32(hit_avg), System.Convert.ToInt32(hit_max), hit_count, hit_damage_percent);
                             }
                             color_index++;
                         }
@@ -807,7 +871,7 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                             rotation += (crit_damage_percent / 100) * 360;
                             if (!Details_BottomContent_prefab.IsNullOrDestroyed())
                             {
-                                CreateDetailsBottom(color_index, "Crit", crit_count, crit_damage_percent);
+                                CreateDetailsBottom(color_index, "Crit", System.Convert.ToInt32(crit_min), System.Convert.ToInt32(crit_avg), System.Convert.ToInt32(crit_max), crit_count, crit_damage_percent);
                             }
                             color_index++;
                         }
@@ -834,7 +898,7 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                 circle.transform.Rotate(new Vector3(0, 0, (rotation * -1)));
                 circle.active = true;
             }
-            public static void CreateDetailsBottom(int color_index, string type, int count, float percent)
+            public static void CreateDetailsBottom(int color_index, string type, int min, int avg, int max, int count, float percent)
             {
                 GameObject details_bottom = Instantiate(Details_BottomContent_prefab, Vector3.zero, Quaternion.identity);
                 DontDestroyOnLoad(details_bottom);
@@ -856,6 +920,25 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
                 {
                     Text text = damage_type.GetComponent<Text>();
                     if (!text.IsNullOrDestroyed()) { text.text = type; }
+                }
+
+                GameObject damage_min = Functions.GetChild(details_bottom, "Min");
+                if (!damage_min.IsNullOrDestroyed())
+                {
+                    Text text = damage_min.GetComponent<Text>();
+                    if (!text.IsNullOrDestroyed()) { text.text = System.Convert.ToString(min); }
+                }
+                GameObject damage_avg = Functions.GetChild(details_bottom, "Avg");
+                if (!damage_avg.IsNullOrDestroyed())
+                {
+                    Text text = damage_avg.GetComponent<Text>();
+                    if (!text.IsNullOrDestroyed()) { text.text = System.Convert.ToString(avg); }
+                }
+                GameObject damage_max = Functions.GetChild(details_bottom, "Max");
+                if (!damage_max.IsNullOrDestroyed())
+                {
+                    Text text = damage_max.GetComponent<Text>();
+                    if (!text.IsNullOrDestroyed()) { text.text = System.Convert.ToString(max); ; }
                 }
                 GameObject damage_count = Functions.GetChild(details_bottom, "Count");
                 if (!damage_count.IsNullOrDestroyed())
