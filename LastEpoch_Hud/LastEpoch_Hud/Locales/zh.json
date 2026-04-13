@@ -225,6 +225,7 @@
   "Weaver": "Weaver",
   "Weaver Tree Points": "编织者天赋点",
   "Free Weaver Respec": "免费编织者重置",
+  "Allow Shields With Two-Handed Weapons": "允许双手武器搭配盾牌",
   "AutoCast": "自动施放",
   "Hold the modifier key and click an ability slot to toggle autocast on/off for that skill.": "按住修饰键并点击技能槽，即可切换该技能的自动施放。",
   "Modifier Key": "修饰键",
@@ -234,5 +235,17 @@
   "Press any key…": "按任意键…",
   "(none)": "（无）",
   "Shards": "Shards",
-  "Title": "Title"
+  "Title": "Title",
+  "Difficulty": "难度",
+  "Enemy Health Multiplier": "敌人生命倍率",
+  "Enemy Damage Multiplier": "敌人伤害倍率",
+  "Enemy Speed Multiplier": "敌人速度倍率",
+  "Raise Zone Level to Match Player": "提升区域等级至玩家等级",
+  "Cap Player Level Gain to Zone Level": "限制玩家等级不超过区域等级",
+  "Force Monster Rarity": "强制怪物稀有度",
+  "Force Monster Rarity Header": "强制所有普通怪物以指定稀有度生成。",
+  "Off": "关闭",
+  "Magic": "魔法",
+  "Rare": "稀有",
+  "Reset Difficulty": "重置难度"
 }

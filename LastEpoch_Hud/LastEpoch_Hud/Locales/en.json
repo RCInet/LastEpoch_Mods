@@ -214,6 +214,7 @@
   "Weaver": "Weaver",
   "Weaver Tree Points": "Weaver Tree Points",
   "Free Weaver Respec": "Free Weaver Respec",
+  "Allow Shields With Two-Handed Weapons": "Allow Shields With Two-Handed Weapons",
   "AutoCast": "AutoCast",
   "Hold the modifier key and click an ability slot to toggle autocast on/off for that skill.": "Hold the modifier key and click an ability slot to toggle autocast on/off for that skill.",
   "Modifier Key": "Modifier Key",
@@ -223,5 +224,17 @@
   "Press any key…": "Press any key…",
   "(none)": "(none)",
   "Shards": "Shards",
-  "Title": "Title"
+  "Title": "Title",
+  "Difficulty": "Difficulty",
+  "Enemy Health Multiplier": "Enemy Health Multiplier",
+  "Enemy Damage Multiplier": "Enemy Damage Multiplier",
+  "Enemy Speed Multiplier": "Enemy Speed Multiplier",
+  "Raise Zone Level to Match Player": "Raise Zone Level to Match Player",
+  "Cap Player Level Gain to Zone Level": "Cap Player Level Gain to Zone Level",
+  "Force Monster Rarity": "Force Monster Rarity",
+  "Force Monster Rarity Header": "Force all normal monsters to spawn as a specific rarity tier.",
+  "Off": "Off",
+  "Magic": "Magic",
+  "Rare": "Rare",
+  "Reset Difficulty": "Reset Difficulty"
 }

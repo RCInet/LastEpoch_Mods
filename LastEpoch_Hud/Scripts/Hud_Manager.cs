@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices; //Gamepad
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -104,9 +105,14 @@ namespace LastEpoch_Hud.Scripts
                         {
                             VirtualKeyboard.instance.MoveTo(Content.OdlForceDrop.center_content_1, Content.OdlForceDrop.shards_filter_name);
                         }
-                        if ((Input.GetKeyDown(KeyCode.Joystick1Button0)) && (!virtual_mouse.IsNullOrDestroyed())) //A
+                        if (Input.GetKeyDown(KeyCode.Joystick1Button0)) //A
                         {
-                            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                            GameObject selected = EventSystem.current?.currentSelectedGameObject;
+                            if (!selected.IsNullOrDestroyed())
+                            {
+                                ExecuteEvents.Execute(selected, new BaseEventData(EventSystem.current), ExecuteEvents.submitHandler);
+                            }
+                            else if (!virtual_mouse.IsNullOrDestroyed() && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                             {
                                 mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, (uint)virtual_mouse.screenPosition.x, (uint)virtual_mouse.screenPosition.y, 0, 0);
                             }
@@ -1747,8 +1753,6 @@ namespace LastEpoch_Hud.Scripts
                                 Cheats.golddropchance_text = Functions.Get_TextInToggle(character_cheats_content, "GoldDropChance", "Toggle_Character_Cheats_GoldDropChance", "Value");
                                 Cheats.golddropchance_slider = Functions.Get_SliderInPanel(character_cheats_content, "GoldDropChance", "Slider_Character_Cheats_GoldDropChance");
 
-                                Cheats.twohanded_toggle = Functions.Get_ToggleInPanel(character_cheats_content, "TwoHandeWithShield", "Toggle_Character_Cheats_TwoHandeWithShield");
-
                                 Cheats.waypoints_toggle = Functions.Get_ToggleInPanel(character_cheats_content, "WaypointsUnlock", "Toggle_Character_Cheats_UnlockAllWaypoints");
 
                                 Cheats.level_once_button = Functions.GetChild(character_cheats_content, "Btn_Character_Cheats_LevelOnce").GetComponent<Button>();
@@ -1986,10 +1990,6 @@ namespace LastEpoch_Hud.Scripts
                     if (!Cheats.golddropchance_toggle.IsNullOrDestroyed())
                     {
                         Events.Set_Toggle_Event(Cheats.golddropchance_toggle, Cheats.GoldChance_Toggle_Action);
-                    }
-                    if (!Cheats.twohanded_toggle.IsNullOrDestroyed())
-                    {
-                        Events.Set_Toggle_Event(Cheats.twohanded_toggle, Cheats.TwoHanded_Toggle_Action);
                     }
                     if (!Cheats.waypoints_toggle.IsNullOrDestroyed())
                     {
@@ -2770,16 +2770,6 @@ namespace LastEpoch_Hud.Scripts
                     }
                     public static Text golddropchance_text = null;
                     public static Slider golddropchance_slider = null;
-
-                    public static Toggle twohanded_toggle = null;
-                    public static readonly System.Action<bool> TwoHanded_Toggle_Action = new System.Action<bool>(Set_TwoHandedWithShield_Enable);
-                    private static void Set_TwoHandedWithShield_Enable(bool enable)
-                    {
-                        if ((!Save_Manager.instance.IsNullOrDestroyed()) && (!twohanded_toggle.IsNullOrDestroyed()))
-                        {
-                            Save_Manager.instance.data.Character.Cheats.Enable_TwoHandedWithShield = twohanded_toggle.isOn;
-                        }
-                    }
 
                     public static Toggle waypoints_toggle = null;
                     public static readonly System.Action<bool> Waypoints_Toggle_Action = new System.Action<bool>(Set_Waypoints_Enable);

@@ -14,16 +14,19 @@ namespace LastEpoch_Hud.Scripts.ModUI
             Trace("MarkDirty called");
             Dirty = true;
         }
+
         public static void ClearDirty() => Dirty = false;
 
         private static readonly List<SettingsGroup> allGroups = new();
         public static IReadOnlyList<SettingsGroup> AllGroups => allGroups;
+
         public static void RegisterGroup(SettingsGroup group) => allGroups.Add(group);
 
         // Tracing helper. No-op when Debug.Enabled is false
         internal static void Trace(string msg)
         {
-            if (Debug.Enabled.Value) Main.logger_instance?.Msg("[ModUI] " + msg);
+            if (Debug.Enabled.Value)
+                Main.logger_instance?.Msg("[ModUI] " + msg);
         }
 
         // Force every nested section class to run its static init so each SettingsGroup
@@ -58,8 +61,108 @@ namespace LastEpoch_Hud.Scripts.ModUI
                 .Viewport("Character_Data", "Character_Data_Content")
                 .Prefix("Weaver_");
 
-            public static readonly FloatSetting TreePoints = Group.Float("TreePoints", defaultValue: 50f, label: "Weaver Tree Points");
-            public static readonly BoolSetting  FreeRespec = Group.Bool("FreeRespec", label: "Free Weaver Respec");
+            public static readonly FloatSetting TreePoints = Group.Float(
+                "TreePoints",
+                label: "Weaver Tree Points"
+            );
+            public static readonly BoolSetting FreeRespec = Group.Bool(
+                "FreeRespec",
+                label: "Free Weaver Respec"
+            );
+        }
+
+        public static class Cheats
+        {
+            public static readonly SettingsGroup Group = new SettingsGroup("Cheats")
+                .Content("Character_Content")
+                .Viewport("Character_Cheats", "Character_Cheats_Content")
+                .Prefix("Character_Cheats_");
+
+            public static readonly BoolSetting TwoHandeWithShield = Group.Bool(
+                "TwoHandeWithShield",
+                label: "Allow Shields With Two-Handed Weapons"
+            );
+        }
+
+        //
+        // SCENES TAB
+        //
+
+        public static class Difficulty
+        {
+            public static readonly SettingsGroup Group = new SettingsGroup("ScenesDifficulty")
+                .Tab("Scenes", "Btn_Menu_Scenes")
+                .Content("Scenes_Content")
+                .Viewport("Difficulty", "Scenes_Difficulty_Content")
+                .Prefix("Scenes_Difficulty_")
+                .OnBind(
+                    (contentObj, _) =>
+                    {
+                        var title = Prefab.Child(contentObj, "Difficulty");
+                        if (title == null)
+                            return;
+                        var label = Prefab.Child(title, "Title");
+                        if (label == null)
+                            return;
+                        var labelText = Prefab.Child(label, "Label");
+                        if (labelText == null)
+                            return;
+                        var text = labelText.GetComponent<UnityEngine.UI.Text>();
+                        if (text != null)
+                            Prefab.ApplyLabel(text, "Difficulty");
+                    }
+                );
+
+            public static readonly FloatSetting EnemyHealthMult = Group.Float(
+                "EnemyHealthMult",
+                defaultValue: 1.0f,
+                min: 0.1f,
+                max: 10f,
+                format: DisplayFormat.Multiplier,
+                label: "Enemy Health Multiplier"
+            );
+
+            public static readonly FloatSetting EnemyDamageMult = Group.Float(
+                "EnemyDamageMult",
+                defaultValue: 1.0f,
+                min: 0.1f,
+                max: 10f,
+                format: DisplayFormat.Multiplier,
+                label: "Enemy Damage Multiplier"
+            );
+
+            public static readonly FloatSetting EnemySpeedMult = Group.Float(
+                "EnemySpeedMult",
+                defaultValue: 1.0f,
+                min: 0.1f,
+                max: 5f,
+                format: DisplayFormat.Multiplier,
+                label: "Enemy Speed Multiplier"
+            );
+
+            public static readonly ActionBinding Reset = Group.Button(
+                "Reset",
+                label: "Reset Difficulty"
+            );
+
+            public static readonly BoolSetting ScaleZoneToPlayer = Group.Bool(
+                "ScaleZoneToPlayer",
+                label: "Raise Zone Level to Match Player"
+            );
+
+            public static readonly BoolSetting CapLevelToZone = Group.Bool(
+                "CapLevelToZone",
+                label: "Cap Player Level Gain to Zone Level"
+            );
+
+            public static readonly HeaderSetting ForceRarityHeader = Group.Header(
+                "ForceRarityHeader",
+                label: "Force Monster Rarity Header"
+            );
+
+            public static readonly RadioSetting ForceMonsterRarity = Group
+                .Radio("ForceMonsterRarity", "ForceRarity", "Off", "Magic", "Rare")
+                .WithDefault(0);
         }
 
         //
@@ -73,11 +176,15 @@ namespace LastEpoch_Hud.Scripts.ModUI
                 .Viewport("Left", "Skills_Content")
                 .Prefix("Skills_AutoCast_");
 
-            public static readonly HeaderSetting Header =
-                Group.Header("AutoCastHeader", label: "AutoCast");
+            public static readonly HeaderSetting Header = Group.Header(
+                "AutoCastHeader",
+                label: "AutoCast"
+            );
 
-            public static readonly HeaderSetting Description =
-                Group.Header("AutoCastDescription", label: "Hold the modifier key and click an ability slot to toggle autocast on/off for that skill.");
+            public static readonly HeaderSetting Description = Group.Header(
+                "AutoCastDescription",
+                label: "Hold the modifier key and click an ability slot to toggle autocast on/off for that skill."
+            );
 
             // Default per build config so a fresh install on either control scheme has a working modifier.
             // Player can rebind freely afterwards (capture mode listens to both KB and gamepad regardless).
@@ -87,14 +194,21 @@ namespace LastEpoch_Hud.Scripts.ModUI
             private const string DefaultModifier = "kb:LeftControl";
 #endif
 
-            public static readonly KeybindSetting ModifierKey =
-                Group.Keybind("ModifierKey", defaultBinding: DefaultModifier, label: "Modifier Key");
+            public static readonly KeybindSetting ModifierKey = Group.Keybind(
+                "ModifierKey",
+                defaultBinding: DefaultModifier,
+                label: "Modifier Key"
+            );
 
-            public static readonly BoolSetting PauseOnZoneChange =
-                Group.Bool("PauseOnZoneChange", label: "Pause autocast on zone change (press any skill to resume)");
+            public static readonly BoolSetting PauseOnZoneChange = Group.Bool(
+                "PauseOnZoneChange",
+                label: "Pause autocast on zone change (press any skill to resume)"
+            );
 
-            public static readonly BoolSetting DisableInNonCombatZone =
-                Group.Bool("DisableInNonCombatZone", label: "Pause autocast in non-combat zones");
+            public static readonly BoolSetting DisableInNonCombatZone = Group.Bool(
+                "DisableInNonCombatZone",
+                label: "Pause autocast in non-combat zones"
+            );
         }
 
         //
@@ -156,7 +270,6 @@ namespace LastEpoch_Hud.Scripts.ModUI
         //     public static readonly BoolSetting HideMaterialsNotifications= Group.Bool("HideMaterialsNotifications", panel: "Hide_Notifications");
         // }
 
-
         // public static class ItemsRequirements
         // {
         //     // No prefix -- the toggles are named Toggle_RemoveReq_Class directly
@@ -168,7 +281,6 @@ namespace LastEpoch_Hud.Scripts.ModUI
         //     public static readonly BoolSetting Level = Group.Bool("Level", panel: "RemoveReq_Level");
         //     public static readonly BoolSetting Set   = Group.Bool("Set", panel: "RemoveReq_Set");
         // }
-
 
         // public static class ItemsCrafting
         // {
@@ -214,7 +326,6 @@ namespace LastEpoch_Hud.Scripts.ModUI
         //     public static readonly FloatSetting WeaverWill      = Group.Float("WeaverWill");
         // }
 
-
         // public static class ItemsForceDrop
         // {
         //     // Drop button fires an event -- mod feature code subscribes to execute the drop.
@@ -241,87 +352,83 @@ namespace LastEpoch_Hud.Scripts.ModUI
         //     public static readonly FloatSetting Quantity = Group.Float("Quantity", panel: "Quantity");
         // }
 
-        //
-        // SCENES TAB
-        //
+        //     public static class ScenesCamera
+        //     {
+        //         public static readonly BoolSetting EnableMod = new BoolSetting();
 
-    //     public static class ScenesCamera
-    //     {
-    //         public static readonly BoolSetting EnableMod = new BoolSetting();
+        //         public static readonly SettingsGroup Group = new SettingsGroup("ScenesCamera")
+        //             .Tab("Scenes", "Btn_Menu_Scenes")
+        //             .Content("Scenes_Content")
+        //             .Viewport("Camera", "Scenes_Camera_Content")
+        //             .Prefix("Scenes_Camera_")
+        //             .OnBind((contentObj, _) =>
+        //             {
+        //                 var toggle = Prefab.ToggleInTitle(contentObj, "Camera", "Toggle_Scenes_Camera_Enable");
+        //                 if (toggle == null) return;
+        //                 toggle.isOn = EnableMod.Value;
+        //                 Prefab.BindToggle(toggle, new System.Action<bool>(v => EnableMod.Set(v)));
+        //             });
 
-    //         public static readonly SettingsGroup Group = new SettingsGroup("ScenesCamera")
-    //             .Tab("Scenes", "Btn_Menu_Scenes")
-    //             .Content("Scenes_Content")
-    //             .Viewport("Camera", "Scenes_Camera_Content")
-    //             .Prefix("Scenes_Camera_")
-    //             .OnBind((contentObj, _) =>
-    //             {
-    //                 var toggle = Prefab.ToggleInTitle(contentObj, "Camera", "Toggle_Scenes_Camera_Enable");
-    //                 if (toggle == null) return;
-    //                 toggle.isOn = EnableMod.Value;
-    //                 Prefab.BindToggle(toggle, new System.Action<bool>(v => EnableMod.Set(v)));
-    //             });
+        //         public static readonly ActionBinding Reset = Group.Button("Reset");
+        //         public static readonly ActionBinding Set   = Group.Button("Set");
 
-    //         public static readonly ActionBinding Reset = Group.Button("Reset");
-    //         public static readonly ActionBinding Set   = Group.Button("Set");
+        //         public static readonly FloatSetting ZoomMinimum     = Group.Float("ZoomMinimum");
+        //         public static readonly FloatSetting ZoomPerScroll   = Group.Float("ZoomPerScroll");
+        //         public static readonly FloatSetting ZoomSpeed       = Group.Float("ZoomSpeed");
+        //         public static readonly FloatSetting DefaultRotation = Group.Float("DefaultRotation");
+        //         public static readonly FloatSetting OffsetMinimum   = Group.Float("OffsetMinimum");
+        //         public static readonly FloatSetting OffsetMaximum   = Group.Float("OffsetMaximum");
+        //         public static readonly FloatSetting AngleMinimum    = Group.Float("AngleMinimum");
+        //         public static readonly FloatSetting AngleMaximum    = Group.Float("AngleMaximum");
+        //         public static readonly BoolSetting  LoadOnStart     = Group.Bool("LoadOnStart");
+        //     }
 
-    //         public static readonly FloatSetting ZoomMinimum     = Group.Float("ZoomMinimum");
-    //         public static readonly FloatSetting ZoomPerScroll   = Group.Float("ZoomPerScroll");
-    //         public static readonly FloatSetting ZoomSpeed       = Group.Float("ZoomSpeed");
-    //         public static readonly FloatSetting DefaultRotation = Group.Float("DefaultRotation");
-    //         public static readonly FloatSetting OffsetMinimum   = Group.Float("OffsetMinimum");
-    //         public static readonly FloatSetting OffsetMaximum   = Group.Float("OffsetMaximum");
-    //         public static readonly FloatSetting AngleMinimum    = Group.Float("AngleMinimum");
-    //         public static readonly FloatSetting AngleMaximum    = Group.Float("AngleMaximum");
-    //         public static readonly BoolSetting  LoadOnStart     = Group.Bool("LoadOnStart");
-    //     }
+        //     public static class ScenesDungeons
+        //     {
+        //         public static readonly SettingsGroup Group = new SettingsGroup("ScenesDungeons")
+        //             .Content("Scenes_Content")
+        //             .Viewport("Center", "Scenes_Dungeons_Content")
+        //             .Prefix("Scenes_Dungeons_");
 
-    //     public static class ScenesDungeons
-    //     {
-    //         public static readonly SettingsGroup Group = new SettingsGroup("ScenesDungeons")
-    //             .Content("Scenes_Content")
-    //             .Viewport("Center", "Scenes_Dungeons_Content")
-    //             .Prefix("Scenes_Dungeons_");
+        //         public static readonly BoolSetting EnterWithoutKey = Group.Bool("EnterWithoutKey");
+        //     }
 
-    //         public static readonly BoolSetting EnterWithoutKey = Group.Bool("EnterWithoutKey");
-    //     }
+        //     public static class ScenesMinimap
+        //     {
+        //         public static readonly SettingsGroup Group = new SettingsGroup("ScenesMinimap")
+        //             .Content("Scenes_Content")
+        //             .Viewport("Center", "Scenes_Minimap_Content")
+        //             .Prefix("Scenes_Minimap_");
 
-    //     public static class ScenesMinimap
-    //     {
-    //         public static readonly SettingsGroup Group = new SettingsGroup("ScenesMinimap")
-    //             .Content("Scenes_Content")
-    //             .Viewport("Center", "Scenes_Minimap_Content")
-    //             .Prefix("Scenes_Minimap_");
+        //         public static readonly BoolSetting MaxZoomOut       = Group.Bool("MaxZoomOut");
+        //         public static readonly BoolSetting RemoveFogOfWar   = Group.Bool("RemoveFogOfWar");
+        //     }
 
-    //         public static readonly BoolSetting MaxZoomOut       = Group.Bool("MaxZoomOut");
-    //         public static readonly BoolSetting RemoveFogOfWar   = Group.Bool("RemoveFogOfWar");
-    //     }
+        //     public static class ScenesMonoliths
+        //     {
+        //         public static readonly SettingsGroup Group = new SettingsGroup("ScenesMonoliths")
+        //             .Content("Scenes_Content")
+        //             .Viewport("Monoliths", "Scenes_Monoliths_Content")
+        //             .Prefix("Scenes_Monoliths_");
 
-    //     public static class ScenesMonoliths
-    //     {
-    //         public static readonly SettingsGroup Group = new SettingsGroup("ScenesMonoliths")
-    //             .Content("Scenes_Content")
-    //             .Viewport("Monoliths", "Scenes_Monoliths_Content")
-    //             .Prefix("Scenes_Monoliths_");
+        //         public static readonly FloatSetting MaxStability    = Group.Float("MaxStability");
+        //         public static readonly FloatSetting MobsDensity     = Group.Float("MobsDensity", format: DisplayFormat.Percent);
+        //         public static readonly FloatSetting MobsDefeatOnStart = Group.Float("MobsDefeatOnStart", format: DisplayFormat.Percent);
+        //         public static readonly FloatSetting BlessingSlots   = Group.Float("BlessingSlots");
+        //         public static readonly BoolSetting  MaxStabilityOnStart = Group.Bool("MaxStabilityOnStart");
+        //         public static readonly BoolSetting  MaxStabilityOnStabilityChanged = Group.Bool("MaxStabilityOnStabilityChanged");
+        //         public static readonly BoolSetting  ObjectiveReveal = Group.Bool("ObjectiveReveal");
+        //         public static readonly BoolSetting  CompleteObjective = Group.Bool("CompleteObjective");
+        //         public static readonly BoolSetting  NoLostWhenDie   = Group.Bool("NoLostWhenDie");
+        //         public static readonly BoolSetting  Islands         = Group.Bool("Islands", panel: "EnableIslands");
+        //     }
 
-    //         public static readonly FloatSetting MaxStability    = Group.Float("MaxStability");
-    //         public static readonly FloatSetting MobsDensity     = Group.Float("MobsDensity", format: DisplayFormat.Percent);
-    //         public static readonly FloatSetting MobsDefeatOnStart = Group.Float("MobsDefeatOnStart", format: DisplayFormat.Percent);
-    //         public static readonly FloatSetting BlessingSlots   = Group.Float("BlessingSlots");
-    //         public static readonly BoolSetting  MaxStabilityOnStart = Group.Bool("MaxStabilityOnStart");
-    //         public static readonly BoolSetting  MaxStabilityOnStabilityChanged = Group.Bool("MaxStabilityOnStabilityChanged");
-    //         public static readonly BoolSetting  ObjectiveReveal = Group.Bool("ObjectiveReveal");
-    //         public static readonly BoolSetting  CompleteObjective = Group.Bool("CompleteObjective");
-    //         public static readonly BoolSetting  NoLostWhenDie   = Group.Bool("NoLostWhenDie");
-    //         public static readonly BoolSetting  Islands         = Group.Bool("Islands", panel: "EnableIslands");
-    //     }
+        //     public static class ScenesHarbringers
+        //     {
+        //         public static readonly SettingsGroup Group = new SettingsGroup("ScenesHarbringers");
 
-    //     public static class ScenesHarbringers
-    //     {
-    //         public static readonly SettingsGroup Group = new SettingsGroup("ScenesHarbringers");
-
-    //         public static readonly BoolSetting AltarWithoutKey = Group.Bool("AltarWithoutKey");
-    //     }
-    // }
+        //         public static readonly BoolSetting AltarWithoutKey = Group.Bool("AltarWithoutKey");
+        //     }
+        // }
     }
 }

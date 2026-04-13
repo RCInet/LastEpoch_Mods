@@ -69,7 +69,9 @@ namespace LastEpoch_Hud.Scripts.ModUI
         // Escape hatch for elements that don't fit the convention or path-mode patterns.
         private System.Action<UnityEngine.GameObject, UnityEngine.GameObject> customBind;
 
-        public SettingsGroup OnBind(System.Action<UnityEngine.GameObject, UnityEngine.GameObject> callback)
+        public SettingsGroup OnBind(
+            System.Action<UnityEngine.GameObject, UnityEngine.GameObject> callback
+        )
         {
             customBind = callback;
             return this;
@@ -80,31 +82,108 @@ namespace LastEpoch_Hud.Scripts.ModUI
         // at bind time, translated via Locales.current_dictionary. Leave null to keep whatever
         // label was serialized into the prefab.
 
-        public BoolSetting Bool(string key, bool defaultValue = false, string panel = null, string label = null, string path = null)
+        public BoolSetting Bool(
+            string key,
+            bool defaultValue = false,
+            string panel = null,
+            string label = null,
+            string path = null
+        )
         {
             var s = new BoolSetting(defaultValue);
-            entries.Add(new Entry(key, panel ?? key, EntryType.Bool, label: label, boolSetting: s, widgetPath: path));
+            entries.Add(
+                new Entry(
+                    key,
+                    panel ?? key,
+                    EntryType.Bool,
+                    label: label,
+                    boolSetting: s,
+                    widgetPath: path
+                )
+            );
             return s;
         }
 
-        public FloatSetting Float(string key, float defaultValue = 0f, bool defaultEnabled = false, DisplayFormat format = DisplayFormat.Raw, string panel = null, string label = null, FloatPaths? paths = null)
+        public FloatSetting Float(
+            string key,
+            float defaultValue = 0f,
+            bool defaultEnabled = false,
+            DisplayFormat format = DisplayFormat.Raw,
+            float min = 0f,
+            float max = 0f,
+            string panel = null,
+            string label = null,
+            FloatPaths? paths = null
+        )
         {
-            var s = new FloatSetting(defaultValue, defaultEnabled, format);
-            entries.Add(new Entry(key, panel ?? key, EntryType.Float, label: label, floatSetting: s, floatPaths: paths));
+            var s = new FloatSetting(defaultValue, defaultEnabled, format, min, max);
+            entries.Add(
+                new Entry(
+                    key,
+                    panel ?? key,
+                    EntryType.Float,
+                    label: label,
+                    floatSetting: s,
+                    floatPaths: paths
+                )
+            );
             return s;
         }
 
-        public RangeSetting Range(string key, float minLimit = 0, float maxLimit = 255, float? defaultMin = null, float? defaultMax = null, bool defaultEnabled = false, DisplayFormat format = DisplayFormat.Raw, string panel = null, string label = null, RangePaths? paths = null)
+        public RangeSetting Range(
+            string key,
+            float minLimit = 0,
+            float maxLimit = 255,
+            float? defaultMin = null,
+            float? defaultMax = null,
+            bool defaultEnabled = false,
+            DisplayFormat format = DisplayFormat.Raw,
+            string panel = null,
+            string label = null,
+            RangePaths? paths = null
+        )
         {
-            var s = new RangeSetting(minLimit, maxLimit, defaultMin, defaultMax, defaultEnabled, format);
-            entries.Add(new Entry(key, panel ?? key, EntryType.Range, label: label, rangeSetting: s, rangePaths: paths));
+            var s = new RangeSetting(
+                minLimit,
+                maxLimit,
+                defaultMin,
+                defaultMax,
+                defaultEnabled,
+                format
+            );
+            entries.Add(
+                new Entry(
+                    key,
+                    panel ?? key,
+                    EntryType.Range,
+                    label: label,
+                    rangeSetting: s,
+                    rangePaths: paths
+                )
+            );
             return s;
         }
 
-        public DropdownSetting Dropdown(string key, int defaultValue = 0, string[] options = null, string panel = null, string label = null, string path = null)
+        public DropdownSetting Dropdown(
+            string key,
+            int defaultValue = 0,
+            string[] options = null,
+            string panel = null,
+            string label = null,
+            string path = null
+        )
         {
             var s = new DropdownSetting(defaultValue, options);
-            entries.Add(new Entry(key, panel ?? key, EntryType.Dropdown, label: label, dropdownSetting: s, widgetPath: path));
+            entries.Add(
+                new Entry(
+                    key,
+                    panel ?? key,
+                    EntryType.Dropdown,
+                    label: label,
+                    dropdownSetting: s,
+                    widgetPath: path
+                )
+            );
             return s;
         }
 
@@ -116,7 +195,11 @@ namespace LastEpoch_Hud.Scripts.ModUI
         }
 
         // Separate method because params arrays can't follow optional parameters cleanly.
-        public RadioSetting RadioWithPaths(string key, RadioPaths paths, params string[] optionNames)
+        public RadioSetting RadioWithPaths(
+            string key,
+            RadioPaths paths,
+            params string[] optionNames
+        )
         {
             var s = new RadioSetting(optionNames);
             entries.Add(new Entry(key, key, EntryType.Radio, radioSetting: s, radioPaths: paths));
@@ -126,22 +209,62 @@ namespace LastEpoch_Hud.Scripts.ModUI
         public ActionBinding Button(string key, string label = null, string path = null)
         {
             var b = new ActionBinding();
-            entries.Add(new Entry(key, key, EntryType.Button, label: label, actionBinding: b, widgetPath: path));
+            entries.Add(
+                new Entry(
+                    key,
+                    key,
+                    EntryType.Button,
+                    label: label,
+                    actionBinding: b,
+                    widgetPath: path
+                )
+            );
             return b;
         }
 
-        public HeaderSetting Header(string key, string label, string panel = null, string path = null)
+        public HeaderSetting Header(
+            string key,
+            string label,
+            string panel = null,
+            string path = null
+        )
         {
             var s = new HeaderSetting(label);
-            entries.Add(new Entry(key, panel ?? key, EntryType.Header, label: label, headerSetting: s, widgetPath: path));
+            entries.Add(
+                new Entry(
+                    key,
+                    panel ?? key,
+                    EntryType.Header,
+                    label: label,
+                    headerSetting: s,
+                    widgetPath: path
+                )
+            );
             return s;
         }
 
         // resetLabel null = centralized "Reset" string.
-        public KeybindSetting Keybind(string key, string defaultBinding = "", string panel = null, string label = null, string resetLabel = null, KeybindPaths? paths = null)
+        public KeybindSetting Keybind(
+            string key,
+            string defaultBinding = "",
+            string panel = null,
+            string label = null,
+            string resetLabel = null,
+            KeybindPaths? paths = null
+        )
         {
             var s = new KeybindSetting(defaultBinding);
-            entries.Add(new Entry(key, panel ?? key, EntryType.Keybind, label: label, keybindSetting: s, resetLabel: resetLabel, keybindPaths: paths));
+            entries.Add(
+                new Entry(
+                    key,
+                    panel ?? key,
+                    EntryType.Keybind,
+                    label: label,
+                    keybindSetting: s,
+                    resetLabel: resetLabel,
+                    keybindPaths: paths
+                )
+            );
             return s;
         }
 
@@ -150,15 +273,21 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
         public void ResolveAndBind(UnityEngine.GameObject contentObj)
         {
-            var viewportContent = (ViewportPanel != null)
-                ? Prefab.ViewportContent(contentObj, ViewportPanel, ViewportContent)
-                : contentObj;
-            if (viewportContent == null) return;
+            var viewportContent =
+                (ViewportPanel != null)
+                    ? Prefab.ViewportContent(contentObj, ViewportPanel, ViewportContent)
+                    : contentObj;
+            if (viewportContent == null)
+                return;
 
             BindAll(contentObj, viewportContent, new SettingsBuilder(viewportContent, UiPrefix));
         }
 
-        private void BindAll(UnityEngine.GameObject contentObj, UnityEngine.GameObject viewportContent, SettingsBuilder builder)
+        private void BindAll(
+            UnityEngine.GameObject contentObj,
+            UnityEngine.GameObject viewportContent,
+            SettingsBuilder builder
+        )
         {
             int bound = 0;
             int failed = 0;
@@ -169,29 +298,80 @@ namespace LastEpoch_Hud.Scripts.ModUI
                     int before = builder.BindCount;
                     switch (e.Type)
                     {
-                        case EntryType.Bool: builder.Bind(e.Panel, e.BoolSetting, e.Label, e.WidgetPath); break;
-                        case EntryType.Float: builder.Bind(e.Panel, e.FloatSetting, e.Label, e.FloatPaths); break;
-                        case EntryType.Range: builder.Bind(e.Panel, e.RangeSetting, e.Label, e.RangePaths); break;
-                        case EntryType.Dropdown: builder.BindDropdown(e.Panel, e.DropdownSetting, e.Label, e.WidgetPath); break;
-                        case EntryType.Radio: builder.BindRadio(e.Panel, e.RadioSetting, e.RadioPaths); break;
-                        case EntryType.Button: builder.BindButton(e.Key, e.ActionBinding, e.Label, e.WidgetPath); break;
-                        case EntryType.Header: builder.BindHeader(e.Panel, e.HeaderSetting, e.Label, e.WidgetPath); break;
-                        case EntryType.Keybind: builder.BindKeybind(e.Panel, e.KeybindSetting, e.Label, e.ResetLabel, e.KeybindPaths); break;
+                        case EntryType.Bool:
+                            builder.Bind(e.Panel, e.BoolSetting, e.Label, e.WidgetPath);
+                            break;
+                        case EntryType.Float:
+                            builder.Bind(e.Panel, e.FloatSetting, e.Label, e.FloatPaths);
+                            break;
+                        case EntryType.Range:
+                            builder.Bind(e.Panel, e.RangeSetting, e.Label, e.RangePaths);
+                            break;
+                        case EntryType.Dropdown:
+                            builder.BindDropdown(e.Panel, e.DropdownSetting, e.Label, e.WidgetPath);
+                            break;
+                        case EntryType.Radio:
+                            builder.BindRadio(e.Panel, e.RadioSetting, e.RadioPaths);
+                            break;
+                        case EntryType.Button:
+                            builder.BindButton(e.Key, e.ActionBinding, e.Label, e.WidgetPath);
+                            break;
+                        case EntryType.Header:
+                            builder.BindHeader(e.Panel, e.HeaderSetting, e.Label, e.WidgetPath);
+                            break;
+                        case EntryType.Keybind:
+                            builder.BindKeybind(
+                                e.Panel,
+                                e.KeybindSetting,
+                                e.Label,
+                                e.ResetLabel,
+                                e.KeybindPaths
+                            );
+                            break;
                     }
-                    if (builder.BindCount > before) { bound++; continue; }
+                    if (builder.BindCount > before)
+                    {
+                        bound++;
+                        continue;
+                    }
                 }
                 catch (System.Exception ex)
                 {
-                    Main.logger_instance?.Warning("SettingsGroup " + Name + ": Exception binding '" + e.Key + "': " + ex.Message);
+                    Main.logger_instance?.Warning(
+                        "SettingsGroup "
+                            + Name
+                            + ": Exception binding '"
+                            + e.Key
+                            + "': "
+                            + ex.Message
+                    );
                 }
                 failed++;
-                Main.logger_instance?.Warning("SettingsGroup " + Name + ": Failed to bind '" + e.Key + "' (panel: '" + e.Panel + "')");
+                Main.logger_instance?.Warning(
+                    "SettingsGroup "
+                        + Name
+                        + ": Failed to bind '"
+                        + e.Key
+                        + "' (panel: '"
+                        + e.Panel
+                        + "')"
+                );
             }
 
-            try { customBind?.Invoke(contentObj, viewportContent); }
-            catch (System.Exception ex) { Main.logger_instance?.Warning("SettingsGroup " + Name + ": Custom bind failed: " + ex.Message); }
+            try
+            {
+                customBind?.Invoke(contentObj, viewportContent);
+            }
+            catch (System.Exception ex)
+            {
+                Main.logger_instance?.Warning(
+                    "SettingsGroup " + Name + ": Custom bind failed: " + ex.Message
+                );
+            }
 
-            Main.logger_instance?.Msg("SettingsGroup " + Name + ": Bound " + bound + "/" + (bound + failed) + " settings");
+            Main.logger_instance?.Msg(
+                "SettingsGroup " + Name + ": Bound " + bound + "/" + (bound + failed) + " settings"
+            );
         }
 
         // JSON serialization
@@ -206,7 +386,8 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
         public void Load(JObject root)
         {
-            if (root[Name] is not JObject section) return;
+            if (root[Name] is not JObject section)
+                return;
             foreach (var e in entries)
                 LoadEntry(section, e);
         }
@@ -221,10 +402,19 @@ namespace LastEpoch_Hud.Scripts.ModUI
                     section[e.Key] = e.BoolSetting.Value;
                     break;
                 case EntryType.Float:
-                    section[e.Key] = new JObject { ["Enabled"] = e.FloatSetting.Enabled, ["Value"] = e.FloatSetting.Value };
+                    section[e.Key] = new JObject
+                    {
+                        ["Enabled"] = e.FloatSetting.Enabled,
+                        ["Value"] = e.FloatSetting.Value,
+                    };
                     break;
                 case EntryType.Range:
-                    section[e.Key] = new JObject { ["Enabled"] = e.RangeSetting.Enabled, ["Min"] = e.RangeSetting.Min, ["Max"] = e.RangeSetting.Max };
+                    section[e.Key] = new JObject
+                    {
+                        ["Enabled"] = e.RangeSetting.Enabled,
+                        ["Min"] = e.RangeSetting.Min,
+                        ["Max"] = e.RangeSetting.Max,
+                    };
                     break;
                 case EntryType.Dropdown:
                     section[e.Key] = e.DropdownSetting.Value;
@@ -244,7 +434,8 @@ namespace LastEpoch_Hud.Scripts.ModUI
         private static void LoadEntry(JObject section, Entry e)
         {
             var token = section[e.Key];
-            if (token == null) return;
+            if (token == null)
+                return;
 
             switch (e.Type)
             {
@@ -255,17 +446,41 @@ namespace LastEpoch_Hud.Scripts.ModUI
                     e.DropdownSetting.Value = token.Value<int>();
                     break;
                 case EntryType.Float:
-                    if (token is JObject fo) { e.FloatSetting.Enabled = fo.Value<bool>("Enabled"); e.FloatSetting.Value = fo.Value<float>("Value"); }
+                    if (token is JObject fo)
+                    {
+                        e.FloatSetting.Enabled = fo.Value<bool>("Enabled");
+                        e.FloatSetting.Value = fo.Value<float>("Value");
+                    }
                     break;
                 case EntryType.Range:
-                    if (token is JObject ro) { e.RangeSetting.Enabled = ro.Value<bool>("Enabled"); e.RangeSetting.Min = ro.Value<float>("Min"); e.RangeSetting.Max = ro.Value<float>("Max"); }
+                    if (token is JObject ro)
+                    {
+                        e.RangeSetting.Enabled = ro.Value<bool>("Enabled");
+                        e.RangeSetting.Min = ro.Value<float>("Min");
+                        e.RangeSetting.Max = ro.Value<float>("Max");
+                    }
                     break;
                 case EntryType.Radio:
-                    if (token is not JObject jo) break;
+                    if (token is not JObject jo)
+                        break;
                     for (int i = 0; i < e.RadioSetting.OptionNames.Length; i++)
                     {
                         var val = jo[e.RadioSetting.OptionNames[i]];
-                        if (val != null) e.RadioSetting.SetValue(i, val.Value<bool>());
+                        if (val != null)
+                            e.RadioSetting.SetValue(i, val.Value<bool>());
+                    }
+                    // If nothing is selected after load and a default exists, apply it
+                    if (e.RadioSetting.DefaultIndex >= 0)
+                    {
+                        bool anySelected = false;
+                        for (int i = 0; i < e.RadioSetting.OptionNames.Length; i++)
+                            if (e.RadioSetting.GetValue(i))
+                            {
+                                anySelected = true;
+                                break;
+                            }
+                        if (!anySelected)
+                            e.RadioSetting.SetValue(e.RadioSetting.DefaultIndex, true);
                     }
                     break;
                 case EntryType.Keybind:
@@ -274,7 +489,17 @@ namespace LastEpoch_Hud.Scripts.ModUI
             }
         }
 
-        private enum EntryType { Bool, Float, Range, Dropdown, Radio, Button, Header, Keybind }
+        private enum EntryType
+        {
+            Bool,
+            Float,
+            Range,
+            Dropdown,
+            Radio,
+            Button,
+            Header,
+            Keybind,
+        }
 
         private readonly struct Entry
         {
@@ -297,7 +522,26 @@ namespace LastEpoch_Hud.Scripts.ModUI
             public readonly KeybindPaths? KeybindPaths;
             public readonly RadioPaths? RadioPaths;
 
-            public Entry(string key, string panel, EntryType type, string label = null, BoolSetting boolSetting = null, FloatSetting floatSetting = null, RangeSetting rangeSetting = null, DropdownSetting dropdownSetting = null, RadioSetting radioSetting = null, ActionBinding actionBinding = null, HeaderSetting headerSetting = null, KeybindSetting keybindSetting = null, string resetLabel = null, string widgetPath = null, FloatPaths? floatPaths = null, RangePaths? rangePaths = null, KeybindPaths? keybindPaths = null, RadioPaths? radioPaths = null)
+            public Entry(
+                string key,
+                string panel,
+                EntryType type,
+                string label = null,
+                BoolSetting boolSetting = null,
+                FloatSetting floatSetting = null,
+                RangeSetting rangeSetting = null,
+                DropdownSetting dropdownSetting = null,
+                RadioSetting radioSetting = null,
+                ActionBinding actionBinding = null,
+                HeaderSetting headerSetting = null,
+                KeybindSetting keybindSetting = null,
+                string resetLabel = null,
+                string widgetPath = null,
+                FloatPaths? floatPaths = null,
+                RangePaths? rangePaths = null,
+                KeybindPaths? keybindPaths = null,
+                RadioPaths? radioPaths = null
+            )
             {
                 Key = key;
                 Panel = panel;
