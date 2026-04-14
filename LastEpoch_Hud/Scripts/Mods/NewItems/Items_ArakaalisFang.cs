@@ -191,7 +191,7 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                     effectiveLevelForLegendaryPotential = 0,
                     canDropRandomly = true,
                     rerollChance = 1,
-                    itemModelType = UniqueList.ItemModelType.Unique,
+                    itemModelType = UniqueList.ItemModelType.OverrideSubType,
                     subTypeForIM = 0,
                     baseType = Basic.base_type,
                     subTypes = SubType(),
