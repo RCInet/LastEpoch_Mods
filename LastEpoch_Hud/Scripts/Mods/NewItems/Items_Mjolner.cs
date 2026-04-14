@@ -4,6 +4,7 @@
 
 using HarmonyLib;
 using Il2Cpp;
+using LastEpoch_Hud.Scripts.Mods.Localization;
 using MelonLoader;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -232,7 +233,7 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                 }
             }
         }
-        private class Locales
+        public class Locales
         {
             internal static string Get_UniqueName()
             {
@@ -303,67 +304,12 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                 internal static string unique_description = "Unique_Tooltip_0_" + Unique.unique_id;
                 internal static string unique_lore = "Unique_Lore_" + Unique.unique_id;
             }
-            private class Hooks
+            public static void RegisterLocales()
             {
-                [HarmonyPatch(typeof(Localization), "TryGetText")]
-                private class Localization_TryGetText
-                {
-                    [HarmonyPrefix]
-                    static bool Prefix(ref bool __result, string __0) //, Il2CppSystem.String __1)
-                    {
-                        bool result = true;
-                        if (/*(__0 == basic_subtype_name_key) ||*/ __0 == Keys.unique_name ||
-                            __0 == Keys.unique_description || __0 == Keys.unique_lore)
-                        {
-                            __result = true;
-                            result = false;
-                        }
-
-                        return result;
-                    }
-                }
-
-                [HarmonyPatch(typeof(Localization), "GetText")]
-                private class Localization_GetText
-                {
-                    [HarmonyPrefix]
-                    static bool Prefix(ref string __result, string __0)
-                    {
-                        bool result = true;
-                        /*if (__0 == basic_subtype_name_key)
-                        {
-                            __result = Basic.Get_Subtype_Name();
-                            result = false;
-                        }
-                        else */
-                        if (__0 == Keys.unique_name)
-                        {
-                            __result = Get_UniqueName();
-                            result = false;
-                        }
-                        else if (__0 == Keys.unique_description)
-                        {
-                            string description = Get_UniqueDescription();
-                            if (description != "")
-                            {
-                                __result = description;
-                                result = false;
-                            }
-                        }
-                        else if (__0 == Keys.unique_lore)
-                        {
-                            string lore = Get_UniqueLore();
-                            if (lore != "")
-                            {
-                                __result = lore;
-                                result = false;
-                            }
-                        }
-
-                        return result;
-                    }
-                }
-            }            
+                LocalizationOverride.Register(Keys.unique_name, Get_UniqueName);
+                LocalizationOverride.Register(Keys.unique_description, Get_UniqueDescription);
+                LocalizationOverride.Register(Keys.unique_lore, Get_UniqueLore);
+            }
         }
         public class Trigger
         {

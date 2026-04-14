@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using Il2Cpp;
+using LastEpoch_Hud.Scripts.Mods.Localization;
 using MelonLoader;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,9 +19,17 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
         {
             instance = this;
             SceneManager.add_sceneLoaded(new System.Action<Scene, LoadSceneMode>(OnSceneLoaded));
+            Refs_Manager.OnRefsReady += OnRefsReadyHandler;
+            Refs_Manager.OnGameSceneTransition += () =>
+            {
+                Events.OnKillEvent_Initialized = false;
+                Events.OnMinionKillEvent_Initialized = false;
+            };
         }
+
         void Update()
         {
+            // Pre-game registration: needs item_list/unique_list (populated in any scene).
             if (Uniques.Ice.Icon.IsNullOrDestroyed() ||
                 Uniques.Fire.Icon.IsNullOrDestroyed() ||
                 Uniques.Lightning.Icon.IsNullOrDestroyed() ||
@@ -34,21 +43,22 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                 if (!Uniques.AddedToUniqueList) { Uniques.AddToUniqueList(); }
                 if (Uniques.AddedToUniqueList && !Uniques.AddedToDictionary) { Uniques.AddToDictionary(); }
             }
+        }
+
+        static void OnRefsReadyHandler()
+        {
             if (!Events.OnKillEvent_Initialized) { Events.Init_OnKillEvent(); }
             if (!Events.OnMinionKillEvent_Initialized) { Events.Init_OnMinionKillEvent(); }
-            if (Scenes.IsGameScene())
-            {
-                if (Uniques.Ice.prefab_obj.IsNullOrDestroyed()) { Uniques.Ice.GetPrefab(); }
-                if (Uniques.Ice.ability.IsNullOrDestroyed()) { Uniques.Ice.GetAbility(); }
-                if (Uniques.Fire.prefab_obj.IsNullOrDestroyed()) { Uniques.Fire.GetPrefab(); }
-                if (Uniques.Fire.ability.IsNullOrDestroyed()) { Uniques.Fire.GetAbility(); }
-                if (Uniques.Lightning.prefab_obj.IsNullOrDestroyed()) { Uniques.Lightning.GetPrefab(); }
-                if (Uniques.Lightning.ability.IsNullOrDestroyed()) { Uniques.Lightning.GetAbility(); }
-                if (Uniques.Poison.prefab_obj.IsNullOrDestroyed()) { Uniques.Poison.GetPrefab(); }
-                if (Uniques.Poison.ability.IsNullOrDestroyed()) { Uniques.Poison.GetAbility(); }
-                if (Uniques.Physical.prefab_obj.IsNullOrDestroyed()) { Uniques.Physical.GetPrefab(); }
-                if (Uniques.Physical.ability.IsNullOrDestroyed()) { Uniques.Physical.GetAbility(); }
-            }
+            if (Uniques.Ice.prefab_obj.IsNullOrDestroyed()) { Uniques.Ice.GetPrefab(); }
+            if (Uniques.Ice.ability.IsNullOrDestroyed()) { Uniques.Ice.GetAbility(); }
+            if (Uniques.Fire.prefab_obj.IsNullOrDestroyed()) { Uniques.Fire.GetPrefab(); }
+            if (Uniques.Fire.ability.IsNullOrDestroyed()) { Uniques.Fire.GetAbility(); }
+            if (Uniques.Lightning.prefab_obj.IsNullOrDestroyed()) { Uniques.Lightning.GetPrefab(); }
+            if (Uniques.Lightning.ability.IsNullOrDestroyed()) { Uniques.Lightning.GetAbility(); }
+            if (Uniques.Poison.prefab_obj.IsNullOrDestroyed()) { Uniques.Poison.GetPrefab(); }
+            if (Uniques.Poison.ability.IsNullOrDestroyed()) { Uniques.Poison.GetAbility(); }
+            if (Uniques.Physical.prefab_obj.IsNullOrDestroyed()) { Uniques.Physical.GetPrefab(); }
+            if (Uniques.Physical.ability.IsNullOrDestroyed()) { Uniques.Physical.GetAbility(); }
         }
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
@@ -1518,164 +1528,31 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                 }
             }
 
-            [HarmonyPatch(typeof(Localization), "TryGetText")]
-            public class Localization_TryGetText
+            public static void RegisterLocales()
             {
-                [HarmonyPrefix]
-                static bool Prefix(ref bool __result, string __0) //, Il2CppSystem.String __1)
-                {
-                    bool result = true;
-                    if (__0 == basic_subtype_name_key ||
-                        __0 == Ice.unique_name_key || __0 == Ice.unique_description_key || __0 == Ice.unique_lore_key ||
-                        __0 == Fire.unique_name_key || __0 == Fire.unique_description_key || __0 == Fire.unique_lore_key ||
-                        __0 == Lightning.unique_name_key || __0 == Lightning.unique_description_key || __0 == Lightning.unique_lore_key ||
-                        __0 == Poison.unique_name_key || __0 == Poison.unique_description_key || __0 == Poison.unique_lore_key ||
-                        __0 == Physical.unique_name_key || __0 == Physical.unique_description_key || __0 == Physical.unique_lore_key)
-                    {
-                        __result = true;
-                        result = false;
-                    }
+                LocalizationOverride.Register(basic_subtype_name_key, Get_Subtype_Name);
 
-                    return result;
-                }
+                LocalizationOverride.Register(Ice.unique_name_key, Uniques.Ice.Get_Unique_Name);
+                LocalizationOverride.Register(Ice.unique_description_key, Uniques.Ice.Get_Unique_Description);
+                LocalizationOverride.Register(Ice.unique_lore_key, Uniques.Ice.Get_Unique_Lore);
+
+                LocalizationOverride.Register(Fire.unique_name_key, Uniques.Fire.Get_Unique_Name);
+                LocalizationOverride.Register(Fire.unique_description_key, Uniques.Fire.Get_Unique_Description);
+                LocalizationOverride.Register(Fire.unique_lore_key, Uniques.Fire.Get_Unique_Lore);
+
+                LocalizationOverride.Register(Lightning.unique_name_key, Uniques.Lightning.Get_Unique_Name);
+                LocalizationOverride.Register(Lightning.unique_description_key, Uniques.Lightning.Get_Unique_Description);
+                LocalizationOverride.Register(Lightning.unique_lore_key, Uniques.Lightning.Get_Unique_Lore);
+
+                LocalizationOverride.Register(Poison.unique_name_key, Uniques.Poison.Get_Unique_Name);
+                LocalizationOverride.Register(Poison.unique_description_key, Uniques.Poison.Get_Unique_Description);
+                LocalizationOverride.Register(Poison.unique_lore_key, Uniques.Poison.Get_Unique_Lore);
+
+                LocalizationOverride.Register(Physical.unique_name_key, Uniques.Physical.Get_Unique_Name);
+                LocalizationOverride.Register(Physical.unique_description_key, Uniques.Physical.Get_Unique_Description);
+                LocalizationOverride.Register(Physical.unique_lore_key, Uniques.Physical.Get_Unique_Lore);
             }
 
-            [HarmonyPatch(typeof(Localization), "GetText")]
-            public class Localization_GetText
-            {
-                [HarmonyPrefix]
-                static bool Prefix(ref string __result, string __0)
-                {
-                    bool result = true;
-                    if (__0 == basic_subtype_name_key)
-                    {
-                        __result = Get_Subtype_Name();
-                        result = false;
-                    }
-                    //Ice
-                    else if (__0 == Ice.unique_name_key)
-                    {
-                        __result = Uniques.Ice.Get_Unique_Name();
-                        result = false;
-                    }
-                    else if (__0 == Ice.unique_description_key)
-                    {
-                        string description = Uniques.Ice.Get_Unique_Description();
-                        if (description != "")
-                        {
-                            __result = description;
-                            result = false;
-                        }
-                    }
-                    else if (__0 == Ice.unique_lore_key)
-                    {
-                        string lore = Uniques.Ice.Get_Unique_Lore();
-                        if (lore != "")
-                        {
-                            __result = lore;
-                            result = false;
-                        }
-                    }
-                    //Fire
-                    else if (__0 == Fire.unique_name_key)
-                    {
-                        __result = Uniques.Fire.Get_Unique_Name();
-                        result = false;
-                    }
-                    else if (__0 == Fire.unique_description_key)
-                    {
-                        string description = Uniques.Fire.Get_Unique_Description();
-                        if (description != "")
-                        {
-                            __result = description;
-                            result = false;
-                        }
-                    }
-                    else if (__0 == Fire.unique_lore_key)
-                    {
-                        string lore = Uniques.Fire.Get_Unique_Lore();
-                        if (lore != "")
-                        {
-                            __result = lore;
-                            result = false;
-                        }
-                    }
-                    //Lightning
-                    else if (__0 == Lightning.unique_name_key)
-                    {
-                        __result = Uniques.Lightning.Get_Unique_Name();
-                        result = false;
-                    }
-                    else if (__0 == Lightning.unique_description_key)
-                    {
-                        string description = Uniques.Lightning.Get_Unique_Description();
-                        if (description != "")
-                        {
-                            __result = description;
-                            result = false;
-                        }
-                    }
-                    else if (__0 == Fire.unique_lore_key)
-                    {
-                        string lore = Uniques.Lightning.Get_Unique_Lore();
-                        if (lore != "")
-                        {
-                            __result = lore;
-                            result = false;
-                        }
-                    }
-                    //Poison
-                    else if (__0 == Poison.unique_name_key)
-                    {
-                        __result = Uniques.Poison.Get_Unique_Name();
-                        result = false;
-                    }
-                    else if (__0 == Poison.unique_description_key)
-                    {
-                        string description = Uniques.Poison.Get_Unique_Description();
-                        if (description != "")
-                        {
-                            __result = description;
-                            result = false;
-                        }
-                    }
-                    else if (__0 == Poison.unique_lore_key)
-                    {
-                        string lore = Uniques.Poison.Get_Unique_Lore();
-                        if (lore != "")
-                        {
-                            __result = lore;
-                            result = false;
-                        }
-                    }
-                    //Physical
-                    else if (__0 == Physical.unique_name_key)
-                    {
-                        __result = Uniques.Physical.Get_Unique_Name();
-                        result = false;
-                    }
-                    else if (__0 == Physical.unique_description_key)
-                    {
-                        string description = Uniques.Physical.Get_Unique_Description();
-                        if (description != "")
-                        {
-                            __result = description;
-                            result = false;
-                        }
-                    }
-                    else if (__0 == Physical.unique_lore_key)
-                    {
-                        string lore = Uniques.Physical.Get_Unique_Lore();
-                        if (lore != "")
-                        {
-                            __result = lore;
-                            result = false;
-                        }
-                    }
-
-                    return result;
-                }
-            }
         }
         public class Events
         {

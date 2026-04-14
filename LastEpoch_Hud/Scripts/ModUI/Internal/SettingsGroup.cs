@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using UnityEngine;
 
 namespace LastEpoch_Hud.Scripts.ModUI
 {
@@ -392,6 +393,18 @@ namespace LastEpoch_Hud.Scripts.ModUI
                 LoadEntry(section, e);
         }
 
+        public bool HasMissingEntries(JObject root)
+        {
+            if (root[Name] is not JObject section)
+                return true;
+            foreach (var e in entries)
+            {
+                if (section[e.Key] == null)
+                    return true;
+            }
+            return false;
+        }
+
         // Internals
 
         private static void SaveEntry(JObject section, Entry e)
@@ -443,21 +456,69 @@ namespace LastEpoch_Hud.Scripts.ModUI
                     e.BoolSetting.Value = token.Value<bool>();
                     break;
                 case EntryType.Dropdown:
-                    e.DropdownSetting.Value = token.Value<int>();
+                    int idx = token.Value<int>();
+                    int optCount = e.DropdownSetting.Options?.Length ?? 0;
+                    if (optCount > 0 && (idx < 0 || idx >= optCount))
+                    {
+                        WarnInvalid(
+                            e.Key,
+                            idx + " not in [0," + (optCount - 1) + "], snapped to 0"
+                        );
+                        idx = 0;
+                    }
+                    e.DropdownSetting.Value = idx;
                     break;
                 case EntryType.Float:
                     if (token is JObject fo)
                     {
                         e.FloatSetting.Enabled = fo.Value<bool>("Enabled");
-                        e.FloatSetting.Value = fo.Value<float>("Value");
+                        float fv = fo.Value<float>("Value");
+                        if (e.FloatSetting.HasLimits)
+                        {
+                            float clamped = Mathf.Clamp(
+                                fv,
+                                e.FloatSetting.MinLimit,
+                                e.FloatSetting.MaxLimit
+                            );
+                            if (clamped != fv)
+                            {
+                                WarnInvalid(
+                                    e.Key,
+                                    fv
+                                        + " out of ["
+                                        + e.FloatSetting.MinLimit
+                                        + ","
+                                        + e.FloatSetting.MaxLimit
+                                        + "], clamped to "
+                                        + clamped
+                                );
+                                fv = clamped;
+                            }
+                        }
+                        e.FloatSetting.Value = fv;
                     }
                     break;
                 case EntryType.Range:
                     if (token is JObject ro)
                     {
                         e.RangeSetting.Enabled = ro.Value<bool>("Enabled");
-                        e.RangeSetting.Min = ro.Value<float>("Min");
-                        e.RangeSetting.Max = ro.Value<float>("Max");
+                        float rmin = Mathf.Clamp(
+                            ro.Value<float>("Min"),
+                            e.RangeSetting.MinLimit,
+                            e.RangeSetting.MaxLimit
+                        );
+                        float rmax = Mathf.Clamp(
+                            ro.Value<float>("Max"),
+                            e.RangeSetting.MinLimit,
+                            e.RangeSetting.MaxLimit
+                        );
+                        if (rmin > rmax)
+                        {
+                            WarnInvalid(e.Key, "Min(" + rmin + ") > Max(" + rmax + "), swapping");
+                            (rmin, rmax) = (rmax, rmin);
+                        }
+                        e.RangeSetting.Min = rmin;
+                        e.RangeSetting.Max = rmax;
                     }
                     break;
                 case EntryType.Radio:
@@ -484,9 +545,40 @@ namespace LastEpoch_Hud.Scripts.ModUI
                     }
                     break;
                 case EntryType.Keybind:
-                    e.KeybindSetting.Value = token.Value<string>() ?? "";
+                    string kb = token.Value<string>() ?? "";
+                    if (!IsValidKeybind(kb))
+                    {
+                        WarnInvalid(
+                            e.Key,
+                            "'"
+                                + kb
+                                + "' is not a valid binding, reset to default '"
+                                + e.KeybindSetting.DefaultValue
+                                + "'"
+                        );
+                        kb = e.KeybindSetting.DefaultValue;
+                    }
+                    e.KeybindSetting.Value = kb;
                     break;
             }
+        }
+
+        private static bool IsValidKeybind(string binding)
+        {
+            if (string.IsNullOrEmpty(binding))
+                return true;
+            if (binding.StartsWith("kb:"))
+                return System.Enum.TryParse<KeyCode>(binding.Substring(3), out _);
+            if (binding.StartsWith("gp:"))
+                return !string.IsNullOrEmpty(binding.Substring(3));
+            return false;
+        }
+
+        private static void WarnInvalid(string key, string detail)
+        {
+            Main.logger_instance?.Warning(
+                "ModUI: setting '" + key + "' invalid in SaveModUI.json: " + detail
+            );
         }
 
         private enum EntryType

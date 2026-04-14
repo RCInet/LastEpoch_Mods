@@ -1,4 +1,5 @@
-﻿using Il2Cpp;
+﻿using HarmonyLib;
+using Il2Cpp;
 using Il2CppItemFiltering;
 using Il2CppLE.Factions;
 //using Il2CppLE.Services.Visuals;
@@ -52,12 +53,69 @@ namespace LastEpoch_Hud.Scripts
         public static MapPanel map_panel = null;
         public static StashPanelUI stash_panel_ui = null;
 
+        const int InitRetryEveryNFrames = 60;
+        static int lastInitFrame = -1000;
+
+        public static event System.Action OnRefsReady;
+        public static event System.Action OnGameSceneTransition;
+        static bool refsReadyFired;
+
+        struct PendingReady
+        {
+            public System.Func<bool> Precondition;
+            public System.Action Callback;
+        }
+        static readonly System.Collections.Generic.List<PendingReady> pendingReady = new System.Collections.Generic.List<PendingReady>();
+
+        public static void WhenReady(System.Func<bool> precondition, System.Action callback)
+        {
+            if (precondition == null || callback == null) { return; }
+            try
+            {
+                if (precondition()) { callback(); return; }
+            }
+            catch (System.Exception ex) { Main.logger_instance?.Error("[Refs_Manager] WhenReady precondition threw on register: " + ex); return; }
+            pendingReady.Add(new PendingReady { Precondition = precondition, Callback = callback });
+        }
+
+        static void DrainPendingReady()
+        {
+            for (int i = pendingReady.Count - 1; i >= 0; i--)
+            {
+                var entry = pendingReady[i];
+                bool ready;
+                try { ready = entry.Precondition(); }
+                catch (System.Exception ex) { Main.logger_instance?.Error("[Refs_Manager] WhenReady precondition threw on drain: " + ex); pendingReady.RemoveAt(i); continue; }
+                if (!ready) { continue; }
+                pendingReady.RemoveAt(i);
+                try { entry.Callback(); }
+                catch (System.Exception ex) { Main.logger_instance?.Error("[Refs_Manager] WhenReady callback threw: " + ex); }
+            }
+        }
+
         void Awake()
         {
             instance = this;
+            UnityEngine.SceneManagement.SceneManager.add_sceneLoaded(new System.Action<UnityEngine.SceneManagement.Scene, UnityEngine.SceneManagement.LoadSceneMode>(OnSceneLoadedHandler));
+        }
+
+        static void OnSceneLoadedHandler(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+        {
+            if (Scenes.IsGameScene()) { FireGameSceneTransition(); }
+        }
+
+        public static void FireGameSceneTransition()
+        {
+            refsReadyFired = false;
+            pendingReady.Clear();
+            try { OnGameSceneTransition?.Invoke(); }
+            catch (System.Exception ex) { Main.logger_instance?.Error("[Refs_Manager] OnGameSceneTransition subscriber threw: " + ex); }
         }
         void Update()
         {
+            if (Time.frameCount - lastInitFrame < InitRetryEveryNFrames) { return; }
+            lastInitFrame = Time.frameCount;
+
             if ((game_uibase.IsNullOrDestroyed()) && (!UIBase.instance.IsNullOrDestroyed())) { game_uibase = UIBase.instance; }
             if ((epoch_input_manager.IsNullOrDestroyed()) && (!EpochInputManager.instance.IsNullOrDestroyed())) { epoch_input_manager = EpochInputManager.instance; }                               //Used to block input
             if ((character_class_list.IsNullOrDestroyed()) && (!CharacterClassList.instance.IsNullOrDestroyed())) { character_class_list = CharacterClassList.instance; }                           //Hud, Maxroll
@@ -100,12 +158,42 @@ namespace LastEpoch_Hud.Scripts
                 if ((filter_manager.IsNullOrDestroyed()) && (!ItemFilterManager.Instance.IsNullOrDestroyed())) { filter_manager = ItemFilterManager.Instance; }                                     //AutoPickupItems, MinimapIcons
                 if ((camera_manager.IsNullOrDestroyed()) && (!CameraManager.instance.IsNullOrDestroyed())) { camera_manager = CameraManager.instance; }                                             //CameraOverride
                 if (map_panel.IsNullOrDestroyed() && (!MapPanel.instance.IsNullOrDestroyed())) { map_panel = MapPanel.instance; }                                                                   //MainQuest, TpSafe
+
+                if (!refsReadyFired
+                    && !player_actor.IsNullOrDestroyed()
+                    && !player_data.IsNullOrDestroyed()
+                    && !player_health.IsNullOrDestroyed()
+                    && !ability_manager.IsNullOrDestroyed()
+                    && !game_uibase.IsNullOrDestroyed())
+                {
+                    refsReadyFired = true;
+                    try { OnRefsReady?.Invoke(); }
+                    catch (System.Exception ex) { Main.logger_instance?.Error("[Refs_Manager] OnRefsReady subscriber threw: " + ex); }
+                }
+
+                DrainPendingReady();
             }
             else
             {
                 if (!player_data.IsNullOrDestroyed()) { player_data = null; }
                 if (!map_panel.IsNullOrDestroyed()) {  map_panel = null; }
+                refsReadyFired = false;
+                pendingReady.Clear();
             }
+        }
+
+        [HarmonyPatch(typeof(MonolithZoneManager), "initialise")]
+        public class MonolithZoneInit_Patch
+        {
+            [HarmonyPostfix]
+            static void Postfix() => FireGameSceneTransition();
+        }
+
+        [HarmonyPatch(typeof(MonolithRunsManager), nameof(MonolithRunsManager.onRestZoneEnteredAfterEchoCompleted))]
+        public class MonolithRestEnter_Patch
+        {
+            [HarmonyPostfix]
+            static void Postfix() => FireGameSceneTransition();
         }
     }
 }

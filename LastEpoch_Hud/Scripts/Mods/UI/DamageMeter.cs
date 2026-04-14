@@ -58,57 +58,69 @@ namespace LastEpoch_Hud.Scripts.Mods.UI
         {
             instance = this;
             UI.Reset();
+            Refs_Manager.OnRefsReady += OnRefsReadyHandler;
         }
-        void Update()
+
+        static void OnRefsReadyHandler()
+        {
+            // Defer init until BottomScreenMenu is also populated
+            Refs_Manager.WhenReady(
+                () => !Refs_Manager.game_uibase.IsNullOrDestroyed()
+                   && !Refs_Manager.game_uibase.bottomScreenMenu.IsNullOrDestroyed(),
+                InitWithBottomScreen);
+        }
+
+        static void InitWithBottomScreen()
         {
             if (!Assets.Loaded()) { Assets.Load(); }
+            if (!Assets.Loaded()) { return; }
+            if (Abilities.Count == 0)
+            {
+                foreach (Ability ab in Resources.FindObjectsOfTypeAll<Ability>())
+                {
+                    if (!Abilities.Contains(ab)) { Abilities.Add(ab); }
+                }
+                foreach (Ability ab in NewItems.Items_Mjolner.Trigger.Abilities)
+                {
+                    if (!Abilities.Contains(ab)) { Abilities.Add(ab); }
+                }
+            }
+            if (!UI.Initialized) { UI.Init(); }
+        }
+
+        void Update()
+        {
+            if (!Assets.Loaded()) { return; }
+            if (Scenes.IsGameScene())
+            {
+                if (!UI.Initialized) { return; }
+                if (!MenuText.IsNullOrDestroyed()) { MenuText.text = "Damage Meter"; }
+                if (!DamageMeter_obj.IsNullOrDestroyed())
+                {
+                    if (Input.GetKeyDown(KeyCode.U)) { DamageMeter_obj.active = !DamageMeter_obj.active; }
+                    if (!DamageMeter_obj.active) { On = false; }
+                    if (On) { UI.Update(); }
+                }
+                if (!OnOff_Image.IsNullOrDestroyed())
+                {
+                    if (On) { OnOff_Image.sprite = On_sprite; }
+                    else { OnOff_Image.sprite = Off_sprite; }
+                }
+                if (!Reset_obj.IsNullOrDestroyed())
+                {
+                    if (Skills.Count > 0) { Reset_obj.active = true; }
+                    else { Reset_obj.active = false; }
+                }
+            }
             else
             {
-                if (Scenes.IsGameScene())
+                On = false;
+                Abilities = new System.Collections.Generic.List<Ability>();
+                if (!DamageMeter_obj.IsNullOrDestroyed())
                 {
-                    if ((Abilities.Count == 0) && (On))
-                    {
-                        foreach (Ability ab in Resources.FindObjectsOfTypeAll<Ability>())
-                        {
-                            if (!Abilities.Contains(ab)) { Abilities.Add(ab); }
-                        }
-                        foreach (Ability ab in NewItems.Items_Mjolner.Trigger.Abilities)
-                        {
-                            if (!Abilities.Contains(ab)) { Abilities.Add(ab); }
-                        }
-                    }
-                    if (!UI.Initialized) { UI.Init(); }
-                    else
-                    {
-                        if (!MenuText.IsNullOrDestroyed()) { MenuText.text = "Damage Meter"; }
-                        if (!DamageMeter_obj.IsNullOrDestroyed())
-                        {
-                            if (Input.GetKeyDown(KeyCode.U)) { DamageMeter_obj.active = !DamageMeter_obj.active; }
-                            if (!DamageMeter_obj.active) { On = false; }
-                            if (On) { UI.Update(); }
-                        }
-                        if (!OnOff_Image.IsNullOrDestroyed())
-                        {
-                            if (On) { OnOff_Image.sprite = On_sprite; }
-                            else { OnOff_Image.sprite = Off_sprite; }
-                        }
-                        if (!Reset_obj.IsNullOrDestroyed())
-                        {
-                            if (Skills.Count > 0) { Reset_obj.active = true; }
-                            else { Reset_obj.active = false; }
-                        }
-                    }
+                    if (DamageMeter_obj.active) { DamageMeter_obj.active = false; }
                 }
-                else
-                {
-                    On = false;
-                    Abilities = new System.Collections.Generic.List<Ability>();
-                    if (!DamageMeter_obj.IsNullOrDestroyed())
-                    {
-                        if (DamageMeter_obj.active) { DamageMeter_obj.active = false; }
-                    }
-                    UI.Initialized = false;
-                }
+                UI.Initialized = false;
             }
         }
         

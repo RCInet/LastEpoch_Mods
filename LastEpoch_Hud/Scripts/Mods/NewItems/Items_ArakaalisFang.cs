@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using Il2Cpp;
+using LastEpoch_Hud.Scripts.Mods.Localization;
 using MelonLoader;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -23,9 +24,17 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
             instance = this;
             spiders = new System.Collections.Generic.List<GameObject>();
             SceneManager.add_sceneLoaded(new System.Action<Scene, LoadSceneMode>(OnSceneLoaded));
+            Refs_Manager.OnRefsReady += OnRefsReadyHandler;
+            Refs_Manager.OnGameSceneTransition += () =>
+            {
+                Events.OnKillEvent_Initialized = false;
+                Events.OnMinionKillEvent_Initialized = false;
+            };
         }
+
         void Update()
         {
+            // Pre-game registration: latches via Added*/Loaded flags
             if (!Assets.Loaded()) { Assets.Load(); }
             if (Locales.current != Locales.Selected.Unknow)
             {
@@ -33,15 +42,16 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                 if (!Unique.AddedToUniqueList) { Unique.AddToUniqueList(); }
                 else if (!Unique.AddedToDictionary) { Unique.AddToDictionary(); }
             }
+            if (Scenes.IsGameScene()) { RaiseSpider.Update(); }
+        }
+
+        static void OnRefsReadyHandler()
+        {
             if (!Events.OnKillEvent_Initialized) { Events.Init_OnKillEvent(); }
             if (!Events.OnMinionKillEvent_Initialized) { Events.Init_OnMinionKillEvent(); }
-            if (Scenes.IsGameScene())
-            {
-                if (RaiseSpider.ability.IsNullOrDestroyed()) { RaiseSpider.GetAbility(); }
-                if (RaiseSpider.actor_data.IsNullOrDestroyed()) { RaiseSpider.GetActorData(); }
-                else if (RaiseSpider.prefab_obj.IsNullOrDestroyed()) { RaiseSpider.GetPrefab(); }
-                RaiseSpider.Update();
-            }
+            if (RaiseSpider.ability.IsNullOrDestroyed()) { RaiseSpider.GetAbility(); }
+            if (RaiseSpider.actor_data.IsNullOrDestroyed()) { RaiseSpider.GetActorData(); }
+            if (RaiseSpider.prefab_obj.IsNullOrDestroyed()) { RaiseSpider.GetPrefab(); }
         }
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
@@ -181,7 +191,7 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                     effectiveLevelForLegendaryPotential = 0,
                     canDropRandomly = true,
                     rerollChance = 1,
-                    itemModelType = UniqueList.ItemModelType.Unique,
+                    itemModelType = UniqueList.ItemModelType.OverrideSubType,
                     subTypeForIM = 0,
                     baseType = Basic.base_type,
                     subTypes = SubType(),
@@ -643,10 +653,10 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
         }
         public class AFLocales
         {
-            private static string basic_subtype_name_key = "Item_SubType_Name_" + Basic.base_type + "_" + Basic.base_id;
-            private static string unique_name_key = "Unique_Name_" + Unique.unique_id;
-            private static string unique_description_key = "Unique_Tooltip_0_" + Unique.unique_id;
-            private static string unique_lore_key = "Unique_Lore_" + Unique.unique_id;
+            public static readonly string basic_subtype_name_key = "Item_SubType_Name_" + Basic.base_type + "_" + Basic.base_id;
+            public static readonly string unique_name_key = "Unique_Name_" + Unique.unique_id;
+            public static readonly string unique_description_key = "Unique_Tooltip_0_" + Unique.unique_id;
+            public static readonly string unique_lore_key = "Unique_Lore_" + Unique.unique_id;
 
             public class SubType
             {
@@ -686,62 +696,12 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                 //Add all languages here
             }
 
-            [HarmonyPatch(typeof(Localization), "TryGetText")]
-            public class Localization_TryGetText
+            public static void RegisterLocales()
             {
-                [HarmonyPrefix]
-                static bool Prefix(ref bool __result, string __0) //, Il2CppSystem.String __1)
-                {
-                    bool result = true;
-                    if (__0 == basic_subtype_name_key || __0 == unique_name_key ||
-                        __0 == unique_description_key || __0 == unique_lore_key)
-                    {
-                        __result = true;
-                        result = false;
-                    }
-
-                    return result;
-                }
-            }
-
-            [HarmonyPatch(typeof(Localization), "GetText")]
-            public class Localization_GetText
-            {
-                [HarmonyPrefix]
-                static bool Prefix(ref string __result, string __0)
-                {
-                    bool result = true;
-                    if (__0 == basic_subtype_name_key)
-                    {
-                        __result = Basic.Get_Subtype_Name();
-                        result = false;
-                    }
-                    else if (__0 == unique_name_key)
-                    {
-                        __result = Unique.Get_Unique_Name();
-                        result = false;
-                    }
-                    else if (__0 == unique_description_key)
-                    {
-                        string description = Unique.Get_Unique_Description();
-                        if (description != "")
-                        {
-                            __result = description;
-                            result = false;
-                        }
-                    }
-                    else if (__0 == unique_lore_key)
-                    {
-                        string lore = Unique.Get_Unique_Lore();
-                        if (lore != "")
-                        {
-                            __result = lore;
-                            result = false;
-                        }
-                    }
-
-                    return result;
-                }
+                LocalizationOverride.Register(basic_subtype_name_key, Basic.Get_Subtype_Name);
+                LocalizationOverride.Register(unique_name_key, Unique.Get_Unique_Name);
+                LocalizationOverride.Register(unique_description_key, Unique.Get_Unique_Description);
+                LocalizationOverride.Register(unique_lore_key, Unique.Get_Unique_Lore);
             }
         }
         public class Events

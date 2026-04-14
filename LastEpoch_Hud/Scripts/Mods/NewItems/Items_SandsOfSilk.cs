@@ -3,6 +3,7 @@ using HarmonyLib;
 using Il2Cpp;
 using Il2CppLE.Services.Models.Items;
 using Il2CppLE.Services.Visuals;
+using LastEpoch_Hud.Scripts.Mods.Localization;
 using MelonLoader;
 using UnityEngine;
 
@@ -404,10 +405,10 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
         }
         public class SOSLocales
         {
-            private static string basic_subtype_name_key = "Item_SubType_Name_" + Basic.base_type + "_" + Basic.base_id;
-            private static string unique_name_key = "Unique_Name_" + Unique.unique_id;
-            private static string unique_description_key = "Unique_Tooltip_0_" + Unique.unique_id;
-            private static string unique_lore_key = "Unique_Lore_" + Unique.unique_id;
+            public static readonly string basic_subtype_name_key = "Item_SubType_Name_" + Basic.base_type + "_" + Basic.base_id;
+            public static readonly string unique_name_key = "Unique_Name_" + Unique.unique_id;
+            public static readonly string unique_description_key = "Unique_Tooltip_0_" + Unique.unique_id;
+            public static readonly string unique_lore_key = "Unique_Lore_" + Unique.unique_id;
 
             public class SubType
             {
@@ -430,62 +431,12 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                 //Add all languages here
             }
 
-            [HarmonyPatch(typeof(Localization), "TryGetText")]
-            public class Localization_TryGetText
+            public static void RegisterLocales()
             {
-                [HarmonyPrefix]
-                static bool Prefix(ref bool __result, string __0) //, Il2CppSystem.String __1)
-                {
-                    bool result = true;
-                    if (__0 == basic_subtype_name_key || __0 == unique_name_key ||
-                        __0 == unique_description_key || __0 == unique_lore_key)
-                    {
-                        __result = true;
-                        result = false;
-                    }
-
-                    return result;
-                }
-            }
-
-            [HarmonyPatch(typeof(Localization), "GetText")]
-            public class Localization_GetText
-            {
-                [HarmonyPrefix]
-                static bool Prefix(ref string __result, string __0)
-                {
-                    bool result = true;
-                    if (__0 == basic_subtype_name_key)
-                    {
-                        __result = Basic.Get_Subtype_Name();
-                        result = false;
-                    }
-                    else if (__0 == unique_name_key)
-                    {
-                        __result = Unique.Get_Unique_Name();
-                        result = false;
-                    }
-                    else if (__0 == unique_description_key)
-                    {
-                        string description = Unique.Get_Unique_Description();
-                        if (description != "")
-                        {
-                            __result = description;
-                            result = false;
-                        }
-                    }
-                    else if (__0 == unique_lore_key)
-                    {
-                        string lore = Unique.Get_Unique_Lore();
-                        if (lore != "")
-                        {
-                            __result = lore;
-                            result = false;
-                        }
-                    }
-
-                    return result;
-                }
+                LocalizationOverride.Register(basic_subtype_name_key, Basic.Get_Subtype_Name);
+                LocalizationOverride.Register(unique_name_key, Unique.Get_Unique_Name);
+                LocalizationOverride.Register(unique_description_key, Unique.Get_Unique_Description);
+                LocalizationOverride.Register(unique_lore_key, Unique.Get_Unique_Lore);
             }
         }
     }

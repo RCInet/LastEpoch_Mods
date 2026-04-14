@@ -1,7 +1,7 @@
+using System.IO;
 using MelonLoader;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.IO;
 using UnityEngine;
 
 namespace LastEpoch_Hud.Scripts.ModUI
@@ -10,35 +10,51 @@ namespace LastEpoch_Hud.Scripts.ModUI
     [RegisterTypeInIl2Cpp]
     public class SaveManager : MonoBehaviour
     {
-        public SaveManager(System.IntPtr ptr) : base(ptr) { }
+        public SaveManager(System.IntPtr ptr)
+            : base(ptr) { }
+
         public static SaveManager instance;
         public volatile bool initialized;
 
-        private static readonly string basePath = Directory.GetCurrentDirectory() + @"\Mods\" + Main.mod_name + @"\";
+        private static readonly string basePath =
+            Directory.GetCurrentDirectory() + @"\Mods\" + Main.mod_name + @"\";
         private const string filename = "SaveModUI.json";
         private const float SaveInterval = 1f;
         private float saveTimer;
 
-        void Awake() { instance = this; }
+        void Awake()
+        {
+            instance = this;
+        }
 
         void Start()
         {
             System.Threading.Tasks.Task.Run(() =>
             {
-                try { Load(); }
-                catch (System.Exception ex) { Main.logger_instance?.Error("ModUI SaveManager: Load failed: " + ex.Message); }
+                try
+                {
+                    Load();
+                }
+                catch (System.Exception ex)
+                {
+                    Main.logger_instance?.Error("ModUI SaveManager: Load failed: " + ex.Message);
+                }
             });
         }
 
         void Update()
         {
             LocaleRegistry.TickIfLocaleChanged();
-            if (KeybindCapture.Active) KeybindCapture.Tick();
-            if (!initialized) return;
-            if (!ModSettings.Dirty) return;
+            if (KeybindCapture.Active)
+                KeybindCapture.Tick();
+            if (!initialized)
+                return;
+            if (!ModSettings.Dirty)
+                return;
             // Time.unscaledDeltaTime: advances even when the game is paused (HUD open = timeScale=0)
             saveTimer += Time.unscaledDeltaTime;
-            if (saveTimer < SaveInterval) return;
+            if (saveTimer < SaveInterval)
+                return;
             saveTimer = 0f;
             ModSettings.ClearDirty();
             ModSettings.Trace("SaveManager.Update flushing (debounce hit)");
@@ -59,17 +75,24 @@ namespace LastEpoch_Hud.Scripts.ModUI
                     foreach (var group in ModSettings.AllGroups)
                         group.Load(root);
 
-                    // If any registered group is missing from the on-disk file, rewrite
-                    // so a new section (e.g. Debug) shows up on disk without waiting for
-                    // the player to interact with one of its settings.
+                    // If any registered group or per-group entry is missing from the
+                    // on-disk file, rewrite so newly added sections or keys (e.g. a new
+                    // Debug.Profiling toggle) show up on disk without waiting for the
+                    // player to interact with one of them.
                     foreach (var group in ModSettings.AllGroups)
                     {
-                        if (root[group.Name] == null) { needsRewrite = true; break; }
+                        if (group.HasMissingEntries(root))
+                        {
+                            needsRewrite = true;
+                            break;
+                        }
                     }
                 }
                 catch
                 {
-                    Main.logger_instance?.Warning("ModUI SaveManager: Error parsing save file, using defaults");
+                    Main.logger_instance?.Warning(
+                        "ModUI SaveManager: Error parsing save file, using defaults"
+                    );
                     needsRewrite = true;
                 }
             }
@@ -79,7 +102,9 @@ namespace LastEpoch_Hud.Scripts.ModUI
                 needsRewrite = true;
             }
 
-            Main.logger_instance?.Msg("ModUI SaveManager: Initialized with " + ModSettings.AllGroups.Count + " group(s)");
+            Main.logger_instance?.Msg(
+                "ModUI SaveManager: Initialized with " + ModSettings.AllGroups.Count + " group(s)"
+            );
             initialized = true;
 
             if (needsRewrite)
@@ -95,7 +120,8 @@ namespace LastEpoch_Hud.Scripts.ModUI
             foreach (var group in ModSettings.AllGroups)
                 group.Save(root);
 
-            if (!Directory.Exists(basePath)) Directory.CreateDirectory(basePath);
+            if (!Directory.Exists(basePath))
+                Directory.CreateDirectory(basePath);
             File.WriteAllText(basePath + filename, root.ToString(Formatting.Indented));
             ModSettings.Trace("SaveManager.Save wrote " + filename);
         }
@@ -107,12 +133,16 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
         public static void BindRoot(string name, GameObject root, RootKind kind = RootKind.Generic)
         {
-            if (instance == null || root.IsNullOrDestroyed()) return;
-            if (string.IsNullOrEmpty(name)) return;
+            if (instance == null || root.IsNullOrDestroyed())
+                return;
+            if (string.IsNullOrEmpty(name))
+                return;
 
             if (BindingRoots.IsSameRoot(name, root))
             {
-                Main.logger_instance?.Msg("ModUI SaveManager: BindRoot " + name + " skipped (same root already bound)");
+                Main.logger_instance?.Msg(
+                    "ModUI SaveManager: BindRoot " + name + " skipped (same root already bound)"
+                );
                 return;
             }
 
@@ -124,7 +154,15 @@ namespace LastEpoch_Hud.Scripts.ModUI
             else
                 BindGenericRoot(name, root);
 
-            Main.logger_instance?.Msg("ModUI SaveManager: BindRoot " + name + " (kind=" + kind + ", groups=" + ModSettings.AllGroups.Count + ")");
+            Main.logger_instance?.Msg(
+                "ModUI SaveManager: BindRoot "
+                    + name
+                    + " (kind="
+                    + kind
+                    + ", groups="
+                    + ModSettings.AllGroups.Count
+                    + ")"
+            );
         }
 
         private static void BindHudInternal(GameObject hud_object)
@@ -134,7 +172,9 @@ namespace LastEpoch_Hud.Scripts.ModUI
             var menuContent = menu.IsNullOrDestroyed() ? null : Functions.GetChild(menu, "Content");
             if (contentRoot.IsNullOrDestroyed() || menuContent.IsNullOrDestroyed())
             {
-                Main.logger_instance?.Warning("ModUI SaveManager: BindHudInternal couldn't resolve Content or Menu/Content");
+                Main.logger_instance?.Warning(
+                    "ModUI SaveManager: BindHudInternal couldn't resolve Content or Menu/Content"
+                );
                 return;
             }
 
@@ -146,16 +186,24 @@ namespace LastEpoch_Hud.Scripts.ModUI
         {
             foreach (var group in ModSettings.AllGroups)
             {
-                if (group.RootName != BindingRoots.HudRootName) continue;
-                if (group.HasTab || group.ContentObjectName == null) continue;
+                if (group.RootName != BindingRoots.HudRootName)
+                    continue;
+                if (group.HasTab || group.ContentObjectName == null)
+                    continue;
                 try
                 {
                     var contentObj = Prefab.Child(contentRoot, group.ContentObjectName);
-                    if (contentObj != null) group.ResolveAndBind(contentObj);
+                    if (contentObj != null)
+                        group.ResolveAndBind(contentObj);
                 }
                 catch (System.Exception ex)
                 {
-                    Main.logger_instance?.Error("ModUI SaveManager: Failed to bind group '" + group.Name + "': " + ex.Message);
+                    Main.logger_instance?.Error(
+                        "ModUI SaveManager: Failed to bind group '"
+                            + group.Name
+                            + "': "
+                            + ex.Message
+                    );
                 }
             }
         }
@@ -164,18 +212,37 @@ namespace LastEpoch_Hud.Scripts.ModUI
         {
             foreach (var group in ModSettings.AllGroups)
             {
-                if (group.RootName != rootName) continue;
+                if (group.RootName != rootName)
+                    continue;
                 try
                 {
-                    var contentObj = group.ContentObjectName != null
-                        ? Prefab.Child(root, group.ContentObjectName)
-                        : root;
-                    if (contentObj != null) group.ResolveAndBind(contentObj);
-                    else Main.logger_instance?.Warning("ModUI SaveManager: BindGenericRoot '" + rootName + "' missing content '" + group.ContentObjectName + "' for group '" + group.Name + "'");
+                    var contentObj =
+                        group.ContentObjectName != null
+                            ? Prefab.Child(root, group.ContentObjectName)
+                            : root;
+                    if (contentObj != null)
+                        group.ResolveAndBind(contentObj);
+                    else
+                        Main.logger_instance?.Warning(
+                            "ModUI SaveManager: BindGenericRoot '"
+                                + rootName
+                                + "' missing content '"
+                                + group.ContentObjectName
+                                + "' for group '"
+                                + group.Name
+                                + "'"
+                        );
                 }
                 catch (System.Exception ex)
                 {
-                    Main.logger_instance?.Error("ModUI SaveManager: Failed to bind group '" + group.Name + "' to root '" + rootName + "': " + ex.Message);
+                    Main.logger_instance?.Error(
+                        "ModUI SaveManager: Failed to bind group '"
+                            + group.Name
+                            + "' to root '"
+                            + rootName
+                            + "': "
+                            + ex.Message
+                    );
                 }
             }
         }
