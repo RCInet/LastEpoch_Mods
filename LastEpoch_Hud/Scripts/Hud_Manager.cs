@@ -257,7 +257,6 @@ namespace LastEpoch_Hud.Scripts
             if (!Refs_Manager.game_uibase.IsNullOrDestroyed())
             {
                 if ((game_canvas.IsNullOrDestroyed()) && (Refs_Manager.game_uibase.canvases.Count > 0)) { game_canvas = Refs_Manager.game_uibase.canvases[0]; }
-                if (Scenes.IsGameScene() && ((game_pause_menu.IsNullOrDestroyed()) || (Hud_Base.Default_PauseMenu_Btns.IsNullOrDestroyed()))) { Hud_Base.Get_DefaultPauseMenu(); }
                 if ((!Hud_Base.initiliazed_events) && (!game_pause_menu.IsNullOrDestroyed()) && (!Hud_Base.Default_PauseMenu_Btns.IsNullOrDestroyed())) { Hud_Base.Set_Events(); }
                 if (Hud_Base.Get_DefaultPauseMenu_Open()) { Hud_Base.Toogle_DefaultPauseMenu(false); }
             }
@@ -1425,26 +1424,53 @@ namespace LastEpoch_Hud.Scripts
             public static GameObject Menu_Fade_Background = null;
             public static GameObject Chapter_Fade_Background = null;
 
+            static float lastWalkTime = -100f;
+            const float PauseMenuWalkIntervalSec = 0.5f;
+
             public static bool Get_DefaultPauseMenu()
             {
-                bool result = false;
-
-                foreach (Il2CppLE.UI.PanelSystem.MainMenuPanel obj in Resources.FindObjectsOfTypeAll<Il2CppLE.UI.PanelSystem.MainMenuPanel>())
+                if (game_pause_menu.IsNullOrDestroyed())
                 {
-                    if (obj.name.Contains("Clone"))
+                    if (Time.realtimeSinceStartup - lastWalkTime < PauseMenuWalkIntervalSec) { return false; }
+                    lastWalkTime = Time.realtimeSinceStartup;
+                    foreach (Il2CppLE.UI.PanelSystem.MainMenuPanel obj in Resources.FindObjectsOfTypeAll<Il2CppLE.UI.PanelSystem.MainMenuPanel>())
                     {
-                        game_pause_menu = obj.gameObject;
-                        break;
+                        if (obj.name.Contains("Clone"))
+                        {
+                            game_pause_menu = obj.gameObject;
+                            break;
+                        }
                     }
                 }
                 if (!game_pause_menu.IsNullOrDestroyed())
                 {
-                    Default_PauseMenu_Btns = Functions.GetChild(game_pause_menu, "Menu");
-                    Get_Refs();
-                    result = true;
+                    if (Default_PauseMenu_Btns.IsNullOrDestroyed()) { Default_PauseMenu_Btns = Functions.GetChild(game_pause_menu, "Menu"); }
+                    if (!Default_PauseMenu_Btns.IsNullOrDestroyed()) { Get_Refs(); }
+                    return !Default_PauseMenu_Btns.IsNullOrDestroyed();
                 }
+                return false;
+            }
 
-                return result;
+            [HarmonyPatch(typeof(Il2CppLE.UI.PanelSystem.MainMenuPanel), "OnOpen")]
+            public class MainMenuPanel_OnOpen_Cache
+            {
+                [HarmonyPostfix]
+                static void Postfix(Il2CppLE.UI.PanelSystem.MainMenuPanel __instance)
+                {
+                    if (__instance.IsNullOrDestroyed()) { return; }
+                    if (!__instance.name.Contains("Clone")) { return; }
+                    game_pause_menu = __instance.gameObject;
+                    if (Default_PauseMenu_Btns.IsNullOrDestroyed())
+                    {
+                        var menu = Functions.GetChild(__instance.gameObject, "Menu");
+                        if (!menu.IsNullOrDestroyed())
+                        {
+                            Default_PauseMenu_Btns = menu;
+                            Get_Refs();
+                        }
+                    }
+                    lastWalkTime = Time.realtimeSinceStartup;
+                }
             }
             public static void Set_ChapterInfo(bool show)
             {

@@ -33,9 +33,17 @@ namespace LastEpoch_Hud
         {
             Scenes.SceneName = SceneManager.GetActiveScene().name;
         }
+        static bool diagnosticsAttachAttempted = false;
         public override void OnLateUpdate()
         {
             if ((!Base.Initializing) && (!Base.Initialized)) { Base.Init(); }
+            if (!diagnosticsAttachAttempted
+                && Scripts.ModUI.SaveManager.instance != null
+                && Scripts.ModUI.SaveManager.instance.initialized)
+            {
+                diagnosticsAttachAttempted = true;
+                Scripts.Mods.Diagnostics.DiagnosticsDumper.AttachIfEnabled();
+            }
         }
         public override void OnApplicationQuit()
         {

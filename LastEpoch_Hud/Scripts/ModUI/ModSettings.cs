@@ -48,6 +48,13 @@ namespace LastEpoch_Hud.Scripts.ModUI
 
             // Gates all ModSettings.Trace(...) output. Default false = silent for players.
             public static readonly BoolSetting Enabled = Group.Bool("Enabled");
+
+            // Gates verbose profiling diagnostics (locale-resolve timing, per-mod Update
+            // duration, GC stats, etc). Default false. Toggled via SaveModUI.json or the
+            // diagnostics dumper hotkey.
+            public static readonly BoolSetting Profiling = Group.Bool("Profiling");
+
+            public static readonly BoolSetting ProfileGameTypes = Group.Bool("ProfileGameTypes");
         }
 
         //

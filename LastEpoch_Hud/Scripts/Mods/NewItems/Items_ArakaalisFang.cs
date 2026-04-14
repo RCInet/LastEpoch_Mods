@@ -24,9 +24,17 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
             instance = this;
             spiders = new System.Collections.Generic.List<GameObject>();
             SceneManager.add_sceneLoaded(new System.Action<Scene, LoadSceneMode>(OnSceneLoaded));
+            Refs_Manager.OnRefsReady += OnRefsReadyHandler;
+            Refs_Manager.OnGameSceneTransition += () =>
+            {
+                Events.OnKillEvent_Initialized = false;
+                Events.OnMinionKillEvent_Initialized = false;
+            };
         }
+
         void Update()
         {
+            // Pre-game registration: latches via Added*/Loaded flags
             if (!Assets.Loaded()) { Assets.Load(); }
             if (Locales.current != Locales.Selected.Unknow)
             {
@@ -34,15 +42,16 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                 if (!Unique.AddedToUniqueList) { Unique.AddToUniqueList(); }
                 else if (!Unique.AddedToDictionary) { Unique.AddToDictionary(); }
             }
+            if (Scenes.IsGameScene()) { RaiseSpider.Update(); }
+        }
+
+        static void OnRefsReadyHandler()
+        {
             if (!Events.OnKillEvent_Initialized) { Events.Init_OnKillEvent(); }
             if (!Events.OnMinionKillEvent_Initialized) { Events.Init_OnMinionKillEvent(); }
-            if (Scenes.IsGameScene())
-            {
-                if (RaiseSpider.ability.IsNullOrDestroyed()) { RaiseSpider.GetAbility(); }
-                if (RaiseSpider.actor_data.IsNullOrDestroyed()) { RaiseSpider.GetActorData(); }
-                else if (RaiseSpider.prefab_obj.IsNullOrDestroyed()) { RaiseSpider.GetPrefab(); }
-                RaiseSpider.Update();
-            }
+            if (RaiseSpider.ability.IsNullOrDestroyed()) { RaiseSpider.GetAbility(); }
+            if (RaiseSpider.actor_data.IsNullOrDestroyed()) { RaiseSpider.GetActorData(); }
+            if (RaiseSpider.prefab_obj.IsNullOrDestroyed()) { RaiseSpider.GetPrefab(); }
         }
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {

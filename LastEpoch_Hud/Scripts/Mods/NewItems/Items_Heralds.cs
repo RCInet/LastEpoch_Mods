@@ -19,9 +19,17 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
         {
             instance = this;
             SceneManager.add_sceneLoaded(new System.Action<Scene, LoadSceneMode>(OnSceneLoaded));
+            Refs_Manager.OnRefsReady += OnRefsReadyHandler;
+            Refs_Manager.OnGameSceneTransition += () =>
+            {
+                Events.OnKillEvent_Initialized = false;
+                Events.OnMinionKillEvent_Initialized = false;
+            };
         }
+
         void Update()
         {
+            // Pre-game registration: needs item_list/unique_list (populated in any scene).
             if (Uniques.Ice.Icon.IsNullOrDestroyed() ||
                 Uniques.Fire.Icon.IsNullOrDestroyed() ||
                 Uniques.Lightning.Icon.IsNullOrDestroyed() ||
@@ -35,21 +43,22 @@ namespace LastEpoch_Hud.Scripts.Mods.NewItems
                 if (!Uniques.AddedToUniqueList) { Uniques.AddToUniqueList(); }
                 if (Uniques.AddedToUniqueList && !Uniques.AddedToDictionary) { Uniques.AddToDictionary(); }
             }
+        }
+
+        static void OnRefsReadyHandler()
+        {
             if (!Events.OnKillEvent_Initialized) { Events.Init_OnKillEvent(); }
             if (!Events.OnMinionKillEvent_Initialized) { Events.Init_OnMinionKillEvent(); }
-            if (Scenes.IsGameScene())
-            {
-                if (Uniques.Ice.prefab_obj.IsNullOrDestroyed()) { Uniques.Ice.GetPrefab(); }
-                if (Uniques.Ice.ability.IsNullOrDestroyed()) { Uniques.Ice.GetAbility(); }
-                if (Uniques.Fire.prefab_obj.IsNullOrDestroyed()) { Uniques.Fire.GetPrefab(); }
-                if (Uniques.Fire.ability.IsNullOrDestroyed()) { Uniques.Fire.GetAbility(); }
-                if (Uniques.Lightning.prefab_obj.IsNullOrDestroyed()) { Uniques.Lightning.GetPrefab(); }
-                if (Uniques.Lightning.ability.IsNullOrDestroyed()) { Uniques.Lightning.GetAbility(); }
-                if (Uniques.Poison.prefab_obj.IsNullOrDestroyed()) { Uniques.Poison.GetPrefab(); }
-                if (Uniques.Poison.ability.IsNullOrDestroyed()) { Uniques.Poison.GetAbility(); }
-                if (Uniques.Physical.prefab_obj.IsNullOrDestroyed()) { Uniques.Physical.GetPrefab(); }
-                if (Uniques.Physical.ability.IsNullOrDestroyed()) { Uniques.Physical.GetAbility(); }
-            }
+            if (Uniques.Ice.prefab_obj.IsNullOrDestroyed()) { Uniques.Ice.GetPrefab(); }
+            if (Uniques.Ice.ability.IsNullOrDestroyed()) { Uniques.Ice.GetAbility(); }
+            if (Uniques.Fire.prefab_obj.IsNullOrDestroyed()) { Uniques.Fire.GetPrefab(); }
+            if (Uniques.Fire.ability.IsNullOrDestroyed()) { Uniques.Fire.GetAbility(); }
+            if (Uniques.Lightning.prefab_obj.IsNullOrDestroyed()) { Uniques.Lightning.GetPrefab(); }
+            if (Uniques.Lightning.ability.IsNullOrDestroyed()) { Uniques.Lightning.GetAbility(); }
+            if (Uniques.Poison.prefab_obj.IsNullOrDestroyed()) { Uniques.Poison.GetPrefab(); }
+            if (Uniques.Poison.ability.IsNullOrDestroyed()) { Uniques.Poison.GetAbility(); }
+            if (Uniques.Physical.prefab_obj.IsNullOrDestroyed()) { Uniques.Physical.GetPrefab(); }
+            if (Uniques.Physical.ability.IsNullOrDestroyed()) { Uniques.Physical.GetAbility(); }
         }
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
