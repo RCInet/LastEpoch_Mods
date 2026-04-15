@@ -137,7 +137,11 @@ namespace LastEpoch_Hud.Scripts.Mods.Items
                     {
                         __1.rarity = 4;
                         __1.RefreshIDAndValues();
-                    }                   
+                    }
+                    // Tutorial items advance their quest objective
+                    // only through the natural GroundItemManager.pickupItem path. Skip auto-pickup so the
+                    // player's manual pickup fires CheckItemRelatedObjectives and avoids a softlock.
+                    if (__1 != null && __1.isTutorialItem()) { return true; }
                     ItemDataUnpacked item = __1.TryCast<ItemDataUnpacked>();
                     if ((!Save_Manager.instance.IsNullOrDestroyed()) && (!item.IsNullOrDestroyed()))
                     {
