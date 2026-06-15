@@ -76,8 +76,8 @@
       <HintPath>$(LastEpochPath)\MelonLoader\net6\IndexRange.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="IL2CppInterop.Runtime">
-      <HintPath>$(LastEpochPath)\MelonLoader\net6\IL2CppInterop.Runtime.dll</HintPath>
+    <Reference Include="Il2CppInterop.Runtime">
+      <HintPath>$(LastEpochPath)\MelonLoader\net6\Il2CppInterop.Runtime.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="LE">
