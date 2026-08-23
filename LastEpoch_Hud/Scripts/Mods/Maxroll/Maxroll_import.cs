@@ -421,7 +421,7 @@ namespace LastEpoch_Hud.Scripts.Mods.Maxroll
                     string[] r = jsonResponse.Split('>');
                     foreach (string s in r)
                     {
-                        if (s.Contains(profile))
+                        if (s.Contains("window.__remixContext = "))
                         {
                             string s2 = s.Split('<')[0];
                             string remove = "window.__remixContext = ";
